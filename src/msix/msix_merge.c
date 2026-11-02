@@ -133,9 +133,9 @@ void rp_msix_module_free(proven_allocator_t a, rp_msix_module_t *x) {
     }
     rp_mem_free(a, x->files);
     for (size_t i = 0; i < x->reg_count; ++i) {
-        rp_mem_free(a, x->regs[i].key);
-        rp_mem_free(a, x->regs[i].name);
-        rp_mem_free(a, x->regs[i].value);
+        rp_mem_free(a, (void *)(x->regs[i].key).ptr);
+        rp_mem_free(a, (void *)(x->regs[i].name).ptr);
+        rp_mem_free(a, (void *)(x->regs[i].value).ptr);
         for (size_t k = 0; k < x->regs[i].item_count; ++k) rp_mem_free(a, x->regs[i].items[k]);
         rp_mem_free(a, x->regs[i].items);
     }
@@ -264,8 +264,8 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
             rp_ir_registry_t *x = &out->regs[out->reg_count++];
             memset(x, 0, sizeof *x);
             x->root = c_r->kind == RP_MSI_INT ? (rp_reg_root_t)c_r->i : RP_ROOT_HKLM;
-            x->key = text(a, c_k);
-            x->name = name;
+            x->key = RP_V(text(a, c_k));
+            x->name = RP_V(name);
             char *v = c_v->kind == RP_MSI_STR ? text(a, c_v) : NULL;
             x->type = RP_REG_STRING;
             if (v && v[0] == '#' && v[1] == 'x') {
@@ -307,8 +307,8 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
                 rp_mem_free(a, v);
                 v = NULL;
             }
-            x->value = v;
-            if (x->key == NULL) err = PROVEN_ERR_NOMEM;
+            x->value = RP_V(v);
+            if (x->key.ptr == NULL) err = PROVEN_ERR_NOMEM;
         }
     }
     rp_msi_module_close(&m);

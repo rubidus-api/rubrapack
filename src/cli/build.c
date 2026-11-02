@@ -53,7 +53,7 @@ static int menu_files(proven_allocator_t heap, const rp_tdoc_t *doc, rp_ir_optio
     size_t part_len = ir->arch == RP_ARCH_X64 ? rp_menu_x64_len : ir->arch == RP_ARCH_X86 ? rp_menu_x86_len : rp_menu_arm64_len;
     const char *exe_name = NULL;
     for (size_t k = 0; k < ir->file_count; ++k) {
-        if (strcmp(ir->files[k].id, ir->menu_exe) == 0) exe_name = ir->files[k].name;
+        if (RP_EQ(ir->files[k].id, ir->menu_exe)) exe_name = rp_cs(ir->files[k].name);
     }
     if (part_len < 2 || exe_name == NULL) {
         rp_srcdiag_add(d, (rp_pos_t){ 1, 1 }, "RP1317", true, "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu");
@@ -61,9 +61,9 @@ static int menu_files(proven_allocator_t heap, const rp_tdoc_t *doc, rp_ir_optio
     }
     // Signed with --key when the source names the certificate's subject ([msix] publisher);
     // otherwise Windows' unsigned form, which an elevated installation may register.
-    bool sign_it = !msix && rp_sign_wanted(sign) && ir->msix_publisher;
+    bool sign_it = !msix && rp_sign_wanted(sign) && ir->msix_publisher.ptr;
     static char publisher[8400];
-    if (sign_it) snprintf(publisher, sizeof publisher, "%s", ir->msix_publisher);
+    if (sign_it) snprintf(publisher, sizeof publisher, "%s", rp_cs(ir->msix_publisher));
     uint8_t *pkg = NULL;
     size_t pkg_len = 0;
     int rc = RP_EXIT_OK;
@@ -92,9 +92,9 @@ static int menu_files(proven_allocator_t heap, const rp_tdoc_t *doc, rp_ir_optio
     }
     rp_ir_free(ir);
     *d = (rp_srcdiags_t){ 0 };
-    opt->menu_dll = dll;
-    opt->menu_pkg = msix ? NULL : pkg_path;
-    opt->menu_publisher = sign_it ? publisher : NULL;
+    opt->menu_dll = RP_V(dll);
+    opt->menu_pkg = RP_V(msix ? NULL : pkg_path);
+    opt->menu_publisher = RP_V(sign_it ? publisher : NULL);
     *err = rp_ir_build(heap, doc, opt, ir, d);
     return RP_EXIT_OK;
 }
@@ -110,7 +110,7 @@ static int build_chain(proven_allocator_t heap, const rp_tdoc_t *doc, const char
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'%s' is a [chain]: it builds a setup program, -o setup.exe", src);
         return RP_EXIT_USAGE;
     }
-    rp_ir_options_t opt = { dir, defines, ndef, arch, NULL, NULL, false, NULL, NULL, NULL };
+    rp_ir_options_t opt = { .source_dir = RP_V(dir), .defines = defines, .define_count = ndef, .arch = RP_V(arch) };
     rp_chain_t chain;
     proven_err_t err = rp_chain_parse(heap, doc, &opt, &chain, d);
     uint8_t *exe = NULL;
@@ -168,7 +168,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
     proven_err_t err = PROVEN_OK;
     for (size_t k = 0; k < (narch ? narch : 1) && err == PROVEN_OK; ++k) {
         rp_ir_t ir;
-        rp_ir_options_t opt = { dir, defines, ndef, narch ? archs[k] : NULL, NULL, out, nfc, NULL, NULL, NULL };
+        rp_ir_options_t opt = { .source_dir = RP_V(dir), .defines = defines, .define_count = ndef, .arch = RP_V(narch ? archs[k] : NULL), .output = RP_V(out), .nfc = nfc };
         err = rp_ir_build(heap, doc, &opt, &ir, d);
         if (err == PROVEN_OK && mopt->winget && !winget_from(heap, &ir, &wg, d)) err = PROVEN_ERR_INVALID_FORMAT;
         char menu_dll[1600] = "", menu_none[8] = "";
@@ -196,8 +196,8 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         if (err == PROVEN_OK) {
             unsigned v[4] = { 0 };
             for (size_t i = 0; i < ir.version_count && i < 4; ++i) v[i] = ir.version_parts[i];
-            snprintf(names[n], sizeof names[n], "%s_%u.%u.%u.%u_%s.msix", ir.msix_identity_name, v[0], v[1], v[2], v[3], arch_names[ir.arch]);
-            if (n == 0) snprintf(lp_prefix, sizeof lp_prefix, "%s_%u.%u.%u.%u", ir.msix_identity_name, v[0], v[1], v[2], v[3]);
+            snprintf(names[n], sizeof names[n], "%s_%u.%u.%u.%u_%s.msix", rp_cs(ir.msix_identity_name), v[0], v[1], v[2], v[3], arch_names[ir.arch]);
+            if (n == 0) snprintf(lp_prefix, sizeof lp_prefix, "%s_%u.%u.%u.%u", rp_cs(ir.msix_identity_name), v[0], v[1], v[2], v[3]);
             if (n == 0) snprintf(bundle_name, sizeof bundle_name, "%s", lp_prefix);
             size_t bn = strlen(bundle_name);
             snprintf(bundle_name + bn, sizeof bundle_name - bn, "_%s", arch_names[ir.arch]);
@@ -231,7 +231,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
             if (err == PROVEN_OK) {
                 unsigned v[4] = { 0 };
                 for (size_t i = 0; i < ir.version_count && i < 4; ++i) v[i] = ir.version_parts[i];
-                snprintf(sym_names[nsym], sizeof sym_names[nsym], "%s_%u.%u.%u.%u_%s.appxsym", ir.msix_identity_name, v[0], v[1], v[2], v[3],
+                snprintf(sym_names[nsym], sizeof sym_names[nsym], "%s_%u.%u.%u.%u_%s.appxsym", rp_cs(ir.msix_identity_name), v[0], v[1], v[2], v[3],
                          arch_names[ir.arch]);
                 size_t sl = 0;
                 err = rp_msix_plain_zip(heap, pdb, np, true, &sym_data[nsym], &sl);
@@ -410,11 +410,11 @@ static int sxs_catalogs(proven_allocator_t heap, rp_ir_t *ir, const rp_sign_args
         const rp_ir_file_t *f = &ir->files[i], *m = NULL;
         if (!rp_ir_sxs_shared(f)) continue;
         for (size_t k = 0; k < n; ++k) {
-            if (strcmp(ir->files[k].id, f->manifest) == 0) m = &ir->files[k];
+            if (RP_EQ(ir->files[k].id, f->manifest)) m = &ir->files[k];
         }
         if (m == NULL) continue;                // refused by the checks
         if (!rp_sign_wanted(sign)) {
-            rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)", f->id);
+            rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)", rp_cs(f->id));
             rc = RP_EXIT_SOURCE;
             break;
         }
@@ -423,7 +423,7 @@ static int sxs_catalogs(proven_allocator_t heap, rp_ir_t *ir, const rp_sign_args
             rc = rp_sign_cert(sign, &cert, &cert_len);
             if (rc != RP_EXIT_OK) break;
             if (!rp_sxs_token(cert, cert_len, token, &why)) {
-                rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: %s", f->id, why);
+                rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: %s", rp_cs(f->id), why);
                 rc = RP_EXIT_SIGN;
                 break;
             }
@@ -433,20 +433,20 @@ static int sxs_catalogs(proven_allocator_t heap, rp_ir_t *ir, const rp_sign_args
             if (strcmp(f->asm_names[k][0], "publicKeyToken") == 0) named = f->asm_names[k][1];
         }
         if (named == NULL || !rp_ascii_ieq(named, token)) {
-            rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\"", f->id, named ? named : "", token);
+            rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\"", rp_cs(f->id), named ? named : "", token);
             rc = RP_EXIT_SOURCE;
             break;
         }
         uint8_t *man = NULL, *cat = NULL;
         size_t ml = 0, cl = 0;
-        if (rp_pal_read_file(heap, m->source_path, 1u << 20, &man, &ml) != PROVEN_OK) {
-            rp_srcdiag_add(d, m->pos, "RP1509", false, "cannot read source file '%s'", m->source);
+        if (rp_pal_read_file(heap, rp_cs(m->source_path), 1u << 20, &man, &ml) != PROVEN_OK) {
+            rp_srcdiag_add(d, m->pos, "RP1509", false, "cannot read source file '%s'", rp_cs(m->source));
             rc = RP_EXIT_IO;
             break;
         }
         rp_cert_t c;
         int64_t when = reproducible && rp_cert_parse(cert, cert_len, &c, &why) ? c.not_before : 0;
-        rc = rp_sign_sxs_catalog(sign, m->source, m->name, man, ml, when, &cat, &cl);
+        rc = rp_sign_sxs_catalog(sign, rp_cs(m->source), rp_cs(m->name), man, ml, when, &cat, &cl);
         rp_mem_free(heap, man);
         if (rc == RP_EXIT_OK && rp_ir_add_sxs_catalog(ir, i, cat, cl) != PROVEN_OK) {
             rp_mem_free(heap, cat);
@@ -507,7 +507,7 @@ static int run(int argc, char **argv, bool lint) {
             }
             size_t nl = (size_t)(eq - next);
             for (size_t k = 0; k < ndef; ++k) {
-                if (strlen(defines[k].name) == nl && memcmp(defines[k].name, next, nl) == 0) {
+                if (defines[k].name.size == nl && memcmp(defines[k].name.ptr, next, nl) == 0) {
                     rp_diag_error("RP1402", "-D %.*s is given twice", (int)nl, next);
                     goto done;
                 }
@@ -520,7 +520,7 @@ static int run(int argc, char **argv, bool lint) {
             strcpy(copy, next);
             copy[nl] = '\0';
             define_buf[ndef] = copy;
-            defines[ndef++] = (rp_define_t){ copy, copy + nl + 1 };
+            defines[ndef++] = (rp_define_t){ RP_V(copy), RP_V(copy + nl + 1)};
             ++i;
         } else if (strcmp(a, "--arch") == 0 && next) {
             arch = next;
@@ -698,7 +698,8 @@ static int run(int argc, char **argv, bool lint) {
             goto done;
         }
         if (err == PROVEN_OK) {
-            rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? (lint_msix ? "lint.msix" : NULL) : out, nfc, NULL, NULL, NULL };
+            rp_ir_options_t opt = { .source_dir = RP_V(dir), .defines = defines, .define_count = ndef, .arch = RP_V(arch), .compress = RP_V(compress),
+                                    .output = RP_V(lint ? (lint_msix ? "lint.msix" : NULL) : out), .nfc = nfc };
             err = rp_ir_build(heap, &doc, &opt, &ir, &d);
             if (err == PROVEN_OK && msix_opt.winget && !winget_from(heap, &ir, &wg, &d)) err = PROVEN_ERR_INVALID_FORMAT;
             if (err == PROVEN_OK && !lint) {

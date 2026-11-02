@@ -188,9 +188,9 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
     mod_t m = { .alloc = alloc };
     *why = NULL;
     // ".5A1B2C3D_1111_4222_8333_944455566677" from "{5A1B2C3D-1111-4222-8333-944455566677}"
-    if (ir->upgrade_code == NULL || strlen(ir->upgrade_code) != 38) return PROVEN_ERR_INVALID_ARG;
+    if (ir->upgrade_code.ptr == NULL || ir->upgrade_code.size != 38) return PROVEN_ERR_INVALID_ARG;
     m.sfx[0] = '.';
-    for (size_t i = 0; i < 36; ++i) m.sfx[1 + i] = ir->upgrade_code[1 + i] == '-' ? '_' : ir->upgrade_code[1 + i];
+    for (size_t i = 0; i < 36; ++i) m.sfx[1 + i] = ir->upgrade_code.ptr[1 + i] == '-' ? '_' : ir->upgrade_code.ptr[1 + i];
     m.sfx[37] = '\0';
 
     // The keys the module defines: its own rows' keys, but not TARGETDIR and the standard folders
@@ -249,13 +249,13 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
     }
 
     // ModuleSignature, ModuleComponents, ModuleInstallExecuteSequence.
-    char *module_id = keep(&m, rp_mem_alloc(alloc, strlen(ir->name) + 40, 1));
-    if (module_id) snprintf(module_id, strlen(ir->name) + 40, "%s%s", ir->name, m.sfx);
+    char *module_id = keep(&m, rp_mem_alloc(alloc, ir->name.size + 40, 1));
+    if (module_id) snprintf(module_id, ir->name.size + 40, "%s%s", rp_cs(ir->name), m.sfx);
     rp_msi_cell_t *sig = cells(&m, 3);
     if (err == PROVEN_OK && sig && module_id) {
         sig[0] = rp_msi_str_cell(module_id);
         sig[1] = (rp_msi_cell_t){ .kind = RP_MSI_INT, .i = ir->language };
-        sig[2] = rp_msi_str_cell(ir->version);
+        sig[2] = rp_msi_str_cell(rp_cs(ir->version));
         mt[nt++] = (rp_msi_wtable_t){ "ModuleSignature", modsig_cols, 3, sig, 1 };
     }
     size_t ncomp = component ? component->row_count : 0;
@@ -316,11 +316,11 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
         char tmpl[32];
         snprintf(tmpl, sizeof tmpl, "%s;%u", ir->arch == RP_ARCH_X64 ? "x64" : ir->arch == RP_ARCH_ARM64 ? "Arm64" : "Intel", ir->language);
         bool ascii = true;
-        for (const char *p = ir->manufacturer; p && *p; ++p) ascii &= (unsigned char)*p < 0x80;
+        for (const char *p = rp_cs(ir->manufacturer); p && *p; ++p) ascii &= (unsigned char)*p < 0x80;
         const char *app = "rubrapack " RUBRAPACK_VERSION_STRING;
         struct { uint32_t pid; const char *s; int32_t i; } props[] = {
-            { 2, "Merge Module", 0 }, { 3, ir->name, 0 }, { 4, ascii && ir->manufacturer ? ir->manufacturer : "rubrapack", 0 },
-            { 7, tmpl, 0 }, { 9, ir->upgrade_code, 0 }, { 14, NULL, ir->arch == RP_ARCH_ARM64 ? 500 : 200 }, { 15, NULL, 2 },
+            { 2, "Merge Module", 0 }, { 3, rp_cs(ir->name), 0 }, { 4, ascii && ir->manufacturer.ptr ? rp_cs(ir->manufacturer) : "rubrapack", 0 },
+            { 7, tmpl, 0 }, { 9, rp_cs(ir->upgrade_code), 0 }, { 14, NULL, ir->arch == RP_ARCH_ARM64 ? 500 : 200 }, { 15, NULL, 2 },
             { 18, app, 0 },
         };
         rp_suminfo_t si = { .count = 0 };

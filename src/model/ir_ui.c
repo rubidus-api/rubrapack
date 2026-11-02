@@ -41,7 +41,7 @@ char *ir_icon_source(ctx_t *c, const char *shown, rp_pos_t pos) {
 // A source file named by a key (license, banner): relative, existing, a regular file.
 static char *ui_source(ctx_t *c, const char *shown, rp_pos_t pos) {
     if (!ir_source_path_ok(c, shown, pos)) return NULL;
-    char *path = ir_join(c, c->opt->source_dir, shown);
+    char *path = ir_join(c, rp_cs(c->opt->source_dir), shown);
     uint64_t size = 0;
     if (path && rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) {
         ERR(c, pos, "RP1509", "cannot read '%s'", shown);
@@ -54,10 +54,10 @@ static char *ui_source(ctx_t *c, const char *shown, rp_pos_t pos) {
 void ir_parse_ui_text(ctx_t *c, const rp_ttable_t *t, rp_ir_ui_text_t *x) {
     static const char *const keys[] = { "text", NULL }, *const lkeys[] = { "text", NULL };
     ir_check_keys_lang(c, t, keys, lkeys);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     ir_get_ltexts(c, t, "text", &x->by_lang, &x->by_lang_count);
-    x->text = ir_get_str(c, t, "text", x->by_lang_count == 0, NULL);
+    x->text = RP_V(ir_get_str(c, t, "text", x->by_lang_count == 0, NULL));
     if (!rp_ui_text_known(t->id)) ERR(c, t->pos, "RP1201", "[ui-text.%s]: no dialog text has this ID", t->id);
 }
 
@@ -79,15 +79,15 @@ void ir_parse_dialog(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_t *x) {
     ir_check_keys_lang(c, t, keys, lkeys);
     ir_get_ltexts(c, t, "title", &x->title_by_lang, &x->title_by_lang_count);
     ir_get_ltexts(c, t, "description", &x->description_by_lang, &x->description_by_lang_count);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     if (!ir_check_id(c, t, 72)) return;
     if (strncmp(t->id, "Rp", 2) == 0 || strcmp(t->id, "FilesInUse") == 0) {
         ERR(c, t->pos, "RP1302", "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own");
     }
-    x->title = ir_get_str(c, t, "title", false, NULL);         // the banner heading; [ProductName] when omitted
-    x->description = ir_get_str(c, t, "description", false, NULL);
-    x->after = ir_get_str(c, t, "after", true, NULL);
+    x->title = RP_V(ir_get_str(c, t, "title", false, NULL));         // the banner heading; [ProductName] when omitted
+    x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
+    x->after = RP_V(ir_get_str(c, t, "after", true, NULL));
 }
 
 // [billboard.ID] (RFC-0031 B10): a .bmp shown on the progress page while its feature installs.
@@ -95,16 +95,16 @@ void ir_parse_billboard(ctx_t *c, const rp_ttable_t *t, rp_ir_billboard_t *x) {
     static const char *const keys[] = { "image", "feature", "order", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 50);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     char *image = ir_get_str(c, t, "image", true, NULL);
     if (image) {
         if (!rp_ascii_ends_with_ci(image, ".bmp")) ERR(c, ir_key_pos(t, "image"), "RP1316", "image must be a .bmp file (Windows Installer shows BMP only)");
-        else x->image_source = ui_source(c, image, ir_key_pos(t, "image"));
-        x->image_shown = ir_dup(c, image);
+        else x->image_source = RP_V(ui_source(c, image, ir_key_pos(t, "image")));
+        x->image_shown = RP_V(ir_dup(c, image));
         rp_mem_free(c->alloc, image);
     }
-    x->feature = ir_get_str(c, t, "feature", true, NULL);
+    x->feature = RP_V(ir_get_str(c, t, "feature", true, NULL));
     x->order = (int32_t)ir_get_int(c, t, "order", 0, 0, 32767);
 }
 
@@ -113,11 +113,11 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
                                         "labels", "image", NULL }, *const lkeys[] = { "text", "labels", NULL };
     ir_check_keys_lang(c, t, keys, lkeys);
     ir_get_ltexts(c, t, "text", &x->text_by_lang, &x->text_by_lang_count);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     if (!ir_check_id(c, t, 50)) return;
     if (frame_control(t->id)) ERR(c, t->pos, "RP1302", "'%s' is a control of the built-in frame; choose another ID", t->id);
-    x->dialog = ir_get_str(c, t, "dialog", true, NULL);
+    x->dialog = RP_V(ir_get_str(c, t, "dialog", true, NULL));
     char *type = ir_get_str(c, t, "type", true, NULL);
     static const char *const types[] = { "text", "checkbox", "edit", "radio", "combo", "listbox", "bitmap", NULL };
     x->type = -1;
@@ -138,8 +138,8 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
     if (x->x + x->width > 370) ERR(c, ir_key_pos(t, "width"), "RP1308", "x + width must be at most 370 (the page width)");
     if (x->y + x->height > 234) ERR(c, ir_key_pos(t, "height"), "RP1308", "y + height must be at most 234 (the line above the buttons)");
     bool has_text = false;
-    x->text = ir_get_str(c, t, "text", false, &has_text);
-    x->property = ir_get_str(c, t, "property", false, NULL);
+    x->text = RP_V(ir_get_str(c, t, "text", false, &has_text));
+    x->property = RP_V(ir_get_str(c, t, "property", false, NULL));
     // bitmap: a picture from a .bmp (Windows Installer shows BMP only, as the banner does), no text,
     // no property, no values.
     bool has_image = false;
@@ -147,8 +147,8 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
     if (x->type == RP_DC_BITMAP) {
         if (image) {
             if (!rp_ascii_ends_with_ci(image, ".bmp")) ERR(c, ir_key_pos(t, "image"), "RP1316", "image must be a .bmp file (Windows Installer shows BMP only)");
-            else x->image_source = ui_source(c, image, ir_key_pos(t, "image"));
-            x->image_shown = ir_dup(c, image);
+            else x->image_source = RP_V(ui_source(c, image, ir_key_pos(t, "image")));
+            x->image_shown = RP_V(ir_dup(c, image));
         } else {
             ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'image'", t->id);
         }
@@ -163,11 +163,11 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
         ERR(c, ir_key_pos(t, "text"), "RP1316", "a %s control has no text; put a text control beside it", noname[x->type]);
     }
     if (x->type == RP_DC_TEXT || x->type == RP_DC_BITMAP) {
-        if (x->property) ERR(c, ir_key_pos(t, "property"), "RP1316", "a %s control has no property", x->type == RP_DC_BITMAP ? "bitmap" : "text");
+        if (x->property.ptr) ERR(c, ir_key_pos(t, "property"), "RP1316", "a %s control has no property", x->type == RP_DC_BITMAP ? "bitmap" : "text");
     } else if (x->type >= 0) {
-        if (x->property == NULL) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'property'", t->id);
-        else if (!public_property(x->property))
-            ERR(c, ir_key_pos(t, "property"), "RP1310", "property '%s' must be a public name of your own (upper case)", x->property);
+        if (x->property.ptr == NULL) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'property'", t->id);
+        else if (!public_property(rp_cs(x->property)))
+            ERR(c, ir_key_pos(t, "property"), "RP1310", "property '%s' must be a public name of your own (upper case)", rp_cs(x->property));
     }
     const rp_tkey_t *vk = ir_find_key(t, "values"), *lk = ir_find_key(t, "labels");
     bool list = x->type == RP_DC_RADIO || x->type == RP_DC_COMBO || x->type == RP_DC_LISTBOX;
@@ -244,7 +244,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
                 ls[j] = ir_subst(c, &a->items[j]);
             }
         }
-        x->labels_by_lang[x->labels_by_lang_count++] = (rp_ir_llabels_t){ ir_dup(c, code), ls };
+        x->labels_by_lang[x->labels_by_lang_count++] = (rp_ir_llabels_t){ RP_V(ir_dup(c, code)), ls };
     }
     if (x->type == RP_DC_RADIO && x->height < 12 * (int)x->value_count)
         ERR(c, ir_key_pos(t, "height"), "RP1308", "a radio control stacks its buttons: height must be at least 12 per value (%d)", 12 * (int)x->value_count);
@@ -252,14 +252,14 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
 
 static const rp_ir_dialog_t *find_dialog(const rp_ir_t *ir, const char *id) {
     for (size_t k = 0; k < ir->dialog_count; ++k) {
-        if (ir->dialogs[k].id && strcmp(ir->dialogs[k].id, id) == 0) return &ir->dialogs[k];
+        if (ir->dialogs[k].id.ptr && RP_EQ(ir->dialogs[k].id, id)) return &ir->dialogs[k];
     }
     return NULL;
 }
 
 static const rp_ir_property_t *find_property(const rp_ir_t *ir, const char *id) {
     for (size_t k = 0; k < ir->property_count; ++k) {
-        if (ir->properties[k].id && strcmp(ir->properties[k].id, id) == 0) return &ir->properties[k];
+        if (ir->properties[k].id.ptr && RP_EQ(ir->properties[k].id, id)) return &ir->properties[k];
     }
     return NULL;
 }
@@ -270,54 +270,54 @@ void ir_dialog_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->dialog_count; ++k) {
         const rp_ir_dialog_t *d = &ir->dialogs[k];
         if (ir->ui < RP_UI_MINIMAL) {
-            ERR(c, d->pos, "RP1316", "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\"", d->id);
+            ERR(c, d->pos, "RP1316", "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\"", rp_cs(d->id));
             continue;
         }
-        if (d->after == NULL) continue;
-        bool builtin = strcmp(d->after, "RpWelcomeDlg") == 0 ||
-                       (strcmp(d->after, "RpLicenseDlg") == 0 && ir->license_shown) ||
-                       (strcmp(d->after, "RpInstallDirDlg") == 0 && ir->ui >= RP_UI_INSTALLDIR) ||
-                       (strcmp(d->after, "RpCustomizeDlg") == 0 && ir->ui == RP_UI_FEATURES);
+        if (d->after.ptr == NULL) continue;
+        bool builtin = RP_EQ(d->after, "RpWelcomeDlg") ||
+                       (RP_EQ(d->after, "RpLicenseDlg") && ir->license_shown.ptr) ||
+                       (RP_EQ(d->after, "RpInstallDirDlg") && ir->ui >= RP_UI_INSTALLDIR) ||
+                       (RP_EQ(d->after, "RpCustomizeDlg") && ir->ui == RP_UI_FEATURES);
         if (builtin) continue;
         // Another author page: it must exist and the chain must reach a built-in page.
-        const rp_ir_dialog_t *p = find_dialog(ir, d->after);
+        const rp_ir_dialog_t *p = find_dialog(ir, rp_cs(d->after));
         size_t steps = 0;
-        while (p && p->after && find_dialog(ir, p->after) && steps <= ir->dialog_count) {
-            p = find_dialog(ir, p->after);
+        while (p && p->after.ptr && find_dialog(ir, rp_cs(p->after)) && steps <= ir->dialog_count) {
+            p = find_dialog(ir, rp_cs(p->after));
             ++steps;
         }
-        if (find_dialog(ir, d->after) == NULL) {
-            ERR(c, d->pos, "RP1315", "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]", d->after,
-                ir->license_shown ? ", RpLicenseDlg" : "", ir->ui >= RP_UI_INSTALLDIR ? ", RpInstallDirDlg" : "",
+        if (find_dialog(ir, rp_cs(d->after)) == NULL) {
+            ERR(c, d->pos, "RP1315", "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]", rp_cs(d->after),
+                ir->license_shown.ptr ? ", RpLicenseDlg" : "", ir->ui >= RP_UI_INSTALLDIR ? ", RpInstallDirDlg" : "",
                 ir->ui == RP_UI_FEATURES ? ", RpCustomizeDlg" : "");
         } else if (steps > ir->dialog_count) {
-            ERR(c, d->pos, "RP1307", "[dialog.%s] is placed after itself through other dialogs", d->id);
+            ERR(c, d->pos, "RP1307", "[dialog.%s] is placed after itself through other dialogs", rp_cs(d->id));
         }
     }
     for (size_t k = 0; k < ir->dialog_control_count; ++k) {
         const rp_ir_dialog_control_t *x = &ir->dialog_controls[k];
-        if (x->dialog && find_dialog(ir, x->dialog) == NULL) ERR(c, x->pos, "RP1315", "dialog '%s' is not a [dialog.*]", x->dialog);
-        if (x->property == NULL || x->type == RP_DC_TEXT) continue;
-        const rp_ir_property_t *p = find_property(ir, x->property);
+        if (x->dialog.ptr && find_dialog(ir, rp_cs(x->dialog)) == NULL) ERR(c, x->pos, "RP1315", "dialog '%s' is not a [dialog.*]", rp_cs(x->dialog));
+        if (x->property.ptr == NULL || x->type == RP_DC_TEXT) continue;
+        const rp_ir_property_t *p = find_property(ir, rp_cs(x->property));
         if (x->type == RP_DC_RADIO || x->type == RP_DC_COMBO) {
             bool ok = false;
-            for (size_t j = 0; p && p->value && j < x->value_count; ++j) ok |= x->values[j] && strcmp(x->values[j], p->value) == 0;
+            for (size_t j = 0; p && p->value.ptr && j < x->value_count; ++j) ok |= x->values[j] && RP_EQ(x->values[j], p->value);
             if (!ok) ERR(c, x->pos, "RP1315", "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)",
-                         x->type == RP_DC_RADIO ? "radio" : "combo", x->property);
+                         x->type == RP_DC_RADIO ? "radio" : "combo", rp_cs(x->property));
         }
         for (size_t j = 0; j < k; ++j) {
             const rp_ir_dialog_control_t *y = &ir->dialog_controls[j];
-            if (y->property && strcmp(y->property, x->property) == 0 && y->type != RP_DC_TEXT)
-                ERR(c, x->pos, "RP1301", "property '%s' already belongs to control '%s'", x->property, y->id);
+            if (y->property.ptr && RP_EQ(y->property, x->property) && y->type != RP_DC_TEXT)
+                ERR(c, x->pos, "RP1301", "property '%s' already belongs to control '%s'", rp_cs(x->property), rp_cs(y->id));
         }
     }
     for (size_t k = 0; k < ir->dialog_count; ++k) {
         bool any = false;
-        for (size_t j = 0; j < ir->dialog_control_count && !any; ++j) any = ir->dialog_controls[j].dialog && strcmp(ir->dialog_controls[j].dialog, ir->dialogs[k].id) == 0;
+        for (size_t j = 0; j < ir->dialog_control_count && !any; ++j) any = ir->dialog_controls[j].dialog.ptr && RP_EQ(ir->dialog_controls[j].dialog, ir->dialogs[k].id);
         size_t count = 0;
-        for (size_t j = 0; j < ir->dialog_control_count; ++j) count += ir->dialog_controls[j].dialog && strcmp(ir->dialog_controls[j].dialog, ir->dialogs[k].id) == 0;
-        if (!any) ERR(c, ir->dialogs[k].pos, "RP1202", "[dialog.%s] has no [dialog-control.*]", ir->dialogs[k].id);
-        else if (count > 64) ERR(c, ir->dialogs[k].pos, "RP1313", "[dialog.%s] has %zu controls; at most 64", ir->dialogs[k].id, count);
+        for (size_t j = 0; j < ir->dialog_control_count; ++j) count += ir->dialog_controls[j].dialog.ptr && RP_EQ(ir->dialog_controls[j].dialog, ir->dialogs[k].id);
+        if (!any) ERR(c, ir->dialogs[k].pos, "RP1202", "[dialog.%s] has no [dialog-control.*]", rp_cs(ir->dialogs[k].id));
+        else if (count > 64) ERR(c, ir->dialogs[k].pos, "RP1313", "[dialog.%s] has %zu controls; at most 64", rp_cs(ir->dialogs[k].id), count);
     }
 }
 
@@ -339,15 +339,29 @@ static void nfc_one(ctx_t *c, char **s) {
     *s = (char *)o;
 }
 
+static void nfc_view(ctx_t *c, proven_u8str_view_t *s) {
+    if (s->ptr == NULL) return;
+    uint8_t *o;
+    size_t n;
+    proven_err_t err = rp_nfc(c->alloc, s->ptr, s->size, &o, &n);
+    if (err == PROVEN_ERR_NOMEM) {
+        c->nomem = true;
+        return;
+    }
+    if (err != PROVEN_OK) return;       // not UTF-8: already refused where the name was read
+    rp_mem_free(c->alloc, (void *)s->ptr);
+    *s = (proven_u8str_view_t){ o, n };
+}
+
 void ir_nfc_names(ctx_t *c) {
     rp_ir_t *ir = c->ir;
     for (size_t k = 0; k < ir->dir_count; ++k) {
         for (size_t j = 0; j < ir->dirs[k].part_count; ++j) nfc_one(c, &ir->dirs[k].parts[j]);
     }
-    for (size_t k = 0; k < ir->file_count; ++k) nfc_one(c, &ir->files[k].name);
-    for (size_t k = 0; k < ir->folder_count; ++k) nfc_one(c, &ir->folders[k].name);
-    for (size_t k = 0; k < ir->shortcut_count; ++k) nfc_one(c, &ir->shortcuts[k].name);
-    for (size_t k = 0; k < ir->copy_count; ++k) nfc_one(c, &ir->copies[k].name);
+    for (size_t k = 0; k < ir->file_count; ++k) nfc_view(c, &ir->files[k].name);
+    for (size_t k = 0; k < ir->folder_count; ++k) nfc_view(c, &ir->folders[k].name);
+    for (size_t k = 0; k < ir->shortcut_count; ++k) nfc_view(c, &ir->shortcuts[k].name);
+    for (size_t k = 0; k < ir->copy_count; ++k) nfc_view(c, &ir->copies[k].name);
 }
 
 // Languages the dialogs know without help (RFC-0012): their LANGIDs for the automatic choice, the
@@ -484,7 +498,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 continue;
             }
             char *v = ir_subst(c, &key->val);
-            if (b == 0) L->name = v;
+            if (b == 0) L->name = RP_V(v);
             else if (b == 1) {
                 // TextStyle.FaceName holds a face name as GDI takes it: at most 31 UTF-16 units.
                 size_t units = 0;
@@ -494,14 +508,14 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 if (v && (units == 0 || units > 31 || ir_has_control(v))) {
                     ERR(c, key->pos, "RP1308", "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)", key->key, units);
                 }
-                L->font = v;
+                L->font = RP_V(v);
             }
             else {
                 if (ir->ui < 2) ERR(c, key->pos, "RP1316", "a license needs ui = \"minimal\", \"installdir\" or \"features\"");
                 else if (v == NULL) (void)0;            // the substitution has said why
                 else if (!license_kind_ok(v)) ERR(c, key->pos, "RP1316", "license must be a .txt, .md (shown as plain text) or .rtf file");
-                else L->license_source = ui_source(c, v, key->pos);
-                L->license_shown = v;
+                else L->license_source = RP_V(ui_source(c, v, key->pos));
+                L->license_shown = RP_V(v);
             }
         }
     }
@@ -513,11 +527,11 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
         // The language's pack (lang/<code>.po beside the source, RUBRAPACK_LANG_DIR, beside the
         // program, or built in): its texts, and what its header says of the language. What the
         // source says itself comes first.
-        const rp_langpack_t *pack = strcmp(L->code, "en") == 0 ? NULL : rp_langpack_get(L->code, c->opt->source_dir);
+        const rp_langpack_t *pack = strcmp(L->code, "en") == 0 ? NULL : rp_langpack_get(L->code, rp_cs(c->opt->source_dir));
         for (size_t j = 0; pack && L->langid_count == 0 && j < pack->langid_count && j < RP_UI_LANGID_MAX; ++j) L->langids[j] = (uint16_t)pack->langids[j];
         if (pack && L->langid_count == 0) L->langid_count = pack->langid_count < RP_UI_LANGID_MAX ? pack->langid_count : RP_UI_LANGID_MAX;
-        if (pack && L->name == NULL && pack->name) L->name = ir_dup(c, pack->name);
-        if (pack && L->font == NULL && pack->font) L->font = ir_dup(c, pack->font);
+        if (pack && L->name.ptr == NULL && pack->name) L->name = RP_V(ir_dup(c, pack->name));
+        if (pack && L->font.ptr == NULL && pack->font) L->font = RP_V(ir_dup(c, pack->font));
         if (pack) L->rtl = pack->rtl;
         // RFC-0028: English is in Western and Southern Europe; a language whose pack names no region, in Other.
         L->group = strcmp(L->code, "en") == 0 ? 6 : pack && pack->group ? pack->group : 9;
@@ -525,17 +539,17 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
             for (size_t j = 0; j < 6 && known_langs[kl].ids[j]; ++j) L->langids[L->langid_count++] = known_langs[kl].ids[j];
         }
         if (L->langid_count == 0) ERR(c, pos, "RP1202", "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)", L->code, L->code);
-        if (L->name == NULL && kl < 0) ERR(c, pos, "RP1202", "language '%s' needs [ui] name-%s (its name on the language page)", L->code, L->code);
-        if (L->name == NULL && kl >= 0) L->name = ir_dup(c, known_langs[kl].name);
-        if (L->font == NULL) L->font = ir_dup(c, kl >= 0 ? known_langs[kl].font : "Segoe UI");
+        if (L->name.ptr == NULL && kl < 0) ERR(c, pos, "RP1202", "language '%s' needs [ui] name-%s (its name on the language page)", L->code, L->code);
+        if (L->name.ptr == NULL && kl >= 0) L->name = RP_V(ir_dup(c, known_langs[kl].name));
+        if (L->font.ptr == NULL) L->font = RP_V(ir_dup(c, kl >= 0 ? known_langs[kl].font : "Segoe UI"));
         // A license shown as text names its face in RTF, which takes no face name it cannot spell in ASCII.
-        bool text_license = L->license_source && !rp_ascii_ends_with_ci(L->license_source, ".rtf");
-        if (text_license && L->font && rp_ui_face_ascii(L->font) == NULL) {
+        bool text_license = L->license_source.ptr && !rp_ascii_ends_with_ci(rp_cs(L->license_source), ".rtf");
+        if (text_license && L->font.ptr && rp_ui_face_ascii(rp_cs(L->font)) == NULL) {
             char key[16];
             snprintf(key, sizeof key, "font-%s", L->code);
             rp_srcdiag_add(c->d, uit ? ir_key_pos(uit, key) : pos, "RP1319", true,
                            "%s '%s': the license text needs the face's English name, so it shows in the language's own face; "
-                           "write the English name (like \"Malgun Gothic\") to use this face there too", key, L->font);
+                           "write the English name (like \"Malgun Gothic\") to use this face there too", key, rp_cs(L->font));
         }
         // English is built in; another language has its texts in its pack, or the source writes them.
         if (strcmp(L->code, "en") != 0) {
@@ -555,9 +569,9 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 bool have = false;
                 for (size_t u = 0; u < ir->ui_text_count && !have; ++u) {
                     const rp_ir_ui_text_t *x = &ir->ui_texts[u];
-                    if (strcmp(x->id, id) != 0) continue;
-                    have = x->text != NULL;
-                    for (size_t w = 0; w < x->by_lang_count && !have; ++w) have = strcmp(x->by_lang[w].lang, L->code) == 0;
+                    if (!RP_EQ(x->id, id)) continue;
+                    have = x->text.ptr != NULL;
+                    for (size_t w = 0; w < x->by_lang_count && !have; ++w) have = RP_EQ(x->by_lang[w].lang, L->code);
                 }
                 if (!have && missing++ == 0) first = id;
             }
@@ -578,7 +592,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
     // text-xx / title-xx / labels-xx name languages of the dialogs.
 #define LANG_OK(code, pos)                                                                                             \
     do {                                                                                                               \
-        if (ui_lang_index(ir, (code)) < 0) ERR(c, (pos), "RP1316", "language '%s' is not in [ui] languages", (code));  \
+        if (ui_lang_index(ir, rp_cs(RP_V(code))) < 0) ERR(c, (pos), "RP1316", "language '%s' is not in [ui] languages", rp_cs(RP_V(code))); \
     } while (0)
     for (size_t u = 0; u < ir->ui_text_count; ++u) {
         for (size_t w = 0; w < ir->ui_texts[u].by_lang_count; ++w) LANG_OK(ir->ui_texts[u].by_lang[w].lang, ir->ui_texts[u].pos);
@@ -602,13 +616,13 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
 
 void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
     rp_ir_t *ir = c->ir;
-    if (ir->license_shown) {
+    if (ir->license_shown.ptr) {
         rp_pos_t pos = ir_key_pos(pkg, "license");
         if (ir->ui == 0 || ir->ui == 1) ERR(c, pos, "RP1316", "a license needs ui = \"minimal\", \"installdir\" or \"features\"");
-        else if (!rp_ascii_ends_with_ci(ir->license_shown, ".txt") && !rp_ascii_ends_with_ci(ir->license_shown, ".rtf") && !rp_ascii_ends_with_ci(ir->license_shown, ".md")) {
+        else if (!rp_ascii_ends_with_ci(rp_cs(ir->license_shown), ".txt") && !rp_ascii_ends_with_ci(rp_cs(ir->license_shown), ".rtf") && !rp_ascii_ends_with_ci(rp_cs(ir->license_shown), ".md")) {
             ERR(c, pos, "RP1316", "license must be a .txt, .md (shown as plain text) or .rtf file");
         } else {
-            ir->license_source = ui_source(c, ir->license_shown, pos);
+            ir->license_source = RP_V(ui_source(c, rp_cs(ir->license_shown), pos));
         }
     }
     ir->ui_save_log = ir->ui != 0 && (uit == NULL || ir_get_bool(c, uit, "save-log", true));
@@ -623,26 +637,26 @@ void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
     char *embedded = ir_get_str(c, uit, "embedded", false, NULL);
     if (embedded) {
         if (!rp_ascii_ends_with_ci(embedded, ".dll")) ERR(c, ir_key_pos(uit, "embedded"), "RP1316", "embedded must be a .dll file (the author's UI handler)");
-        else ir->ui_embedded_source = ui_source(c, embedded, ir_key_pos(uit, "embedded"));
-        ir->ui_embedded_shown = ir_dup(c, embedded);
+        else ir->ui_embedded_source = RP_V(ui_source(c, embedded, ir_key_pos(uit, "embedded")));
+        ir->ui_embedded_shown = RP_V(ir_dup(c, embedded));
         rp_mem_free(c->alloc, embedded);
     }
-    if (ir->ui == 0 && ir->ui_embedded_source == NULL) ERR(c, uit->pos, "RP1316", "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")");
+    if (ir->ui == 0 && ir->ui_embedded_source.ptr == NULL) ERR(c, uit->pos, "RP1316", "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")");
     char *banner = ir_get_str(c, uit, "banner", false, NULL);
     if (banner) {
         if (!rp_ascii_ends_with_ci(banner, ".bmp")) ERR(c, ir_key_pos(uit, "banner"), "RP1316", "banner must be a .bmp file (Windows Installer shows BMP only)");
-        else ir->banner_source = ui_source(c, banner, ir_key_pos(uit, "banner"));
+        else ir->banner_source = RP_V(ui_source(c, banner, ir_key_pos(uit, "banner")));
         rp_mem_free(c->alloc, banner);
     }
-    ir->ui_install_dir = ir_get_str(c, uit, "install-dir", false, NULL);
+    ir->ui_install_dir = RP_V(ir_get_str(c, uit, "install-dir", false, NULL));
     // RFC-0013 A5: a program started from the finished page, as the user who runs the setup.
     char *launch = ir_get_str(c, uit, "launch", false, NULL);
     if (launch) {
         if (strncmp(launch, "file:", 5) != 0 || launch[5] == '\0') ERR(c, ir_key_pos(uit, "launch"), "RP1315", "launch must be \"file:<ID>\" naming a [file.*] of this package");
-        else ir->ui_launch_file = ir_dup(c, launch + 5);
+        else ir->ui_launch_file = RP_V(ir_dup(c, launch + 5));
         rp_mem_free(c->alloc, launch);
     }
-    ir->ui_launch_args = ir_get_fmt(c, uit, "launch-args", false, NULL, IR_FMT_INSTALL);
+    ir->ui_launch_args = RP_V(ir_get_fmt(c, uit, "launch-args", false, NULL, IR_FMT_INSTALL));
     ir->ui_launch_default = ir_get_bool(c, uit, "launch-checked", true);
-    if (ir->ui_launch_args && ir->ui_launch_file == NULL) ERR(c, ir_key_pos(uit, "launch-args"), "RP1316", "launch-args needs launch");
+    if (ir->ui_launch_args.ptr && ir->ui_launch_file.ptr == NULL) ERR(c, ir_key_pos(uit, "launch-args"), "RP1316", "launch-args needs launch");
 }

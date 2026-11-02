@@ -163,7 +163,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
                 if (ir->msix_block_count) memcpy(nb, ir->msix_blocks, ir->msix_block_count * sizeof *nb);
                 rp_mem_free(alloc, ir->msix_blocks);
                 ir->msix_blocks = nb;
-                nb[ir->msix_block_count++] = (rp_ir_msix_block_t){ ir_dup(&c, t->kind), ir_dup(&c, t->id), t->pos };
+                nb[ir->msix_block_count++] = (rp_ir_msix_block_t){ RP_V(ir_dup(&c, t->kind)), RP_V(ir_dup(&c, t->id)), t->pos };
             }
         }
     }
@@ -183,9 +183,9 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         }
     }
     for (size_t k = 0; k < opt->define_count; ++k) {
-        if (ir_windows_name(opt->defines[k].name)) {
+        if (ir_windows_name(rp_cs(opt->defines[k].name))) {
             ERR(&c, ((rp_pos_t){ 1, 1 }), "RP1404", "-D %s: '%s' is a Windows name; give the variable another name",
-                opt->defines[k].name, opt->defines[k].name);
+                rp_cs(opt->defines[k].name), rp_cs(opt->defines[k].name));
         }
     }
     if (package == NULL) {
@@ -405,8 +405,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     if (!c.nomem && ir->feature_count == 0) {       // G2: one hidden default feature
         rp_ir_feature_t *f = &ir->features[ir->feature_count++];
         memset(f, 0, sizeof *f);
-        f->id = ir_dup(&c, "Main");
-        f->title = ir_dup(&c, ir->name ? ir->name : "Main");
+        f->id = RP_V(ir_dup(&c, "Main"));
+        f->title = RP_V(ir_dup(&c, ir->name.ptr ? rp_cs(ir->name) : "Main"));
         f->level = 1;
         f->hidden = true;
         f->implicit = true;
@@ -452,15 +452,15 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             }
         }
         for (size_t k = 0; k < ir->dir_count; ++k) {
-            if (ir->dirs[k].guard) ERR(&c, ir->dirs[k].pos, "RP1316", "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry", ir->dirs[k].id);
+            if (ir->dirs[k].guard) ERR(&c, ir->dirs[k].pos, "RP1316", "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry", rp_cs(ir->dirs[k].id));
         }
         for (size_t k = 0; k < ir->remove_count; ++k) {
-            if (ir->removes[k].recursive) ERR(&c, ir->removes[k].pos, "RP1316", "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry", ir->removes[k].id);
+            if (ir->removes[k].recursive) ERR(&c, ir->removes[k].pos, "RP1316", "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry", rp_cs(ir->removes[k].id));
         }
         for (size_t k = 0; k < ir->registry_count; ++k) {
-            if (ir->registries[k].purge) ERR(&c, ir->registries[k].pos, "RP1316", "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry", ir->registries[k].id);
+            if (ir->registries[k].purge) ERR(&c, ir->registries[k].pos, "RP1316", "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry", rp_cs(ir->registries[k].id));
             if (ir->registries[k].type == RP_REG_QWORD) {
-                ERR(&c, ir->registries[k].pos, "RP1316", "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry", ir->registries[k].id);
+                ERR(&c, ir->registries[k].pos, "RP1316", "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry", rp_cs(ir->registries[k].id));
             }
         }
     }
@@ -477,8 +477,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
 
 static void free_ltexts(proven_allocator_t a, rp_ir_ltext_t *x, size_t n) {
     for (size_t i = 0; i < n; ++i) {
-        rp_mem_free(a, x[i].lang);
-        rp_mem_free(a, x[i].text);
+        rp_mem_free(a, (void *)(x[i].lang).ptr);
+        rp_mem_free(a, (void *)(x[i].text).ptr);
     }
     rp_mem_free(a, x);
 }
@@ -486,181 +486,181 @@ static void free_ltexts(proven_allocator_t a, rp_ir_ltext_t *x, size_t n) {
 void rp_ir_free(rp_ir_t *ir) {
     if (ir == NULL) return;
     proven_allocator_t a = ir->alloc;
-    char *strs[] = { ir->name, ir->summary_name, ir->manufacturer, ir->version, ir->upgrade_code, ir->product_code,
-                     ir->downgrade_message, ir->refuse_below, ir->refuse_message, ir->parent };
-    for (size_t k = 0; k < sizeof strs / sizeof strs[0]; ++k) rp_mem_free(a, strs[k]);
+    proven_u8str_view_t strs[] = { ir->name, ir->summary_name, ir->manufacturer, ir->version, ir->upgrade_code, ir->product_code,
+                     ir->downgrade_message, ir->refuse_below, ir->refuse_message, ir->parent};
+    for (size_t k = 0; k < sizeof strs / sizeof strs[0]; ++k) rp_mem_free(a, (void *)strs[k].ptr);
     for (size_t k = 0; k < ir->feature_count; ++k) {
         rp_ir_feature_t *f = &ir->features[k];
-        rp_mem_free(a, f->id);
-        rp_mem_free(a, f->title);
-        rp_mem_free(a, f->description);
-        rp_mem_free(a, f->parent);
-        rp_mem_free(a, f->when);
-        rp_mem_free(a, f->default_when);
+        rp_mem_free(a, (void *)(f->id).ptr);
+        rp_mem_free(a, (void *)(f->title).ptr);
+        rp_mem_free(a, (void *)(f->description).ptr);
+        rp_mem_free(a, (void *)(f->parent).ptr);
+        rp_mem_free(a, (void *)(f->when).ptr);
+        rp_mem_free(a, (void *)(f->default_when).ptr);
     }
     for (size_t k = 0; k < ir->dir_count; ++k) {
         rp_ir_dir_t *d = &ir->dirs[k];
-        rp_mem_free(a, d->id);
-        rp_mem_free(a, d->base);
-        rp_mem_free(a, d->parent);
-        rp_mem_free(a, d->feature);
+        rp_mem_free(a, (void *)(d->id).ptr);
+        rp_mem_free(a, (void *)(d->base).ptr);
+        rp_mem_free(a, (void *)(d->parent).ptr);
+        rp_mem_free(a, (void *)(d->feature).ptr);
         for (size_t j = 0; j < d->part_count; ++j) rp_mem_free(a, d->parts[j]);
         rp_mem_free(a, d->parts);
     }
     for (size_t k = 0; k < ir->file_count; ++k) {
         rp_ir_file_t *f = &ir->files[k];
-        char *fs[] = { f->id, f->dir, f->source, f->source_path, f->name, f->feature, f->component_guid, f->when, f->isolate_for,
-                       f->assembly_for, f->manifest, f->manifest_of };
-        for (size_t j = 0; j < sizeof fs / sizeof fs[0]; ++j) rp_mem_free(a, fs[j]);
+        proven_u8str_view_t fs[] = { f->id, f->dir, f->source, f->source_path, f->name, f->feature, f->component_guid, f->when, f->isolate_for,
+                       f->assembly_for, f->manifest, f->manifest_of};
+        for (size_t j = 0; j < sizeof fs / sizeof fs[0]; ++j) rp_mem_free(a, (void *)fs[j].ptr);
         for (size_t j = 0; j < 6; ++j) rp_mem_free(a, f->asm_names[j][0]), rp_mem_free(a, f->asm_names[j][1]);
         rp_mem_free(a, f->data);
     }
     for (size_t k = 0; k < ir->folder_count; ++k) {
         rp_ir_folder_t *f = &ir->folders[k];
-        rp_mem_free(a, f->id);
-        rp_mem_free(a, f->dir);
-        rp_mem_free(a, f->name);
-        rp_mem_free(a, f->feature);
+        rp_mem_free(a, (void *)(f->id).ptr);
+        rp_mem_free(a, (void *)(f->dir).ptr);
+        rp_mem_free(a, (void *)(f->name).ptr);
+        rp_mem_free(a, (void *)(f->feature).ptr);
     }
     for (size_t k = 0; k < ir->property_count; ++k) {
-        rp_mem_free(a, ir->properties[k].id);
-        rp_mem_free(a, ir->properties[k].value);
+        rp_mem_free(a, (void *)(ir->properties[k].id).ptr);
+        rp_mem_free(a, (void *)(ir->properties[k].value).ptr);
     }
     for (size_t k = 0; k < ir->action_count; ++k) {
         rp_ir_action_t *x = &ir->actions[k];
-        char *xs[] = { x->id, x->run_file, x->do_args, x->undo_args, x->check_args, x->args, x->dll_file, x->binary_shown, x->binary_source, x->entry, x->when, x->data, x->before, x->after };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->run_file, x->do_args, x->undo_args, x->check_args, x->args, x->dll_file, x->binary_shown, x->binary_source, x->entry, x->when, x->data, x->before, x->after};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     for (size_t k = 0; k < ir->registry_count; ++k) {
         rp_ir_registry_t *r = &ir->registries[k];
-        char *rs[] = { r->id, r->key, r->name, r->value, r->with_file, r->feature, r->when };
-        for (size_t j = 0; j < sizeof rs / sizeof rs[0]; ++j) rp_mem_free(a, rs[j]);
+        proven_u8str_view_t rs[] = { r->id, r->key, r->name, r->value, r->with_file, r->feature, r->when};
+        for (size_t j = 0; j < sizeof rs / sizeof rs[0]; ++j) rp_mem_free(a, (void *)rs[j].ptr);
         for (size_t j = 0; j < r->item_count; ++j) rp_mem_free(a, r->items[j]);
         rp_mem_free(a, r->items);
     }
     rp_mem_free(a, ir->registries);
     for (size_t k = 0; k < ir->shortcut_count; ++k) {
         rp_ir_shortcut_t *sc = &ir->shortcuts[k];
-        char *ss[] = { sc->id, sc->dir, sc->name, sc->target_file, sc->args, sc->description, sc->working_dir, sc->icon_source,
-                       sc->icon_shown, sc->when };
-        for (size_t j = 0; j < sizeof ss / sizeof ss[0]; ++j) rp_mem_free(a, ss[j]);
+        proven_u8str_view_t ss[] = { sc->id, sc->dir, sc->name, sc->target_file, sc->args, sc->description, sc->working_dir, sc->icon_source,
+                       sc->icon_shown, sc->when};
+        for (size_t j = 0; j < sizeof ss / sizeof ss[0]; ++j) rp_mem_free(a, (void *)ss[j].ptr);
     }
     rp_mem_free(a, ir->shortcuts);
     for (size_t k = 0; k < ir->remove_count; ++k) {
         rp_ir_remove_t *r = &ir->removes[k];
-        char *xs[] = { r->id, r->dir, r->name, r->feature };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { r->id, r->dir, r->name, r->feature};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     for (size_t k = 0; k < ir->copy_count; ++k) {
         rp_ir_copy_t *cp = &ir->copies[k];
-        char *xs[] = { cp->id, cp->source_file, cp->dir, cp->name };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { cp->id, cp->source_file, cp->dir, cp->name};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     for (size_t k = 0; k < ir->env_count; ++k) {
         rp_ir_env_t *e = &ir->envs[k];
-        char *xs[] = { e->id, e->name, e->value, e->feature, e->when };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { e->id, e->name, e->value, e->feature, e->when};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     rp_mem_free(a, ir->envs);
     for (size_t k = 0; k < ir->ini_count; ++k) {
         rp_ir_ini_t *x = &ir->inis[k];
-        char *xs[] = { x->id, x->dir, x->file, x->section, x->key, x->value, x->feature, x->when };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->dir, x->file, x->section, x->key, x->value, x->feature, x->when};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     rp_mem_free(a, ir->inis);
     for (size_t k = 0; k < ir->require_count; ++k) {
-        rp_mem_free(a, ir->requires[k].id);
-        rp_mem_free(a, ir->requires[k].condition);
-        rp_mem_free(a, ir->requires[k].message);
+        rp_mem_free(a, (void *)(ir->requires[k].id).ptr);
+        rp_mem_free(a, (void *)(ir->requires[k].condition).ptr);
+        rp_mem_free(a, (void *)(ir->requires[k].message).ptr);
     }
     rp_mem_free(a, ir->requires);
     for (size_t k = 0; k < ir->search_count; ++k) {
         rp_ir_search_t *x = &ir->searches[k];
-        char *xs[] = { x->id, x->property, x->key, x->name, x->base, x->path, x->file_name, x->min_version, x->component_guid };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->property, x->key, x->name, x->base, x->path, x->file_name, x->min_version, x->component_guid};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     rp_mem_free(a, ir->searches);
     for (size_t k = 0; k < ir->service_count; ++k) {
         rp_ir_service_t *x = &ir->services[k];
-        char *xs[] = { x->id, x->file, x->name, x->display_name, x->description, x->args };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->file, x->name, x->display_name, x->description, x->args};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     rp_mem_free(a, ir->services);
     for (size_t k = 0; k < ir->merge_count; ++k) {
         rp_ir_merge_t *x = &ir->merges[k];
-        char *xs[] = { x->id, x->source, x->shown, x->dir, x->feature };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->source, x->shown, x->dir, x->feature};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
         for (size_t j = 0; j < x->config_count; ++j) rp_mem_free(a, x->config[j]);
         rp_mem_free(a, x->config);
     }
     rp_mem_free(a, ir->merges);
     for (size_t k = 0; k < ir->font_count; ++k) {
-        rp_mem_free(a, ir->fonts[k].id);
-        rp_mem_free(a, ir->fonts[k].file);
-        rp_mem_free(a, ir->fonts[k].title);
+        rp_mem_free(a, (void *)(ir->fonts[k].id).ptr);
+        rp_mem_free(a, (void *)(ir->fonts[k].file).ptr);
+        rp_mem_free(a, (void *)(ir->fonts[k].title).ptr);
     }
     rp_mem_free(a, ir->fonts);
     for (size_t k = 0; k < ir->assoc_count; ++k) {
         rp_ir_assoc_t *x = &ir->assocs[k];
-        char *xs[] = { x->id, x->extension, x->prog_id, x->description, x->target_file, x->icon_file, x->logo, x->logo_path, x->args,
-                       x->content_type, x->perceived_type };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->extension, x->prog_id, x->description, x->target_file, x->icon_file, x->logo, x->logo_path, x->args,
+                       x->content_type, x->perceived_type};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     rp_mem_free(a, ir->assocs);
     for (size_t k = 0; k < ir->protocol_count; ++k) {
         rp_ir_protocol_t *x = &ir->protocols[k];
-        char *xs[] = { x->id, x->name, x->description, x->target_file, x->args };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->name, x->description, x->target_file, x->args};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     rp_mem_free(a, ir->protocols);
     for (size_t k = 0; k < ir->com_count; ++k) {
         rp_ir_com_t *x = &ir->coms[k];
-        char *xs[] = { x->id, x->file, x->clsid, x->description, x->threading, x->args, x->prog_id, x->app_id, x->typelib,
-                       x->typelib_version, x->typelib_file };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->file, x->clsid, x->description, x->threading, x->args, x->prog_id, x->app_id, x->typelib,
+                       x->typelib_version, x->typelib_file};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     rp_mem_free(a, ir->coms);
     for (size_t k = 0; k < ir->handler_count; ++k) {
         rp_ir_handler_t *x = &ir->handlers[k];
-        rp_mem_free(a, x->id);
-        rp_mem_free(a, x->clsid);
-        rp_mem_free(a, x->description);
+        rp_mem_free(a, (void *)(x->id).ptr);
+        rp_mem_free(a, (void *)(x->clsid).ptr);
+        rp_mem_free(a, (void *)(x->description).ptr);
         for (size_t j = 0; j < x->type_count; ++j) rp_mem_free(a, x->types[j]);
         rp_mem_free(a, x->types);
     }
     rp_mem_free(a, ir->handlers);
     for (size_t k = 0; k < ir->menu_count; ++k) {
         rp_ir_menu_t *x = &ir->menus[k];
-        char *xs[] = { x->id, x->text, x->target_file, x->icon_file, x->args, x->list, x->hide_when, x->parent, x->clsid };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->text, x->target_file, x->icon_file, x->args, x->list, x->hide_when, x->parent, x->clsid};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
         for (size_t j = 0; j < x->on_count; ++j) rp_mem_free(a, x->on[j]);
         rp_mem_free(a, x->on);
         for (size_t j = 0; j < x->text_by_lang_count; ++j) {
-            rp_mem_free(a, x->text_by_lang[j].lang);
-            rp_mem_free(a, x->text_by_lang[j].text);
+            rp_mem_free(a, (void *)(x->text_by_lang[j].lang).ptr);
+            rp_mem_free(a, (void *)(x->text_by_lang[j].text).ptr);
         }
         rp_mem_free(a, x->text_by_lang);
     }
     rp_mem_free(a, ir->menus);
     for (size_t k = 0; k < ir->other_count; ++k) {
         rp_ir_other_t *x = &ir->others[k];
-        char *xs[] = { x->id, x->msix, x->publisher, x->upgrade_code, x->message };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->msix, x->publisher, x->upgrade_code, x->message};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
         for (size_t j = 0; j < x->message_by_lang_count; ++j) {
-            rp_mem_free(a, x->message_by_lang[j].lang);
-            rp_mem_free(a, x->message_by_lang[j].text);
+            rp_mem_free(a, (void *)(x->message_by_lang[j].lang).ptr);
+            rp_mem_free(a, (void *)(x->message_by_lang[j].text).ptr);
         }
         rp_mem_free(a, x->message_by_lang);
     }
     rp_mem_free(a, ir->others);
     ir_more_free(ir, a);
-    rp_mem_free(a, ir->menu_exe);
-    rp_mem_free(a, ir->menu_publisher);
+    rp_mem_free(a, (void *)(ir->menu_exe).ptr);
+    rp_mem_free(a, (void *)(ir->menu_publisher).ptr);
     for (size_t k = 0; k < ir->msix_ext_count; ++k) {
         rp_ir_msix_ext_t *x = &ir->msix_exts[k];
-        char *xs[] = { x->id, x->app, x->alias, x->task_id, x->display, x->file, x->profile, x->clsid, x->threading, x->args, x->verb,
-                       x->prog_id, x->name, x->ext_id, x->folder, x->description, x->entry, x->action };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->app, x->alias, x->task_id, x->display, x->file, x->profile, x->clsid, x->threading, x->args, x->verb,
+                       x->prog_id, x->name, x->ext_id, x->folder, x->description, x->entry, x->action};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
         for (size_t j = 0; j < x->type_count; ++j) rp_mem_free(a, x->types[j]);
         rp_mem_free(a, x->types);
         for (size_t j = 0; j < x->name_count; ++j) rp_mem_free(a, x->names[j]);
@@ -671,31 +671,31 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->msix_exts);
     for (size_t k = 0; k < ir->permission_count; ++k) {
         rp_ir_permission_t *x = &ir->permissions[k];
-        char *xs[] = { x->id, x->target, x->sddl, x->feature };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->target, x->sddl, x->feature};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     rp_mem_free(a, ir->permissions);
     for (size_t k = 0; k < ir->ui_text_count; ++k) {
-        rp_mem_free(a, ir->ui_texts[k].id);
-        rp_mem_free(a, ir->ui_texts[k].text);
+        rp_mem_free(a, (void *)(ir->ui_texts[k].id).ptr);
+        rp_mem_free(a, (void *)(ir->ui_texts[k].text).ptr);
         free_ltexts(a, ir->ui_texts[k].by_lang, ir->ui_texts[k].by_lang_count);
     }
     rp_mem_free(a, ir->ui_texts);
     for (size_t k = 0; k < ir->ui_lang_count; ++k) {
-        char *xs[] = { ir->ui_langs[k].name, ir->ui_langs[k].font, ir->ui_langs[k].license_source, ir->ui_langs[k].license_shown };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { ir->ui_langs[k].name, ir->ui_langs[k].font, ir->ui_langs[k].license_source, ir->ui_langs[k].license_shown};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     for (size_t k = 0; k < ir->dialog_count; ++k) {
-        char *xs[] = { ir->dialogs[k].id, ir->dialogs[k].title, ir->dialogs[k].description, ir->dialogs[k].after };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { ir->dialogs[k].id, ir->dialogs[k].title, ir->dialogs[k].description, ir->dialogs[k].after};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
         free_ltexts(a, ir->dialogs[k].title_by_lang, ir->dialogs[k].title_by_lang_count);
         free_ltexts(a, ir->dialogs[k].description_by_lang, ir->dialogs[k].description_by_lang_count);
     }
     rp_mem_free(a, ir->dialogs);
     for (size_t k = 0; k < ir->dialog_control_count; ++k) {
         rp_ir_dialog_control_t *x = &ir->dialog_controls[k];
-        char *xs[] = { x->id, x->dialog, x->text, x->property, x->image_source, x->image_shown };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->dialog, x->text, x->property, x->image_source, x->image_shown};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
         for (size_t j = 0; j < x->value_count; ++j) {
             rp_mem_free(a, x->values[j]);
             rp_mem_free(a, x->labels[j]);
@@ -706,46 +706,46 @@ void rp_ir_free(rp_ir_t *ir) {
         for (size_t j = 0; j < x->labels_by_lang_count; ++j) {
             for (size_t v = 0; v < x->value_count; ++v) rp_mem_free(a, x->labels_by_lang[j].labels[v]);
             rp_mem_free(a, x->labels_by_lang[j].labels);
-            rp_mem_free(a, x->labels_by_lang[j].lang);
+            rp_mem_free(a, (void *)(x->labels_by_lang[j].lang).ptr);
         }
         rp_mem_free(a, x->labels_by_lang);
     }
     rp_mem_free(a, ir->dialog_controls);
     for (size_t k = 0; k < ir->billboard_count; ++k) {
         rp_ir_billboard_t *x = &ir->billboards[k];
-        char *xs[] = { x->id, x->image_source, x->image_shown, x->feature };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->image_source, x->image_shown, x->feature};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     rp_mem_free(a, ir->billboards);
-    char *us[] = { ir->license_source, ir->license_shown, ir->banner_source, ir->ui_install_dir, ir->ui_launch_file, ir->ui_launch_args,
-                   ir->ui_embedded_source, ir->ui_embedded_shown };
-    for (size_t k = 0; k < sizeof us / sizeof us[0]; ++k) rp_mem_free(a, us[k]);
+    proven_u8str_view_t us[] = { ir->license_source, ir->license_shown, ir->banner_source, ir->ui_install_dir, ir->ui_launch_file, ir->ui_launch_args,
+                   ir->ui_embedded_source, ir->ui_embedded_shown};
+    for (size_t k = 0; k < sizeof us / sizeof us[0]; ++k) rp_mem_free(a, (void *)us[k].ptr);
     rp_mem_free(a, ir->removes);
     rp_mem_free(a, ir->copies);
     rp_mem_free(a, ir->properties);
     rp_mem_free(a, ir->actions);
-    rp_mem_free(a, ir->arp_help);
-    rp_mem_free(a, ir->arp_icon_source);
-    rp_mem_free(a, ir->arp_logo_source);
-    rp_mem_free(a, ir->arp_logo_shown);
-    rp_mem_free(a, ir->arp_icon_shown);
-    rp_mem_free(a, ir->arp_about);
-    rp_mem_free(a, ir->msix_identity_name);
-    rp_mem_free(a, ir->msix_publisher);
-    rp_mem_free(a, ir->msix_publisher_display);
-    rp_mem_free(a, ir->msix_display);
+    rp_mem_free(a, (void *)(ir->arp_help).ptr);
+    rp_mem_free(a, (void *)(ir->arp_icon_source).ptr);
+    rp_mem_free(a, (void *)(ir->arp_logo_source).ptr);
+    rp_mem_free(a, (void *)(ir->arp_logo_shown).ptr);
+    rp_mem_free(a, (void *)(ir->arp_icon_shown).ptr);
+    rp_mem_free(a, (void *)(ir->arp_about).ptr);
+    rp_mem_free(a, (void *)(ir->msix_identity_name).ptr);
+    rp_mem_free(a, (void *)(ir->msix_publisher).ptr);
+    rp_mem_free(a, (void *)(ir->msix_publisher_display).ptr);
+    rp_mem_free(a, (void *)(ir->msix_display).ptr);
     free_ltexts(a, ir->msix_display_by_lang, ir->msix_display_by_lang_count);
     free_ltexts(a, ir->msix_publisher_display_by_lang, ir->msix_publisher_display_by_lang_count);
-    rp_mem_free(a, ir->msix_min_version);
-    rp_mem_free(a, ir->msix_appinstaller_uri);
-    rp_mem_free(a, ir->msix_package_uri);
+    rp_mem_free(a, (void *)(ir->msix_min_version).ptr);
+    rp_mem_free(a, (void *)(ir->msix_appinstaller_uri).ptr);
+    rp_mem_free(a, (void *)(ir->msix_package_uri).ptr);
     for (size_t k = 0; k < ir->msix_app_count; ++k) {
         rp_ir_msix_app_t *x = &ir->msix_apps[k];
-        rp_mem_free(a, x->id);
-        rp_mem_free(a, x->exe);
-        rp_mem_free(a, x->display);
-        rp_mem_free(a, x->background);
-        rp_mem_free(a, x->description);
+        rp_mem_free(a, (void *)(x->id).ptr);
+        rp_mem_free(a, (void *)(x->exe).ptr);
+        rp_mem_free(a, (void *)(x->display).ptr);
+        rp_mem_free(a, (void *)(x->background).ptr);
+        rp_mem_free(a, (void *)(x->description).ptr);
         free_ltexts(a, x->display_by_lang, x->display_by_lang_count);
         free_ltexts(a, x->description_by_lang, x->description_by_lang_count);
         for (int i = 0; i < 3; ++i) {
@@ -754,29 +754,29 @@ void rp_ir_free(rp_ir_t *ir) {
         }
     }
     rp_mem_free(a, ir->msix_apps);
-    rp_mem_free(a, ir->msix_main);
-    rp_mem_free(a, ir->msix_main_publisher);
+    rp_mem_free(a, (void *)(ir->msix_main).ptr);
+    rp_mem_free(a, (void *)(ir->msix_main_publisher).ptr);
     for (size_t k = 0; k < ir->msix_cap_count; ++k) rp_mem_free(a, ir->msix_caps[k]);
     rp_mem_free(a, ir->msix_caps);
-    char *wg[] = { ir->wg_id, ir->wg_url, ir->wg_license, ir->wg_desc, ir->wg_publisher_url, ir->wg_package_url, ir->wg_license_url, ir->wg_moniker };
-    for (size_t k = 0; k < sizeof wg / sizeof wg[0]; ++k) rp_mem_free(a, wg[k]);
+    proven_u8str_view_t wg[] = { ir->wg_id, ir->wg_url, ir->wg_license, ir->wg_desc, ir->wg_publisher_url, ir->wg_package_url, ir->wg_license_url, ir->wg_moniker};
+    for (size_t k = 0; k < sizeof wg / sizeof wg[0]; ++k) rp_mem_free(a, (void *)wg[k].ptr);
     for (size_t k = 0; k < ir->wg_tag_count; ++k) rp_mem_free(a, ir->wg_tags[k]);
     rp_mem_free(a, ir->wg_tags);
     free_ltexts(a, ir->wg_desc_by_lang, ir->wg_desc_by_lang_count);
-    rp_mem_free(a, ir->psf_files);
-    rp_mem_free(a, ir->psf_config);
-    rp_mem_free(a, ir->psf_launcher);
+    rp_mem_free(a, (void *)(ir->psf_files).ptr);
+    rp_mem_free(a, (void *)(ir->psf_config).ptr);
+    rp_mem_free(a, (void *)(ir->psf_launcher).ptr);
     for (size_t k = 0; k < ir->msix_symbol_count; ++k) rp_mem_free(a, ir->msix_symbols[k]);
     rp_mem_free(a, ir->msix_symbols);
     for (size_t k = 0; k < ir->msix_dep_count; ++k) {
         rp_ir_msix_dep_t *x = &ir->msix_deps[k];
-        char *xs[] = { x->id, x->name, x->publisher, x->min_version };
-        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        proven_u8str_view_t xs[] = { x->id, x->name, x->publisher, x->min_version};
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, (void *)xs[j].ptr);
     }
     rp_mem_free(a, ir->msix_deps);
     for (size_t i = 0; i < ir->msix_block_count; ++i) {
-        rp_mem_free(a, ir->msix_blocks[i].kind);
-        rp_mem_free(a, ir->msix_blocks[i].id);
+        rp_mem_free(a, (void *)(ir->msix_blocks[i].kind).ptr);
+        rp_mem_free(a, (void *)(ir->msix_blocks[i].id).ptr);
     }
     rp_mem_free(a, ir->msix_blocks);
     rp_mem_free(a, ir->folders);

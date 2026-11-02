@@ -146,7 +146,7 @@ const rp_tkey_t *ir_find_key(const rp_ttable_t *t, const char *key) {
 }
 
 bool ir_msix_output(const ctx_t *c) {
-    const char *o = c->opt->output;
+    const char *o = rp_cs(c->opt->output);
     size_t n = o ? strlen(o) : 0;
     return (n >= 5 && strcmp(o + n - 5, ".msix") == 0) || (n >= 11 && strcmp(o + n - 11, ".msixbundle") == 0);
 }
@@ -249,7 +249,7 @@ static void name_hint(const char *name, char *out, size_t cap) {
 
 // The built-in $(ARCH): the architecture being built - --arch, else [package] arch as written.
 static const char *builtin_arch(ctx_t *c) {
-    if (c->opt->arch) return c->opt->arch;
+    if (c->opt->arch.ptr) return rp_cs(c->opt->arch);
     for (size_t k = 0; k < c->doc->count; ++k) {
         const rp_ttable_t *t = &c->doc->tables[k];
         if (strcmp(t->kind, "package") != 0 || t->id) continue;
@@ -261,7 +261,7 @@ static const char *builtin_arch(ctx_t *c) {
 
 static const char *define_value(ctx_t *c, const char *name) {
     for (size_t k = 0; k < c->opt->define_count; ++k) {
-        if (strcmp(c->opt->defines[k].name, name) == 0) return c->opt->defines[k].value;
+        if (RP_EQ(c->opt->defines[k].name, name)) return rp_cs(c->opt->defines[k].value);
     }
     if (c->define) {
         const rp_tkey_t *k = ir_find_key(c->define, name);
@@ -446,7 +446,7 @@ void ir_get_ltexts(ctx_t *c, const rp_ttable_t *t, const char *base, rp_ir_ltext
             ERR(c, t->keys[k].pos, "RP1306", "'%s' must be a string", t->keys[k].key);
             continue;
         }
-        (*out)[*count] = (rp_ir_ltext_t){ ir_dup(c, code), ir_subst(c, &t->keys[k].val) };
+        (*out)[*count] = (rp_ir_ltext_t){ RP_V(ir_dup(c, code)), RP_V(ir_subst(c, &t->keys[k].val))};
         ++*count;
     }
 }

@@ -78,9 +78,9 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
     }
     char *arch = ir_get_str(&c, chain, "arch", false, NULL);
     out->arch = RP_ARCH_X64;
-    if (opt->arch) {
+    if (opt->arch.ptr) {
         rp_mem_free(alloc, arch);
-        arch = ir_dup(&c, opt->arch);
+        arch = ir_dup(&c, rp_cs(opt->arch));
     }
     if (arch) {
         if (strcmp(arch, "x64") == 0) out->arch = RP_ARCH_X64;
@@ -98,7 +98,7 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
         const rp_tval_t *v = &lk->val.items[i];
         const char *code = v->kind == RP_TV_STRING ? v->str : "";
         if (strcmp(code, "en") == 0) continue;
-        if (rp_langpack_get(code, opt->source_dir ? opt->source_dir : ".") == NULL) {
+        if (rp_langpack_get(code, opt->source_dir.ptr ? rp_cs(opt->source_dir) : ".") == NULL) {
             ERR(&c, lk->pos, "RP1509", "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)", code, code);
         } else if (out->language_count < 8) {
             snprintf(out->languages[out->language_count++], 16, "%s", code);
@@ -135,7 +135,7 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
             } else if (p->kind == RP_CHAIN_MSIX && p->properties) {
                 ERR(&c, ir_key_pos(t, "properties"), "RP1308", "properties are for Windows Installer packages; an MSIX takes none");
             } else if (ir_source_path_ok(&c, p->shown, ir_key_pos(t, "source"))) {
-                p->source = ir_join(&c, opt->source_dir ? opt->source_dir : ".", p->shown);
+                p->source = ir_join(&c, opt->source_dir.ptr ? rp_cs(opt->source_dir) : ".", p->shown);
                 uint64_t size;
                 if (p->source && rp_pal_stat(alloc, p->source, &size) != RP_FS_FILE) {
                     ERR(&c, ir_key_pos(t, "source"), "RP1507", "package '%s' not found", p->shown);

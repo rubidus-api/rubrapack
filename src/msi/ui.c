@@ -509,11 +509,11 @@ const char *rp_ui_text_for(const rp_ir_t *ir, const char *id, size_t li) {
     const char *code = ir->ui_lang_count ? ir->ui_langs[li].code : "en";
     for (size_t i = 0; i < ir->ui_text_count; ++i) {
         const rp_ir_ui_text_t *x = &ir->ui_texts[i];
-        if (strcmp(x->id, id) != 0) continue;
+        if (!RP_EQ(x->id, id)) continue;
         for (size_t j = 0; j < x->by_lang_count; ++j) {
-            if (strcmp(x->by_lang[j].lang, code) == 0) return x->by_lang[j].text;
+            if (RP_EQ(x->by_lang[j].lang, code)) return rp_cs(x->by_lang[j].text);
         }
-        if (x->text) return x->text;
+        if (x->text.ptr) return rp_cs(x->text);
     }
     // A language that gives no Removal* text shows its own install text instead.
     if (strncmp(id, "Removal", 7) == 0 && strcmp(code, "en") != 0 && rp_langpack_text(rp_langpack_get(code, NULL), "installer", id) == NULL)
@@ -524,11 +524,11 @@ const char *rp_ui_text_for(const rp_ir_t *ir, const char *id, size_t li) {
 const char *rp_ui_text_lang(const rp_ir_t *ir, const char *id, const char *code) {
     for (size_t i = 0; i < ir->ui_text_count; ++i) {
         const rp_ir_ui_text_t *x = &ir->ui_texts[i];
-        if (strcmp(x->id, id) != 0) continue;
+        if (!RP_EQ(x->id, id)) continue;
         for (size_t j = 0; j < x->by_lang_count; ++j) {
-            if (strcmp(x->by_lang[j].lang, code) == 0) return x->by_lang[j].text;
+            if (RP_EQ(x->by_lang[j].lang, code)) return rp_cs(x->by_lang[j].text);
         }
-        if (x->text) return x->text;
+        if (x->text.ptr) return rp_cs(x->text);
     }
     return rp_ui_text_builtin(id, code);
 }
@@ -569,7 +569,7 @@ static const char *AT(ctx_t *c, const char *all, const rp_ir_ltext_t *by, size_t
     if (!c->multi) {
         const char *t = all;
         for (size_t j = 0; j < nby; ++j) {
-            if (strcmp(by[j].lang, "en") == 0) t = by[j].text;
+            if (RP_EQ(by[j].lang, "en")) t = rp_cs(by[j].text);
         }
         t = t ? t : "";
         return title ? keep(c, "{\\RpTitle}", t) : t;
@@ -578,7 +578,7 @@ static const char *AT(ctx_t *c, const char *all, const rp_ir_ltext_t *by, size_t
     for (size_t i = 0; i < c->nlang; ++i) {
         src[i] = all ? all : "";
         for (size_t j = 0; j < nby; ++j) {
-            if (strcmp(by[j].lang, lang_code(c, i)) == 0) src[i] = by[j].text;
+            if (RP_EQ(by[j].lang, lang_code(c, i))) src[i] = rp_cs(by[j].text);
         }
     }
     char key[24];
@@ -833,7 +833,7 @@ static void error_dlg(ctx_t *c) {
 // nothing to close; Retry and Exit stay.
 static bool user_text(const rp_ir_t *ir, const char *id) {
     for (size_t i = 0; i < ir->ui_text_count; ++i) {
-        if (strcmp(ir->ui_texts[i].id, id) == 0) return true;
+        if (RP_EQ(ir->ui_texts[i].id, id)) return true;
     }
     return false;
 }
@@ -873,16 +873,16 @@ static void progress_and_exits(ctx_t *c) {
             const rp_ir_billboard_t *bb = &c->ir->billboards[k];
             const char *bn = NULL;
             for (size_t g = 0; g < c->bbimage_count; ++g) {
-                if (strcmp(c->bbimages[g].control_id, bb->id) != 0) continue;
-                bn = keep(c, "RpBb", bb->id);
+                if (!RP_EQ(c->bbimages[g].control_id, bb->id)) continue;
+                bn = keep(c, "RpBb", rp_cs(bb->id));
                 s_(c, &c->binary, bn);
                 rp_msi_cell_t *bc = cell(c, &c->binary);
                 if (bc) { bc->bytes = (uint8_t *)c->bbimages[g].bmp; bc->len = c->bbimages[g].len; }
                 break;
             }
-            s_(c, &c->billboard, bb->id); s_(c, &c->billboard, bb->feature); s_(c, &c->billboard, "InstallFiles");
+            s_(c, &c->billboard, rp_cs(bb->id)); s_(c, &c->billboard, rp_cs(bb->feature)); s_(c, &c->billboard, "InstallFiles");
             i_(c, &c->billboard, bb->order ? bb->order : (int32_t)k + 1);
-            s_(c, &c->bbcontrol, bb->id); s_(c, &c->bbcontrol, "Img"); s_(c, &c->bbcontrol, "Bitmap");
+            s_(c, &c->bbcontrol, rp_cs(bb->id)); s_(c, &c->bbcontrol, "Img"); s_(c, &c->bbcontrol, "Bitmap");
             i_(c, &c->bbcontrol, 0); i_(c, &c->bbcontrol, 0); i_(c, &c->bbcontrol, 320); i_(c, &c->bbcontrol, 44);
             i_(c, &c->bbcontrol, 1); s_(c, &c->bbcontrol, bn);
         }
@@ -909,7 +909,7 @@ static void progress_and_exits(ctx_t *c) {
     for (int i = 0; i < 3; ++i) {
         // RFC-0013 A5: the finished page may start the program (RP_Launch, made by the lowering),
         // after a first installation or an upgrade only.
-        bool launch = i == 0 && c->ir->ui_launch_file;
+        bool launch = i == 0 && c->ir->ui_launch_file.ptr;
         dialog(c, exits[i][0], 370, 270, 3, "Finish", "Finish", "Finish");
         frame(c, exits[i][0], exits[i][1], exits[i][2], NULL);
         frame_removal(c, exits[i][0], exits[i][1], exits[i][2]);
@@ -932,7 +932,7 @@ static void progress_and_exits(ctx_t *c) {
         control(c, exits[i][0], "Cancel", "PushButton", 304, 243, 56, 17, VIS, NULL, T(c, "Cancel"), NULL);
         event(c, exits[i][0], "Finish", "EndDialog", "Return", NULL, launch ? 2 : 1);
     }
-    if (c->ir->ui_launch_file && c->ir->ui_launch_default) prop(c, "RPLAUNCH", "1");
+    if (c->ir->ui_launch_file.ptr && c->ir->ui_launch_default) prop(c, "RPLAUNCH", "1");
     dseq(c, "RpExitDlg", NULL, -1);
     dseq(c, "RpUserExitDlg", NULL, -2);
     dseq(c, "RpFatalDlg", NULL, -3);
@@ -953,7 +953,7 @@ bool rp_ui_wipes(const rp_ir_t *ir) {
 // The package wipes the folder of dir `id` at removal (a [remove] recursive on that dir).
 bool rp_ui_wipes_dir(const rp_ir_t *ir, const char *id) {
     for (size_t i = 0; i < ir->remove_count; ++i) {
-        if (ir->removes[i].recursive && ir->removes[i].dir && strcmp(ir->removes[i].dir, id) == 0) return true;
+        if (ir->removes[i].recursive && ir->removes[i].dir.ptr && RP_EQ(ir->removes[i].dir, id)) return true;
     }
     return false;
 }
@@ -1053,7 +1053,7 @@ static void installdir_dlg(ctx_t *c, const char *back, const char *next, const c
     // A package that wipes this folder at removal asks before it takes a folder that holds
     // something: RP_DirCheck (helper DLL) looks, RpDirWarnDlg asks, and Next moves on only for an
     // empty or new folder or after "Use this folder". Not for an installed product (its own folder).
-    bool ask = c->details_dll && rp_ui_wipes_dir(c->ir, c->ir->ui_install_dir ? c->ir->ui_install_dir : "INSTALLDIR");
+    bool ask = c->details_dll && rp_ui_wipes_dir(c->ir, c->ir->ui_install_dir.ptr ? rp_cs(c->ir->ui_install_dir) : "INSTALLDIR");
     c->next_when = ask ? "RP_DIR_NOTEMPTY <> \"1\" OR Installed" : NULL;
     buttons(c, d, back, next, NULL, NULL, "Path");
     c->next_when = NULL;
@@ -1131,19 +1131,19 @@ static const char *scope_path(ctx_t *c, const char *id, bool machine) {
     for (int depth = 0; id && depth < 64; ++depth) {
         const rp_ir_dir_t *d = NULL;
         for (size_t i = 0; i < ir->dir_count; ++i) {
-            if (strcmp(ir->dirs[i].id, id) == 0) d = &ir->dirs[i];
+            if (RP_EQ(ir->dirs[i].id, id)) d = &ir->dirs[i];
         }
         if (d == NULL) return NULL;
         const char *mine = "";
         for (size_t j = 0; j < d->part_count; ++j) mine = keep(c, mine, keep(c, d->parts[j], "\\"));
         tail = keep(c, mine, tail);
-        if (d->base) {
-            if (strcmp(d->base, "ProgramFiles") != 0) return NULL;
+        if (d->base.ptr) {
+            if (!RP_EQ(d->base, "ProgramFiles")) return NULL;
             const char *root = !machine ? "[LocalAppDataFolder]Programs\\"
                              : ir->arch == RP_ARCH_X86 ? "[%ProgramFiles(x86)]\\" : "[%ProgramW6432]\\";
             return keep(c, root, tail);
         }
-        id = d->parent;
+        id = rp_cs(d->parent);
     }
     return NULL;
 }
@@ -1194,7 +1194,7 @@ static void ready_dlg(ctx_t *c, const char *back) {
 static const char *label(ctx_t *c, const rp_ir_dialog_control_t *x, size_t j) {
     rp_ir_ltext_t by[RP_UI_LANG_MAX];
     size_t n = 0;
-    for (size_t k = 0; k < x->labels_by_lang_count && n < RP_UI_LANG_MAX; ++k) by[n++] = (rp_ir_ltext_t){ x->labels_by_lang[k].lang, x->labels_by_lang[k].labels[j] };
+    for (size_t k = 0; k < x->labels_by_lang_count && n < RP_UI_LANG_MAX; ++k) by[n++] = (rp_ir_ltext_t){ x->labels_by_lang[k].lang, RP_V(x->labels_by_lang[k].labels[j])};
     return AT(c, x->labels[j], by, n, false);
 }
 
@@ -1209,7 +1209,7 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
     const rp_ir_dialog_control_t *mine[64];
     size_t n = 0;
     for (size_t k = 0; k < ir->dialog_control_count && n < 64; ++k) {
-        if (ir->dialog_controls[k].dialog && strcmp(ir->dialog_controls[k].dialog, d->id) == 0) mine[n++] = &ir->dialog_controls[k];
+        if (ir->dialog_controls[k].dialog.ptr && RP_EQ(ir->dialog_controls[k].dialog, d->id)) mine[n++] = &ir->dialog_controls[k];
     }
     for (size_t i = 1; i < n; ++i) {        // controls come in ID order; stable by position
         for (size_t j = i; j > 0 && (mine[j - 1]->y > mine[j]->y || (mine[j - 1]->y == mine[j]->y && mine[j - 1]->x > mine[j]->x)); --j) {
@@ -1220,62 +1220,62 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
     }
     const char *first = NULL;
     for (size_t i = 0; i < n && first == NULL; ++i) {
-        if (dc_tabstop(mine[i]->type)) first = mine[i]->id;
+        if (dc_tabstop(mine[i]->type)) first = rp_cs(mine[i]->id);
     }
-    dialog(c, d->id, 370, 270, 3, first ? first : "Next", "Next", "Cancel");
-    frame_text(c, d->id, AT(c, d->title ? d->title : "[ProductName]", d->title_by_lang, d->title_by_lang_count, true),
-               AT(c, d->description, d->description_by_lang, d->description_by_lang_count, false));
+    dialog(c, rp_cs(d->id), 370, 270, 3, first ? first : "Next", "Next", "Cancel");
+    frame_text(c, rp_cs(d->id), AT(c, d->title.ptr ? rp_cs(d->title) : "[ProductName]", d->title_by_lang, d->title_by_lang_count, true),
+               AT(c, rp_cs(d->description), d->description_by_lang, d->description_by_lang_count, false));
     for (size_t i = 0; i < n; ++i) {
         const rp_ir_dialog_control_t *x = mine[i];
-        const char *text = AT(c, x->text, x->text_by_lang, x->text_by_lang_count, false);
+        const char *text = AT(c, rp_cs(x->text), x->text_by_lang, x->text_by_lang_count, false);
         const char *to = NULL;              // the next tab stop, or Back after the last
         if (dc_tabstop(x->type)) {
             to = "Back";
             for (size_t j = i + 1; j < n && strcmp(to, "Back") == 0; ++j) {
-                if (dc_tabstop(mine[j]->type)) to = mine[j]->id;
+                if (dc_tabstop(mine[j]->type)) to = rp_cs(mine[j]->id);
             }
         }
         switch (x->type) {
         case RP_DC_TEXT:
-            control(c, d->id, x->id, "Text", x->x, x->y, x->width, x->height, VIS | TRANSPARENT, NULL, text, NULL);
+            control(c, rp_cs(d->id), rp_cs(x->id), "Text", x->x, x->y, x->width, x->height, VIS | TRANSPARENT, NULL, text, NULL);
             break;
         case RP_DC_CHECKBOX:        // ticked: the property is "1"; clear: the property is removed
-            control(c, d->id, x->id, "CheckBox", x->x, x->y, x->width, x->height, VIS | EN, x->property, text, to);
+            control(c, rp_cs(d->id), rp_cs(x->id), "CheckBox", x->x, x->y, x->width, x->height, VIS | EN, rp_cs(x->property), text, to);
             break;
         case RP_DC_EDIT:
-            control(c, d->id, x->id, "Edit", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN, x->property, NULL, to);
+            control(c, rp_cs(d->id), rp_cs(x->id), "Edit", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN, rp_cs(x->property), NULL, to);
             break;
         case RP_DC_RADIO: {
-            control(c, d->id, x->id, "RadioButtonGroup", x->x, x->y, x->width, x->height, VIS | EN, x->property, NULL, to);
+            control(c, rp_cs(d->id), rp_cs(x->id), "RadioButtonGroup", x->x, x->y, x->width, x->height, VIS | EN, rp_cs(x->property), NULL, to);
             int step = x->value_count ? x->height / (int)x->value_count : x->height;
             for (size_t j = 0; j < x->value_count && !c->rtl; ++j) {
                 rows_t *r = &c->radio;
-                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); i_(c, r, 0);
+                s_(c, r, rp_cs(x->property)); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); i_(c, r, 0);
                 i_(c, r, (int32_t)j * step); i_(c, r, x->width); i_(c, r, step < 14 ? step : 14); s_(c, r, label(c, x, j)); n_(c, r);
             }
             break;
         }
         case RP_DC_COMBO:           // a drop-down list (0x20000): one of the values, nothing typed. Without
                                     // Sorted (0x10000) the engine lists them alphabetically (observed).
-            control(c, d->id, x->id, "ComboBox", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN | 0x20000 | 0x10000,
-                    x->property, NULL, to);
+            control(c, rp_cs(d->id), rp_cs(x->id), "ComboBox", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN | 0x20000 | 0x10000,
+                    rp_cs(x->property), NULL, to);
             for (size_t j = 0; j < x->value_count && !c->rtl; ++j) {
                 rows_t *r = &c->combo;
-                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, label(c, x, j));
+                s_(c, r, rp_cs(x->property)); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, label(c, x, j));
             }
             break;
         case RP_DC_LISTBOX:         // a list box: one of the values is picked (no typing); shown in Order
-            control(c, d->id, x->id, "ListBox", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN, x->property, NULL, to);
+            control(c, rp_cs(d->id), rp_cs(x->id), "ListBox", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN, rp_cs(x->property), NULL, to);
             for (size_t j = 0; j < x->value_count && !c->rtl; ++j) {
                 rows_t *r = &c->listbox;
-                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, label(c, x, j));
+                s_(c, r, rp_cs(x->property)); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, label(c, x, j));
             }
             break;
         case RP_DC_BITMAP: {        // a picture from a Binary stream (the .bmp read by the caller)
             const char *bn = NULL;
             for (size_t g = 0; g < c->image_count; ++g) {
-                if (strcmp(c->images[g].control_id, x->id) != 0) continue;
-                bn = keep(c, "RpBmp", x->id);
+                if (!RP_EQ(c->images[g].control_id, x->id)) continue;
+                bn = keep(c, "RpBmp", rp_cs(x->id));
                 if (!c->rtl) {          // the Binary row is global: add it once, not again for the RTL twin
                     rows_t *r = &c->binary;
                     s_(c, r, bn);
@@ -1284,14 +1284,14 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
                 }
                 break;
             }
-            control(c, d->id, x->id, "Bitmap", x->x, x->y, x->width, x->height, VIS, NULL, bn, NULL);   // stretched to the control rect, as the banner is
+            control(c, rp_cs(d->id), rp_cs(x->id), "Bitmap", x->x, x->y, x->width, x->height, VIS, NULL, bn, NULL);   // stretched to the control rect, as the banner is
             break;
         }
         default:
             break;
         }
     }
-    buttons(c, d->id, back, next, next_text, NULL, first);
+    buttons(c, rp_cs(d->id), back, next, next_text, NULL, first);
 }
 
 typedef struct {
@@ -1303,9 +1303,9 @@ typedef struct {
 static void place(const rp_ir_t *ir, page_t *pages, size_t *n, size_t cap, const char *anchor, int depth) {
     for (size_t k = 0; k < ir->dialog_count && depth <= (int)ir->dialog_count; ++k) {
         const rp_ir_dialog_t *d = &ir->dialogs[k];
-        if (d->after && strcmp(d->after, anchor) == 0 && *n < cap) {
-            pages[(*n)++] = (page_t){ d->id, d };
-            place(ir, pages, n, cap, d->id, depth + 1);
+        if (d->after.ptr && RP_EQ(d->after, anchor) && *n < cap) {
+            pages[(*n)++] = (page_t){ rp_cs(d->id), d };
+            place(ir, pages, n, cap, rp_cs(d->id), depth + 1);
         }
     }
 }
@@ -1372,7 +1372,7 @@ static void grouped_page(ctx_t *c, const char *title, const char *text) {
             if (k == 0) prop(c, ctl, lang_code(c, li));
             if (!c->rtl) {
                 rows_t *r = &c->radio;
-                const char *lname = c->ir->ui_langs[li].name ? c->ir->ui_langs[li].name : lang_code(c, li);
+                const char *lname = c->ir->ui_langs[li].name.ptr ? rp_cs(c->ir->ui_langs[li].name) : lang_code(c, li);
                 s_(c, r, ctl); i_(c, r, (int32_t)k + 1); s_(c, r, lang_code(c, li)); i_(c, r, 0);
                 i_(c, r, (int32_t)k * 14); i_(c, r, 165); i_(c, r, 14); s_(c, r, lname); n_(c, r);
             }
@@ -1420,7 +1420,7 @@ static void language_dlg(ctx_t *c) {
     control(c, d, "Lang", "RadioButtonGroup", 25, 60, 200, h, VIS | EN, "RPLANGUAGEUI", NULL, "Back");
     for (size_t i = 0; i < c->nlang && !c->rtl; ++i) {
         rows_t *r = &c->radio;
-        const char *name = c->ir->ui_langs[i].name ? c->ir->ui_langs[i].name : lang_code(c, i);
+        const char *name = c->ir->ui_langs[i].name.ptr ? rp_cs(c->ir->ui_langs[i].name) : lang_code(c, i);
         s_(c, r, "RPLANGUAGEUI"); i_(c, r, (int32_t)i + 1); s_(c, r, lang_code(c, i)); i_(c, r, 0);
         i_(c, r, (int32_t)i * 14); i_(c, r, 200); i_(c, r, 14); s_(c, r, name); n_(c, r);
     }
@@ -1439,7 +1439,7 @@ static void language_dlg(ctx_t *c) {
 // Returns NULL when the text needs the installer's formatting (rp_ui_text_static).
 static const char *settle(ctx_t *c, const char *src) {
     if (!rp_ui_text_static(src)) return NULL;
-    const char *vals[3] = { c->ir->name, c->ir->manufacturer, c->ir->version };
+    const char *vals[3] = { rp_cs(c->ir->name), rp_cs(c->ir->manufacturer), rp_cs(c->ir->version)};
     const char *out = "";
     const char *p = src;
     while (*p) {
@@ -1787,7 +1787,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     // With several languages the styles carry the language's code, and the chosen language picks
     // DefaultUIFont and the title style (RFC-0012).
     for (size_t i = 0; i < c->nlang; ++i) {
-        const char *face = ir->ui_lang_count && ir->ui_langs[i].font ? ir->ui_langs[i].font : "Segoe UI";
+        const char *face = ir->ui_lang_count && ir->ui_langs[i].font.ptr ? rp_cs(ir->ui_langs[i].font) : "Segoe UI";
         const char *sfx = c->multi ? keep(c, "_", lang_code(c, i)) : "";
         s_(c, &c->style, keep(c, "RpNormal", sfx)); s_(c, &c->style, face); i_(c, &c->style, 9); n_(c, &c->style); n_(c, &c->style);
         s_(c, &c->style, keep(c, "RpTitle", sfx)); s_(c, &c->style, face); i_(c, &c->style, 11); n_(c, &c->style); i_(c, &c->style, 1);
@@ -1819,8 +1819,8 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     // past RP_UI_LANG_ACTIONS RpLangApply at 19 puts them in place; with fewer, lower.c gives each
     // language an error action of its own.
     if (c->table && ir->ui) {
-        if (ir->downgrade_message == NULL) (void)T(c, "NewerInstalled");
-        if (ir->refuse_below && ir->refuse_message == NULL) (void)T(c, "OlderRefused");
+        if (ir->downgrade_message.ptr == NULL) (void)T(c, "NewerInstalled");
+        if (ir->refuse_below.ptr && ir->refuse_message.ptr == NULL) (void)T(c, "OlderRefused");
     }
     white_bmp(c->white);
     rp_msi_cell_t *bn = NULL;
@@ -1898,7 +1898,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
             else if (strcmp(p, "RpWelcomeDlg") == 0) welcome_dlg(c, next, next_text);
             else if (strcmp(p, "RpLicenseDlg") == 0) license_dlg(c, rtf, back, next, next_text);
             else if (strcmp(p, "RpInstallDirDlg") == 0) installdir_dlg(c, back, next, dir);
-            else if (strcmp(p, "RpScopeDlg") == 0) scope_dlg(c, back, next, next_text, dir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR");
+            else if (strcmp(p, "RpScopeDlg") == 0) scope_dlg(c, back, next, next_text, dir, ir->ui_install_dir.ptr ? rp_cs(ir->ui_install_dir) : "INSTALLDIR");
             else if (strcmp(p, "RpCustomizeDlg") == 0) customize_dlg(c, back, next, NULL);
             else ready_dlg(c, back);
         }

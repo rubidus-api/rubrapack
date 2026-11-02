@@ -90,4 +90,26 @@ static inline uint8_t rp_ascii_upper(uint8_t c) {
     return false;
 }
 
+
+// ---- text as proven views (DECISIONS 2026-11-02 "Hashes, TLS and text on proven") -------------
+//
+// The model's text (the IR) is proven_u8str_view_t over storage the model owns and ends with a NUL,
+// so a view still is a C string where the C library or a message format needs one: rp_cs() costs
+// nothing. Absent text is { NULL, 0 }; rp_has() tells it from "" (which proven compares equal).
+
+static inline proven_u8str_view_t rp_v_view(proven_u8str_view_t v) { return v; }
+static inline proven_u8str_view_t rp_v_cstr(const char *s) { return proven_u8str_view_from_cstr(s); }
+// A view of either a view or a C string (NULL gives the absent view).
+#define RP_V(x) _Generic((x), proven_u8str_view_t: rp_v_view, char *: rp_v_cstr, const char *: rp_v_cstr)(x)
+// The C string of a view that ends in a NUL (the model's text, a literal's view); NULL when absent.
+#define RP_NONE ((proven_u8str_view_t){ 0 })     // absent text
+static inline const char *rp_cs(proven_u8str_view_t v) { return (const char *)v.ptr; }
+static inline bool rp_has(proven_u8str_view_t v) { return v.ptr != NULL; }
+// The same text to change in place, for the code that owns it (the model fixing a GUID's case).
+static inline char *rp_ws(proven_u8str_view_t v) { return (char *)v.ptr; }
+// Equality and order of text given as views or C strings (proven_u8str_view_eq / _cmp: the bytes,
+// unsigned, the shorter first - strcmp's order for text without NUL bytes).
+#define RP_EQ(a, b) (proven_u8str_view_eq(RP_V(a), RP_V(b)) != 0)
+#define RP_CMP(a, b) proven_u8str_view_cmp(RP_V(a), RP_V(b))
+
 #endif // RUBRAPACK_STR_H

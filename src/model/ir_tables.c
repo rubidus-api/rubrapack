@@ -29,12 +29,12 @@ void ir_parse_arp(ctx_t *c, const rp_ttable_t *t) {
     c->ir->arp_no_remove = ir_get_bool(c, t, "no-remove", false);
     c->ir->arp_no_remove_pos = ir_key_pos(t, "no-remove");
     c->ir->arp_no_repair = ir_get_bool(c, t, "no-repair", false);
-    c->ir->arp_help = ir_get_str(c, t, "help", false, NULL);
-    c->ir->arp_about = ir_get_str(c, t, "about", false, NULL);
-    c->ir->arp_icon_shown = ir_get_str(c, t, "icon", false, NULL);
-    if (c->ir->arp_icon_shown) c->ir->arp_icon_source = ir_icon_source(c, c->ir->arp_icon_shown, ir_key_pos(t, "icon"));
-    c->ir->arp_logo_shown = ir_get_str(c, t, "logo", false, NULL);
-    if (c->ir->arp_logo_shown) c->ir->arp_logo_source = ir_png_source(c, c->ir->arp_logo_shown, ir_key_pos(t, "logo"));
+    c->ir->arp_help = RP_V(ir_get_str(c, t, "help", false, NULL));
+    c->ir->arp_about = RP_V(ir_get_str(c, t, "about", false, NULL));
+    c->ir->arp_icon_shown = RP_V(ir_get_str(c, t, "icon", false, NULL));
+    if (c->ir->arp_icon_shown.ptr) c->ir->arp_icon_source = RP_V(ir_icon_source(c, rp_cs(c->ir->arp_icon_shown), ir_key_pos(t, "icon")));
+    c->ir->arp_logo_shown = RP_V(ir_get_str(c, t, "logo", false, NULL));
+    if (c->ir->arp_logo_shown.ptr) c->ir->arp_logo_source = RP_V(ir_png_source(c, rp_cs(c->ir->arp_logo_shown), ir_key_pos(t, "logo")));
 }
 
 // ---- [msix] and [msix-app.ID] (RFC-0009) --------------------------------------------------------
@@ -72,25 +72,25 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     ir_check_keys_lang(c, t, keys, lang_bases);
     rp_ir_t *ir = c->ir;
     ir->has_msix = true;
-    ir->msix_display = ir_get_str(c, t, "display-name", false, NULL);
+    ir->msix_display = RP_V(ir_get_str(c, t, "display-name", false, NULL));
     ir_get_ltexts(c, t, "display-name", &ir->msix_display_by_lang, &ir->msix_display_by_lang_count);
     ir_get_ltexts(c, t, "publisher-display-name", &ir->msix_publisher_display_by_lang, &ir->msix_publisher_display_by_lang_count);
     ir->msix_pos = t->pos;
-    ir->msix_identity_name = ir_get_str(c, t, "identity-name", true, NULL);
-    ir->msix_publisher = ir_get_str(c, t, "publisher", true, NULL);
-    ir->msix_publisher_display = ir_get_str(c, t, "publisher-display-name", false, NULL);
-    ir->msix_min_version = ir_get_str(c, t, "min-version", false, NULL);
-    if (ir->msix_identity_name && !msix_name_ok(ir->msix_identity_name)) {
+    ir->msix_identity_name = RP_V(ir_get_str(c, t, "identity-name", true, NULL));
+    ir->msix_publisher = RP_V(ir_get_str(c, t, "publisher", true, NULL));
+    ir->msix_publisher_display = RP_V(ir_get_str(c, t, "publisher-display-name", false, NULL));
+    ir->msix_min_version = RP_V(ir_get_str(c, t, "min-version", false, NULL));
+    if (ir->msix_identity_name.ptr && !msix_name_ok(rp_cs(ir->msix_identity_name))) {
         ERR(c, ir_key_pos(t, "identity-name"), "RP1601", "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')",
-            ir->msix_identity_name);
+            rp_cs(ir->msix_identity_name));
     }
-    if (ir->msix_publisher && (strchr(ir->msix_publisher, '=') == NULL || strlen(ir->msix_publisher) > 8192)) {
+    if (ir->msix_publisher.ptr && (strchr(rp_cs(ir->msix_publisher), '=') == NULL || ir->msix_publisher.size > 8192)) {
         ERR(c, ir_key_pos(t, "publisher"), "RP1602", "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\"");
     }
-    if (ir->msix_publisher && strstr(ir->msix_publisher, "OID.2.25.311729368913984317654407730594956997722")) {
+    if (ir->msix_publisher.ptr && strstr(rp_cs(ir->msix_publisher), "OID.2.25.311729368913984317654407730594956997722")) {
         ERR(c, ir_key_pos(t, "publisher"), "RP1602", "publisher must not carry the unsigned-test OID; --unsigned-test adds it");
     }
-    if (ir->msix_min_version && !four_part_version(ir->msix_min_version)) {
+    if (ir->msix_min_version.ptr && !four_part_version(rp_cs(ir->msix_min_version))) {
         ERR(c, ir_key_pos(t, "min-version"), "RP1603", "min-version must have four parts, such as 10.0.17763.0");
     }
     // RFC-0018: capabilities beyond runFullTrust (checked by name when the MSIX is built), and
@@ -110,8 +110,8 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
         }
     }
     // RFC-0019: an optional package of another (main-package), or a modification package of it.
-    ir->msix_main = ir_get_str(c, t, "main-package", false, NULL);
-    ir->msix_main_publisher = ir_get_str(c, t, "main-publisher", false, NULL);
+    ir->msix_main = RP_V(ir_get_str(c, t, "main-package", false, NULL));
+    ir->msix_main_publisher = RP_V(ir_get_str(c, t, "main-publisher", false, NULL));
     ir->msix_modification = ir_get_bool(c, t, "modification", false);
     ir->msix_no_langpacks = !ir_get_bool(c, t, "language-packs", true);
     ir->msix_framework = ir_get_bool(c, t, "framework", false);       // RFC-0031 B19
@@ -123,7 +123,7 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     } else if (sym) {
         ir->msix_symbols = rp_mem_alloc(c->alloc, sym->val.count, sizeof *ir->msix_symbols);
         if (ir->msix_symbols == NULL) c->nomem = true;
-        const char *dir = c->opt->source_dir ? c->opt->source_dir : ".";
+        const char *dir = c->opt->source_dir.ptr ? rp_cs(c->opt->source_dir) : ".";
         for (size_t k = 0; ir->msix_symbols && k < sym->val.count; ++k) {
             char *s = ir_subst(c, &sym->val.items[k]);
             if (s == NULL) continue;
@@ -149,36 +149,36 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
             rp_mem_free(c->alloc, s);
         }
     }
-    if (ir->msix_main && !msix_name_ok(ir->msix_main)) {
-        ERR(c, ir_key_pos(t, "main-package"), "RP1601", "main-package is the main package's identity name (got '%s')", ir->msix_main);
+    if (ir->msix_main.ptr && !msix_name_ok(rp_cs(ir->msix_main))) {
+        ERR(c, ir_key_pos(t, "main-package"), "RP1601", "main-package is the main package's identity name (got '%s')", rp_cs(ir->msix_main));
     }
-    if (ir->msix_main_publisher && strchr(ir->msix_main_publisher, '=') == NULL) {
+    if (ir->msix_main_publisher.ptr && strchr(rp_cs(ir->msix_main_publisher), '=') == NULL) {
         ERR(c, ir_key_pos(t, "main-publisher"), "RP1602", "main-publisher is the main package's publisher, such as \"CN=Example\"");
     }
-    if ((ir->msix_main_publisher || ir->msix_modification) && ir->msix_main == NULL) {
+    if ((ir->msix_main_publisher.ptr || ir->msix_modification) && ir->msix_main.ptr == NULL) {
         ERR(c, t->pos, "RP1617", "main-publisher and modification = true go with main-package (the package this one belongs to)");
     }
     ir->msix_no_fs_virt = !ir_get_bool(c, t, "file-system-virtualization", true);
     ir->msix_no_reg_virt = !ir_get_bool(c, t, "registry-virtualization", true);
     // RFC-0016 3: where the .appinstaller file and the package will be downloaded from.
-    ir->msix_appinstaller_uri = ir_get_str(c, t, "appinstaller-uri", false, NULL);
-    ir->msix_package_uri = ir_get_str(c, t, "package-uri", false, NULL);
+    ir->msix_appinstaller_uri = RP_V(ir_get_str(c, t, "appinstaller-uri", false, NULL));
+    ir->msix_package_uri = RP_V(ir_get_str(c, t, "package-uri", false, NULL));
     ir->msix_update_hours = (int)ir_get_int(c, t, "update-hours", 24, 0, 255);
     ir->msix_update_prompt = ir_get_bool(c, t, "update-prompt", false);
     ir->msix_update_blocks = ir_get_bool(c, t, "update-blocks", false);
     ir->msix_update_background = ir_get_bool(c, t, "update-background", false);
-    if ((ir->msix_appinstaller_uri == NULL) != (ir->msix_package_uri == NULL)) {
+    if ((ir->msix_appinstaller_uri.ptr == NULL) != (ir->msix_package_uri.ptr == NULL)) {
         ERR(c, t->pos, "RP1615", "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be");
     }
     const char *uris[] = { "appinstaller-uri", "package-uri" };
-    const char *vals[] = { ir->msix_appinstaller_uri, ir->msix_package_uri };
+    const char *vals[] = { rp_cs(ir->msix_appinstaller_uri), rp_cs(ir->msix_package_uri)};
     for (int k = 0; k < 2; ++k) {
         const char *u = vals[k];
         if (u && strncmp(u, "https://", 8) != 0 && strncmp(u, "http://", 7) != 0 && strncmp(u, "file://", 7) != 0 && strncmp(u, "\\\\", 2) != 0) {
             ERR(c, ir_key_pos(t, uris[k]), "RP1615", "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')", uris[k], u);
         }
     }
-    if (ir->msix_appinstaller_uri == NULL && (ir_find_key(t, "update-hours") || ir_find_key(t, "update-prompt") || ir_find_key(t, "update-blocks") ||
+    if (ir->msix_appinstaller_uri.ptr == NULL && (ir_find_key(t, "update-hours") || ir_find_key(t, "update-prompt") || ir_find_key(t, "update-blocks") ||
                                               ir_find_key(t, "update-background"))) {
         ERR(c, t->pos, "RP1615", "update-* keys need appinstaller-uri and package-uri");
     }
@@ -189,7 +189,7 @@ char *ir_logo_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool sizes, 
     if (*shown == NULL) return NULL;
     rp_pos_t p = ir_key_pos(t, key);
     if (!ir_source_path_ok(c, *shown, p)) return NULL;
-    char *path = ir_join(c, c->opt->source_dir ? c->opt->source_dir : ".", *shown);
+    char *path = ir_join(c, c->opt->source_dir.ptr ? rp_cs(c->opt->source_dir) : ".", *shown);
     uint64_t size;
     if (path && rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) {
         // RFC-0016 3: scale variants alone (Logo.scale-100.png ...) stand in for Logo.png; with
@@ -230,11 +230,11 @@ void ir_parse_msix_app(ctx_t *c, const rp_ttable_t *t) {
     ir->msix_apps = na;
     rp_ir_msix_app_t *a = &na[ir->msix_app_count++];
     memset(a, 0, sizeof *a);
-    a->id = ir_dup(c, t->id);
+    a->id = RP_V(ir_dup(c, t->id));
     a->pos = t->pos;
-    a->exe = ir_get_str(c, t, "executable", true, NULL);
-    a->display = ir_get_str(c, t, "display-name", false, NULL);
-    a->description = ir_get_str(c, t, "description", false, NULL);
+    a->exe = RP_V(ir_get_str(c, t, "executable", true, NULL));
+    a->display = RP_V(ir_get_str(c, t, "display-name", false, NULL));
+    a->description = RP_V(ir_get_str(c, t, "description", false, NULL));
     ir_get_ltexts(c, t, "display-name", &a->display_by_lang, &a->display_by_lang_count);
     ir_get_ltexts(c, t, "description", &a->description_by_lang, &a->description_by_lang_count);
     static const char *const logos[3] = { "logo-150", "logo-44", "store-logo" };
@@ -245,10 +245,10 @@ void ir_parse_msix_app(ctx_t *c, const rp_ttable_t *t) {
     }
     if (given != 0 && given != 3) ERR(c, t->pos, "RP1608", "give all three logos (logo-150, logo-44, store-logo) or none");
     // RFC-0018: the tile's background and whether the application shows in the Start menu.
-    a->background = ir_get_str(c, t, "background-color", false, NULL);
-    if (a->background && strcmp(a->background, "transparent") != 0) {
-        bool ok = strlen(a->background) == 7 && a->background[0] == '#';
-        for (int k = 1; ok && k < 7; ++k) ok = ir_is_hex(a->background[k]);
+    a->background = RP_V(ir_get_str(c, t, "background-color", false, NULL));
+    if (a->background.ptr && !RP_EQ(a->background, "transparent")) {
+        bool ok = a->background.size == 7 && a->background.ptr[0] == '#';
+        for (int k = 1; ok && k < 7; ++k) ok = ir_is_hex(a->background.ptr[k]);
         if (!ok) ERR(c, ir_key_pos(t, "background-color"), "RP1308", "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\"");
     }
     a->hidden = ir_get_bool(c, t, "hidden", false);
@@ -273,16 +273,16 @@ void ir_parse_msix_dep(ctx_t *c, const rp_ttable_t *t) {
     ir->msix_deps = nd;
     rp_ir_msix_dep_t *d = &nd[ir->msix_dep_count++];
     memset(d, 0, sizeof *d);
-    d->id = ir_dup(c, t->id);
+    d->id = RP_V(ir_dup(c, t->id));
     d->pos = t->pos;
-    d->name = ir_get_str(c, t, "name", true, NULL);
-    d->publisher = ir_get_str(c, t, "publisher", true, NULL);
-    d->min_version = ir_get_str(c, t, "min-version", true, NULL);
-    if (d->name && !msix_name_ok(d->name)) ERR(c, ir_key_pos(t, "name"), "RP1601", "name is a package's identity name (got '%s')", d->name);
-    if (d->publisher && strchr(d->publisher, '=') == NULL) {
+    d->name = RP_V(ir_get_str(c, t, "name", true, NULL));
+    d->publisher = RP_V(ir_get_str(c, t, "publisher", true, NULL));
+    d->min_version = RP_V(ir_get_str(c, t, "min-version", true, NULL));
+    if (d->name.ptr && !msix_name_ok(rp_cs(d->name))) ERR(c, ir_key_pos(t, "name"), "RP1601", "name is a package's identity name (got '%s')", rp_cs(d->name));
+    if (d->publisher.ptr && strchr(rp_cs(d->publisher), '=') == NULL) {
         ERR(c, ir_key_pos(t, "publisher"), "RP1602", "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\"");
     }
-    if (d->min_version && !four_part_version(d->min_version)) ERR(c, ir_key_pos(t, "min-version"), "RP1603", "min-version must have four parts, such as 14.0.24217.0");
+    if (d->min_version.ptr && !four_part_version(rp_cs(d->min_version))) ERR(c, ir_key_pos(t, "min-version"), "RP1603", "min-version must have four parts, such as 14.0.24217.0");
 }
 
 // [msix-psf] (RFC-0031 B26): the Package Support Framework the author brings - a folder of its files
@@ -294,7 +294,7 @@ static char *psf_path(ctx_t *c, const rp_ttable_t *t, const char *key, rp_fskind
         rp_mem_free(c->alloc, s);
         return NULL;
     }
-    const char *dir = c->opt->source_dir ? c->opt->source_dir : ".";
+    const char *dir = c->opt->source_dir.ptr ? rp_cs(c->opt->source_dir) : ".";
     size_t n = strlen(dir) + strlen(s) + 2;
     char *path = rp_mem_alloc(c->alloc, n, 1);
     if (path == NULL) {
@@ -317,10 +317,10 @@ void ir_parse_msix_psf(ctx_t *c, const rp_ttable_t *t) {
     rp_ir_t *ir = c->ir;
     ir->has_psf = true;
     ir->psf_pos = t->pos;
-    ir->psf_files = psf_path(c, t, "files", RP_FS_DIR);
-    ir->psf_config = psf_path(c, t, "config", RP_FS_FILE);
-    ir->psf_launcher = ir_get_str(c, t, "launcher", false, NULL);
-    const char *l = ir->psf_launcher;
+    ir->psf_files = RP_V(psf_path(c, t, "files", RP_FS_DIR));
+    ir->psf_config = RP_V(psf_path(c, t, "config", RP_FS_FILE));
+    ir->psf_launcher = RP_V(ir_get_str(c, t, "launcher", false, NULL));
+    const char *l = rp_cs(ir->psf_launcher);
     if (l && (strpbrk(l, "/\\:") || !rp_ascii_ends_with_ci(l, ".exe"))) {
         ERR(c, ir_key_pos(t, "launcher"), "RP1306", "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\"");
     }
@@ -360,30 +360,30 @@ void ir_parse_winget(ctx_t *c, const rp_ttable_t *t) {
     rp_ir_t *ir = c->ir;
     ir->has_winget = true;
     ir->wg_pos = t->pos;
-    ir->wg_id = ir_get_str(c, t, "identifier", true, NULL);
-    ir->wg_url = ir_get_str(c, t, "installer-url", true, NULL);
-    ir->wg_license = ir_get_str(c, t, "license", true, NULL);
-    ir->wg_desc = ir_get_str(c, t, "short-description", true, NULL);
+    ir->wg_id = RP_V(ir_get_str(c, t, "identifier", true, NULL));
+    ir->wg_url = RP_V(ir_get_str(c, t, "installer-url", true, NULL));
+    ir->wg_license = RP_V(ir_get_str(c, t, "license", true, NULL));
+    ir->wg_desc = RP_V(ir_get_str(c, t, "short-description", true, NULL));
     ir_get_ltexts(c, t, "short-description", &ir->wg_desc_by_lang, &ir->wg_desc_by_lang_count);
-    ir->wg_publisher_url = ir_get_str(c, t, "publisher-url", false, NULL);
-    ir->wg_package_url = ir_get_str(c, t, "package-url", false, NULL);
-    ir->wg_license_url = ir_get_str(c, t, "license-url", false, NULL);
-    ir->wg_moniker = ir_get_str(c, t, "moniker", false, NULL);
-    if (ir->wg_id && !wg_id_ok(ir->wg_id)) {
-        ERR(c, ir_key_pos(t, "identifier"), "RP1306", "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')", ir->wg_id);
+    ir->wg_publisher_url = RP_V(ir_get_str(c, t, "publisher-url", false, NULL));
+    ir->wg_package_url = RP_V(ir_get_str(c, t, "package-url", false, NULL));
+    ir->wg_license_url = RP_V(ir_get_str(c, t, "license-url", false, NULL));
+    ir->wg_moniker = RP_V(ir_get_str(c, t, "moniker", false, NULL));
+    if (ir->wg_id.ptr && !wg_id_ok(rp_cs(ir->wg_id))) {
+        ERR(c, ir_key_pos(t, "identifier"), "RP1306", "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')", rp_cs(ir->wg_id));
     }
     const char *const url_keys[] = { "installer-url", "publisher-url", "package-url", "license-url" };
-    const char *const urls[] = { ir->wg_url, ir->wg_publisher_url, ir->wg_package_url, ir->wg_license_url };
+    const char *const urls[] = { rp_cs(ir->wg_url), rp_cs(ir->wg_publisher_url), rp_cs(ir->wg_package_url), rp_cs(ir->wg_license_url)};
     for (size_t k = 0; k < 4; ++k) {
         if (urls[k] && !wg_url_ok(urls[k])) ERR(c, ir_key_pos(t, url_keys[k]), "RP1306", "%s must be an http:// or https:// address (got '%s')", url_keys[k], urls[k]);
     }
-    if (ir->wg_license && (strlen(ir->wg_license) < 3 || strlen(ir->wg_license) > 512)) ERR(c, ir_key_pos(t, "license"), "RP1306", "%s is %u to %u characters long", "license", 3u, 512u);
-    if (ir->wg_desc && (strlen(ir->wg_desc) < 3 || strlen(ir->wg_desc) > 256)) ERR(c, ir_key_pos(t, "short-description"), "RP1306", "%s is %u to %u characters long", "short-description", 3u, 256u);
+    if (ir->wg_license.ptr && (ir->wg_license.size < 3 || ir->wg_license.size > 512)) ERR(c, ir_key_pos(t, "license"), "RP1306", "%s is %u to %u characters long", "license", 3u, 512u);
+    if (ir->wg_desc.ptr && (ir->wg_desc.size < 3 || ir->wg_desc.size > 256)) ERR(c, ir_key_pos(t, "short-description"), "RP1306", "%s is %u to %u characters long", "short-description", 3u, 256u);
     for (size_t k = 0; k < ir->wg_desc_by_lang_count; ++k) {
-        size_t n = strlen(ir->wg_desc_by_lang[k].text);
+        size_t n = ir->wg_desc_by_lang[k].text.size;
         if (n < 3 || n > 256) ERR(c, t->pos, "RP1306", "%s is %u to %u characters long", "short-description", 3u, 256u);
     }
-    if (ir->wg_moniker && (strlen(ir->wg_moniker) < 1 || strlen(ir->wg_moniker) > 40)) ERR(c, ir_key_pos(t, "moniker"), "RP1306", "%s is %u to %u characters long", "moniker", 1u, 40u);
+    if (ir->wg_moniker.ptr && (ir->wg_moniker.size < 1 || ir->wg_moniker.size > 40)) ERR(c, ir_key_pos(t, "moniker"), "RP1306", "%s is %u to %u characters long", "moniker", 1u, 40u);
     const rp_tkey_t *tags = ir_find_key(t, "tags");
     if (tags && (tags->val.kind != RP_TV_ARRAY || tags->val.count > 16 || (tags->val.count && tags->val.items[0].kind != RP_TV_STRING))) {
         ERR(c, tags->pos, "RP1306", "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]");
@@ -405,7 +405,7 @@ void ir_parse_winget(ctx_t *c, const rp_ttable_t *t) {
 void ir_parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p) {
     static const char *const keys[] = { "value", "secure", "hidden", NULL };
     ir_check_keys(c, t, keys);
-    p->id = ir_dup(c, t->id);
+    p->id = RP_V(ir_dup(c, t->id));
     p->pos = t->pos;
     bool upper = t->id[0] != '\0' && strlen(t->id) <= 72;
     for (const char *s = t->id; *s; ++s) upper &= (*s >= 'A' && *s <= 'Z') || (*s >= '0' && *s <= '9') || *s == '_';
@@ -414,7 +414,7 @@ void ir_parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p) {
     } else if (ir_tool_property(t->id)) {
         ERR(c, t->pos, "RP1310", "property '%s' is set by rubrapack or the installer and cannot be defined here", t->id);
     }
-    p->value = ir_get_str(c, t, "value", true, NULL);
+    p->value = RP_V(ir_get_str(c, t, "value", true, NULL));
     p->secure = ir_get_bool(c, t, "secure", false);
     p->hidden = ir_get_bool(c, t, "hidden", false);
 }
@@ -433,17 +433,17 @@ void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
                                         "before", "after", "sequence", "ignore-exit", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 40);            // leaves room for the RP_<ID>_<Suffix> keys (72)
-    a->id = ir_dup(c, t->id);
+    a->id = RP_V(ir_dup(c, t->id));
     a->pos = t->pos;
     a->as_user = -1;
     bool has_do = ir_find_key(t, "do") != NULL, has_undo = ir_find_key(t, "undo") != NULL;
-    a->run_file = action_file(c, t, "run");
+    a->run_file = RP_V(action_file(c, t, "run"));
     if (has_do || has_undo) {             // a do/undo pair (RFC-0003)
         a->kind = RP_ACT_PAIR;
-        a->do_args = ir_get_fmt(c, t, "do", false, NULL, IR_FMT_INSTALL);
-        a->undo_args = ir_get_fmt(c, t, "undo", false, NULL, IR_FMT_INSTALL);
-        a->check_args = ir_get_fmt(c, t, "check", false, NULL, IR_FMT_INSTALL);
-        if (a->run_file == NULL) ERR(c, t->pos, "RP1202", "[action.%s] needs run = \"file:<ID>\": the program do and undo run", t->id);
+        a->do_args = RP_V(ir_get_fmt(c, t, "do", false, NULL, IR_FMT_INSTALL));
+        a->undo_args = RP_V(ir_get_fmt(c, t, "undo", false, NULL, IR_FMT_INSTALL));
+        a->check_args = RP_V(ir_get_fmt(c, t, "check", false, NULL, IR_FMT_INSTALL));
+        if (a->run_file.ptr == NULL) ERR(c, t->pos, "RP1202", "[action.%s] needs run = \"file:<ID>\": the program do and undo run", t->id);
         if (!has_do || !has_undo) ERR(c, t->pos, "RP1312", "[action.%s] needs both do and undo (the undo also rolls back a failed do)", t->id);
         static const char *const single[] = { "args", "dll", "binary", "entry", "phase", "as", "when", "data", "before", "after", "sequence", "ignore-exit", NULL };
         for (size_t k = 0; single[k]; ++k) {
@@ -452,17 +452,17 @@ void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
         return;
     }
     // A single action.
-    a->dll_file = action_file(c, t, "dll");
-    a->binary_shown = ir_get_str(c, t, "binary", false, NULL);
-    if (a->binary_shown && ir_source_path_ok(c, a->binary_shown, ir_key_pos(t, "binary"))) a->binary_source = ir_join(c, c->opt->source_dir, a->binary_shown);
-    int forms = (a->run_file != NULL) + (a->dll_file != NULL) + (a->binary_shown != NULL);
-    a->kind = a->run_file ? RP_ACT_EXE : a->dll_file ? RP_ACT_DLL : RP_ACT_BINARY;
+    a->dll_file = RP_V(action_file(c, t, "dll"));
+    a->binary_shown = RP_V(ir_get_str(c, t, "binary", false, NULL));
+    if (a->binary_shown.ptr && ir_source_path_ok(c, rp_cs(a->binary_shown), ir_key_pos(t, "binary"))) a->binary_source = RP_V(ir_join(c, rp_cs(c->opt->source_dir), rp_cs(a->binary_shown)));
+    int forms = (a->run_file.ptr != NULL) + (a->dll_file.ptr != NULL) + (a->binary_shown.ptr != NULL);
+    a->kind = a->run_file.ptr ? RP_ACT_EXE : a->dll_file.ptr ? RP_ACT_DLL : RP_ACT_BINARY;
     if (forms != 1) ERR(c, t->pos, "RP1202", "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo", t->id);
-    a->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
-    a->entry = ir_get_str(c, t, "entry", false, NULL);
-    if (a->kind == RP_ACT_EXE && a->entry) ERR(c, ir_key_pos(t, "entry"), "RP1316", "[action.%s]: entry is a DLL's function; run takes args", t->id);
-    if (a->kind != RP_ACT_EXE && a->args) ERR(c, ir_key_pos(t, "args"), "RP1316", "[action.%s]: args are a program's; a DLL gets data", t->id);
-    if (a->kind != RP_ACT_EXE && forms == 1 && a->entry == NULL) ERR(c, t->pos, "RP1202", "[action.%s] needs entry: the DLL's function to call", t->id);
+    a->args = RP_V(ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL));
+    a->entry = RP_V(ir_get_str(c, t, "entry", false, NULL));
+    if (a->kind == RP_ACT_EXE && a->entry.ptr) ERR(c, ir_key_pos(t, "entry"), "RP1316", "[action.%s]: entry is a DLL's function; run takes args", t->id);
+    if (a->kind != RP_ACT_EXE && a->args.ptr) ERR(c, ir_key_pos(t, "args"), "RP1316", "[action.%s]: args are a program's; a DLL gets data", t->id);
+    if (a->kind != RP_ACT_EXE && forms == 1 && a->entry.ptr == NULL) ERR(c, t->pos, "RP1202", "[action.%s] needs entry: the DLL's function to call", t->id);
     char *phase = ir_get_str(c, t, "phase", false, NULL);
     static const char *const phases[] = { "immediate", "deferred", "commit", "rollback" };
     a->phase = RP_PHASE_DEFERRED;
@@ -479,13 +479,13 @@ void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
     else if (as) ERR(c, ir_key_pos(t, "as"), "RP1316", "as must be \"system\" or \"user\" (got '%s')", as);
     if (as && a->phase == RP_PHASE_IMMEDIATE) ERR(c, ir_key_pos(t, "as"), "RP1316", "[action.%s]: an immediate action runs as the user who installs; as is for the other phases", t->id);
     rp_mem_free(c->alloc, as);
-    a->when = ir_get_when(c, t);
-    a->data = ir_get_fmt(c, t, "data", false, NULL, IR_FMT_INSTALL);
-    if (a->data && a->phase == RP_PHASE_IMMEDIATE) ERR(c, ir_key_pos(t, "data"), "RP1316", "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)", t->id);
-    a->before = ir_get_str(c, t, "before", false, NULL);
-    a->after = ir_get_str(c, t, "after", false, NULL);
+    a->when = RP_V(ir_get_when(c, t));
+    a->data = RP_V(ir_get_fmt(c, t, "data", false, NULL, IR_FMT_INSTALL));
+    if (a->data.ptr && a->phase == RP_PHASE_IMMEDIATE) ERR(c, ir_key_pos(t, "data"), "RP1316", "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)", t->id);
+    a->before = RP_V(ir_get_str(c, t, "before", false, NULL));
+    a->after = RP_V(ir_get_str(c, t, "after", false, NULL));
     a->sequence = (int32_t)ir_get_int(c, t, "sequence", 0, 1, 32767);
-    if ((a->before != NULL) + (a->after != NULL) + (a->sequence != 0) > 1)
+    if ((a->before.ptr != NULL) + (a->after.ptr != NULL) + (a->sequence != 0) > 1)
         ERR(c, t->pos, "RP1316", "[action.%s] is placed once: before, after or sequence", t->id);
     a->ignore_exit = ir_get_bool(c, t, "ignore-exit", false);
     if (ir_find_key(t, "check")) ERR(c, ir_key_pos(t, "check"), "RP1316", "[action.%s]: check goes with a do/undo pair", t->id);
@@ -517,10 +517,10 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
                                         "feature", "when", "on", "users", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    r->id = ir_dup(c, t->id);
+    r->id = RP_V(ir_dup(c, t->id));
     r->pos = t->pos;
-    r->when = ir_get_when(c, t);
-    if (r->when && ir_find_key(t, "with")) ERR(c, ir_key_pos(t, "when"), "RP1316", "a value `with` a file shares its component: put `when` on the file");
+    r->when = RP_V(ir_get_when(c, t));
+    if (r->when.ptr && ir_find_key(t, "with")) ERR(c, ir_key_pos(t, "when"), "RP1316", "a value `with` a file shares its component: put `when` on the file");
     r->msi_only = ir_get_bool(c, t, "msi-only", false);
     char *root = ir_get_str(c, t, "root", true, NULL);
     if (root) {
@@ -544,14 +544,14 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
         }
         rp_mem_free(c->alloc, root);
     }
-    r->key = ir_get_str(c, t, "key", true, NULL);
-    if (r->key && (r->key[0] == '\\' || r->key[strlen(r->key) - 1] == '\\' || strstr(r->key, "\\\\") || ir_has_control(r->key))) {
-        ERR(c, ir_key_pos(t, "key"), "RP1316", "key '%s' must not start or end with '\\' or contain an empty part", r->key);
+    r->key = RP_V(ir_get_str(c, t, "key", true, NULL));
+    if (r->key.ptr && (r->key.ptr[0] == '\\' || r->key.ptr[r->key.size - 1] == '\\' || strstr(rp_cs(r->key), "\\\\") || ir_has_control(rp_cs(r->key)))) {
+        ERR(c, ir_key_pos(t, "key"), "RP1316", "key '%s' must not start or end with '\\' or contain an empty part", rp_cs(r->key));
     }
-    r->name = ir_get_str(c, t, "name", false, NULL);
-    if (r->name && r->name[0] == '\0') {        // "" is the default value, as omitting it
-        rp_mem_free(c->alloc, r->name);
-        r->name = NULL;
+    r->name = RP_V(ir_get_str(c, t, "name", false, NULL));
+    if (r->name.ptr && r->name.ptr[0] == '\0') {        // "" is the default value, as omitting it
+        rp_mem_free(c->alloc, (void *)(r->name).ptr);
+        r->name = RP_NONE;
     }
     r->remove = ir_get_bool(c, t, "remove", false);
     r->keep = ir_get_bool(c, t, "keep", false);
@@ -565,7 +565,7 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
         rp_mem_free(c->alloc, on);
     }
     r->users_all = ir_users_all(c, t, ir_get_str(c, t, "users", false, NULL));
-    if (r->purge && r->remove && r->key) {
+    if (r->purge && r->remove && r->key.ptr) {
         static const char *const keys2[] = { "name", "with", "when", "keep", NULL };
         for (size_t k = 0; keys2[k]; ++k) {
             if (ir_find_key(t, keys2[k])) ERR(c, ir_key_pos(t, keys2[k]), "RP1316", "on = \"uninstall\" removes the whole key at removal; it takes no '%s'", keys2[k]);
@@ -573,20 +573,20 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
         if (r->root == RP_ROOT_HKCR) ERR(c, ir_key_pos(t, "root"), "RP1316", "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)");
         // Only a key of the product: below Software, and not a whole branch of Windows' own.
         size_t parts = 1;
-        for (const char *p = r->key; *p; ++p) parts += *p == '\\';
+        for (const char *p = rp_cs(r->key); *p; ++p) parts += *p == '\\';
         static const char *const wide[] = { "Microsoft", "Classes", "Policies", "Wow6432Node" };
-        bool below = ieq_n(r->key, "Software\\", 9) && parts >= 2;
+        bool below = ieq_n(rp_cs(r->key), "Software\\", 9) && parts >= 2;
         for (size_t k = 0; below && k < sizeof wide / sizeof wide[0]; ++k) {
             size_t wl = strlen(wide[k]);
-            if (ieq_n(r->key + 9, wide[k], wl) && (r->key[9 + wl] == '\\' || r->key[9 + wl] == 0) && parts < 4) below = false;
+            if (ieq_n(rp_cs(r->key) + 9, wide[k], wl) && (r->key.ptr[9 + wl] == '\\' || r->key.ptr[9 + wl] == 0) && parts < 4) below = false;
         }
         // Windows' own settings, however deep.
         static const char *const own[] = { "Software\\Microsoft\\Windows", "Software\\Microsoft\\Windows NT" };
         for (size_t k = 0; below && k < sizeof own / sizeof own[0]; ++k) {
             size_t ol = strlen(own[k]);
-            if (ieq_n(r->key, own[k], ol) && (r->key[ol] == '\\' || r->key[ol] == 0)) below = false;
+            if (ieq_n(rp_cs(r->key), own[k], ol) && (r->key.ptr[ol] == '\\' || r->key.ptr[ol] == 0)) below = false;
         }
-        if (!below) ERR(c, ir_key_pos(t, "key"), "RP1316", "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software", r->key);
+        if (!below) ERR(c, ir_key_pos(t, "key"), "RP1316", "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software", rp_cs(r->key));
     }
     char *view = ir_get_str(c, t, "view", false, NULL);
     if (view) {
@@ -601,11 +601,11 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
     char *with = ir_get_str(c, t, "with", false, NULL);
     if (with) {
         if (strncmp(with, "file:", 5) != 0 || with[5] == '\0') ERR(c, ir_key_pos(t, "with"), "RP1315", "with must be \"file:<ID>\"");
-        else r->with_file = ir_dup(c, with + 5);
+        else r->with_file = RP_V(ir_dup(c, with + 5));
         rp_mem_free(c->alloc, with);
     }
-    r->feature = ir_get_str(c, t, "feature", false, NULL);
-    if (r->with_file && r->feature) ERR(c, ir_key_pos(t, "feature"), "RP1316", "a value that goes 'with' a file takes that file's feature");
+    r->feature = RP_V(ir_get_str(c, t, "feature", false, NULL));
+    if (r->with_file.ptr && r->feature.ptr) ERR(c, ir_key_pos(t, "feature"), "RP1316", "a value that goes 'with' a file takes that file's feature");
 
     char *type = ir_get_str(c, t, "type", false, NULL);
     static const char *const types[] = { "string", "expand", "dword", "binary", "multi", "qword" };
@@ -646,7 +646,7 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
             ERR(c, v->pos, "RP1316", "a qword value is an integer or \"0x\" and 1 to 16 hex digits");
             return;
         }
-        r->value = ir_dup(c, num);
+        r->value = RP_V(ir_dup(c, num));
         return;
     case RP_REG_DWORD:
         if (v->val.kind != RP_TV_INT || v->val.i < 0 || v->val.i > 0xFFFFFFFFll) {
@@ -654,7 +654,7 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
             return;
         }
         snprintf(num, sizeof num, "%lld", (long long)v->val.i);
-        r->value = ir_dup(c, num);
+        r->value = RP_V(ir_dup(c, num));
         return;
     case RP_REG_MULTI:
         if (v->val.kind != RP_TV_ARRAY || v->val.count == 0) {
@@ -679,17 +679,17 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
     default:
         break;
     }
-    r->value = ir_get_fmt(c, t, "value", false, NULL, r->type == RP_REG_EXPAND ? IR_FMT_RUNTIME : IR_FMT_INSTALL);
-    if (r->value && (r->type == RP_REG_STRING || r->type == RP_REG_EXPAND) && strstr(r->value, "[~]")) {
+    r->value = RP_V(ir_get_fmt(c, t, "value", false, NULL, r->type == RP_REG_EXPAND ? IR_FMT_RUNTIME : IR_FMT_INSTALL));
+    if (r->value.ptr && (r->type == RP_REG_STRING || r->type == RP_REG_EXPAND) && strstr(rp_cs(r->value), "[~]")) {
         ERR(c, v->pos, "RP1316", "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array");
     }
-    if (r->value && r->type == RP_REG_BINARY) {
-        size_t n = strlen(r->value);
+    if (r->value.ptr && r->type == RP_REG_BINARY) {
+        size_t n = r->value.size;
         bool ok = n > 0 && n % 2 == 0;
-        for (size_t k = 0; ok && k < n; ++k) ok = ir_is_hex(r->value[k]);
+        for (size_t k = 0; ok && k < n; ++k) ok = ir_is_hex(r->value.ptr[k]);
         if (!ok) ERR(c, v->pos, "RP1316", "a binary value is an even number of hex digits, like \"01A0FF\"");
         for (size_t k = 0; ok && k < n; ++k) {
-            if (r->value[k] >= 'a' && r->value[k] <= 'f') r->value[k] = (char)(r->value[k] - 32);
+            if (r->value.ptr[k] >= 'a' && r->value.ptr[k] <= 'f') rp_ws(r->value)[k] = (char)(r->value.ptr[k] - 32);
         }
     }
 }
@@ -702,34 +702,34 @@ void ir_parse_shortcut(ctx_t *c, const rp_ttable_t *t, rp_ir_shortcut_t *s) {
     static const char *const keys[] = { "dir", "name", "target", "args", "description", "working-dir", "icon", "when", "advertise", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    s->id = ir_dup(c, t->id);
+    s->id = RP_V(ir_dup(c, t->id));
     s->pos = t->pos;
-    s->when = ir_get_when(c, t);
-    s->icon_shown = ir_get_str(c, t, "icon", false, NULL);
-    if (s->icon_shown) s->icon_source = ir_icon_source(c, s->icon_shown, ir_key_pos(t, "icon"));
+    s->when = RP_V(ir_get_when(c, t));
+    s->icon_shown = RP_V(ir_get_str(c, t, "icon", false, NULL));
+    if (s->icon_shown.ptr) s->icon_source = RP_V(ir_icon_source(c, rp_cs(s->icon_shown), ir_key_pos(t, "icon")));
     // RFC-0031 B8: an advertised shortcut points at the feature (installed on demand, repaired when
     // launched), so Windows needs its own Icon_; `when` (a conditional shortcut, RFC-0013 A2) is a
     // different component shape and is not combined with it here.
     s->advertise = ir_get_bool(c, t, "advertise", false);
     if (s->advertise) {
-        if (s->icon_shown == NULL) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "[shortcut.%s]: an advertised shortcut needs an icon", t->id);
-        if (s->when) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "[shortcut.%s]: advertise is not combined with when", t->id);
+        if (s->icon_shown.ptr == NULL) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "[shortcut.%s]: an advertised shortcut needs an icon", t->id);
+        if (s->when.ptr) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "[shortcut.%s]: advertise is not combined with when", t->id);
     }
-    s->dir = ir_get_str(c, t, "dir", true, NULL);
-    s->name = ir_get_str(c, t, "name", true, NULL);
-    if (s->name) ir_target_name_ok(c, s->name, ir_key_pos(t, "name"));
+    s->dir = RP_V(ir_get_str(c, t, "dir", true, NULL));
+    s->name = RP_V(ir_get_str(c, t, "name", true, NULL));
+    if (s->name.ptr) ir_target_name_ok(c, rp_cs(s->name), ir_key_pos(t, "name"));
     char *target = ir_get_str(c, t, "target", true, NULL);
     if (target) {
         if (strncmp(target, "file:", 5) != 0 || target[5] == '\0') {
             ERR(c, ir_key_pos(t, "target"), "RP1315", "target must be \"file:<ID>\" naming a [file.*] of this package");
         } else {
-            s->target_file = ir_dup(c, target + 5);
+            s->target_file = RP_V(ir_dup(c, target + 5));
         }
         rp_mem_free(c->alloc, target);
     }
-    s->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
-    s->description = ir_get_str(c, t, "description", false, NULL);
-    s->working_dir = ir_get_str(c, t, "working-dir", false, NULL);
+    s->args = RP_V(ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL));
+    s->description = RP_V(ir_get_str(c, t, "description", false, NULL));
+    s->working_dir = RP_V(ir_get_str(c, t, "working-dir", false, NULL));
 }
 
 // A file name pattern: a target name that may contain * and ?.
@@ -750,11 +750,11 @@ void ir_parse_remove(ctx_t *c, const rp_ttable_t *t, rp_ir_remove_t *r) {
     static const char *const keys[] = { "dir", "name", "on", "feature", "upgrade", "recursive", "users", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    r->id = ir_dup(c, t->id);
+    r->id = RP_V(ir_dup(c, t->id));
     r->pos = t->pos;
-    r->dir = ir_get_str(c, t, "dir", true, NULL);
-    r->name = ir_get_str(c, t, "name", false, NULL);
-    if (r->name) pattern_ok(c, r->name, ir_key_pos(t, "name"));
+    r->dir = RP_V(ir_get_str(c, t, "dir", true, NULL));
+    r->name = RP_V(ir_get_str(c, t, "name", false, NULL));
+    if (r->name.ptr) pattern_ok(c, rp_cs(r->name), ir_key_pos(t, "name"));
     char *on = ir_get_str(c, t, "on", true, NULL);
     if (on) {
         if (strcmp(on, "install") == 0) r->mode = 1;
@@ -772,47 +772,47 @@ void ir_parse_remove(ctx_t *c, const rp_ttable_t *t, rp_ir_remove_t *r) {
     // the product is really removed, never when an upgrade removes this version.
     r->recursive = ir_get_bool(c, t, "recursive", false);
     if (r->recursive) {
-        if (r->name) ERR(c, ir_key_pos(t, "name"), "RP1316", "recursive = true removes the folder with everything in it; it takes no 'name'");
+        if (r->name.ptr) ERR(c, ir_key_pos(t, "name"), "RP1316", "recursive = true removes the folder with everything in it; it takes no 'name'");
         if (r->mode != 0 && r->mode != 2) ERR(c, ir_key_pos(t, "on"), "RP1316", "recursive = true is for on = \"uninstall\"");
         if (ir_find_key(t, "upgrade")) ERR(c, ir_key_pos(t, "upgrade"), "RP1316", "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'");
         r->keep_on_upgrade = false;
     }
     r->users_all = ir_users_all(c, t, ir_get_str(c, t, "users", false, NULL));
-    r->feature = ir_get_str(c, t, "feature", false, NULL);
+    r->feature = RP_V(ir_get_str(c, t, "feature", false, NULL));
 }
 
 void ir_parse_copy(ctx_t *c, const rp_ttable_t *t, rp_ir_copy_t *cp) {
     static const char *const keys[] = { "source", "dir", "name", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    cp->id = ir_dup(c, t->id);
+    cp->id = RP_V(ir_dup(c, t->id));
     cp->pos = t->pos;
     cp->msi_only = ir_get_bool(c, t, "msi-only", false);
     char *src = ir_get_str(c, t, "source", true, NULL);
     if (src) {
         if (strncmp(src, "file:", 5) != 0 || src[5] == '\0') ERR(c, ir_key_pos(t, "source"), "RP1315", "source must be \"file:<ID>\"");
-        else cp->source_file = ir_dup(c, src + 5);
+        else cp->source_file = RP_V(ir_dup(c, src + 5));
         rp_mem_free(c->alloc, src);
     }
-    cp->dir = ir_get_str(c, t, "dir", true, NULL);
-    cp->name = ir_get_str(c, t, "name", false, NULL);
-    if (cp->name) ir_target_name_ok(c, cp->name, ir_key_pos(t, "name"));
+    cp->dir = RP_V(ir_get_str(c, t, "dir", true, NULL));
+    cp->name = RP_V(ir_get_str(c, t, "name", false, NULL));
+    if (cp->name.ptr) ir_target_name_ok(c, rp_cs(cp->name), ir_key_pos(t, "name"));
 }
 
 void ir_parse_ini(ctx_t *c, const rp_ttable_t *t, rp_ir_ini_t *x) {
     static const char *const keys[] = { "dir", "file", "section", "key", "value", "mode", "feature", "when", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     x->msi_only = ir_get_bool(c, t, "msi-only", false);
-    x->when = ir_get_when(c, t);
-    x->dir = ir_get_str(c, t, "dir", true, NULL);
-    x->file = ir_get_str(c, t, "file", true, NULL);
-    if (x->file) ir_target_name_ok(c, x->file, ir_key_pos(t, "file"));
-    x->section = ir_get_str(c, t, "section", true, NULL);
-    x->key = ir_get_str(c, t, "key", true, NULL);
-    if ((x->section && (strchr(x->section, ']') || ir_has_control(x->section))) || (x->key && (strchr(x->key, '=') || ir_has_control(x->key)))) {
+    x->when = RP_V(ir_get_when(c, t));
+    x->dir = RP_V(ir_get_str(c, t, "dir", true, NULL));
+    x->file = RP_V(ir_get_str(c, t, "file", true, NULL));
+    if (x->file.ptr) ir_target_name_ok(c, rp_cs(x->file), ir_key_pos(t, "file"));
+    x->section = RP_V(ir_get_str(c, t, "section", true, NULL));
+    x->key = RP_V(ir_get_str(c, t, "key", true, NULL));
+    if ((x->section.ptr && (strchr(rp_cs(x->section), ']') || ir_has_control(rp_cs(x->section)))) || (x->key.ptr && (strchr(rp_cs(x->key), '=') || ir_has_control(rp_cs(x->key))))) {
         ERR(c, t->pos, "RP1316", "an INI section may not contain ']' and a key may not contain '='");
     }
     char *mode = ir_get_str(c, t, "mode", false, NULL);
@@ -824,10 +824,10 @@ void ir_parse_ini(ctx_t *c, const rp_ttable_t *t, rp_ir_ini_t *x) {
         rp_mem_free(c->alloc, mode);
     }
     bool has_value = false;
-    x->value = ir_get_fmt(c, t, "value", false, &has_value, IR_FMT_INSTALL);
+    x->value = RP_V(ir_get_fmt(c, t, "value", false, &has_value, IR_FMT_INSTALL));
     if (x->mode != 2 && !has_value) ERR(c, t->pos, "RP1202", "[ini.%s] needs 'value'", t->id);
     if (x->mode == 2 && has_value) ERR(c, ir_key_pos(t, "value"), "RP1316", "mode = \"remove\" removes the key; it takes no 'value'");
-    x->feature = ir_get_str(c, t, "feature", false, NULL);
+    x->feature = RP_V(ir_get_str(c, t, "feature", false, NULL));
 }
 
 // A basic shape check of an MSI condition (RFC-0001 9.7): quotes close, brackets balance.
@@ -856,14 +856,14 @@ void ir_parse_require(ctx_t *c, const rp_ttable_t *t, rp_ir_require_t *r) {
     static const char *const keys[] = { "condition", "message", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    r->id = ir_dup(c, t->id);
+    r->id = RP_V(ir_dup(c, t->id));
     r->pos = t->pos;
-    r->condition = ir_get_str(c, t, "condition", true, NULL);
-    if (r->condition && !condition_ok(r->condition)) {
+    r->condition = RP_V(ir_get_str(c, t, "condition", true, NULL));
+    if (r->condition.ptr && !condition_ok(rp_cs(r->condition))) {
         ERR(c, ir_key_pos(t, "condition"), "RP1316", "condition has an unclosed quote or unbalanced parentheses");
     }
-    if (r->condition && strlen(r->condition) > 240) ERR(c, ir_key_pos(t, "condition"), "RP1316", "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")");
-    r->message = ir_get_fmt(c, t, "message", true, NULL, IR_FMT_INSTALL);
+    if (r->condition.ptr && r->condition.size > 240) ERR(c, ir_key_pos(t, "condition"), "RP1316", "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")");
+    r->message = RP_V(ir_get_fmt(c, t, "message", true, NULL, IR_FMT_INSTALL));
 }
 
 void ir_parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x) {
@@ -871,14 +871,14 @@ void ir_parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x) {
                                         "component-guid", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
-    x->property = ir_get_str(c, t, "property", true, NULL);
-    if (x->property) {
+    x->property = RP_V(ir_get_str(c, t, "property", true, NULL));
+    if (x->property.ptr) {
         bool upper = true;
-        for (const char *p = x->property; *p; ++p) upper &= (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_';
-        if (!upper || ir_tool_property(x->property)) {
-            ERR(c, ir_key_pos(t, "property"), "RP1310", "search property '%s' must be a public name of your own (upper case)", x->property);
+        for (const char *p = rp_cs(x->property); *p; ++p) upper &= (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_';
+        if (!upper || ir_tool_property(rp_cs(x->property))) {
+            ERR(c, ir_key_pos(t, "property"), "RP1310", "search property '%s' must be a public name of your own (upper case)", rp_cs(x->property));
         }
     }
     char *kind = ir_get_str(c, t, "kind", true, NULL);
@@ -898,8 +898,8 @@ void ir_parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x) {
             else ERR(c, ir_key_pos(t, "root"), "RP1316", "root must be HKLM, HKCR or HKCU");
             rp_mem_free(c->alloc, root);
         }
-        x->key = ir_get_str(c, t, "key", true, NULL);
-        x->name = ir_get_str(c, t, "name", false, NULL);
+        x->key = RP_V(ir_get_str(c, t, "key", true, NULL));
+        x->name = RP_V(ir_get_str(c, t, "name", false, NULL));
         char *view = ir_get_str(c, t, "view", false, NULL);
         if (view) {
             if (strcmp(view, "32") == 0) x->view32 = true;
@@ -908,17 +908,17 @@ void ir_parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x) {
         }
         if (c->ir->arch == RP_ARCH_X86) x->view32 = true;
     } else if (x->kind == RP_SEARCH_COMPONENT) {
-        x->component_guid = ir_get_str(c, t, "component-guid", true, NULL);
-        if (x->component_guid && !ir_guid_ok(x->component_guid)) ERR(c, ir_key_pos(t, "component-guid"), "RP1308", "component-guid must be a GUID");
+        x->component_guid = RP_V(ir_get_str(c, t, "component-guid", true, NULL));
+        if (x->component_guid.ptr && !ir_guid_ok(rp_ws(x->component_guid))) ERR(c, ir_key_pos(t, "component-guid"), "RP1308", "component-guid must be a GUID");
     } else {
         char *path = ir_get_path(c, t, "path", true);         // $(Base) or $(Base)/rel/path, like [dir.*]
         if (path) {
             char *slash = strchr(path, '/');
-            x->base = slash ? ir_dup_n(c, path, (size_t)(slash - path)) : ir_dup(c, path);
-            if (x->base && !ir_known_folder(x->base)) ERR(c, ir_key_pos(t, "path"), "RP1316", "path must start with a Windows folder (like $(ProgramFiles) or $(System))");
+            x->base = RP_V(slash ? ir_dup_n(c, path, (size_t)(slash - path)) : ir_dup(c, path));
+            if (x->base.ptr && !ir_known_folder(rp_cs(x->base))) ERR(c, ir_key_pos(t, "path"), "RP1316", "path must start with a Windows folder (like $(ProgramFiles) or $(System))");
             if (slash && slash[1]) {
-                x->path = ir_dup(c, slash + 1);
-                for (char *p = x->path; p && *p; ++p) {
+                x->path = RP_V(ir_dup(c, slash + 1));
+                for (char *p = rp_ws(x->path); p && *p; ++p) {
                     if (*p == '/') *p = '\\';
                 }
             }
@@ -926,12 +926,12 @@ void ir_parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x) {
             rp_mem_free(c->alloc, path);
         }
         if (x->kind == RP_SEARCH_FILE) {
-            x->file_name = ir_get_str(c, t, "file", true, NULL);
-            if (x->file_name) ir_target_name_ok(c, x->file_name, ir_key_pos(t, "file"));
-            x->min_version = ir_get_str(c, t, "min-version", false, NULL);
+            x->file_name = RP_V(ir_get_str(c, t, "file", true, NULL));
+            if (x->file_name.ptr) ir_target_name_ok(c, rp_cs(x->file_name), ir_key_pos(t, "file"));
+            x->min_version = RP_V(ir_get_str(c, t, "min-version", false, NULL));
             uint16_t parts[4];
             size_t n = 0;
-            if (x->min_version && !ir_parse_version(x->min_version, parts, &n)) {
+            if (x->min_version.ptr && !ir_parse_version(rp_cs(x->min_version), parts, &n)) {
                 ERR(c, ir_key_pos(t, "min-version"), "RP1308", "min-version must be a version like 1.2.3");
             }
         }
@@ -950,21 +950,21 @@ void ir_parse_service(ctx_t *c, const rp_ttable_t *t, rp_ir_service_t *x) {
                                         "start-on-install", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     char *file = ir_get_str(c, t, "file", true, NULL);
     if (file) {
         if (strncmp(file, "file:", 5) != 0 || file[5] == '\0') ERR(c, ir_key_pos(t, "file"), "RP1315", "file must be \"file:<ID>\"");
-        else x->file = ir_dup(c, file + 5);
+        else x->file = RP_V(ir_dup(c, file + 5));
         rp_mem_free(c->alloc, file);
     }
-    x->name = ir_get_str(c, t, "name", true, NULL);
-    if (x->name && (strpbrk(x->name, "/\\") || ir_has_control(x->name) || strlen(x->name) > 256)) {
+    x->name = RP_V(ir_get_str(c, t, "name", true, NULL));
+    if (x->name.ptr && (strpbrk(rp_cs(x->name), "/\\") || ir_has_control(rp_cs(x->name)) || x->name.size > 256)) {
         ERR(c, ir_key_pos(t, "name"), "RP1316", "a service name may not contain '/' or '\\' (at most 256 characters)");
     }
-    x->display_name = ir_get_str(c, t, "display-name", false, NULL);
-    x->description = ir_get_str(c, t, "description", false, NULL);
-    x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
+    x->display_name = RP_V(ir_get_str(c, t, "display-name", false, NULL));
+    x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
+    x->args = RP_V(ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL));
     x->start = 3;
     char *start = ir_get_str(c, t, "start", false, NULL);
     if (start) {
@@ -990,7 +990,7 @@ void ir_parse_permission(ctx_t *c, const rp_ttable_t *t, rp_ir_permission_t *x) 
     static const char *const keys[] = { "target", "sddl", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     char *target = ir_get_str(c, t, "target", true, NULL);
     if (target) {
@@ -1000,16 +1000,16 @@ void ir_parse_permission(ctx_t *c, const rp_ttable_t *t, rp_ir_permission_t *x) 
             size_t n = strlen(prefixes[k]);
             if (strncmp(target, prefixes[k], n) == 0 && target[n]) {
                 x->kind = k;
-                x->target = ir_dup(c, target + n);
+                x->target = RP_V(ir_dup(c, target + n));
             }
         }
         if (x->kind < 0) ERR(c, ir_key_pos(t, "target"), "RP1315", "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\"");
         rp_mem_free(c->alloc, target);
     }
-    x->sddl = ir_get_str(c, t, "sddl", true, NULL);
-    if (x->sddl) {
-        bool ok = strlen(x->sddl) >= 3 && strchr("DOGS", x->sddl[0]) && x->sddl[1] == ':';
-        for (const char *p = x->sddl; ok && *p; ++p) ok = *p > ' ' && *p < 127 && *p != '[' && *p != ']';
+    x->sddl = RP_V(ir_get_str(c, t, "sddl", true, NULL));
+    if (x->sddl.ptr) {
+        bool ok = x->sddl.size >= 3 && strchr("DOGS", x->sddl.ptr[0]) && x->sddl.ptr[1] == ':';
+        for (const char *p = rp_cs(x->sddl); ok && *p; ++p) ok = *p > ' ' && *p < 127 && *p != '[' && *p != ']';
         if (!ok) ERR(c, ir_key_pos(t, "sddl"), "RP1316", "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\"");
     }
 }
@@ -1018,15 +1018,15 @@ void ir_parse_font(ctx_t *c, const rp_ttable_t *t, rp_ir_font_t *x) {
     static const char *const keys[] = { "file", "title", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     char *file = ir_get_str(c, t, "file", true, NULL);
     if (file) {
         if (strncmp(file, "file:", 5) != 0 || file[5] == '\0') ERR(c, ir_key_pos(t, "file"), "RP1315", "file must be \"file:<ID>\"");
-        else x->file = ir_dup(c, file + 5);
+        else x->file = RP_V(ir_dup(c, file + 5));
         rp_mem_free(c->alloc, file);
     }
-    x->title = ir_get_str(c, t, "title", false, NULL);
+    x->title = RP_V(ir_get_str(c, t, "title", false, NULL));
 }
 
 // [merge.ID] (RFC-0016 3).
@@ -1034,7 +1034,7 @@ void ir_parse_merge(ctx_t *c, const rp_ttable_t *t, rp_ir_merge_t *x) {
     static const char *const keys[] = { "source", "dir", "feature", "config", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->msi_only = ir_get_bool(c, t, "msi-only", false);
     // config = ["Name=value", ...]: the answers to a configurable module's items (RFC-0017 C).
     const rp_tkey_t *cfg = ir_find_key(t, "config");
@@ -1058,14 +1058,14 @@ void ir_parse_merge(ctx_t *c, const rp_ttable_t *t, rp_ir_merge_t *x) {
         }
     }
     x->pos = t->pos;
-    x->shown = ir_get_str(c, t, "source", true, NULL);
-    x->dir = ir_get_str(c, t, "dir", true, NULL);
-    x->feature = ir_get_str(c, t, "feature", false, NULL);
-    if (x->shown && ir_source_path_ok(c, x->shown, ir_key_pos(t, "source"))) {
-        x->source = ir_join(c, c->opt->source_dir ? c->opt->source_dir : ".", x->shown);
+    x->shown = RP_V(ir_get_str(c, t, "source", true, NULL));
+    x->dir = RP_V(ir_get_str(c, t, "dir", true, NULL));
+    x->feature = RP_V(ir_get_str(c, t, "feature", false, NULL));
+    if (x->shown.ptr && ir_source_path_ok(c, rp_cs(x->shown), ir_key_pos(t, "source"))) {
+        x->source = RP_V(ir_join(c, c->opt->source_dir.ptr ? rp_cs(c->opt->source_dir) : ".", rp_cs(x->shown)));
         uint64_t size;
-        if (x->source && rp_pal_stat(c->alloc, x->source, &size) != RP_FS_FILE) {
-            ERR(c, ir_key_pos(t, "source"), "RP1507", "merge module '%s' not found", x->shown);
+        if (x->source.ptr && rp_pal_stat(c->alloc, rp_cs(x->source), &size) != RP_FS_FILE) {
+            ERR(c, ir_key_pos(t, "source"), "RP1507", "merge module '%s' not found", rp_cs(x->shown));
         }
     }
 }
@@ -1104,37 +1104,39 @@ void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
                                         "perceived-type", "default", "msi-only", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 64);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
-    x->extension = ir_get_str(c, t, "extension", true, NULL);
-    if (x->extension && (x->extension[0] != '.' || strlen(x->extension) > 64 || !lower_name(x->extension + 1, "_-", 1))) {
-        ERR(c, ir_key_pos(t, "extension"), "RP1316", "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')", x->extension);
+    x->extension = RP_V(ir_get_str(c, t, "extension", true, NULL));
+    if (x->extension.ptr && (x->extension.ptr[0] != '.' || x->extension.size > 64 || !lower_name(rp_cs(x->extension) + 1, "_-", 1))) {
+        ERR(c, ir_key_pos(t, "extension"), "RP1316", "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')", rp_cs(x->extension));
     }
-    x->prog_id = ir_get_str(c, t, "prog-id", true, NULL);
-    if (x->prog_id) check_prog_id(c, t, x->prog_id);
-    x->description = ir_get_str(c, t, "description", false, NULL);
-    x->target_file = file_ref(c, t, "target", true);
-    x->icon_file = file_ref(c, t, "icon", false);
-    x->logo_path = ir_logo_path(c, t, "logo", true, &x->logo);
-    x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
-    if (x->args == NULL) x->args = ir_dup(c, "\"%1\"");
+    x->prog_id = RP_V(ir_get_str(c, t, "prog-id", true, NULL));
+    if (x->prog_id.ptr) check_prog_id(c, t, rp_cs(x->prog_id));
+    x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
+    x->target_file = RP_V(file_ref(c, t, "target", true));
+    x->icon_file = RP_V(file_ref(c, t, "icon", false));
+    char *logo_shown = NULL;
+    x->logo_path = RP_V(ir_logo_path(c, t, "logo", true, &logo_shown));
+    x->logo = RP_V(logo_shown);
+    x->args = RP_V(ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL));
+    if (x->args.ptr == NULL) x->args = RP_V(ir_dup(c, "\"%1\""));
     x->no_default = !ir_get_bool(c, t, "default", true);
-    x->content_type = ir_get_str(c, t, "content-type", false, NULL);
-    if (x->content_type) {
+    x->content_type = RP_V(ir_get_str(c, t, "content-type", false, NULL));
+    if (x->content_type.ptr) {
         // type/subtype in the characters a media type takes.
-        const char *slash = strchr(x->content_type, '/');
-        bool ok = slash && slash > x->content_type && slash[1] && strlen(x->content_type) <= 127 && strchr(slash + 1, '/') == NULL;
-        for (const char *q = x->content_type; ok && *q; ++q) {
+        const char *slash = strchr(rp_cs(x->content_type), '/');
+        bool ok = slash && slash > rp_cs(x->content_type) && slash[1] && x->content_type.size <= 127 && strchr(slash + 1, '/') == NULL;
+        for (const char *q = rp_cs(x->content_type); ok && *q; ++q) {
             ok = (*q >= 'a' && *q <= 'z') || (*q >= 'A' && *q <= 'Z') || (*q >= '0' && *q <= '9') || strchr("/.+-_!#$&^", *q) != NULL;
         }
-        if (!ok) ERR(c, ir_key_pos(t, "content-type"), "RP1316", "content-type is a media type, like \"image/png\" (got '%s')", x->content_type);
+        if (!ok) ERR(c, ir_key_pos(t, "content-type"), "RP1316", "content-type is a media type, like \"image/png\" (got '%s')", rp_cs(x->content_type));
     }
-    x->perceived_type = ir_get_str(c, t, "perceived-type", false, NULL);
-    if (x->perceived_type) {
+    x->perceived_type = RP_V(ir_get_str(c, t, "perceived-type", false, NULL));
+    if (x->perceived_type.ptr) {
         static const char *const kinds[] = { "image", "text", "audio", "video", "compressed", "document", "system", "application", NULL };
-        if (!ir_in_list(x->perceived_type, kinds)) {
+        if (!ir_in_list(rp_cs(x->perceived_type), kinds)) {
             ERR(c, ir_key_pos(t, "perceived-type"), "RP1316", "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", "
-                                                              "\"document\", \"system\" or \"application\" (got '%s')", x->perceived_type);
+                                                              "\"document\", \"system\" or \"application\" (got '%s')", rp_cs(x->perceived_type));
         }
     }
 }
@@ -1143,18 +1145,18 @@ void ir_parse_protocol(ctx_t *c, const rp_ttable_t *t, rp_ir_protocol_t *x) {
     static const char *const keys[] = { "name", "description", "target", "args", "msi-only", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 64);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
-    x->name = ir_get_str(c, t, "name", true, NULL);
-    if (x->name && (!(x->name[0] >= 'a' && x->name[0] <= 'z') || strlen(x->name) > 64 || !lower_name(x->name, "+-.", 2))) {
-        ERR(c, ir_key_pos(t, "name"), "RP1316", "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')", x->name);
+    x->name = RP_V(ir_get_str(c, t, "name", true, NULL));
+    if (x->name.ptr && (!(x->name.ptr[0] >= 'a' && x->name.ptr[0] <= 'z') || x->name.size > 64 || !lower_name(rp_cs(x->name), "+-.", 2))) {
+        ERR(c, ir_key_pos(t, "name"), "RP1316", "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')", rp_cs(x->name));
     }
     static const char *const taken[] = { "http", "https", "file", "ftp", "mailto", "ms-settings", "shell", NULL };
-    if (x->name && ir_in_list(x->name, taken)) ERR(c, ir_key_pos(t, "name"), "RP1316", "'%s' belongs to Windows or the browsers", x->name);
-    x->description = ir_get_str(c, t, "description", false, NULL);
-    x->target_file = file_ref(c, t, "target", true);
-    x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
-    if (x->args == NULL) x->args = ir_dup(c, "\"%1\"");
+    if (x->name.ptr && ir_in_list(rp_cs(x->name), taken)) ERR(c, ir_key_pos(t, "name"), "RP1316", "'%s' belongs to Windows or the browsers", rp_cs(x->name));
+    x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
+    x->target_file = RP_V(file_ref(c, t, "target", true));
+    x->args = RP_V(ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL));
+    if (x->args.ptr == NULL) x->args = RP_V(ir_dup(c, "\"%1\""));
 }
 
 static char *guid_key(ctx_t *c, const rp_ttable_t *t, const char *key, bool required) {
@@ -1168,35 +1170,35 @@ void ir_parse_com(ctx_t *c, const rp_ttable_t *t, rp_ir_com_t *x) {
                                         "typelib", "typelib-version", "typelib-file", "msi-only", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 64);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
-    x->file = file_ref(c, t, "file", true);
-    x->clsid = guid_key(c, t, "class", true);
-    x->description = ir_get_str(c, t, "description", false, NULL);
+    x->file = RP_V(file_ref(c, t, "file", true));
+    x->clsid = RP_V(guid_key(c, t, "class", true));
+    x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
     char *th = ir_get_str(c, t, "threading", false, NULL);
     static const char *const models[][2] = { { "sta", "Apartment" }, { "mta", "Free" }, { "both", "Both" }, { "neutral", "Neutral" } };
     for (size_t k = 0; th && k < 4; ++k) {
-        if (strcmp(th, models[k][0]) == 0) x->threading = ir_dup(c, models[k][1]);
+        if (strcmp(th, models[k][0]) == 0) x->threading = RP_V(ir_dup(c, models[k][1]));
     }
-    if (th && x->threading == NULL) ERR(c, ir_key_pos(t, "threading"), "RP1316", "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')", th);
+    if (th && x->threading.ptr == NULL) ERR(c, ir_key_pos(t, "threading"), "RP1316", "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')", th);
     rp_mem_free(c->alloc, th);
-    x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
-    x->prog_id = ir_get_str(c, t, "prog-id", false, NULL);
-    if (x->prog_id) check_prog_id(c, t, x->prog_id);
-    x->app_id = guid_key(c, t, "app-id", false);
+    x->args = RP_V(ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL));
+    x->prog_id = RP_V(ir_get_str(c, t, "prog-id", false, NULL));
+    if (x->prog_id.ptr) check_prog_id(c, t, rp_cs(x->prog_id));
+    x->app_id = RP_V(guid_key(c, t, "app-id", false));
     x->surrogate = ir_get_bool(c, t, "surrogate", false);
-    x->typelib = guid_key(c, t, "typelib", false);
-    x->typelib_version = ir_get_str(c, t, "typelib-version", false, NULL);
-    x->typelib_file = file_ref(c, t, "typelib-file", false);
-    if (x->typelib_version) {
+    x->typelib = RP_V(guid_key(c, t, "typelib", false));
+    x->typelib_version = RP_V(ir_get_str(c, t, "typelib-version", false, NULL));
+    x->typelib_file = RP_V(file_ref(c, t, "typelib-file", false));
+    if (x->typelib_version.ptr) {
         // "major.minor", each 1 to 4 hex digits, as the TypeLib key spells them.
-        const char *v = x->typelib_version, *dot = strchr(v, '.');
+        const char *v = rp_cs(x->typelib_version), *dot = strchr(v, '.');
         bool ok = dot && dot > v && dot - v <= 4 && dot[1] && strlen(dot + 1) <= 4;
         for (const char *q = v; ok && *q; ++q) ok = q == dot || ir_is_hex(*q);
         if (!ok) ERR(c, ir_key_pos(t, "typelib-version"), "RP1316", "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')", v);
     }
-    if (x->typelib == NULL && (x->typelib_version || x->typelib_file)) ERR(c, t->pos, "RP1316", "[com.%s]: typelib-version and typelib-file need typelib", t->id);
-    if (x->typelib && x->typelib_version == NULL) x->typelib_version = ir_dup(c, "1.0");
+    if (x->typelib.ptr == NULL && (x->typelib_version.ptr || x->typelib_file.ptr)) ERR(c, t->pos, "RP1316", "[com.%s]: typelib-version and typelib-file need typelib", t->id);
+    if (x->typelib.ptr && x->typelib_version.ptr == NULL) x->typelib_version = RP_V(ir_dup(c, "1.0"));
     x->msi_only = ir_get_bool(c, t, "msi-only", false);
 }
 
@@ -1204,7 +1206,7 @@ void ir_parse_handler(ctx_t *c, const rp_ttable_t *t, rp_ir_handler_t *x) {
     static const char *const keys[] = { "kind", "class", "types", "description", "msi-only", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 48);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     char *kind = ir_get_str(c, t, "kind", true, NULL);
     if (kind && strcmp(kind, "preview") == 0) x->kind = RP_HANDLER_PREVIEW;
@@ -1212,8 +1214,8 @@ void ir_parse_handler(ctx_t *c, const rp_ttable_t *t, rp_ir_handler_t *x) {
     else if (kind && strcmp(kind, "property") == 0) x->kind = RP_HANDLER_PROPERTY;
     else if (kind) ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')", kind);
     rp_mem_free(c->alloc, kind);
-    x->clsid = guid_key(c, t, "class", true);
-    x->description = ir_get_str(c, t, "description", false, NULL);
+    x->clsid = RP_V(guid_key(c, t, "class", true));
+    x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
     x->msi_only = ir_get_bool(c, t, "msi-only", false);
     const rp_tkey_t *tk = ir_find_key(t, "types");
     if (tk == NULL || tk->val.kind != RP_TV_ARRAY || tk->val.count == 0) {
@@ -1240,16 +1242,16 @@ void ir_parse_menu(ctx_t *c, const rp_ttable_t *t, rp_ir_menu_t *x) {
     static const char *const lkeys[] = { "text", NULL };
     ir_check_keys_lang(c, t, keys, lkeys);
     ir_check_id(c, t, 40);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     ir_get_ltexts(c, t, "text", &x->text_by_lang, &x->text_by_lang_count);
-    x->text = ir_get_str(c, t, "text", x->text_by_lang_count == 0, NULL);
-    x->target_file = file_ref(c, t, "target", false);
-    x->icon_file = file_ref(c, t, "icon", false);
-    x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
-    x->list = ir_get_fmt(c, t, "list", false, NULL, IR_FMT_INSTALL);
-    x->hide_when = ir_get_str(c, t, "hide-when", false, NULL);
-    x->parent = ir_get_str(c, t, "parent", false, NULL);
+    x->text = RP_V(ir_get_str(c, t, "text", x->text_by_lang_count == 0, NULL));
+    x->target_file = RP_V(file_ref(c, t, "target", false));
+    x->icon_file = RP_V(file_ref(c, t, "icon", false));
+    x->args = RP_V(ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL));
+    x->list = RP_V(ir_get_fmt(c, t, "list", false, NULL, IR_FMT_INSTALL));
+    x->hide_when = RP_V(ir_get_str(c, t, "hide-when", false, NULL));
+    x->parent = RP_V(ir_get_str(c, t, "parent", false, NULL));
     x->extended = ir_get_bool(c, t, "extended", false);
     x->windows11 = ir_get_bool(c, t, "windows11", true);
     char *multi = ir_get_str(c, t, "multi", false, NULL);
@@ -1339,27 +1341,27 @@ static void parse_msix_contract(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t
         if (ir_in_list(key, known)) ERR(c, t->keys[k].pos, "RP1316", "%s does not belong to kind = \"%s\"", key, kind);
     }
     if (x->kind == RP_MSIX_EXT_APP_EXTENSION) {
-        x->name = ir_get_str(c, t, "name", true, NULL);
-        if (x->name) contract_name(c, t, "name", x->name, 2, 65519);
-        x->ext_id = ir_get_str(c, t, "extension-id", false, NULL);
-        if (x->ext_id) contract_name(c, t, "extension-id", x->ext_id, 2, 39);
-        else x->ext_id = ir_dup(c, t->id);
-        x->folder = ir_get_str(c, t, "public-folder", false, NULL);
-        if (x->folder && (x->folder[0] == 0 || x->folder[0] == '\\' || x->folder[0] == '/' || strlen(x->folder) > 256 ||
-                          strpbrk(x->folder, "<>:\"|?*") || strstr(x->folder, ".."))) {
-            ERR(c, ir_key_pos(t, "public-folder"), "RP1316", "public-folder must be a folder of the package, like \"Public\" (got '%s')", x->folder);
+        x->name = RP_V(ir_get_str(c, t, "name", true, NULL));
+        if (x->name.ptr) contract_name(c, t, "name", rp_cs(x->name), 2, 65519);
+        x->ext_id = RP_V(ir_get_str(c, t, "extension-id", false, NULL));
+        if (x->ext_id.ptr) contract_name(c, t, "extension-id", rp_cs(x->ext_id), 2, 39);
+        else x->ext_id = RP_V(ir_dup(c, t->id));
+        x->folder = RP_V(ir_get_str(c, t, "public-folder", false, NULL));
+        if (x->folder.ptr && (x->folder.ptr[0] == 0 || x->folder.ptr[0] == '\\' || x->folder.ptr[0] == '/' || x->folder.size > 256 ||
+                          strpbrk(rp_cs(x->folder), "<>:\"|?*") || strstr(rp_cs(x->folder), ".."))) {
+            ERR(c, ir_key_pos(t, "public-folder"), "RP1316", "public-folder must be a folder of the package, like \"Public\" (got '%s')", rp_cs(x->folder));
         }
-        for (char *q = x->folder; q && *q; ++q) if (*q == '/') *q = '\\';
-        x->display = ir_get_str(c, t, "display-name", false, NULL);
-        x->description = ir_get_str(c, t, "description", false, NULL);
+        for (char *q = rp_ws(x->folder); q && *q; ++q) if (*q == '/') *q = '\\';
+        x->display = RP_V(ir_get_str(c, t, "display-name", false, NULL));
+        x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
     } else if (x->kind == RP_MSIX_EXT_APP_EXTENSION_HOST) {
         x->names = contract_list(c, t, "names", "com.example.plugin", &x->name_count);
         if (!ir_find_key(t, "names")) ERR(c, t->pos, "RP1316", "%s is a list of texts, like [\"%s\"]", "names", "com.example.plugin");
         for (size_t k = 0; k < x->name_count; ++k) contract_name(c, t, "names", x->names[k], 2, 65519);
     } else if (x->kind == RP_MSIX_EXT_APP_SERVICE) {
-        x->name = ir_get_str(c, t, "name", true, NULL);
-        if (x->name) contract_name(c, t, "name", x->name, 2, 39);
-        x->entry = ir_get_str(c, t, "entry-point", true, NULL);
+        x->name = RP_V(ir_get_str(c, t, "name", true, NULL));
+        if (x->name.ptr) contract_name(c, t, "name", rp_cs(x->name), 2, 39);
+        x->entry = RP_V(ir_get_str(c, t, "entry-point", true, NULL));
         x->multi = ir_get_bool(c, t, "multiple-instances", false);
     } else if (x->kind == RP_MSIX_EXT_SHARE_TARGET) {
         const rp_tkey_t *tk = ir_find_key(t, "types");
@@ -1378,26 +1380,26 @@ static void parse_msix_contract(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t
         }
         x->names = contract_list(c, t, "formats", "Text", &x->name_count);
         if (!tk && !ir_find_key(t, "formats")) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: a share target needs types, formats or both", t->id);
-        x->description = ir_get_str(c, t, "description", false, NULL);
+        x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
     } else {
-        x->action = ir_get_str(c, t, "action", true, NULL);
-        x->display = ir_get_str(c, t, "display-name", false, NULL);
+        x->action = RP_V(ir_get_str(c, t, "action", true, NULL));
+        x->display = RP_V(ir_get_str(c, t, "display-name", false, NULL));
         x->names = contract_list(c, t, "content-events", "ShowPicturesOnArrival", &x->name_count);
         x->events = contract_list(c, t, "device-events", "ImageSourceArrival", &x->event_count);
         if (!ir_find_key(t, "content-events") && !ir_find_key(t, "device-events")) {
             ERR(c, t->pos, "RP1316", "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both", t->id);
         }
-        x->verb = ir_get_str(c, t, "verb", false, NULL);
-        if (x->verb == NULL) x->verb = ir_dup(c, t->id);
-        bool alnum = x->verb != NULL;
-        for (const char *q = x->verb; alnum && *q; ++q) alnum = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
-        if (x->verb && !alnum) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: verb '%s': Windows takes letters and digits only", t->id, x->verb);
-        x->clsid = ir_get_str(c, t, "class", false, NULL);
-        if (x->clsid && !ir_guid_ok(x->clsid)) ERR(c, ir_key_pos(t, "class"), "RP1316", "class must be a GUID like {12345678-...} (got '%s')", x->clsid);
-        if (x->event_count && x->clsid == NULL) {
+        x->verb = RP_V(ir_get_str(c, t, "verb", false, NULL));
+        if (x->verb.ptr == NULL) x->verb = RP_V(ir_dup(c, t->id));
+        bool alnum = x->verb.ptr != NULL;
+        for (const char *q = rp_cs(x->verb); alnum && *q; ++q) alnum = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
+        if (x->verb.ptr && !alnum) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: verb '%s': Windows takes letters and digits only", t->id, rp_cs(x->verb));
+        x->clsid = RP_V(ir_get_str(c, t, "class", false, NULL));
+        if (x->clsid.ptr && !ir_guid_ok(rp_ws(x->clsid))) ERR(c, ir_key_pos(t, "class"), "RP1316", "class must be a GUID like {12345678-...} (got '%s')", rp_cs(x->clsid));
+        if (x->event_count && x->clsid.ptr == NULL) {
             ERR(c, t->pos, "RP1316", "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)", t->id);
         }
-        x->args = ir_get_str(c, t, "args", false, NULL);
+        x->args = RP_V(ir_get_str(c, t, "args", false, NULL));
     }
 }
 
@@ -1408,34 +1410,34 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
                                         "multiple-instances", "formats", "action", "content-events", "device-events", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
     char *kind = ir_get_str(c, t, "kind", true, NULL);
-    x->app = ir_get_str(c, t, "app", false, NULL);
+    x->app = RP_V(ir_get_str(c, t, "app", false, NULL));
     x->enabled = ir_get_bool(c, t, "enabled", true);
     if (kind && strcmp(kind, "alias") == 0) {
         x->kind = RP_MSIX_EXT_ALIAS;
-        x->alias = ir_get_str(c, t, "alias", true, NULL);
-        size_t n = x->alias ? strlen(x->alias) : 0;
-        bool ok = n > 4 && n <= 64 && strcmp(x->alias + n - 4, ".exe") == 0;
+        x->alias = RP_V(ir_get_str(c, t, "alias", true, NULL));
+        size_t n = x->alias.ptr ? x->alias.size : 0;
+        bool ok = n > 4 && n <= 64 && strcmp(rp_cs(x->alias) + n - 4, ".exe") == 0;
         for (size_t k = 0; ok && k < n; ++k) {
-            char ch = x->alias[k];
+            char ch = x->alias.ptr[k];
             ok = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '.' || ch == '_' || ch == '-';
         }
-        if (x->alias && !ok) ERR(c, ir_key_pos(t, "alias"), "RP1316", "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')", x->alias);
+        if (x->alias.ptr && !ok) ERR(c, ir_key_pos(t, "alias"), "RP1316", "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')", rp_cs(x->alias));
         if (ir_find_key(t, "task-id") || ir_find_key(t, "display-name") || ir_find_key(t, "enabled")) {
             ERR(c, t->pos, "RP1316", "task-id, display-name and enabled belong to kind = \"startup-task\"");
         }
     } else if (kind && strcmp(kind, "startup-task") == 0) {
         x->kind = RP_MSIX_EXT_STARTUP;
-        x->task_id = ir_get_str(c, t, "task-id", false, NULL);
-        if (x->task_id == NULL) x->task_id = ir_dup(c, t->id);
-        x->display = ir_get_str(c, t, "display-name", false, NULL);
+        x->task_id = RP_V(ir_get_str(c, t, "task-id", false, NULL));
+        if (x->task_id.ptr == NULL) x->task_id = RP_V(ir_dup(c, t->id));
+        x->display = RP_V(ir_get_str(c, t, "display-name", false, NULL));
         if (ir_find_key(t, "alias")) ERR(c, ir_key_pos(t, "alias"), "RP1316", "alias belongs to kind = \"alias\"");
     } else if (kind && strcmp(kind, "firewall") == 0) {
         // RFC-0016 2: an inbound or outbound rule for a program of the package (desktop2:FirewallRules).
         x->kind = RP_MSIX_EXT_FIREWALL;
-        x->file = file_ref(c, t, "file", false);
+        x->file = RP_V(file_ref(c, t, "file", false));
         char *dir = ir_get_str(c, t, "direction", true, NULL), *proto = ir_get_str(c, t, "protocol", true, NULL);
         if (dir && strcmp(dir, "in") != 0 && strcmp(dir, "out") != 0) {
             ERR(c, ir_key_pos(t, "direction"), "RP1316", "direction must be \"in\" or \"out\" (got '%s')", dir);
@@ -1467,10 +1469,10 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
             }
             rp_mem_free(c->alloc, ports);
         }
-        x->profile = ir_get_str(c, t, "profile", false, NULL);
+        x->profile = RP_V(ir_get_str(c, t, "profile", false, NULL));
         static const char *const profiles[] = { "all", "domain", "private", "public", NULL };
-        if (x->profile && !ir_in_list(x->profile, profiles)) {
-            ERR(c, ir_key_pos(t, "profile"), "RP1316", "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')", x->profile);
+        if (x->profile.ptr && !ir_in_list(rp_cs(x->profile), profiles)) {
+            ERR(c, ir_key_pos(t, "profile"), "RP1316", "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')", rp_cs(x->profile));
         }
         const char *other[] = { "alias", "task-id", "display-name", "enabled" };
         for (size_t k = 0; k < sizeof other / sizeof other[0]; ++k) {
@@ -1480,29 +1482,29 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
         // RFC-0016 2: a COM class of the package (com:ComServer), the toast activator (a COM class of
         // the application's program) and an Explorer context menu verb (a COM class in a DLL).
         x->kind = strcmp(kind, "com-server") == 0 ? RP_MSIX_EXT_COM : strcmp(kind, "toast") == 0 ? RP_MSIX_EXT_TOAST : RP_MSIX_EXT_CONTEXT_MENU;
-        x->file = file_ref(c, t, "file", x->kind != RP_MSIX_EXT_TOAST);
-        x->clsid = ir_get_str(c, t, "class", true, NULL);
-        if (x->clsid && !ir_guid_ok(x->clsid)) ERR(c, ir_key_pos(t, "class"), "RP1316", "class must be a GUID like {12345678-...} (got '%s')", x->clsid);
-        x->display = ir_get_str(c, t, "display-name", false, NULL);
-        x->args = ir_get_str(c, t, "args", false, NULL);
-        if (x->kind == RP_MSIX_EXT_TOAST && x->args == NULL) x->args = ir_dup(c, "-ToastActivated");
+        x->file = RP_V(file_ref(c, t, "file", x->kind != RP_MSIX_EXT_TOAST));
+        x->clsid = RP_V(ir_get_str(c, t, "class", true, NULL));
+        if (x->clsid.ptr && !ir_guid_ok(rp_ws(x->clsid))) ERR(c, ir_key_pos(t, "class"), "RP1316", "class must be a GUID like {12345678-...} (got '%s')", rp_cs(x->clsid));
+        x->display = RP_V(ir_get_str(c, t, "display-name", false, NULL));
+        x->args = RP_V(ir_get_str(c, t, "args", false, NULL));
+        if (x->kind == RP_MSIX_EXT_TOAST && x->args.ptr == NULL) x->args = RP_V(ir_dup(c, "-ToastActivated"));
         char *th = ir_get_str(c, t, "threading", false, NULL);
         static const char *const models[][2] = { { "sta", "STA" }, { "mta", "MTA" }, { "both", "Both" }, { "neutral", "Neutral" } };
         if (th) {
             for (size_t k = 0; k < 4; ++k) {
-                if (strcmp(th, models[k][0]) == 0) x->threading = ir_dup(c, models[k][1]);
+                if (strcmp(th, models[k][0]) == 0) x->threading = RP_V(ir_dup(c, models[k][1]));
             }
-            if (x->threading == NULL) ERR(c, ir_key_pos(t, "threading"), "RP1316", "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')", th);
+            if (x->threading.ptr == NULL) ERR(c, ir_key_pos(t, "threading"), "RP1316", "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')", th);
             rp_mem_free(c->alloc, th);
         } else {
-            x->threading = ir_dup(c, "STA");
+            x->threading = RP_V(ir_dup(c, "STA"));
         }
         if (x->kind == RP_MSIX_EXT_CONTEXT_MENU) {
-            x->verb = ir_get_str(c, t, "verb", false, NULL);
-            if (x->verb == NULL) x->verb = ir_dup(c, t->id);
-            bool alnum = x->verb != NULL;
-            for (const char *q = x->verb; alnum && *q; ++q) alnum = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
-            if (x->verb && !alnum) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: verb '%s': Windows takes letters and digits only", t->id, x->verb);
+            x->verb = RP_V(ir_get_str(c, t, "verb", false, NULL));
+            if (x->verb.ptr == NULL) x->verb = RP_V(ir_dup(c, t->id));
+            bool alnum = x->verb.ptr != NULL;
+            for (const char *q = rp_cs(x->verb); alnum && *q; ++q) alnum = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
+            if (x->verb.ptr && !alnum) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: verb '%s': Windows takes letters and digits only", t->id, rp_cs(x->verb));
             const rp_tkey_t *tk = ir_find_key(t, "types");
             if (tk == NULL || tk->val.kind != RP_TV_ARRAY || tk->val.count == 0) {
                 ERR(c, tk ? tk->pos : t->pos, "RP1316", "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]", t->id);
@@ -1541,16 +1543,16 @@ void ir_parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
     static const char *const keys[] = { "name", "value", "mode", "keep", "feature", "when", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    e->id = ir_dup(c, t->id);
+    e->id = RP_V(ir_dup(c, t->id));
     e->pos = t->pos;
     e->msi_only = ir_get_bool(c, t, "msi-only", false);
-    e->when = ir_get_when(c, t);
-    e->name = ir_get_str(c, t, "name", true, NULL);
-    if (e->name && (strchr("=+-!*", e->name[0]) || strchr(e->name, '=') || ir_has_control(e->name))) {
-        ERR(c, ir_key_pos(t, "name"), "RP1316", "variable name '%s' may not contain '=' or start with = + - ! *", e->name);
+    e->when = RP_V(ir_get_when(c, t));
+    e->name = RP_V(ir_get_str(c, t, "name", true, NULL));
+    if (e->name.ptr && (strchr("=+-!*", e->name.ptr[0]) || strchr(rp_cs(e->name), '=') || ir_has_control(rp_cs(e->name)))) {
+        ERR(c, ir_key_pos(t, "name"), "RP1316", "variable name '%s' may not contain '=' or start with = + - ! *", rp_cs(e->name));
     }
-    e->value = ir_get_fmt(c, t, "value", true, NULL, IR_FMT_INSTALL);
-    if (e->value && strstr(e->value, "[~]")) {
+    e->value = RP_V(ir_get_fmt(c, t, "value", true, NULL, IR_FMT_INSTALL));
+    if (e->value.ptr && strstr(rp_cs(e->value), "[~]")) {
         ERR(c, ir_key_pos(t, "value"), "RP1316", "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it");
     }
     char *mode = ir_get_str(c, t, "mode", false, NULL);
@@ -1562,7 +1564,7 @@ void ir_parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
         rp_mem_free(c->alloc, mode);
     }
     e->keep = ir_get_bool(c, t, "keep", false);
-    e->feature = ir_get_str(c, t, "feature", false, NULL);
+    e->feature = RP_V(ir_get_str(c, t, "feature", false, NULL));
 }
 
 // [other-copy.ID] (plan 2026-10-17-menu-list-and-hide): one of msix (with publisher) or upgrade-code.
@@ -1571,24 +1573,24 @@ void ir_parse_other(ctx_t *c, const rp_ttable_t *t, rp_ir_other_t *x) {
     static const char *const lkeys[] = { "message", NULL };
     ir_check_keys_lang(c, t, keys, lkeys);
     ir_check_id(c, t, 40);
-    x->id = ir_dup(c, t->id);
+    x->id = RP_V(ir_dup(c, t->id));
     x->pos = t->pos;
-    x->msix = ir_get_str(c, t, "msix", false, NULL);
-    x->publisher = ir_get_str(c, t, "publisher", false, NULL);
-    x->upgrade_code = ir_get_str(c, t, "upgrade-code", false, NULL);
-    x->message = ir_get_str(c, t, "message", false, NULL);
+    x->msix = RP_V(ir_get_str(c, t, "msix", false, NULL));
+    x->publisher = RP_V(ir_get_str(c, t, "publisher", false, NULL));
+    x->upgrade_code = RP_V(ir_get_str(c, t, "upgrade-code", false, NULL));
+    x->message = RP_V(ir_get_str(c, t, "message", false, NULL));
     ir_get_ltexts(c, t, "message", &x->message_by_lang, &x->message_by_lang_count);
     char *action = ir_get_str(c, t, "action", false, NULL);
     if (action && strcmp(action, "refuse") == 0) x->refuse = true;
     else if (action && strcmp(action, "warn") != 0) ERR(c, ir_key_pos(t, "action"), "RP1316", "action must be \"warn\" or \"refuse\" (got '%s')", action);
     rp_mem_free(c->alloc, action);
-    if ((x->msix == NULL) == (x->upgrade_code == NULL) || (x->publisher && x->msix == NULL)) {
+    if ((x->msix.ptr == NULL) == (x->upgrade_code.ptr == NULL) || (x->publisher.ptr && x->msix.ptr == NULL)) {
         ERR(c, t->pos, "RP1316", "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code", t->id);
-    } else if (x->msix) {
-        bool ok = strlen(x->msix) >= 3 && strlen(x->msix) <= 50 && x->publisher && strchr(x->publisher, '=');
-        for (const char *q = x->msix; ok && *q; ++q) ok = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9') || *q == '.' || *q == '-';
+    } else if (x->msix.ptr) {
+        bool ok = x->msix.size >= 3 && x->msix.size <= 50 && x->publisher.ptr && strchr(rp_cs(x->publisher), '=');
+        for (const char *q = rp_cs(x->msix); ok && *q; ++q) ok = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9') || *q == '.' || *q == '-';
         if (!ok) ERR(c, t->pos, "RP1316", "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them", t->id);
-    } else if (!ir_guid_ok(x->upgrade_code)) {
-        ERR(c, ir_key_pos(t, "upgrade-code"), "RP1308", "%s must be a GUID like {12345678-...} (got '%s')", "upgrade-code", x->upgrade_code);
+    } else if (!ir_guid_ok(rp_ws(x->upgrade_code))) {
+        ERR(c, ir_key_pos(t, "upgrade-code"), "RP1308", "%s must be a GUID like {12345678-...} (got '%s')", "upgrade-code", rp_cs(x->upgrade_code));
     }
 }
