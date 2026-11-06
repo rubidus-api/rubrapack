@@ -2,10 +2,10 @@
 #define RUBRAPACK_DER_H
 
 // include/rubrapack/der.h - DER reading and writing (X.690) for keys, certificates and CMS
-// (RFC-0007 1). The reader keeps the rules of lowent_lang v1.3.0 lib/der.low (same author, MIT):
-// every length is checked against the buffer in one place, only the shortest length form is
-// accepted (that is what makes it DER), long-form lengths have at most 4 bytes, and it never
-// recurses - callers walk nested structures with a cursor. Multi-byte tags are refused.
+// (RFC-0007 1). The reader is proven_c_lib's (proven/der.h) under rubrapack's cursor shape:
+// every length is checked against the buffer, only the shortest length form is accepted (that
+// is what makes it DER), and it never recurses - callers walk nested structures with a cursor.
+// Multi-byte tags are refused.
 // BER (indefinite lengths, constructed strings), which PKCS#12 files from some tools use, is
 // turned into DER by rp_ber_to_der first and is never read directly.
 

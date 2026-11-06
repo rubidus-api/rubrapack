@@ -15,6 +15,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "proven/aes.h"
+#include "proven/random.h"
+#include "proven/sign.h"
+
 enum { MAX_ITER = 1000000, MAX_FILE = 1u << 22 };
 
 #define OID(name, ...) static const uint8_t name[] = { __VA_ARGS__ }
@@ -87,55 +91,31 @@ static bool add_cert(ctx_t *c, const uint8_t *der, size_t len) {
     return true;
 }
 
-// PrivateKeyInfo (RFC 5958): an RSA key is kept; an EC key is refused for now (RFC-0007 S1).
+// PrivateKeyInfo (RFC 5958): an RSA key (two primes, 2048 to 4096 bits) or an EC key on P-256
+// or P-384 (RFC-0011 W6; whether a format takes ECDSA is the signer's question). proven_pkey_parse
+// reads and checks the key; what is looked at here first is only what the messages name.
 OID(O_P256, 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x03, 0x01, 0x07);
 OID(O_P384, 0x2B, 0x81, 0x04, 0x00, 0x22);
 
-// An EC private key (RFC 5915 ECPrivateKey inside PKCS#8): P-256 or P-384 from the algorithm's
-// namedCurve (or the key's own [0] parameters); the scalar must be in [1, n-1]. Whether a format
-// takes ECDSA is the signer's question (RFC-0011 W6).
-static bool take_ec(ctx_t *c, rp_der_span_t *alg_rest, const rp_der_t *key) {
+// The curve an EC PrivateKeyInfo names: in the algorithm's parameters or the key's own [0].
+static int ec_curve_of(rp_der_span_t alg_rest, const rp_der_t *key) {
     rp_der_t curve, seq, ver, d;
-    int crv = -1;
-    if (rp_der_get(alg_rest, RP_DER_OID, &curve)) {
-        if (rp_der_oid_is(&curve, O_P256, sizeof O_P256)) crv = RP_EC_P256;
-        else if (rp_der_oid_is(&curve, O_P384, sizeof O_P384)) crv = RP_EC_P384;
-        else return fail(c, PROVEN_ERR_UNSUPPORTED, "an EC key on a curve other than P-256 or P-384");
-    }
-    rp_der_span_t ks = { key->val.p, key->val.n };
-    uint64_t v = 0;
-    if (!rp_der_get(&ks, RP_DER_SEQUENCE, &seq)) return fail(c, PROVEN_ERR_INVALID_FORMAT, "a malformed EC private key");
-    rp_der_span_t ss = rp_der_inside(&seq);
-    if (!rp_der_get(&ss, RP_DER_INTEGER, &ver) || !rp_der_small(&ver, &v) || v != 1 || !rp_der_get(&ss, RP_DER_OCTET_STRING, &d)) {
-        return fail(c, PROVEN_ERR_INVALID_FORMAT, "a malformed EC private key");
-    }
-    uint8_t tag = 0;
-    if (crv < 0 && rp_der_peek(&ss, &tag) && tag == RP_DER_CTX0) {
+    if (!rp_der_get(&alg_rest, RP_DER_OID, &curve)) {
+        rp_der_span_t ks = key->val;
+        uint8_t tag = 0;
+        if (!rp_der_get(&ks, RP_DER_SEQUENCE, &seq)) return -2;
+        rp_der_span_t ss = rp_der_inside(&seq);
+        if (!rp_der_get(&ss, RP_DER_INTEGER, &ver) || !rp_der_get(&ss, RP_DER_OCTET_STRING, &d)) return -2;
         rp_der_t p0;
-        (void)rp_der_read(&ss, &p0);
+        if (!rp_der_peek(&ss, &tag) || tag != RP_DER_CTX0 || !rp_der_read(&ss, &p0)) return -1;
         rp_der_span_t ps = rp_der_inside(&p0);
-        if (rp_der_get(&ps, RP_DER_OID, &curve)) {
-            if (rp_der_oid_is(&curve, O_P256, sizeof O_P256)) crv = RP_EC_P256;
-            else if (rp_der_oid_is(&curve, O_P384, sizeof O_P384)) crv = RP_EC_P384;
-        }
+        if (!rp_der_get(&ps, RP_DER_OID, &curve)) return -1;
     }
-    if (crv < 0) return fail(c, PROVEN_ERR_UNSUPPORTED, "an EC key without a named P-256 or P-384 curve");
-    size_t n = rp_ec_size((rp_ec_curve_t)crv);
-    if (d.val.n != n) return fail(c, PROVEN_ERR_INVALID_FORMAT, "an EC private key of the wrong length");
-    uint8_t qx[48], qy[48];
-    if (!rp_ec_public((rp_ec_curve_t)crv, d.val.p, qx, qy)) return fail(c, PROVEN_ERR_INVALID_FORMAT, "an EC private key out of range");
-    uint8_t *copy = rp_mem_alloc(c->alloc, n, 1);
-    if (copy == NULL) return fail(c, PROVEN_ERR_NOMEM, "out of memory");
-    memcpy(copy, d.val.p, n);
-    c->out->key_der = copy;
-    c->out->key_len = n;
-    c->out->ec = true;
-    c->out->ec_curve = crv;
-    return true;
+    return rp_der_oid_is(&curve, O_P256, sizeof O_P256) ? RP_EC_P256 : rp_der_oid_is(&curve, O_P384, sizeof O_P384) ? RP_EC_P384 : -1;
 }
 
 static bool take_pkcs8(ctx_t *c, const uint8_t *der, size_t len) {
-    if (c->out->key_der) return fail(c, PROVEN_ERR_INVALID_FORMAT, "the file holds more than one private key");
+    if (c->out->pkey) return fail(c, PROVEN_ERR_INVALID_FORMAT, "the file holds more than one private key");
     rp_der_span_t s = { der, len };
     rp_der_t info, ver, alg, oid, key;
     if (!rp_der_get(&s, RP_DER_SEQUENCE, &info)) return fail(c, PROVEN_ERR_INVALID_FORMAT, "a malformed private key");
@@ -153,29 +133,28 @@ static bool take_pkcs8(ctx_t *c, const uint8_t *der, size_t len) {
     }
     rp_der_span_t as = rp_der_inside(&alg);
     if (!rp_der_get(&as, RP_DER_OID, &oid)) return fail(c, PROVEN_ERR_INVALID_FORMAT, "a private key without an algorithm");
-    if (rp_der_oid_is(&oid, O_ECKEY, sizeof O_ECKEY)) return take_ec(c, &as, &key);
-    if (!rp_der_oid_is(&oid, O_RSA, sizeof O_RSA)) return fail(c, PROVEN_ERR_UNSUPPORTED, "the private key is not an RSA key");
-    uint8_t *copy = rp_mem_alloc(c->alloc, key.val.n, 1);
-    if (copy == NULL) return fail(c, PROVEN_ERR_NOMEM, "out of memory");
-    memcpy(copy, key.val.p, key.val.n);
-    rp_der_span_t ks = { copy, key.val.n };
-    rp_der_t seq, f[9];
-    rp_der_span_t mag[9];
-    bool ok = rp_der_get(&ks, RP_DER_SEQUENCE, &seq);
-    rp_der_span_t fs = ok ? rp_der_inside(&seq) : (rp_der_span_t){ 0 };
-    for (int i = 0; ok && i < 9; ++i) ok = rp_der_get(&fs, RP_DER_INTEGER, &f[i]) && rp_der_uint(&f[i], &mag[i]);
-    uint64_t kv = 1;
-    if (ok) ok = rp_der_small(&f[0], &kv) && kv == 0;       // two-prime keys only
-    if (!ok) {
-        rp_wipe(copy, key.val.n);
-        rp_mem_free(c->alloc, copy);
-        return fail(c, PROVEN_ERR_UNSUPPORTED, "not a two-prime RSA private key");
+    bool ec = rp_der_oid_is(&oid, O_ECKEY, sizeof O_ECKEY);
+    int crv = -1;
+    if (ec) {
+        crv = ec_curve_of(as, &key);
+        if (crv == -2) return fail(c, PROVEN_ERR_INVALID_FORMAT, "a malformed EC private key");
+        if (crv < 0) return fail(c, PROVEN_ERR_UNSUPPORTED, "an EC key on a curve other than P-256 or P-384");
+    } else if (!rp_der_oid_is(&oid, O_RSA, sizeof O_RSA)) {
+        return fail(c, PROVEN_ERR_UNSUPPORTED, "the private key is not an RSA key");
     }
-    rp_keyfile_t *kf = c->out;
-    kf->key_der = copy;
-    kf->key_len = key.val.n;
-    kf->rsa = (rp_rsa_key_t){ mag[1].p, mag[2].p, mag[3].p, mag[4].p, mag[5].p, mag[6].p, mag[7].p, mag[8].p,
-                              mag[1].n, mag[2].n, mag[3].n, mag[4].n, mag[5].n, mag[6].n, mag[7].n, mag[8].n };
+    // RSA blinding while the key is checked draws from a generator seeded from the OS.
+    proven_chacha_rng_t g;
+    if (!proven_chacha_rng_seed_from_entropy(&g)) return fail(c, PROVEN_ERR_IO, "the system random source failed");
+    proven_err_t err = proven_pkey_parse(c->alloc, (proven_mem_view_t){ info.whole.p, info.whole.n }, proven_chacha_rng(&g), &c->out->pkey);
+    rp_wipe(&g, sizeof g);
+    if (err == PROVEN_ERR_NOMEM) return fail(c, err, "out of memory");
+    if (err != PROVEN_OK) {
+        c->out->pkey = NULL;
+        return fail(c, ec ? PROVEN_ERR_INVALID_FORMAT : PROVEN_ERR_UNSUPPORTED,
+                    ec ? "an EC private key out of range or malformed" : "not a two-prime RSA private key of 2048 to 4096 bits");
+    }
+    c->out->ec = ec;
+    c->out->ec_curve = ec ? crv : 0;
     return true;
 }
 
@@ -230,16 +209,15 @@ static bool pbes2_decrypt(ctx_t *c, const rp_der_t *alg, uint8_t *data, size_t l
     if (len == 0 || len % 16) return fail(c, PROVEN_ERR_INVALID_FORMAT, "encrypted data is not a whole number of AES blocks");
     uint8_t key[32];
     rp_pbkdf2(prf, c->pass, c->pass_len, salt.val.p, salt.val.n, (uint32_t)iterations, key, aes_len);
-    rp_aes_t aes;
-    (void)rp_aes_init(&aes, key, aes_len);
+    uint8_t ivb[16];
+    memcpy(ivb, iv.val.p, 16);
+    proven_err_t err = proven_aes_cbc_decrypt((proven_mem_view_t){ key, aes_len }, ivb, (proven_mem_mut_t){ data, len });
     rp_wipe(key, sizeof key);
-    (void)rp_aes_cbc_decrypt(&aes, iv.val.p, data, data, len);
-    rp_wipe(&aes, sizeof aes);
-    uint8_t pad = data[len - 1];
-    bool ok = pad >= 1 && pad <= 16;
-    for (size_t i = 0; ok && i < pad; ++i) ok = data[len - 1 - i] == pad;
-    if (!ok) return fail(c, PROVEN_ERR_PERMISSION, "wrong password (the decrypted data does not end in valid padding)");
-    *plain_len = len - pad;
+    size_t plain = 0;
+    if (err != PROVEN_OK || proven_pkcs7_unpad((proven_mem_view_t){ data, len }, 16, &plain) != PROVEN_OK) {
+        return fail(c, PROVEN_ERR_PERMISSION, "wrong password (the decrypted data does not end in valid padding)");
+    }
+    *plain_len = plain;
     return true;
 }
 
@@ -584,7 +562,7 @@ proven_err_t rp_keyfile_load(proven_allocator_t alloc, const uint8_t *data, size
         rp_wipe(der, der_len);
         rp_mem_free(alloc, der);
     }
-    if (ok && out->key_der == NULL) ok = fail(&c, PROVEN_ERR_INVALID_FORMAT, "the file holds no private key");
+    if (ok && out->pkey == NULL) ok = fail(&c, PROVEN_ERR_INVALID_FORMAT, "the file holds no private key");
     if (!ok) {
         rp_keyfile_free(out);
         return c.err == PROVEN_OK ? PROVEN_ERR_INVALID_FORMAT : c.err;
@@ -621,14 +599,20 @@ proven_err_t rp_keyfile_add_roots(rp_keyfile_t *kf, const uint8_t *data, size_t 
 
 void rp_keyfile_free(rp_keyfile_t *kf) {
     if (kf->ext_free) kf->ext_free(kf->ext_ctx);
-    if (kf->key_der) {
-        rp_wipe(kf->key_der, kf->key_len);
-        rp_mem_free(kf->alloc, kf->key_der);
-    }
+    proven_pkey_destroy(kf->pkey);
     for (size_t i = 0; i < kf->cert_count; ++i) rp_mem_free(kf->alloc, kf->certs[i]);
     rp_mem_free(kf->alloc, kf->certs);
     rp_mem_free(kf->alloc, kf->cert_len);
     memset(kf, 0, sizeof *kf);
+}
+
+// An unsigned big-endian integer without its leading zero bytes.
+static rp_der_span_t lead(proven_mem_view_t v) {
+    while (v.size > 1 && v.ptr[0] == 0) {
+        ++v.ptr;
+        --v.size;
+    }
+    return (rp_der_span_t){ v.ptr, v.size };
 }
 
 int rp_keyfile_leaf(const rp_keyfile_t *kf) {
@@ -637,18 +621,18 @@ int rp_keyfile_leaf(const rp_keyfile_t *kf) {
         rp_cert_t c;
         if (!rp_cert_parse(kf->certs[i], kf->cert_len[i], &c, NULL)) continue;
         if (kf->ec) {                   // the certificate's point is the key's public point
-            uint8_t qx[48], qy[48];
+            proven_mem_view_t pt;
             size_t n = rp_ec_size((rp_ec_curve_t)kf->ec_curve);
-            if (c.ec_curve == kf->ec_curve && rp_ec_public((rp_ec_curve_t)kf->ec_curve, kf->key_der, qx, qy) && c.ec_x.n == n &&
-                c.ec_y.n == n && memcmp(c.ec_x.p, qx, n) == 0 && memcmp(c.ec_y.p, qy, n) == 0) {
+            if (c.ec_curve == kf->ec_curve && proven_pkey_ec_point(kf->pkey, &pt) == PROVEN_OK && pt.size == 1 + 2 * n &&
+                c.ec_x.n == n && c.ec_y.n == n && memcmp(c.ec_x.p, pt.ptr + 1, n) == 0 && memcmp(c.ec_y.p, pt.ptr + 1 + n, n) == 0) {
                 return (int)i;
             }
             continue;
         }
-        if (!c.rsa) continue;
-        const uint8_t *n = kf->rsa.n, *e = kf->rsa.e;
-        size_t nl = kf->rsa.n_len, el = kf->rsa.e_len;
-        if (c.rsa_n.n == nl && c.rsa_e.n == el && memcmp(c.rsa_n.p, n, nl) == 0 && memcmp(c.rsa_e.p, e, el) == 0) return (int)i;
+        proven_rsa_components_t k;
+        if (!c.rsa || proven_pkey_rsa_components(kf->pkey, &k) != PROVEN_OK) continue;
+        rp_der_span_t n = lead(k.n), e = lead(k.e);
+        if (c.rsa_n.n == n.n && c.rsa_e.n == e.n && memcmp(c.rsa_n.p, n.p, n.n) == 0 && memcmp(c.rsa_e.p, e.p, e.n) == 0) return (int)i;
     }
     return -1;
 }

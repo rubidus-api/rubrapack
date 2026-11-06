@@ -17,6 +17,9 @@
 
 #include <string.h>
 
+#include "proven/random.h"
+#include "proven/sign.h"
+
 #define OID(name, ...) static const uint8_t name[] = { __VA_ARGS__ }
 OID(O_SIGNED_DATA, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x07, 0x02);
 OID(O_SHA256, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01);
@@ -171,28 +174,18 @@ static proven_err_t build_signed(proven_allocator_t alloc, const rp_keyfile_t *k
                 *why = TR_N("the token's signature does not verify with the certificate (the key and the certificate do not belong together)");
                 err = PROVEN_ERR_INVALID_STATE;
             }
-        } else if (kf->ec) {
-            // ECDSA (RFC 6979): the signature as DER SEQUENCE { r, s }, as Windows writes it.
-            uint8_t r[48], sv[48];
-            size_t n = rp_ec_size((rp_ec_curve_t)kf->ec_curve);
-            err = rp_ecdsa_sign((rp_ec_curve_t)kf->ec_curve, kf->key_der, alg, attrs_hash, r, sv);
-            if (err == PROVEN_OK) {
-                rp_buf_t rs = rp_buf_new(alloc, 256), seq = rp_buf_new(alloc, 256);
-                rp_der_put_uint(&rs, r, n);
-                rp_der_put_uint(&rs, sv, n);
-                rp_der_wrap(&seq, RP_DER_SEQUENCE, &rs);
-                if (seq.err == PROVEN_OK && seq.len <= sizeof sig) {
-                    memcpy(sig, seq.data, seq.len);
-                    sig_len = seq.len;
-                } else {
-                    err = PROVEN_ERR_NOMEM;
-                }
-                rp_buf_free(&seq);
-            }
-            rp_wipe(r, sizeof r);
-            rp_wipe(sv, sizeof sv);
         } else {
-            err = rp_rsa_sign(&kf->rsa, alg, attrs_hash, sig, &sig_len);
+            // proven signs: RSA PKCS#1 v1.5 (blinded, checked before it is given out), or ECDSA with
+            // RFC 6979 nonces as DER SEQUENCE { r, s }, as Windows writes it, checked here.
+            proven_chacha_rng_t g;
+            if (!proven_chacha_rng_seed_from_entropy(&g)) err = PROVEN_ERR_IO;
+            else {
+                err = proven_pkey_sign(kf->pkey, kf->ec ? PROVEN_SIGN_ECDSA : PROVEN_SIGN_RSA_PKCS1, rp_hash_mac(alg),
+                                       (proven_mem_view_t){ attrs_hash, rp_hash_size(alg) }, proven_chacha_rng(&g),
+                                       (proven_mem_mut_t){ sig, sizeof sig }, &sig_len);
+                if (err == PROVEN_OK && kf->ec && !rp_cert_verify_sig(&lc, alg, attrs_hash, sig, sig_len)) err = PROVEN_ERR_INVALID_STATE;
+            }
+            rp_wipe(&g, sizeof g);
         }
         if (err != PROVEN_OK && !kf->ext_sign) {
             *why = err == PROVEN_ERR_IO ? "the system random source failed" : "the private key does not work (or does not match its certificate)";

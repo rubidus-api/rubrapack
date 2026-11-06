@@ -5,32 +5,21 @@
 
 #include <string.h>
 
-// The one place a length is checked against the buffer.
+#include "proven/der.h"
+
+// The reader is proven's (proven/der.h): definite lengths in their shortest form, one-byte tags,
+// nothing past the input. These keep the cursor shape the callers walk with.
+
+static proven_mem_view_t pv(rp_der_span_t s) { return (proven_mem_view_t){ s.p, s.n }; }
+
 bool rp_der_read(rp_der_span_t *s, rp_der_t *e) {
-    const uint8_t *p = s->p;
-    size_t n = s->n;
-    if (n < 2) return false;
-    uint8_t tag = p[0];
-    if ((tag & 0x1F) == 0x1F) return false;         // multi-byte tag
-    size_t len, head;
-    uint8_t l0 = p[1];
-    if (l0 < 0x80) {
-        len = l0;
-        head = 2;
-    } else {
-        size_t k = l0 & 0x7F;
-        if (k == 0 || k > 4 || n < 2 + k || p[2] == 0) return false;     // indefinite, too long, or not minimal
-        len = 0;
-        for (size_t i = 0; i < k; ++i) len = (len << 8) | p[2 + i];
-        if (len < 0x80 || (k > 1 && len < ((size_t)1 << (8 * (k - 1))))) return false;   // a shorter form existed
-        head = 2 + k;
-    }
-    if (len > n - head) return false;
-    e->tag = tag;
-    e->val = (rp_der_span_t){ p + head, len };
-    e->whole = (rp_der_span_t){ p, head + len };
-    s->p = p + head + len;
-    s->n = n - head - len;
+    proven_mem_view_t in = pv(*s);
+    proven_der_item_t it;
+    if (s->n == 0 || proven_der_read(&in, &it) != PROVEN_OK) return false;
+    e->tag = it.tag;
+    e->val = (rp_der_span_t){ it.content.ptr, it.content.size };
+    e->whole = (rp_der_span_t){ it.whole.ptr, it.whole.size };
+    *s = (rp_der_span_t){ in.ptr, in.size };
     return true;
 }
 
@@ -51,28 +40,21 @@ bool rp_der_peek(const rp_der_span_t *s, uint8_t *tag) {
 }
 
 bool rp_der_oid_is(const rp_der_t *e, const uint8_t *oid, size_t len) {
-    return e->tag == RP_DER_OID && e->val.n == len && memcmp(e->val.p, oid, len) == 0;
+    return e->tag == RP_DER_OID && proven_der_oid_is(pv(e->val), (proven_mem_view_t){ oid, len });
 }
 
 bool rp_der_uint(const rp_der_t *e, rp_der_span_t *out) {
-    if (e->tag != RP_DER_INTEGER || e->val.n == 0) return false;
-    const uint8_t *p = e->val.p;
-    size_t n = e->val.n;
-    if (p[0] & 0x80) return false;                  // negative
-    if (n > 1 && p[0] == 0 && !(p[1] & 0x80)) return false;     // not minimal
-    if (n > 1 && p[0] == 0) {
-        ++p;
-        --n;
-    }
-    *out = (rp_der_span_t){ p, n };
+    proven_mem_view_t in = pv(e->whole), m;
+    if (proven_der_read_uint(&in, &m) != PROVEN_OK) return false;
+    *out = (rp_der_span_t){ m.ptr, m.size };
     return true;
 }
 
 bool rp_der_small(const rp_der_t *e, uint64_t *v) {
-    rp_der_span_t m;
-    if (!rp_der_uint(e, &m) || m.n > 8) return false;
-    *v = 0;
-    for (size_t i = 0; i < m.n; ++i) *v = (*v << 8) | m.p[i];
+    proven_mem_view_t in = pv(e->whole);
+    proven_u64 x;
+    if (proven_der_read_u64(&in, &x) != PROVEN_OK) return false;
+    *v = x;
     return true;
 }
 
@@ -191,11 +173,40 @@ proven_err_t rp_ber_to_der(proven_allocator_t alloc, const uint8_t *in, size_t l
 }
 
 // ---- writing -----------------------------------------------------------------------------
+//
+// Each element is encoded by proven's writer (proven/der.h) straight into the end of `b`: the
+// room it needs is made first, exactly, so a buffer's limit is reached only by what is written.
+
+// Bytes of an element with `n` content bytes.
+static size_t elem_size(size_t n) {
+    size_t h = 2;
+    for (size_t x = n; n >= 0x80 && x; x >>= 8) ++h;
+    return h + n;
+}
+
+static bool open_tail(rp_buf_t *b, size_t room, proven_der_writer_t *w, size_t *at) {
+    *at = b->len;
+    rp_buf_zero(b, room);
+    if (b->err != PROVEN_OK || b->len != *at + room) return false;
+    proven_der_writer_init(w, (proven_mem_mut_t){ b->data + *at, room });
+    return true;
+}
+
+static void close_tail(rp_buf_t *b, const proven_der_writer_t *w, size_t at) {
+    size_t n = 0;
+    if (proven_der_writer_finish(w, &n) != PROVEN_OK) {
+        if (b->err == PROVEN_OK) b->err = PROVEN_ERR_INVALID_STATE;
+        n = 0;
+    }
+    b->len = at + n;
+}
 
 void rp_der_put(rp_buf_t *b, uint8_t tag, const void *v, size_t n) {
-    rp_buf_byte(b, tag);
-    put_len(b, n);
-    if (n) rp_buf_put(b, v, n);
+    proven_der_writer_t w;
+    size_t at;
+    if (!open_tail(b, elem_size(n), &w, &at)) return;
+    proven_der_put(&w, tag, (proven_mem_view_t){ n ? v : (const void *)"", n });
+    close_tail(b, &w, at);
 }
 
 void rp_der_put_uint(rp_buf_t *b, const uint8_t *be, size_t n) {
@@ -203,22 +214,19 @@ void rp_der_put_uint(rp_buf_t *b, const uint8_t *be, size_t n) {
         ++be;
         --n;
     }
-    bool pad = n == 0 || (be[0] & 0x80);
-    rp_buf_byte(b, RP_DER_INTEGER);
-    put_len(b, n + (pad ? 1 : 0));
-    if (pad) rp_buf_byte(b, 0);
-    if (n) rp_buf_put(b, be, n);
+    proven_der_writer_t w;
+    size_t at;
+    if (!open_tail(b, elem_size(n + 1), &w, &at)) return;
+    proven_der_put_uint(&w, (proven_mem_view_t){ n ? be : (const uint8_t *)"", n });
+    close_tail(b, &w, at);
 }
 
 void rp_der_put_small(rp_buf_t *b, uint64_t v) {
-    uint8_t tmp[8];
-    int k = 0;
-    for (uint64_t x = v; x; x >>= 8) tmp[7 - k++] = (uint8_t)x;
-    if (k == 0) {
-        rp_der_put(b, RP_DER_INTEGER, "\0", 1);
-        return;
-    }
-    rp_der_put_uint(b, tmp + 8 - k, (size_t)k);
+    proven_der_writer_t w;
+    size_t at;
+    if (!open_tail(b, elem_size(9), &w, &at)) return;
+    proven_der_put_u64(&w, v);
+    close_tail(b, &w, at);
 }
 
 void rp_der_put_oid(rp_buf_t *b, const uint8_t *oid, size_t n) { rp_der_put(b, RP_DER_OID, oid, n); }
@@ -231,35 +239,15 @@ void rp_der_wrap(rp_buf_t *b, uint8_t tag, rp_buf_t *child) {
     rp_buf_free(child);
 }
 
-// X.690 11.6: the encodings in ascending order, compared as octet strings where the shorter one
-// is padded with zeros at the end.
-static int cmp_set(const rp_der_span_t *a, const rp_der_span_t *b) {
-    size_t n = a->n > b->n ? a->n : b->n;
-    for (size_t i = 0; i < n; ++i) {
-        uint8_t x = i < a->n ? a->p[i] : 0, y = i < b->n ? b->p[i] : 0;
-        if (x != y) return x < y ? -1 : 1;
-    }
-    return 0;
-}
-
+// X.690 11.6 order, which proven_der_end_set_of puts the elements in.
 void rp_der_set_of(rp_buf_t *b, uint8_t tag, const rp_der_span_t *elems, size_t n) {
-    size_t *order = rp_mem_alloc(b->alloc, n + 1, sizeof *order);
-    if (order == NULL) {
-        if (b->err == PROVEN_OK) b->err = PROVEN_ERR_NOMEM;
-        return;
-    }
-    for (size_t i = 0; i < n; ++i) order[i] = i;
-    for (size_t i = 1; i < n; ++i) {
-        for (size_t j = i; j > 0 && cmp_set(&elems[order[j - 1]], &elems[order[j]]) > 0; --j) {
-            size_t t = order[j];
-            order[j] = order[j - 1];
-            order[j - 1] = t;
-        }
-    }
     size_t total = 0;
     for (size_t i = 0; i < n; ++i) total += elems[i].n;
-    rp_buf_byte(b, tag);
-    put_len(b, total);
-    for (size_t i = 0; i < n; ++i) rp_buf_put(b, elems[order[i]].p, elems[order[i]].n);
-    rp_mem_free(b->alloc, order);
+    proven_der_writer_t w;
+    size_t at;
+    if (!open_tail(b, elem_size(total), &w, &at)) return;
+    proven_der_begin(&w, tag);
+    for (size_t i = 0; i < n; ++i) proven_der_put_raw(&w, (proven_mem_view_t){ elems[i].p, elems[i].n });
+    proven_der_end_set_of(&w);
+    close_tail(b, &w, at);
 }

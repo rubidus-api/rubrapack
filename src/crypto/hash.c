@@ -1,16 +1,11 @@
-// src/crypto/hash.c - SHA-256/384/512, SHA-1, HMAC, HKDF and PBKDF2 behind one interface
-// (include/rubrapack/crypto.h). The hashes, HMAC and HKDF are proven's; PBKDF2, which proven
-// does not have (proven/hmac.h), is a loop over proven's HMAC.
+// src/crypto/hash.c - SHA-256/384/512, SHA-1, HMAC and PBKDF2 behind one interface
+// (include/rubrapack/crypto.h), all proven's.
 
 #include "rubrapack/crypto.h"
 
 #include <string.h>
 
 static proven_mem_view_t mv(const void *p, size_t n) { return (proven_mem_view_t){ (const proven_byte_t *)p, n }; }
-
-static proven_hmac_hash_t mac_of(rp_hash_alg_t alg) {
-    return alg == RP_HASH_SHA256 ? PROVEN_HMAC_SHA256 : alg == RP_HASH_SHA384 ? PROVEN_HMAC_SHA384 : PROVEN_HMAC_SHA512;
-}
 
 size_t rp_hash_size(rp_hash_alg_t alg) { return alg == RP_HASH_SHA256 ? 32 : alg == RP_HASH_SHA384 ? 48 : 64; }
 size_t rp_hash_block(rp_hash_alg_t alg) { return alg == RP_HASH_SHA256 ? 64 : 128; }
@@ -47,11 +42,11 @@ void rp_wipe(void *p, size_t n) { proven_mem_wipe((proven_mem_mut_t){ p, n }); }
 
 bool rp_ct_equal(const uint8_t *a, const uint8_t *b, size_t n) { return proven_mem_equal_ct(mv(a, n), mv(b, n)); }
 
-// ---- HMAC, PBKDF2, HKDF --------------------------------------------------------------------
+// ---- HMAC and PBKDF2 --------------------------------------------------------------------------
 
 void rp_hmac_init(rp_hmac_t *m, rp_hash_alg_t alg, const uint8_t *key, size_t key_len) {
     // Fails only for an unknown hash or a NULL key with a length, neither of which reaches here.
-    (void)proven_hmac_init(&m->m, mac_of(alg), mv(key_len ? key : (const uint8_t *)"", key_len));
+    (void)proven_hmac_init(&m->m, rp_hash_mac(alg), mv(key_len ? key : (const uint8_t *)"", key_len));
 }
 
 void rp_hmac_update(rp_hmac_t *m, const void *data, size_t len) {
@@ -75,32 +70,9 @@ void rp_hmac(rp_hash_alg_t alg, const uint8_t *key, size_t key_len, const void *
 
 void rp_pbkdf2(rp_hash_alg_t alg, const uint8_t *pass, size_t pass_len, const uint8_t *salt, size_t salt_len,
                uint32_t iterations, uint8_t *out, size_t out_len) {
-    size_t hl = rp_hash_size(alg);
-    rp_hmac_t base, m;
-    rp_hmac_init(&base, alg, pass, pass_len);      // the keyed state, copied for every HMAC
-    uint8_t u[RP_HASH_MAX], t[RP_HASH_MAX];
-    for (uint32_t block = 1; out_len; ++block) {
-        uint8_t ctr[4] = { (uint8_t)(block >> 24), (uint8_t)(block >> 16), (uint8_t)(block >> 8), (uint8_t)block };
-        m = base;
-        rp_hmac_update(&m, salt, salt_len);
-        rp_hmac_update(&m, ctr, 4);
-        rp_hmac_final(&m, u);
-        memcpy(t, u, hl);
-        for (uint32_t i = 1; i < iterations; ++i) {
-            m = base;
-            rp_hmac_update(&m, u, hl);
-            rp_hmac_final(&m, u);
-            for (size_t j = 0; j < hl; ++j) t[j] ^= u[j];
-        }
-        size_t take = out_len < hl ? out_len : hl;
-        memcpy(out, t, take);
-        out += take;
-        out_len -= take;
-    }
-    rp_wipe(&base, sizeof base);
-    rp_wipe(&m, sizeof m);
-    rp_wipe(u, sizeof u);
-    rp_wipe(t, sizeof t);
+    // Fails only for zero iterations or a NULL buffer with a length, neither of which reaches here.
+    (void)proven_pbkdf2(rp_hash_mac(alg), mv(pass_len ? pass : (const uint8_t *)"", pass_len),
+                        mv(salt_len ? salt : (const uint8_t *)"", salt_len), iterations, (proven_mem_mut_t){ out, out_len });
 }
 
 // ---- SHA-1, for catalog member identifiers only --------------------------------------------

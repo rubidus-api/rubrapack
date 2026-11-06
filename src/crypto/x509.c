@@ -1,199 +1,88 @@
-// src/crypto/x509.c - X.509 certificate parsing (include/rubrapack/pki.h; RFC 5280).
-//
-// Written on the approach of lowent_lang v1.3.0 lib/x509.low (same author, MIT): the fields are
-// spans into the original bytes, found with the DER cursor. Extended here with validity, key
-// usage, extended key usage, basic constraints and the critical-extension check that code
-// signing needs.
+// src/crypto/x509.c - X.509 certificates (include/rubrapack/pki.h; RFC 5280): proven_c_lib's
+// parser (proven/cert.h), its fields given as the spans the signing code reads. The spans point
+// into the original bytes.
 
 #include "rubrapack/pki.h"
-#include "rubrapack/str.h"
 
 #include <string.h>
 
-static const uint8_t OID_RSA[] = { 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01 };
-static const uint8_t OID_EC[] = { 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x02, 0x01 };
-static const uint8_t OID_P256[] = { 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x03, 0x01, 0x07 };
-static const uint8_t OID_P384[] = { 0x2B, 0x81, 0x04, 0x00, 0x22 };
-static const uint8_t OID_KU[] = { 0x55, 0x1D, 0x0F }, OID_BC[] = { 0x55, 0x1D, 0x13 }, OID_EKU[] = { 0x55, 0x1D, 0x25 };
-static const uint8_t OID_SAN[] = { 0x55, 0x1D, 0x11 }, OID_SKI[] = { 0x55, 0x1D, 0x0E }, OID_AKI[] = { 0x55, 0x1D, 0x23 };
-static const uint8_t OID_CODE[] = { 0x2B, 0x06, 0x01, 0x05, 0x05, 0x07, 0x03, 0x03 };
-static const uint8_t OID_TIME[] = { 0x2B, 0x06, 0x01, 0x05, 0x05, 0x07, 0x03, 0x08 };
-static const uint8_t OID_SERVER[] = { 0x2B, 0x06, 0x01, 0x05, 0x05, 0x07, 0x03, 0x01 };
-static const uint8_t OID_ANY_EKU[] = { 0x55, 0x1D, 0x25, 0x00 };
+#include "proven/cert.h"
+#include "proven/der.h"
 
-// Days from 1970-01-01 to a civil date (proleptic Gregorian).
-static int64_t days_from_civil(int64_t y, int m, int d) {
-    y -= m <= 2;
-    int64_t era = (y >= 0 ? y : y - 399) / 400;
-    int64_t yoe = y - era * 400;
-    int64_t doy = (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + d - 1;
-    int64_t doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
-    return era * 146097 + doe - 719468;
-}
-
-static bool digits(const uint8_t *p, size_t n, int *v) {
-    *v = 0;
-    for (size_t i = 0; i < n; ++i) {
-        if (p[i] < '0' || p[i] > '9') return false;
-        *v = *v * 10 + (p[i] - '0');
-    }
-    return true;
-}
-
-static bool parse_time(const rp_der_t *e, int64_t *out) {
-    const uint8_t *p = e->val.p;
-    int y, mo, d, h, mi, s;
-    size_t off;
-    if (e->tag == RP_DER_UTCTIME && e->val.n == 13) {
-        if (!digits(p, 2, &y)) return false;
-        y += y < 50 ? 2000 : 1900;
-        off = 2;
-    } else if (e->tag == RP_DER_GENTIME && e->val.n == 15) {
-        if (!digits(p, 4, &y)) return false;
-        off = 4;
-    } else {
-        return false;
-    }
-    if (p[e->val.n - 1] != 'Z' || !digits(p + off, 2, &mo) || !digits(p + off + 2, 2, &d) || !digits(p + off + 4, 2, &h) ||
-        !digits(p + off + 6, 2, &mi) || !digits(p + off + 8, 2, &s) || mo < 1 || mo > 12 || d < 1 || d > 31 || h > 23 ||
-        mi > 59 || s > 60) {
-        return false;
-    }
-    *out = days_from_civil(y, mo, d) * 86400 + h * 3600 + mi * 60 + s;
-    return true;
-}
-
-#define FAIL(msg) do { *why = (msg); return false; } while (0)
-
-static bool parse_ext(const rp_der_t *ext, rp_cert_t *c, const char **why) {
-    rp_der_span_t s = rp_der_inside(ext), v;
-    rp_der_t id, crit, val, x;
-    bool critical = false;
-    if (!rp_der_get(&s, RP_DER_OID, &id)) FAIL("an extension without an identifier");
-    if (rp_der_get(&s, RP_DER_BOOLEAN, &crit)) critical = crit.val.n == 1 && crit.val.p[0] != 0;
-    if (!rp_der_get(&s, RP_DER_OCTET_STRING, &val) || s.n) FAIL("a malformed extension");
-    v = val.val;
-    if (rp_der_oid_is(&id, OID_KU, sizeof OID_KU)) {
-        if (!rp_der_get(&v, RP_DER_BIT_STRING, &x) || x.val.n < 2) FAIL("a malformed key usage");
-        c->has_ku = true;
-        c->ku_sign = x.val.p[1] & 0x80;
-        c->ku_cert_sign = x.val.p[1] & 0x04;
-    } else if (rp_der_oid_is(&id, OID_BC, sizeof OID_BC)) {
-        if (!rp_der_get(&v, RP_DER_SEQUENCE, &x)) FAIL("malformed basic constraints");
-        rp_der_span_t b = rp_der_inside(&x);
-        rp_der_t ca;
-        if (rp_der_get(&b, RP_DER_BOOLEAN, &ca)) c->ca = ca.val.n == 1 && ca.val.p[0] != 0;
-    } else if (rp_der_oid_is(&id, OID_EKU, sizeof OID_EKU)) {
-        if (!rp_der_get(&v, RP_DER_SEQUENCE, &x)) FAIL("a malformed extended key usage");
-        c->has_eku = true;
-        rp_der_span_t list = rp_der_inside(&x);
-        rp_der_t o;
-        while (rp_der_get(&list, RP_DER_OID, &o)) {
-            c->eku_code |= rp_der_oid_is(&o, OID_CODE, sizeof OID_CODE);
-            c->eku_time |= rp_der_oid_is(&o, OID_TIME, sizeof OID_TIME);
-            c->eku_server |= rp_der_oid_is(&o, OID_SERVER, sizeof OID_SERVER);
-            c->eku_any |= rp_der_oid_is(&o, OID_ANY_EKU, sizeof OID_ANY_EKU);
-        }
-        if (list.n) FAIL("a malformed extended key usage");
-    } else if (rp_der_oid_is(&id, OID_SAN, sizeof OID_SAN)) {
-        if (!rp_der_get(&v, RP_DER_SEQUENCE, &x) || v.n) FAIL("a malformed subject alternative name");
-        c->san = rp_der_inside(&x);
-        rp_der_span_t list = c->san;
-        rp_der_t n;
-        while (list.n) {
-            if (!rp_der_read(&list, &n)) FAIL("a malformed subject alternative name");
-        }
-    } else if (rp_der_oid_is(&id, OID_SKI, sizeof OID_SKI)) {
-        if (!rp_der_get(&v, RP_DER_OCTET_STRING, &x)) FAIL("a malformed subject key identifier");
-        c->ski = x.val;
-    } else if (critical && !rp_der_oid_is(&id, OID_SAN, sizeof OID_SAN) && !rp_der_oid_is(&id, OID_SKI, sizeof OID_SKI) &&
-               !rp_der_oid_is(&id, OID_AKI, sizeof OID_AKI)) {
-        c->unknown_critical = true;
-    }
-    return true;
-}
+static rp_der_span_t sp(proven_mem_view_t v) { return (rp_der_span_t){ v.ptr, v.size }; }
 
 bool rp_cert_parse(const uint8_t *der, size_t len, rp_cert_t *c, const char **why) {
     memset(c, 0, sizeof *c);
     c->ec_curve = -1;
-    const char *dummy;
-    if (why == NULL) why = &dummy;
-    rp_der_span_t s = { der, len };
-    rp_der_t cert, tbs, e;
-    if (!rp_der_get(&s, RP_DER_SEQUENCE, &cert) || s.n) FAIL("not a DER certificate");
-    c->der = cert.whole;
-    rp_der_span_t cs = rp_der_inside(&cert);
-    if (!rp_der_get(&cs, RP_DER_SEQUENCE, &tbs)) FAIL("no tbsCertificate");
-    c->tbs = tbs.whole;
-    if (!rp_der_get(&cs, RP_DER_SEQUENCE, &e)) FAIL("no signature algorithm");
-    c->sig_alg = e.whole;
-    if (!rp_der_get(&cs, RP_DER_BIT_STRING, &e) || e.val.n < 1 || e.val.p[0] != 0 || cs.n) FAIL("a malformed signature");
-    c->sig = (rp_der_span_t){ e.val.p + 1, e.val.n - 1 };
-
-    rp_der_span_t t = rp_der_inside(&tbs);
-    uint64_t version = 0;
-    if (rp_der_get(&t, RP_DER_CTX0, &e)) {
-        rp_der_span_t vs = rp_der_inside(&e);
-        rp_der_t v;
-        if (!rp_der_get(&vs, RP_DER_INTEGER, &v) || !rp_der_small(&v, &version) || version > 2) FAIL("an unknown certificate version");
+    proven_cert_t pc;
+    if (proven_cert_parse((proven_mem_view_t){ der, len }, &pc) != PROVEN_OK) {
+        if (why) *why = "not a well-formed DER certificate";
+        return false;
     }
-    if (!rp_der_get(&t, RP_DER_INTEGER, &e)) FAIL("no serial number");
-    c->serial = e.whole;
-    if (!rp_der_get(&t, RP_DER_SEQUENCE, &e)) FAIL("no inner signature algorithm");
-    if (!rp_der_get(&t, RP_DER_SEQUENCE, &e)) FAIL("no issuer");
-    c->issuer = e.whole;
-    if (!rp_der_get(&t, RP_DER_SEQUENCE, &e)) FAIL("no validity");
-    rp_der_span_t vs = rp_der_inside(&e);
-    rp_der_t nb, na;
-    if (!rp_der_read(&vs, &nb) || !rp_der_read(&vs, &na) || !parse_time(&nb, &c->not_before) || !parse_time(&na, &c->not_after)) {
-        FAIL("a malformed validity");
+    c->der = sp(pc.der);
+    c->tbs = sp(pc.tbs);
+    c->issuer = sp(pc.issuer);
+    c->subject = sp(pc.subject);
+    c->spki = sp(pc.public_key_info);
+    // The serial number as its whole INTEGER element, for IssuerAndSerialNumber: the element after
+    // the optional [0] version at the start of tbsCertificate.
+    proven_mem_view_t t = pc.tbs, inner;
+    proven_der_item_t e;
+    if (proven_der_expect(&t, PROVEN_DER_SEQUENCE, &inner) != PROVEN_OK || proven_der_read(&inner, &e) != PROVEN_OK ||
+        (e.tag == PROVEN_DER_CONTEXT(0) && proven_der_read(&inner, &e) != PROVEN_OK) || e.tag != PROVEN_DER_INTEGER) {
+        if (why) *why = "not a well-formed DER certificate";
+        return false;
     }
-    if (!rp_der_get(&t, RP_DER_SEQUENCE, &e)) FAIL("no subject");
-    c->subject = e.whole;
-    if (!rp_der_get(&t, RP_DER_SEQUENCE, &e)) FAIL("no public key");
-    c->spki = e.whole;
-    rp_der_span_t ks = rp_der_inside(&e);
-    rp_der_t alg, bits, oid;
-    if (!rp_der_get(&ks, RP_DER_SEQUENCE, &alg) || !rp_der_get(&ks, RP_DER_BIT_STRING, &bits)) FAIL("a malformed public key");
-    rp_der_span_t as = rp_der_inside(&alg);
-    if (!rp_der_get(&as, RP_DER_OID, &oid)) FAIL("a public key without an algorithm");
-    if (rp_der_oid_is(&oid, OID_RSA, sizeof OID_RSA)) {
-        if (bits.val.n < 1 || bits.val.p[0] != 0) FAIL("a malformed RSA key");
-        rp_der_span_t kb = { bits.val.p + 1, bits.val.n - 1 };
-        rp_der_t seq, n, ex;
-        if (!rp_der_get(&kb, RP_DER_SEQUENCE, &seq)) FAIL("a malformed RSA key");
-        rp_der_span_t kk = rp_der_inside(&seq);
-        if (!rp_der_get(&kk, RP_DER_INTEGER, &n) || !rp_der_get(&kk, RP_DER_INTEGER, &ex) || !rp_der_uint(&n, &c->rsa_n) ||
-            !rp_der_uint(&ex, &c->rsa_e)) {
-            FAIL("a malformed RSA key");
-        }
+    c->serial = sp(e.whole);
+    // The signature's bits without the unused-bits byte (after tbsCertificate and signatureAlgorithm).
+    proven_mem_view_t outer = pc.der, cs;
+    proven_der_item_t tbs, alg;
+    if (proven_der_expect(&outer, PROVEN_DER_SEQUENCE, &cs) != PROVEN_OK || proven_der_read(&cs, &tbs) != PROVEN_OK ||
+        proven_der_read(&cs, &alg) != PROVEN_OK) {
+        if (why) *why = "not a well-formed DER certificate";
+        return false;
+    }
+    proven_mem_view_t bits;
+    proven_u8 unused = 0;
+    if (proven_der_read_bits(&cs, &bits, &unused) != PROVEN_OK || unused != 0) {
+        if (why) *why = "not a well-formed DER certificate";
+        return false;
+    }
+    c->sig = sp(bits);
+    // SHA-1, MD5, PSS and anything else proven reads as a kind it does not accept are refused.
+    c->sig_hash = -1;
+    if ((pc.sig_kind == PROVEN_CERT_SIG_RSA_PKCS1 || pc.sig_kind == PROVEN_CERT_SIG_ECDSA) && pc.sig_hash >= PROVEN_HMAC_SHA256 &&
+        pc.sig_hash <= PROVEN_HMAC_SHA512) {
+        c->sig_hash = pc.sig_hash == PROVEN_HMAC_SHA256 ? RP_HASH_SHA256 : pc.sig_hash == PROVEN_HMAC_SHA384 ? RP_HASH_SHA384 : RP_HASH_SHA512;
+        c->sig_rsa = pc.sig_kind == PROVEN_CERT_SIG_RSA_PKCS1;
+    }
+    c->not_before = pc.not_before;
+    c->not_after = pc.not_after;
+    if (pc.key_kind == PROVEN_CERT_KEY_RSA) {
         c->rsa = true;
-    } else if (rp_der_oid_is(&oid, OID_EC, sizeof OID_EC)) {
-        rp_der_t curve;
-        if (!rp_der_get(&as, RP_DER_OID, &curve)) FAIL("an EC key without a named curve");
-        size_t n = rp_der_oid_is(&curve, OID_P256, sizeof OID_P256) ? 32 : rp_der_oid_is(&curve, OID_P384, sizeof OID_P384) ? 48 : 0;
-        // BIT STRING: no unused bits, then 04 || X || Y.
-        if (n && bits.val.n == 2 + 2 * n && bits.val.p[0] == 0 && bits.val.p[1] == 4) {
+        c->rsa_n = sp(pc.rsa_n);
+        c->rsa_e = sp(pc.rsa_e);
+    } else if (pc.key_kind == PROVEN_CERT_KEY_EC_P256 || pc.key_kind == PROVEN_CERT_KEY_EC_P384) {
+        size_t n = pc.key_kind == PROVEN_CERT_KEY_EC_P256 ? 32 : 48;
+        if (pc.key.size == 1 + 2 * n && pc.key.ptr[0] == 4) {
             c->ec_curve = n == 32 ? RP_EC_P256 : RP_EC_P384;
-            c->ec_x = (rp_der_span_t){ bits.val.p + 2, n };
-            c->ec_y = (rp_der_span_t){ bits.val.p + 2 + n, n };
+            c->ec_x = (rp_der_span_t){ pc.key.ptr + 1, n };
+            c->ec_y = (rp_der_span_t){ pc.key.ptr + 1 + n, n };
         }
     }
-    // Optional issuerUniqueID [1], subjectUniqueID [2], then extensions [3].
-    uint8_t tag;
-    while (rp_der_peek(&t, &tag) && (tag == 0x81 || tag == 0xA1 || tag == 0x82 || tag == 0xA2)) {
-        if (!rp_der_read(&t, &e)) FAIL("a malformed unique identifier");
-    }
-    if (rp_der_get(&t, RP_DER_CTX3, &e)) {
-        rp_der_span_t xs = rp_der_inside(&e);
-        rp_der_t list, ext;
-        if (!rp_der_get(&xs, RP_DER_SEQUENCE, &list) || xs.n) FAIL("malformed extensions");
-        rp_der_span_t ls = rp_der_inside(&list);
-        while (rp_der_get(&ls, RP_DER_SEQUENCE, &ext)) {
-            if (!parse_ext(&ext, c, why)) return false;
-        }
-        if (ls.n) FAIL("malformed extensions");
-    }
-    if (t.n) FAIL("unexpected data in the certificate");
+    c->ski = sp(pc.subject_key_id);
+    c->has_ku = pc.has_key_usage;
+    c->ku_sign = pc.key_usage & PROVEN_CERT_KU_DIGITAL_SIGNATURE;
+    c->ku_cert_sign = pc.key_usage & PROVEN_CERT_KU_KEY_CERT_SIGN;
+    c->has_eku = pc.has_ext_key_usage;
+    c->eku_code = pc.ext_key_usage & PROVEN_CERT_EKU_CODE_SIGNING;
+    c->eku_time = pc.ext_key_usage & PROVEN_CERT_EKU_TIME_STAMPING;
+    c->eku_server = pc.ext_key_usage & PROVEN_CERT_EKU_SERVER_AUTH;
+    c->eku_any = pc.ext_key_usage & PROVEN_CERT_EKU_ANY;
+    c->san = sp(pc.alt_names);
+    c->ca = pc.is_ca;
+    // proven reads name constraints but rubrapack's path check does not apply them, so a
+    // certificate that has them is treated as one with a critical extension not understood.
+    c->unknown_critical = pc.unknown_critical || pc.name_constraints.size;
     return true;
 }

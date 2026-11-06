@@ -8,47 +8,20 @@
 
 #include <string.h>
 
-// The hash of a certificate's signature algorithm; *rsa says whether it is PKCS#1 (else ECDSA). The
-// kind belongs to the issuer's key, not to the certificate's own.
-static bool sig_hash(const rp_cert_t *c, rp_hash_alg_t *alg, bool *rsa) {
-    static const uint8_t pkcs1[] = { 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01 };
-    static const uint8_t ecdsa[] = { 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x04, 0x03 };        // ecdsa-with-SHA2
-    rp_der_span_t s = c->sig_alg;
-    rp_der_t seq, oid;
-    if (!rp_der_get(&s, RP_DER_SEQUENCE, &seq)) return false;
-    rp_der_span_t in = rp_der_inside(&seq);
-    if (!rp_der_get(&in, RP_DER_OID, &oid)) return false;
-    uint8_t last;
-    if (oid.val.n == 9 && memcmp(oid.val.p, pkcs1, 8) == 0) last = (uint8_t)(oid.val.p[8] - 0x0B), *rsa = true;
-    else if (oid.val.n == 8 && memcmp(oid.val.p, ecdsa, 7) == 0) last = (uint8_t)(oid.val.p[7] - 2), *rsa = false;
-    else return false;              // SHA-1 and older are not accepted
-    if (last > 2) return false;
-    *alg = (rp_hash_alg_t)(RP_HASH_SHA256 + last);
-    return true;
-}
+#include "proven/sign.h"
 
 bool rp_cert_verify_sig(const rp_cert_t *c, rp_hash_alg_t alg, const uint8_t *digest, const uint8_t *sig, size_t len) {
-    if (c->rsa) return rp_rsa_verify(c->rsa_n.p, c->rsa_n.n, c->rsa_e.p, c->rsa_e.n, alg, digest, sig, len);
-    if (c->ec_curve < 0) return false;
-    rp_der_span_t s = { sig, len };
-    rp_der_t seq, r, t;
-    if (!rp_der_get(&s, RP_DER_SEQUENCE, &seq) || s.n) return false;
-    rp_der_span_t in = rp_der_inside(&seq);
-    rp_der_span_t rm, sm;
-    if (!rp_der_get(&in, RP_DER_INTEGER, &r) || !rp_der_get(&in, RP_DER_INTEGER, &t) || in.n || !rp_der_uint(&r, &rm) || !rp_der_uint(&t, &sm)) return false;
-    size_t n = rp_ec_size((rp_ec_curve_t)c->ec_curve);
-    if (rm.n > n || sm.n > n) return false;
-    uint8_t rb[48] = { 0 }, sb[48] = { 0 };
-    memcpy(rb + n - rm.n, rm.p, rm.n);
-    memcpy(sb + n - sm.n, sm.p, sm.n);
-    return rp_ecdsa_verify((rp_ec_curve_t)c->ec_curve, c->ec_x.p, c->ec_y.p, alg, digest, rb, sb);
+    if (!c->rsa && c->ec_curve < 0) return false;
+    return proven_verify_spki((proven_mem_view_t){ c->spki.p, c->spki.n }, c->rsa ? PROVEN_SIGN_RSA_PKCS1 : PROVEN_SIGN_ECDSA,
+                              rp_hash_mac(alg), (proven_mem_view_t){ digest, rp_hash_size(alg) },
+                              (proven_mem_view_t){ sig, len }) == PROVEN_OK;
 }
 
+// The kind of the child's signature belongs to the issuer's key, not to the child's own.
 bool rp_cert_signed_by(const rp_cert_t *child, const rp_cert_t *issuer) {
-    rp_hash_alg_t alg;
-    bool rsa;
-    if (!sig_hash(child, &alg, &rsa) || rsa != issuer->rsa || (!rsa && issuer->ec_curve < 0)) return false;
+    if (child->sig_hash < 0 || child->sig_rsa != issuer->rsa || (!issuer->rsa && issuer->ec_curve < 0)) return false;
     if (child->issuer.n != issuer->subject.n || memcmp(child->issuer.p, issuer->subject.p, child->issuer.n) != 0) return false;
+    rp_hash_alg_t alg = (rp_hash_alg_t)child->sig_hash;
     uint8_t d[RP_HASH_MAX];
     rp_hash(alg, child->tbs.p, child->tbs.n, d);
     return rp_cert_verify_sig(issuer, alg, d, child->sig.p, child->sig.n);

@@ -12,6 +12,7 @@
 #include <stdint.h>
 
 #include "proven/allocator.h"
+#include "proven/sign.h"
 #include "proven/types.h"
 #include "rubrapack/crypto.h"
 #include "rubrapack/der.h"
@@ -28,7 +29,8 @@ typedef struct {
     int           ec_curve;     // -1, or RP_EC_P256 / RP_EC_P384 for an EC public key
     rp_der_span_t ec_x, ec_y;   // its coordinates (uncompressed point)
     rp_der_span_t ski;          // subjectKeyIdentifier contents, or empty
-    rp_der_span_t sig_alg;      // signatureAlgorithm (whole)
+    int           sig_hash;     // the hash the issuer signed with (rp_hash_alg_t), -1 for one not accepted
+    bool          sig_rsa;      // ... with RSA PKCS#1 v1.5 (else ECDSA)
     rp_der_span_t sig;          // signature bits
     int64_t       not_before, not_after;    // seconds since 1970 (UTC)
     bool          has_ku, ku_sign, ku_cert_sign;
@@ -44,14 +46,12 @@ typedef struct {
 // A private key with its certificates, loaded from a PKCS#12 (.pfx/.p12), PEM or DER PKCS#8 file.
 typedef struct {
     proven_allocator_t alloc;
-    uint8_t           *key_der;     // the RSAPrivateKey, or the EC private scalar (owned, wiped on free)
-    size_t             key_len;
-    rp_rsa_key_t       rsa;         // points into key_der (RSA keys)
-    bool               ec;          // an EC key (RFC-0011 W6): ec_curve and the scalar in key_der
+    proven_pkey_t     *pkey;        // the private key (proven's; wiped on free)
+    bool               ec;          // an EC key (RFC-0011 W6) on ec_curve, else RSA
     int                ec_curve;    // RP_EC_P256 or RP_EC_P384
     // A key that stays in a token or a key store (RFC-0011 P9b: PKCS#11, NCrypt): the signature
     // over one digest is made there - RSA PKCS#1 v1.5, or ECDSA as DER SEQUENCE { r, s } - and
-    // certs[ext_leaf] is its certificate. key_der is NULL then.
+    // certs[ext_leaf] is its certificate. pkey is NULL then.
     proven_err_t     (*ext_sign)(void *ctx, int alg, const uint8_t *digest, uint8_t *sig, size_t *sig_len, const char **why);
     void             (*ext_free)(void *ctx);
     void              *ext_ctx;
