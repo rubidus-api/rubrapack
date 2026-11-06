@@ -14,6 +14,7 @@
 #include "rubrapack/in.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/lang.h"
+#include "rubrapack/str.h"
 #include "rubrapack/suminfo.h"
 #include "rubrapack/transform.h"
 
@@ -75,12 +76,12 @@ static bool sort_rows(proven_allocator_t alloc, const rp_msi_wcolumn_t *cols, si
 
 // "<Table>.<key>.<key>" - the stream of a binary cell (as src/msi/db_write.c names it).
 static bool binary_name(const char *table, const rp_msi_wcolumn_t *cols, size_t ncols, const rp_msi_cell_t *row, char *out, size_t cap) {
-    size_t o = (size_t)snprintf(out, cap, "%s", table);
+    size_t o = (size_t)rp_fmt_n(proven_fmt_to(out, cap, "{}", proven_arg_cstr(table)));
     for (size_t k = 0; k < ncols && o < cap; ++k) {
         if (!(cols[k].type & RP_MSI_COL_KEY)) continue;
         const rp_msi_cell_t *key = &row[k];
-        if (key->kind == RP_MSI_STR) o += (size_t)snprintf(out + o, cap - o, ".%.*s", (int)key->len, (const char *)key->bytes);
-        else o += (size_t)snprintf(out + o, cap - o, ".%ld", key->kind == RP_MSI_INT ? (long)key->i : 0L);
+        if (key->kind == RP_MSI_STR) o += (size_t)rp_fmt_n(proven_fmt_to(out + o, cap - o, ".{}", proven_arg_cstr_n((const char *)key->bytes, (int)key->len)));
+        else o += (size_t)rp_fmt_n(proven_fmt_to(out + o, cap - o, ".{}", proven_arg_i64(key->kind == RP_MSI_INT ? (long)key->i : 0L)));
     }
     return o < cap;
 }
@@ -153,7 +154,7 @@ typedef struct {
 
 static proven_err_t refuse(wctx_t *w, const char *table, const char *why) {
     w->why = why;
-    if (w->table && w->table_cap) snprintf(w->table, w->table_cap, "%s", table);
+    if (w->table && w->table_cap) (void)proven_fmt_to(w->table, w->table_cap, "{}", proven_arg_cstr(table));
     return PROVEN_ERR_UNSUPPORTED;
 }
 
@@ -468,8 +469,7 @@ static proven_err_t summary(wctx_t *w, uint32_t flags, uint8_t **out, size_t *le
     property(w->target->db, "ProductCode", &p[2], &n[2]);
     property(w->target->db, "ProductVersion", &p[3], &n[3]);
     property(w->base->db, "UpgradeCode", &p[4], &n[4]);
-    int rn = snprintf(rev, sizeof rev, "%.*s%.*s;%.*s%.*s%s%.*s", (int)n[0], (const char *)p[0], (int)n[1], (const char *)p[1],
-                      (int)n[2], (const char *)p[2], (int)n[3], (const char *)p[3], n[4] ? ";" : "", (int)n[4], (const char *)p[4]);
+    int rn = rp_fmt_n(proven_fmt_to(rev, sizeof rev, "{}{};{}{}{}{}", proven_arg_cstr_n((const char *)p[0], (int)n[0]), proven_arg_cstr_n((const char *)p[1], (int)n[1]), proven_arg_cstr_n((const char *)p[2], (int)n[2]), proven_arg_cstr_n((const char *)p[3], (int)n[3]), proven_arg_cstr(n[4] ? ";" : ""), proven_arg_cstr_n((const char *)p[4], (int)n[4])));
     if (rn < 0 || (size_t)rn >= sizeof rev) return PROVEN_ERR_OUT_OF_BOUNDS;
     static const uint8_t none[1] = { 0 };
     for (uint32_t pid = 1; pid <= 19; ++pid) {
@@ -712,7 +712,7 @@ static void put_text(rp_buf_t *b, const uint8_t *p, size_t n) {
     for (size_t i = 0; i < n; ++i) {
         if (p[i] < 0x20 || p[i] == 0x7F) {
             char x[5];
-            snprintf(x, sizeof x, "\\x%02X", p[i]);
+            (void)proven_fmt_to(x, sizeof x, "\\x{:02X}", proven_arg_u32(p[i]));
             rp_buf_puts(b, x);
         } else {
             rp_buf_byte(b, p[i]);
@@ -808,15 +808,15 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
         rp_buf_puts(out, name);
         rp_buf_puts(out, mask == 0 ? "\tdelete" : (mask & 1) ? "\tinsert" : "\tupdate");
         char sname[256];
-        size_t so = (size_t)snprintf(sname, sizeof sname, "%s", name);
+        size_t so = (size_t)rp_fmt_n(proven_fmt_to(sname, sizeof sname, "{}", proven_arg_cstr(name)));
         for (size_t c = 0; c < ncols; ++c) {
             if (!(cols[c].type & RP_MSI_COL_KEY)) continue;
             if (v[c].kind == RP_MSI_STR && so < sizeof sname) {
                 size_t kn;
                 const uint8_t *kv = lstr(l, v[c].s, &kn);
-                so += (size_t)snprintf(sname + so, sizeof sname - so, ".%.*s", (int)kn, (const char *)kv);
+                so += (size_t)rp_fmt_n(proven_fmt_to(sname + so, sizeof sname - so, ".{}", proven_arg_cstr_n((const char *)kv, (int)kn)));
             } else if (so < sizeof sname) {
-                so += (size_t)snprintf(sname + so, sizeof sname - so, ".%ld", v[c].kind == RP_MSI_INT ? (long)v[c].i : 0L);
+                so += (size_t)rp_fmt_n(proven_fmt_to(sname + so, sizeof sname - so, ".{}", proven_arg_i64(v[c].kind == RP_MSI_INT ? (long)v[c].i : 0L)));
             }
         }
         for (size_t c = 0; c < ncols; ++c) {
@@ -914,7 +914,7 @@ proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, uint32_t
             memcpy(tnames[k], tnames[k - 1], sizeof tnames[0]);
             --k;
         }
-        snprintf(tnames[k], sizeof tnames[0], "%s", name);
+        (void)proven_fmt_to(tnames[k], sizeof tnames[0], "{}", proven_arg_cstr(name));
     }
     for (size_t t = 0; err == PROVEN_OK && t < nt; ++t) {
         const char *name = tnames[t];
@@ -952,7 +952,7 @@ static void diff_text(rp_buf_t *b, const uint8_t *p, size_t n) {
     for (size_t i = 0; i < n; ++i) {
         if (p[i] < 0x20 || p[i] == 0x7F) {
             char x[5];
-            snprintf(x, sizeof x, "\\x%02X", p[i]);
+            (void)proven_fmt_to(x, sizeof x, "\\x{:02X}", proven_arg_u32(p[i]));
             rp_buf_puts(b, x);
         } else {
             rp_buf_byte(b, p[i]);
@@ -1130,7 +1130,7 @@ static const char *summary_value(const char *body, const char *pid, size_t *n) {
 static void diff_summary(rp_buf_t *out, const char *x, const char *y) {
     for (unsigned pid = 0; pid < 32; ++pid) {
         char k[8];
-        snprintf(k, sizeof k, "%u", pid);
+        (void)proven_fmt_to(k, sizeof k, "{}", proven_arg_u32(pid));
         size_t xn = 0, yn = 0;
         const char *a = summary_value(x, k, &xn), *b = summary_value(y, k, &yn);
         if ((a == NULL && b == NULL) || (a && b && xn == yn && memcmp(a, b, xn) == 0)) continue;

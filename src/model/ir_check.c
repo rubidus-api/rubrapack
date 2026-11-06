@@ -137,7 +137,7 @@ static void add_class_value(ctx_t *c, proven_u8str_view_t id, proven_u8str_view_
     rp_ir_registry_t *r = &c->ir->registries[c->ir->registry_count++];
     memset(r, 0, sizeof *r);
     char rid[96];
-    snprintf(rid, sizeof rid, "%s.%s", rp_cs(id), rp_cs(suffix));
+    (void)proven_fmt_to(rid, sizeof rid, "{}.{}", proven_arg_cstr(rp_cs(id)), proven_arg_cstr(rp_cs(suffix)));
     r->id = RP_V(ir_dup(c, rid));
     r->root = RP_ROOT_HKCR;
     r->key = ir_dup_v(c, key);
@@ -246,7 +246,7 @@ static void add_menu_data(ctx_t *c, proven_u8str_view_t id, proven_u8str_view_t 
     rp_ir_registry_t *r = &c->ir->registries[c->ir->registry_count++];
     memset(r, 0, sizeof *r);
     char rid[96];
-    snprintf(rid, sizeof rid, "%s.%s", rp_cs(id), rp_cs(suffix));
+    (void)proven_fmt_to(rid, sizeof rid, "{}.{}", proven_arg_cstr(rp_cs(id)), proven_arg_cstr(rp_cs(suffix)));
     r->id = RP_V(ir_dup(c, rid));
     r->root = RP_ROOT_HKMU;
     r->key = ir_dup_v(c, key);
@@ -268,7 +268,7 @@ static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const
     static const char *const multi[] = { "each", "one", "single" };
     if (x->text.ptr) {
         char *t = fmt_literal(c, rp_cs(x->text));
-        snprintf(rid, sizeof rid, "%sText", tag);
+        (void)proven_fmt_to(rid, sizeof rid, "{}Text", proven_arg_cstr(tag));
         if (t) add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Text"), RP_V(t), RP_REG_STRING, RP_V(with), x->pos);
         rp_mem_free(c->alloc, t);
     }
@@ -277,12 +277,12 @@ static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const
         // Without an English text the first language's is the fallback too.
         bool en = RP_EQ(x->text_by_lang[w].lang, "en");
         if (t && (en || (x->text.ptr == NULL && w == 0))) {
-            snprintf(rid, sizeof rid, "%sText", tag);
+            (void)proven_fmt_to(rid, sizeof rid, "{}Text", proven_arg_cstr(tag));
             add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Text"), RP_V(t), RP_REG_STRING, RP_V(with), x->pos);
         }
         if (t && !en) {
-            snprintf(rid, sizeof rid, "%sText_%s", tag, rp_cs(x->text_by_lang[w].lang));
-            snprintf(name, sizeof name, "Text.%s", rp_cs(x->text_by_lang[w].lang));
+            (void)proven_fmt_to(rid, sizeof rid, "{}Text_{}", proven_arg_cstr(tag), proven_arg_cstr(rp_cs(x->text_by_lang[w].lang)));
+            (void)proven_fmt_to(name, sizeof name, "Text.{}", proven_arg_cstr(rp_cs(x->text_by_lang[w].lang)));
             add_menu_data(c, x->id, RP_V(rid), RP_V(key), RP_V(name), RP_V(t), RP_REG_STRING, RP_V(with), x->pos);
         }
         rp_mem_free(c->alloc, t);
@@ -290,20 +290,20 @@ static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const
     const char *icon = rp_cs(x->icon_file.ptr ? x->icon_file : x->target_file);
     if (icon) {
         char val[160];
-        snprintf(val, sizeof val, x->icon_file.ptr ? "[#%s]" : "[#%s],0", icon);
-        snprintf(rid, sizeof rid, "%sIcon", tag);
+        (void)proven_fmt_to(val, sizeof val, x->icon_file.ptr ? "[#{}]" : "[#{}],0", proven_arg_cstr(icon));
+        (void)proven_fmt_to(rid, sizeof rid, "{}Icon", proven_arg_cstr(tag));
         add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Icon"), RP_V(val), RP_REG_STRING, RP_V(with), x->pos);
     }
     if (x->hide_when.ptr) {
         char *h = fmt_literal(c, rp_cs(x->hide_when));
-        snprintf(rid, sizeof rid, "%sHideWhen", tag);
+        (void)proven_fmt_to(rid, sizeof rid, "{}HideWhen", proven_arg_cstr(tag));
         if (h) add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("HideWhen"), RP_V(h), RP_REG_STRING, RP_V(with), x->pos);
         rp_mem_free(c->alloc, h);
     }
     if (x->target_file.ptr == NULL) {           // a sub-menu: its items' IDs, in ID order
         size_t n = 0;
         for (size_t j = 0; j < ir->menu_count; ++j) n += ir->menus[j].parent.ptr && RP_EQ(ir->menus[j].parent, x->id);
-        snprintf(rid, sizeof rid, "%sItems", tag);
+        (void)proven_fmt_to(rid, sizeof rid, "{}Items", proven_arg_cstr(tag));
         add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Items"), PROVEN_LIT(""), RP_REG_MULTI, RP_V(with), x->pos);
         rp_ir_registry_t *r = &ir->registries[ir->registry_count - 1];
         r->items = rp_mem_alloc(c->alloc, n ? n : 1, sizeof *r->items);
@@ -317,15 +317,15 @@ static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const
         return;
     }
     char val[160];
-    snprintf(val, sizeof val, "[#%s]", rp_cs(x->target_file));
-    snprintf(rid, sizeof rid, "%sCommand", tag);
+    (void)proven_fmt_to(val, sizeof val, "[#{}]", proven_arg_cstr(rp_cs(x->target_file)));
+    (void)proven_fmt_to(rid, sizeof rid, "{}Command", proven_arg_cstr(tag));
     add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Command"), RP_V(val), RP_REG_STRING, RP_V(with), x->pos);
-    snprintf(rid, sizeof rid, "%sArgs", tag);
+    (void)proven_fmt_to(rid, sizeof rid, "{}Args", proven_arg_cstr(tag));
     add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Args"), x->args, RP_REG_STRING, RP_V(with), x->pos);
-    snprintf(rid, sizeof rid, "%sMulti", tag);
+    (void)proven_fmt_to(rid, sizeof rid, "{}Multi", proven_arg_cstr(tag));
     add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Multi"), RP_V(multi[x->multi]), RP_REG_STRING, RP_V(with), x->pos);
     if (x->list.ptr) {
-        snprintf(rid, sizeof rid, "%sList", tag);
+        (void)proven_fmt_to(rid, sizeof rid, "{}List", proven_arg_cstr(tag));
         add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("List"), x->list, RP_REG_STRING, RP_V(with), x->pos);
     }
 }
@@ -435,33 +435,33 @@ static void menu_values_at(ctx_t *c, const rp_ir_menu_t *x, const char *base, co
     char key[400], rid[40], prop[64];
     char *text = NULL;
     if (x->text_by_lang_count) {            // the text of the language chosen at installation (lower.c sets the property)
-        snprintf(prop, sizeof prop, "[RpMenuT_%s]", rp_cs(x->id));
+        (void)proven_fmt_to(prop, sizeof prop, "[RpMenuT_{}]", proven_arg_cstr(rp_cs(x->id)));
         text = ir_dup(c, prop);
     } else if (x->text.ptr) {
         text = fmt_literal(c, rp_cs(x->text));
     }
     if (text == NULL) return;
-    snprintf(rid, sizeof rid, "Verb%s", suffix);
+    (void)proven_fmt_to(rid, sizeof rid, "Verb{}", proven_arg_cstr(suffix));
     add_class_value(c, x->id, RP_V(rid), RP_V(base), PROVEN_LIT("MUIVerb"), RP_V(text), RP_V(with), x->pos);
     rp_mem_free(c->alloc, text);
     const char *icon = rp_cs(x->icon_file.ptr ? x->icon_file : x->target_file);
     if (icon) {
         char val[160];
-        snprintf(val, sizeof val, x->icon_file.ptr ? "[#%s]" : "[#%s],0", icon);
-        snprintf(rid, sizeof rid, "Icon%s", suffix);
+        (void)proven_fmt_to(val, sizeof val, x->icon_file.ptr ? "[#{}]" : "[#{}],0", proven_arg_cstr(icon));
+        (void)proven_fmt_to(rid, sizeof rid, "Icon{}", proven_arg_cstr(suffix));
         add_class_value(c, x->id, RP_V(rid), RP_V(base), PROVEN_LIT("Icon"), RP_V(val), RP_V(with), x->pos);
     }
     if (x->extended) {
-        snprintf(rid, sizeof rid, "Shift%s", suffix);
+        (void)proven_fmt_to(rid, sizeof rid, "Shift{}", proven_arg_cstr(suffix));
         add_class_value(c, x->id, RP_V(rid), RP_V(base), PROVEN_LIT("Extended"), PROVEN_LIT(""), RP_V(with), x->pos);
     }
     if (x->target_file.ptr == NULL) {
-        snprintf(rid, sizeof rid, "Sub%s", suffix);
+        (void)proven_fmt_to(rid, sizeof rid, "Sub{}", proven_arg_cstr(suffix));
         add_class_value(c, x->id, RP_V(rid), RP_V(base), PROVEN_LIT("SubCommands"), PROVEN_LIT(""), RP_V(with), x->pos);
         return;
     }
     if (x->multi == RP_MENU_SINGLE) {
-        snprintf(rid, sizeof rid, "Multi%s", suffix);
+        (void)proven_fmt_to(rid, sizeof rid, "Multi{}", proven_arg_cstr(suffix));
         add_class_value(c, x->id, RP_V(rid), RP_V(base), PROVEN_LIT("MultiSelectModel"), PROVEN_LIT("Single"), RP_V(with), x->pos);
     }
     // The command; on the folder background there is no "%1": the folder is "%V".
@@ -480,8 +480,8 @@ static void menu_values_at(ctx_t *c, const rp_ir_menu_t *x, const char *base, co
         }
     }
     cmd[w] = '\0';
-    snprintf(key, sizeof key, "%s\\command", base);
-    snprintf(rid, sizeof rid, "Cmd%s", suffix);
+    (void)proven_fmt_to(key, sizeof key, "{}\\command", proven_arg_cstr(base));
+    (void)proven_fmt_to(rid, sizeof rid, "Cmd{}", proven_arg_cstr(suffix));
     add_class_value(c, x->id, RP_V(rid), RP_V(key), RP_NONE, RP_V(cmd), RP_V(with), x->pos);
     rp_mem_free(c->alloc, cmd);
 }
@@ -497,7 +497,7 @@ static void menu_msix_exts(ctx_t *c) {
         rp_ir_msix_ext_t *e = &ir->msix_exts[ir->msix_ext_count++];
         memset(e, 0, sizeof *e);
         char id[64];
-        snprintf(id, sizeof id, "RpMenu_%s", rp_cs(x->id));
+        (void)proven_fmt_to(id, sizeof id, "RpMenu_{}", proven_arg_cstr(rp_cs(x->id)));
         e->id = RP_V(ir_dup(c, id));
         e->kind = RP_MSIX_EXT_CONTEXT_MENU;
         e->file = RP_V(ir_dup(c, "RpMenuDll"));
@@ -542,12 +542,12 @@ static void menu_values(ctx_t *c) {
         }
         if (ir->menu_package && x->windows11 && x->clsid.ptr) {
             char key[128], sub[200];
-            snprintf(key, sizeof key, "Software\\rubrapack\\Menu\\%s", rp_cs(x->clsid));
+            (void)proven_fmt_to(key, sizeof key, "Software\\rubrapack\\Menu\\{}", proven_arg_cstr(rp_cs(x->clsid)));
             menu_data_at(c, x, key, "D", with);
             for (size_t j = 0; j < ir->menu_count && !c->nomem; ++j) {
                 const rp_ir_menu_t *y = &ir->menus[j];
                 if (y->parent.ptr == NULL || !RP_EQ(y->parent, x->id)) continue;
-                snprintf(sub, sizeof sub, "%s\\%s", key, rp_cs(y->id));
+                (void)proven_fmt_to(sub, sizeof sub, "{}\\{}", proven_arg_cstr(key), proven_arg_cstr(rp_cs(y->id)));
                 menu_data_at(c, y, sub, "D", rp_cs(y->target_file));
             }
         }
@@ -562,19 +562,19 @@ static void menu_values(ctx_t *c) {
                     if (RP_EQ(ir->assocs[a].id, on + 6)) place = rp_cs(ir->assocs[a].prog_id);
                 }
             } else if (on[0] == '.') {
-                snprintf(sys, sizeof sys, "SystemFileAssociations\\%s", on);
+                (void)proven_fmt_to(sys, sizeof sys, "SystemFileAssociations\\{}", proven_arg_cstr(on));
                 place = sys;
             }
             bool background = strcmp(on, "background") == 0;
             char base[320], suffix[24];
-            snprintf(base, sizeof base, "%s\\shell\\%s.%s", place, token, rp_cs(x->id));
-            snprintf(suffix, sizeof suffix, "%zu", p);
+            (void)proven_fmt_to(base, sizeof base, "{}\\shell\\{}.{}", proven_arg_cstr(place), proven_arg_cstr(token), proven_arg_cstr(rp_cs(x->id)));
+            (void)proven_fmt_to(suffix, sizeof suffix, "{}", proven_arg_u64(p));
             menu_values_at(c, x, base, suffix, background, with);
             for (size_t j = 0; j < ir->menu_count && !c->nomem; ++j) {
                 const rp_ir_menu_t *y = &ir->menus[j];
                 if (y->parent.ptr == NULL || !RP_EQ(y->parent, x->id)) continue;
                 char sub[400];
-                snprintf(sub, sizeof sub, "%s\\shell\\%s", base, rp_cs(y->id));
+                (void)proven_fmt_to(sub, sizeof sub, "{}\\shell\\{}", proven_arg_cstr(base), proven_arg_cstr(rp_cs(y->id)));
                 menu_values_at(c, y, sub, suffix, background, rp_cs(y->target_file));
             }
         }
@@ -704,7 +704,7 @@ void ir_class_checks(ctx_t *c) {
         // The extension names the ProgID as its own (unless default = false) and always lists it
         // among those that open it ("Open with"); Windows 10 and 11 let only the user pick the default.
         char okey[96];
-        snprintf(okey, sizeof okey, "%s\\OpenWithProgids", rp_cs(x->extension));
+        (void)proven_fmt_to(okey, sizeof okey, "{}\\OpenWithProgids", proven_arg_cstr(rp_cs(x->extension)));
         if (!x->no_default) add_class_value(c, x->id, PROVEN_LIT("Ext"), x->extension, RP_NONE, x->prog_id, x->target_file, x->pos);
         add_class_value(c, x->id, PROVEN_LIT("With"), RP_V(okey), x->prog_id, PROVEN_LIT(""), x->target_file, x->pos);
         if (x->content_type.ptr) add_class_value(c, x->id, PROVEN_LIT("Type"), x->extension, PROVEN_LIT("Content Type"), x->content_type, x->target_file, x->pos);
@@ -714,10 +714,10 @@ void ir_class_checks(ctx_t *c) {
         if (!first) continue;
         char key[160], val[512];
         add_class_value(c, x->id, PROVEN_LIT("Prog"), x->prog_id, RP_NONE, x->description.ptr ? x->description : ir->name, x->target_file, x->pos);
-        snprintf(key, sizeof key, "%s\\DefaultIcon", rp_cs(x->prog_id));
-        snprintf(val, sizeof val, "[#%s],0", rp_cs(x->icon_file.ptr ? x->icon_file : x->target_file));
+        (void)proven_fmt_to(key, sizeof key, "{}\\DefaultIcon", proven_arg_cstr(rp_cs(x->prog_id)));
+        (void)proven_fmt_to(val, sizeof val, "[#{}],0", proven_arg_cstr(rp_cs(x->icon_file.ptr ? x->icon_file : x->target_file)));
         add_class_value(c, x->id, PROVEN_LIT("Icon"), RP_V(key), RP_NONE, RP_V(val), x->target_file, x->pos);
-        snprintf(key, sizeof key, "%s\\shell\\open\\command", rp_cs(x->prog_id));
+        (void)proven_fmt_to(key, sizeof key, "{}\\shell\\open\\command", proven_arg_cstr(rp_cs(x->prog_id)));
         char *cmd = rp_mem_alloc(c->alloc, x->target_file.size + x->args.size + 16, 1);
         if (cmd == NULL) {
             c->nomem = true;
@@ -730,13 +730,13 @@ void ir_class_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->protocol_count && !c->nomem; ++k) {
         const rp_ir_protocol_t *x = &ir->protocols[k];
         char key[160], val[512];
-        snprintf(val, sizeof val, "URL:%s", rp_cs(x->description.ptr ? x->description : x->name));
+        (void)proven_fmt_to(val, sizeof val, "URL:{}", proven_arg_cstr(rp_cs(x->description.ptr ? x->description : x->name)));
         add_class_value(c, x->id, PROVEN_LIT("Url"), x->name, RP_NONE, RP_V(val), x->target_file, x->pos);
         add_class_value(c, x->id, PROVEN_LIT("Proto"), x->name, PROVEN_LIT("URL Protocol"), PROVEN_LIT(""), x->target_file, x->pos);
-        snprintf(key, sizeof key, "%s\\DefaultIcon", rp_cs(x->name));
-        snprintf(val, sizeof val, "[#%s],0", rp_cs(x->target_file));
+        (void)proven_fmt_to(key, sizeof key, "{}\\DefaultIcon", proven_arg_cstr(rp_cs(x->name)));
+        (void)proven_fmt_to(val, sizeof val, "[#{}],0", proven_arg_cstr(rp_cs(x->target_file)));
         add_class_value(c, x->id, PROVEN_LIT("Icon"), RP_V(key), RP_NONE, RP_V(val), x->target_file, x->pos);
-        snprintf(key, sizeof key, "%s\\shell\\open\\command", rp_cs(x->name));
+        (void)proven_fmt_to(key, sizeof key, "{}\\shell\\open\\command", proven_arg_cstr(rp_cs(x->name)));
         char *cmd = rp_mem_alloc(c->alloc, x->target_file.size + x->args.size + 16, 1);
         if (cmd == NULL) {
             c->nomem = true;
@@ -755,18 +755,17 @@ void ir_class_checks(ctx_t *c) {
         const char *desc = rp_cs(x->description.ptr ? x->description : cm->description.ptr ? cm->description : ir->name);
         char key[256], suffix[24];
         for (size_t t = 0; t < x->type_count; ++t) {
-            snprintf(suffix, sizeof suffix, "T%zu", t + 1);
+            (void)proven_fmt_to(suffix, sizeof suffix, "T{}", proven_arg_u64(t + 1));
             if (x->kind == RP_HANDLER_PROPERTY) {
-                snprintf(key, sizeof key, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PropertySystem\\PropertyHandlers\\%s", x->types[t]);
+                (void)proven_fmt_to(key, sizeof key, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PropertySystem\\PropertyHandlers\\{}", proven_arg_cstr(x->types[t]));
                 add_root_value(c, rp_cs(x->id), suffix, RP_ROOT_HKLM, key, NULL, rp_cs(x->clsid), rp_cs(cm->file), x->pos);
             } else {
-                snprintf(key, sizeof key, "%s\\ShellEx\\%s", x->types[t],
-                         x->kind == RP_HANDLER_PREVIEW ? "{8895B1C6-B41F-4C1C-A562-0D564250836F}" : "{E357FCCD-A995-4576-B01F-234630154E96}");
+                (void)proven_fmt_to(key, sizeof key, "{}\\ShellEx\\{}", proven_arg_cstr(x->types[t]), proven_arg_cstr(x->kind == RP_HANDLER_PREVIEW ? "{8895B1C6-B41F-4C1C-A562-0D564250836F}" : "{E357FCCD-A995-4576-B01F-234630154E96}"));
                 add_class_value(c, x->id, RP_V(suffix), RP_V(key), RP_NONE, x->clsid, cm->file, x->pos);
             }
         }
         if (x->kind == RP_HANDLER_PREVIEW) {
-            snprintf(key, sizeof key, "CLSID\\%s", rp_cs(x->clsid));
+            (void)proven_fmt_to(key, sizeof key, "CLSID\\{}", proven_arg_cstr(rp_cs(x->clsid)));
             // prevhost.exe: the 64-bit one for an x64 or Arm64 package, the 32-bit one for x86.
             add_class_value(c, x->id, PROVEN_LIT("App"), RP_V(key), PROVEN_LIT("AppID"),
                             RP_V(ir->arch == RP_ARCH_X86 ? "{534A1E02-D58F-44F0-B58B-36CBED287C7C}" : "{6D2B5079-2F0B-48DD-AB7F-97CEC514D30B}"), cm->file, x->pos);
@@ -780,10 +779,10 @@ void ir_class_checks(ctx_t *c) {
         const rp_ir_com_t *x = &ir->coms[k];
         const char *desc = rp_cs(x->description.ptr ? x->description : ir->name);
         char key[200], val[512];
-        snprintf(key, sizeof key, "CLSID\\%s", rp_cs(x->clsid));
+        (void)proven_fmt_to(key, sizeof key, "CLSID\\{}", proven_arg_cstr(rp_cs(x->clsid)));
         add_class_value(c, x->id, PROVEN_LIT("Cls"), RP_V(key), RP_NONE, RP_V(desc), x->file, x->pos);
         if (x->exe) {
-            snprintf(key, sizeof key, "CLSID\\%s\\LocalServer32", rp_cs(x->clsid));
+            (void)proven_fmt_to(key, sizeof key, "CLSID\\{}\\LocalServer32", proven_arg_cstr(rp_cs(x->clsid)));
             char *cmd = rp_mem_alloc(c->alloc, x->file.size + (x->args.ptr ? x->args.size : 0) + 16, 1);
             if (cmd == NULL) {
                 c->nomem = true;
@@ -793,40 +792,40 @@ void ir_class_checks(ctx_t *c) {
             add_class_value(c, x->id, PROVEN_LIT("Srv"), RP_V(key), RP_NONE, RP_V(cmd), x->file, x->pos);
             rp_mem_free(c->alloc, cmd);
         } else {
-            snprintf(key, sizeof key, "CLSID\\%s\\InprocServer32", rp_cs(x->clsid));
-            snprintf(val, sizeof val, "[#%s]", rp_cs(x->file));
+            (void)proven_fmt_to(key, sizeof key, "CLSID\\{}\\InprocServer32", proven_arg_cstr(rp_cs(x->clsid)));
+            (void)proven_fmt_to(val, sizeof val, "[#{}]", proven_arg_cstr(rp_cs(x->file)));
             add_class_value(c, x->id, PROVEN_LIT("Srv"), RP_V(key), RP_NONE, RP_V(val), x->file, x->pos);
             add_class_value(c, x->id, PROVEN_LIT("Thr"), RP_V(key), PROVEN_LIT("ThreadingModel"), RP_V(x->threading.ptr ? rp_cs(x->threading) : "Apartment"), x->file, x->pos);
         }
         if (x->prog_id.ptr) {
-            snprintf(key, sizeof key, "CLSID\\%s\\ProgID", rp_cs(x->clsid));
+            (void)proven_fmt_to(key, sizeof key, "CLSID\\{}\\ProgID", proven_arg_cstr(rp_cs(x->clsid)));
             add_class_value(c, x->id, PROVEN_LIT("PidC"), RP_V(key), RP_NONE, x->prog_id, x->file, x->pos);
             add_class_value(c, x->id, PROVEN_LIT("Pid"), x->prog_id, RP_NONE, RP_V(desc), x->file, x->pos);
-            snprintf(key, sizeof key, "%s\\CLSID", rp_cs(x->prog_id));
+            (void)proven_fmt_to(key, sizeof key, "{}\\CLSID", proven_arg_cstr(rp_cs(x->prog_id)));
             add_class_value(c, x->id, PROVEN_LIT("PidK"), RP_V(key), RP_NONE, x->clsid, x->file, x->pos);
         }
         const char *app = x->app_id.ptr ? rp_cs(x->app_id) : x->surrogate ? rp_cs(x->clsid) : NULL;
         if (app) {
-            snprintf(key, sizeof key, "CLSID\\%s", rp_cs(x->clsid));
+            (void)proven_fmt_to(key, sizeof key, "CLSID\\{}", proven_arg_cstr(rp_cs(x->clsid)));
             add_class_value(c, x->id, PROVEN_LIT("App"), RP_V(key), PROVEN_LIT("AppID"), RP_V(app), x->file, x->pos);
-            snprintf(key, sizeof key, "AppID\\%s", app);
+            (void)proven_fmt_to(key, sizeof key, "AppID\\{}", proven_arg_cstr(app));
             add_class_value(c, x->id, PROVEN_LIT("AppK"), RP_V(key), RP_NONE, RP_V(desc), x->file, x->pos);
             if (x->surrogate) add_class_value(c, x->id, PROVEN_LIT("Sur"), RP_V(key), PROVEN_LIT("DllSurrogate"), PROVEN_LIT(""), x->file, x->pos);
         }
         if (x->typelib.ptr) {
             const char *tf = rp_cs(x->typelib_file.ptr ? x->typelib_file : x->file);
-            snprintf(key, sizeof key, "CLSID\\%s\\TypeLib", rp_cs(x->clsid));
+            (void)proven_fmt_to(key, sizeof key, "CLSID\\{}\\TypeLib", proven_arg_cstr(rp_cs(x->clsid)));
             add_class_value(c, x->id, PROVEN_LIT("Tlb"), RP_V(key), RP_NONE, x->typelib, x->file, x->pos);
-            snprintf(key, sizeof key, "TypeLib\\%s\\%s", rp_cs(x->typelib), rp_cs(x->typelib_version));
+            (void)proven_fmt_to(key, sizeof key, "TypeLib\\{}\\{}", proven_arg_cstr(rp_cs(x->typelib)), proven_arg_cstr(rp_cs(x->typelib_version)));
             add_class_value(c, x->id, PROVEN_LIT("TlbV"), RP_V(key), RP_NONE, RP_V(desc), RP_V(tf), x->pos);
-            snprintf(key, sizeof key, "TypeLib\\%s\\%s\\0\\%s", rp_cs(x->typelib), rp_cs(x->typelib_version), ir->arch == RP_ARCH_X86 ? "win32" : "win64");
-            snprintf(val, sizeof val, "[#%s]", tf);
+            (void)proven_fmt_to(key, sizeof key, "TypeLib\\{}\\{}\\0\\{}", proven_arg_cstr(rp_cs(x->typelib)), proven_arg_cstr(rp_cs(x->typelib_version)), proven_arg_cstr(ir->arch == RP_ARCH_X86 ? "win32" : "win64"));
+            (void)proven_fmt_to(val, sizeof val, "[#{}]", proven_arg_cstr(tf));
             add_class_value(c, x->id, PROVEN_LIT("TlbP"), RP_V(key), RP_NONE, RP_V(val), RP_V(tf), x->pos);
-            snprintf(key, sizeof key, "TypeLib\\%s\\%s\\FLAGS", rp_cs(x->typelib), rp_cs(x->typelib_version));
+            (void)proven_fmt_to(key, sizeof key, "TypeLib\\{}\\{}\\FLAGS", proven_arg_cstr(rp_cs(x->typelib)), proven_arg_cstr(rp_cs(x->typelib_version)));
             add_class_value(c, x->id, PROVEN_LIT("TlbF"), RP_V(key), RP_NONE, PROVEN_LIT("0"), RP_V(tf), x->pos);
-            snprintf(key, sizeof key, "TypeLib\\%s\\%s\\HELPDIR", rp_cs(x->typelib), rp_cs(x->typelib_version));
+            (void)proven_fmt_to(key, sizeof key, "TypeLib\\{}\\{}\\HELPDIR", proven_arg_cstr(rp_cs(x->typelib)), proven_arg_cstr(rp_cs(x->typelib_version)));
             const rp_ir_file_t *tff = file_by_id(ir, RP_V(tf));
-            snprintf(val, sizeof val, "[%s]", tff ? rp_cs(tff->dir) : "INSTALLDIR");
+            (void)proven_fmt_to(val, sizeof val, "[{}]", proven_arg_cstr(tff ? rp_cs(tff->dir) : "INSTALLDIR"));
             add_class_value(c, x->id, PROVEN_LIT("TlbH"), RP_V(key), RP_NONE, RP_V(val), RP_V(tf), x->pos);
         }
         if (x->msi_only) continue;
@@ -1033,7 +1032,7 @@ void ir_cross_checks(ctx_t *c) {
                 size_t len = strlen(dir_paths[di]) + f->name.size + 2;
                 char *full = rp_mem_alloc(c->alloc, len, 1);
                 if (full) {
-                    snprintf(full, len, "%s/%s", dir_paths[di], rp_cs(f->name));
+                    (void)proven_fmt_to(full, len, "{}/{}", proven_arg_cstr(dir_paths[di]), proven_arg_cstr(rp_cs(f->name)));
                     folded[nf] = rp_mem_alloc(c->alloc, len * 2 + 4, 1);
                     if (folded[nf]) ir_fold(full, folded[nf], len * 2 + 4);
                     where[nf++] = f->pos;
@@ -1092,7 +1091,7 @@ void ir_cross_checks(ctx_t *c) {
                 size_t len = strlen(dir_paths[di]) + f->name.size + 2;
                 char *full = rp_mem_alloc(c->alloc, len, 1);
                 if (full) {
-                    snprintf(full, len, "%s/%s", dir_paths[di], rp_cs(f->name));
+                    (void)proven_fmt_to(full, len, "{}/{}", proven_arg_cstr(dir_paths[di]), proven_arg_cstr(rp_cs(f->name)));
                     folded[nf] = rp_mem_alloc(c->alloc, len * 2 + 4, 1);
                     if (folded[nf]) ir_fold(full, folded[nf], len * 2 + 4);
                     where[nf++] = f->pos;

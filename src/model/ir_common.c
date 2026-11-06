@@ -249,7 +249,7 @@ static size_t read_name(const char *s, size_t len, size_t i, char *name, size_t 
 static void name_hint(const char *name, char *out, size_t cap) {
     out[0] = '\0';
     for (size_t k = 0; k < sizeof old_names / sizeof old_names[0]; ++k) {
-        if (ir_ascii_casecmp(name, old_names[k][0]) == 0) snprintf(out, cap, " (write $(%s))", old_names[k][1]);
+        if (ir_ascii_casecmp(name, old_names[k][0]) == 0) (void)proven_fmt_to(out, cap, " (write $({}))", proven_arg_cstr(old_names[k][1]));
     }
 }
 

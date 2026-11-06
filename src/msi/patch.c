@@ -55,7 +55,7 @@ static void *zalloc(pctx_t *p, size_t n, size_t size) {
 
 static proven_err_t refuse(pctx_t *p, const char *what, size_t what_len, const char *why) {
     p->why = why;
-    if (p->table && p->table_cap) snprintf(p->table, p->table_cap, "%.*s", (int)what_len, what);
+    if (p->table && p->table_cap) (void)proven_fmt_to(p->table, p->table_cap, "{}", proven_arg_cstr_n(what, (int)what_len));
     return PROVEN_ERR_UNSUPPORTED;
 }
 
@@ -179,7 +179,7 @@ static proven_err_t load_files(pctx_t *p, const rp_mst_side_t *side, files_t *ou
         if (c->kind != RP_MSI_STR || c->len == 0) continue;
         if (c->bytes[0] != '#') return refuse(p, (const char *)c->bytes, c->len, "is an external cabinet; a patch is made from packages whose cabinets are embedded");
         char name[80];
-        snprintf(name, sizeof name, "%.*s", (int)(c->len - 1), (const char *)c->bytes + 1);
+        (void)proven_fmt_to(name, sizeof name, "{}", proven_arg_cstr_n((const char *)c->bytes + 1, (int)(c->len - 1)));
         uint16_t packed[32];
         size_t pl;
         uint32_t id;
@@ -425,7 +425,7 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
 
     char patch_code[39];
     if (o->patch_code) {
-        snprintf(patch_code, sizeof patch_code, "%s", o->patch_code);
+        (void)proven_fmt_to(patch_code, sizeof patch_code, "{}", proven_arg_cstr(o->patch_code));
     } else {
         const char *fields[2] = { sum_str(p, A, 9), sum_str(p, B, 9) };
         rp_uuid_derive("patch", fields, 2, patch_code);
@@ -463,7 +463,7 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
                 err = PROVEN_ERR_NOMEM;
                 break;
             }
-            snprintf(hash_cab, sizeof cab_name + 1, "#%s", cab_name);
+            (void)proven_fmt_to(hash_cab, sizeof cab_name + 1, "#{}", proven_arg_cstr(cab_name));
             static const char *const names[] = { "DiskId", "LastSequence", "Cabinet", "Source" };
             rp_msi_cell_t values[] = { int_cell(disk), int_cell(start + (int32_t)npick), str_cell(npick ? hash_cab : NULL),
                                        str_cell("RPPATCHSRC") };
@@ -542,8 +542,8 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
 
     // The root database: MsiPatchMetadata and MsiPatchSequence.
     char display[512], seq[64], *url = NULL;
-    snprintf(display, sizeof display, "%s %s", name ? name : "", ver_b ? ver_b : "");
-    snprintf(seq, sizeof seq, "%ld.%ld.%ld.%ld", vb[0], vb[1], vb[2], vb[3]);
+    (void)proven_fmt_to(display, sizeof display, "{} {}", proven_arg_cstr(name ? name : ""), proven_arg_cstr(ver_b ? ver_b : ""));
+    (void)proven_fmt_to(seq, sizeof seq, "{}.{}.{}.{}", proven_arg_i64(vb[0]), proven_arg_i64(vb[1]), proven_arg_i64(vb[2]), proven_arg_i64(vb[3]));
     if (err == PROVEN_OK) {
         url = property(p, B, "ARPHELPLINK");
         if (url && !*url) url = property(p, B, "ARPURLINFOABOUT");

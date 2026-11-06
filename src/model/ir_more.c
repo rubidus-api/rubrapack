@@ -262,8 +262,8 @@ static void asm_identity(ctx_t *c, rp_ir_file_t *f) {
             ERR(c, f->pos, "RP1316", "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\"", rp_cs(f->id));
         } else {
             char ver[32], tok[17];
-            snprintf(ver, sizeof ver, "%u.%u.%u.%u", a.version[0], a.version[1], a.version[2], a.version[3]);
-            for (int i = 0; i < 8; ++i) snprintf(tok + 2 * i, 3, "%02X", a.token[i]);
+            (void)proven_fmt_to(ver, sizeof ver, "{}.{}.{}.{}", proven_arg_u32(a.version[0]), proven_arg_u32(a.version[1]), proven_arg_u32(a.version[2]), proven_arg_u32(a.version[3]));
+            for (int i = 0; i < 8; ++i) (void)proven_fmt_to(tok + 2 * i, 3, "{:02X}", proven_arg_u32(a.token[i]));
             asm_name(c, f, &n, "Name", a.name);
             asm_name(c, f, &n, "Version", ver);
             asm_name(c, f, &n, "Culture", a.culture[0] ? a.culture : "neutral");

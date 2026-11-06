@@ -8,6 +8,7 @@
 // that is gone.
 
 #include "rubrapack/lint.h"
+#include "rubrapack/str.h"
 #include "rubrapack/mem.h"
 
 #include <stdio.h>
@@ -103,12 +104,6 @@ static const char *long_name(const char *n) {
     return bar ? bar + 1 : n;
 }
 
-// snprintf that may cut a long path short (only compared and printed).
-#define CUT(out, cap, ...)                                                   \
-    do {                                                                     \
-        if (snprintf((out), (cap), __VA_ARGS__) >= (int)(cap)) (out)[(cap) - 1] = 0; \
-    } while (0)
-
 // A directory as a path of long names from its root key: "ProgramFiles64Folder/Example/bin".
 static void dir_path(side_t *s, const char *key, char *out, size_t cap, int depth) {
     out[0] = 0;
@@ -118,21 +113,21 @@ static void dir_path(side_t *s, const char *key, char *out, size_t cap, int dept
         if (!is(cellp(t, r, kd), key)) continue;
         const char *parent = str(s, cellp(t, r, kp));
         char dflt[512];
-        CUT(dflt, sizeof dflt, "%s", str(s, cellp(t, r, kn)));
+        (void)proven_fmt_to(dflt, sizeof dflt, "{}", proven_arg_cstr(str(s, cellp(t, r, kn))));
         char *colon = strchr(dflt, ':');       // target:source - the target part
         if (colon) *colon = 0;
         const char *name = long_name(dflt);
         if (parent[0] == 0 || strcmp(parent, key) == 0 || depth > 64) {
-            CUT(out, cap, "%s", key);
+            (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr(key));
             return;
         }
         char up[1024];
         dir_path(s, parent, up, sizeof up, depth + 1);
-        if (strcmp(name, ".") == 0) CUT(out, cap, "%s", strcmp(up, "TARGETDIR") == 0 ? key : up);
-        else CUT(out, cap, "%s/%s", strcmp(up, "TARGETDIR") == 0 ? key : up, name);
+        if (strcmp(name, ".") == 0) (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr(strcmp(up, "TARGETDIR") == 0 ? key : up));
+        else (void)proven_fmt_to(out, cap, "{}/{}", proven_arg_cstr(strcmp(up, "TARGETDIR") == 0 ? key : up), proven_arg_cstr(name));
         return;
     }
-    CUT(out, cap, "%s", key);
+    (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr(key));
 }
 
 // What a component's key path points at: a file, a registry value, or its folder.
@@ -143,26 +138,25 @@ static void key_path(side_t *s, size_t row, char *out, size_t cap) {
     char dir[1024];
     dir_path(s, str(s, cellp(c, row, column(c, "Directory_"))), dir, sizeof dir, 0);
     if (kp[0] == 0) {
-        CUT(out, cap, "folder %s", dir);
+        (void)proven_fmt_to(out, cap, "folder {}", proven_arg_cstr(dir));
     } else if (attr & 4) {
         const rp_msi_wtable_t *t = table(s->db, "Registry");
         size_t kk = column(t, "Registry");
         for (size_t r = 0; t && r < t->row_count; ++r) {
             if (!is(cellp(t, r, kk), kp)) continue;
-            CUT(out, cap, "registry %d\\%s\\%s", num(cellp(t, r, column(t, "Root"))), str(s, cellp(t, r, column(t, "Key"))),
-                     str(s, cellp(t, r, column(t, "Name"))));
+            (void)proven_fmt_to(out, cap, "registry {}\\{}\\{}", proven_arg_i32(num(cellp(t, r, column(t, "Root")))), proven_arg_cstr(str(s, cellp(t, r, column(t, "Key")))), proven_arg_cstr(str(s, cellp(t, r, column(t, "Name")))));
             return;
         }
-        CUT(out, cap, "registry %s", kp);
+        (void)proven_fmt_to(out, cap, "registry {}", proven_arg_cstr(kp));
     } else {
         const rp_msi_wtable_t *t = table(s->db, "File");
         size_t kf = column(t, "File");
         for (size_t r = 0; t && r < t->row_count; ++r) {
             if (!is(cellp(t, r, kf), kp)) continue;
-            CUT(out, cap, "file %s/%s", dir, long_name(str(s, cellp(t, r, column(t, "FileName")))));
+            (void)proven_fmt_to(out, cap, "file {}/{}", proven_arg_cstr(dir), proven_arg_cstr(long_name(str(s, cellp(t, r, column(t, "FileName"))))));
             return;
         }
-        CUT(out, cap, "file %s", kp);
+        (void)proven_fmt_to(out, cap, "file {}", proven_arg_cstr(kp));
     }
 }
 

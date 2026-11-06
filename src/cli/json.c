@@ -10,6 +10,7 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/str.h"
 #include "rubrapack/suminfo.h"
 
 #include <stdio.h>
@@ -32,7 +33,7 @@ void rp_json_str(rp_buf_t *b, const char *s, size_t n) {
             rp_buf_puts(b, "\\t");
         } else if (c < 0x20 || c == 0x7F) {
             char u[8];
-            snprintf(u, sizeof u, "\\u%04x", c);
+            (void)proven_fmt_to(u, sizeof u, "\\u{:04x}", proven_arg_u32(c));
             rp_buf_puts(b, u);
         } else {
             rp_buf_byte(b, c);

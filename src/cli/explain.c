@@ -7,6 +7,7 @@
 #include "rubrapack/lang.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/str.h"
 
 #include "explain_int.h"
 
@@ -107,7 +108,7 @@ int rp_cmd_explain(int argc, char **argv) {
         out(TR("rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"));
         char line[512];
         for (size_t i = 0; i < sizeof ranges / sizeof ranges[0]; ++i) {
-            snprintf(line, sizeof line, "  %sxx  %s\n", ranges[i].prefix, rp_tr(ranges[i].what));
+            (void)proven_fmt_to(line, sizeof line, "  {}xx  {}\n", proven_arg_cstr(ranges[i].prefix), proven_arg_cstr(rp_tr(ranges[i].what)));
             out(line);
         }
         return RP_EXIT_OK;
@@ -124,7 +125,7 @@ int rp_cmd_explain(int argc, char **argv) {
         rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "'%s' is not a diagnostic code (RP and four digits, like RP1612)", argv[2]);
         return RP_EXIT_USAGE;
     }
-    snprintf(code, sizeof code, "RP%s", a);
+    (void)proven_fmt_to(code, sizeof code, "RP{}", proven_arg_cstr(a));
     const rp_explain_entry_t *e = NULL;
     for (size_t i = 0; i < rp_explain_count; ++i) {
         if (strcmp(rp_explain_table[i].code, code) == 0) e = &rp_explain_table[i];
@@ -135,13 +136,13 @@ int rp_cmd_explain(int argc, char **argv) {
         return RP_EXIT_USAGE;
     }
     char line[1024];
-    snprintf(line, sizeof line, "%s - %s\n", code, r ? rp_tr(r->what) : TR("a diagnostic of rubrapack"));
+    (void)proven_fmt_to(line, sizeof line, "{} - {}\n", proven_arg_cstr(code), proven_arg_cstr(r ? rp_tr(r->what) : TR("a diagnostic of rubrapack")));
     out(line);
     if (e->count) {
         out(TR("\nMessages with this code (* stands for a name or a value):\n"));
         for (size_t i = 0; i < e->count; ++i) {
             char tr[1000];
-            snprintf(line, sizeof line, "  - %s\n", in_language(e->messages[i], tr, sizeof tr));
+            (void)proven_fmt_to(line, sizeof line, "  - {}\n", proven_arg_cstr(in_language(e->messages[i], tr, sizeof tr)));
             out(line);
         }
     }

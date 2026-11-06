@@ -68,11 +68,11 @@ static char *keep(keep_t *k, char *s) {
 static char *kprintf(keep_t *k, const char *fmt, const char *a, const char *b) {
     size_t n = strlen(fmt) + (a ? strlen(a) : 0) + (b ? strlen(b) : 0) + 1;
     char *s = rp_mem_alloc(k->alloc, n, 1);
-    if (s) snprintf(s, n, fmt, a ? a : "", b ? b : "");
+    if (s) (void)rp_fmt_strs(s, n, fmt, a ? a : "", b ? b : "");
     return keep(k, s);
 }
 
-static char *kdup(keep_t *k, const char *s) { return kprintf(k, "%s", s, NULL); }
+static char *kdup(keep_t *k, const char *s) { return kprintf(k, "{}", s, NULL); }
 
 static void keep_free(keep_t *k) {
     for (size_t i = 0; i < k->count; ++i) rp_mem_free(k->alloc, k->v[i]);
@@ -341,7 +341,7 @@ static char *ir_dir_logical(dirs_t *d, const rp_ir_dir_t *dir, size_t depth) {
     }
     if (head == NULL) return NULL;
     char *s = kdup(d->k, head);
-    for (size_t i = 0; s && i < dir->part_count; ++i) s = kprintf(d->k, "%s/%s", s, dir->parts[i]);
+    for (size_t i = 0; s && i < dir->part_count; ++i) s = kprintf(d->k, "{}/{}", s, dir->parts[i]);
     return s;
 }
 
@@ -446,14 +446,14 @@ static void assign_short(keep_t *k, sib_t *s, size_t n) {
         stem[sn] = '\0';
         ext[en] = '\0';
         char se[16];                        // the stem and extension the number counts for
-        snprintf(se, sizeof se, "%s|%s", stem, ext);
+        (void)proven_fmt_to(se, sizeof se, "{}|{}", proven_arg_cstr(stem), proven_arg_cstr(ext));
         const unsigned *from = set.ok ? PROVEN_MAP_GET_U8_OWNED(&set.next, unsigned, proven_u8str_view_from_cstr(se)) : NULL;
         for (unsigned num = from ? *from : 1; num < 1000000; ++num) {
             char cand[16], digits[8];
-            int dn = snprintf(digits, sizeof digits, "%u", num);
+            int dn = rp_fmt_n(proven_fmt_to(digits, sizeof digits, "{}", proven_arg_u32(num)));
             size_t keepn = sn;
             if (keepn + 1 + (size_t)dn > 8) keepn = 8 - 1 - (size_t)dn;
-            snprintf(cand, sizeof cand, "%.*s~%s%s%s", (int)keepn, stem, digits, en ? "." : "", ext);
+            (void)proven_fmt_to(cand, sizeof cand, "{}~{}{}{}", proven_arg_cstr_n(stem, (int)keepn), proven_arg_cstr(digits), proven_arg_cstr(en ? "." : ""), proven_arg_cstr(ext));
             if (!short_taken(&set, cand, i)) {
                 *s[i].short_out = kdup(k, cand);
                 if (*s[i].short_out) short_take(&set, cand);
@@ -635,8 +635,8 @@ static const char *icon_name(proven_allocator_t alloc, keep_t *k, rows_t *icon, 
     *err = rp_pal_read_file(alloc, source, 1u << 22, &data, &len);
     if (*err != PROVEN_OK) return NULL;
     char num[24];
-    snprintf(num, sizeof num, "%zu", *n + 1);
-    const char *name = kprintf(k, "RpIcon%s.ico", num, NULL);
+    (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_u64(*n + 1));
+    const char *name = kprintf(k, "RpIcon{}.ico", num, NULL);
     icons[(*n)++] = (icon_t){ source, name, data };
     s_(icon, RP_V(name)); b_(icon, data, len);
     return name;
@@ -687,8 +687,8 @@ typedef struct {
 static const char *comp_ns(const pkg_t *pk) {
     if (pk->instance == 0) return "rubrapack.component";
     char num[16];
-    snprintf(num, sizeof num, "%d", pk->instance);
-    return kprintf(pk->k, "rubrapack.component/i%s", num, NULL);
+    (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_i32(pk->instance));
+    return kprintf(pk->k, "rubrapack.component/i{}", num, NULL);
 }
 
 // Property: identity, scope, [arp], [property.*] and the lists of secure and hidden properties.
@@ -699,7 +699,7 @@ static const char *comp_ns(const pkg_t *pk) {
 static const char *upgrade_code_of(pkg_t *pk) {
     if (pk->instance <= 0) return rp_cs(pk->ir->upgrade_code);
     char ik[16], guid[39];
-    snprintf(ik, sizeof ik, "i%d", pk->instance);
+    (void)proven_fmt_to(ik, sizeof ik, "i{}", proven_arg_i32(pk->instance));
     const char *fields[] = { rp_cs(pk->ir->upgrade_code), ik };
     rp_uuid_derive("rubrapack.instance-upgrade", fields, 2, guid);
     return kdup(pk->k, guid);
@@ -710,17 +710,17 @@ static void lower_properties(pkg_t *pk, const char *product_code) {
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
     char version3[24];
-    snprintf(version3, sizeof version3, "%u.%u.%u", ir->version_parts[0], ir->version_parts[1], ir->version_parts[2]);
+    (void)proven_fmt_to(version3, sizeof version3, "{}.{}.{}", proven_arg_u32(ir->version_parts[0]), proven_arg_u32(ir->version_parts[1]), proven_arg_u32(ir->version_parts[2]));
     char lang[8];
-    snprintf(lang, sizeof lang, "%u", ir->language);
+    (void)proven_fmt_to(lang, sizeof lang, "{}", proven_arg_u32(ir->language));
     s_(&pk->property, PROVEN_LIT("ProductCode")); s_(&pk->property, RP_V(product_code));
     // RFC-0031 B12: an instance variant has its own name so Installed apps shows it separately and
     // its [ProductName]-keyed registry (Shortcuts, Components) does not collide with the base's.
     const char *prodname = rp_cs(ir->name);
     if (pk->instance > 0) {
         char suffix[24];
-        snprintf(suffix, sizeof suffix, " (instance %d)", pk->instance);
-        prodname = kprintf(k, "%s%s", rp_cs(ir->name), suffix);
+        (void)proven_fmt_to(suffix, sizeof suffix, " (instance {})", proven_arg_i32(pk->instance));
+        prodname = kprintf(k, "{}{}", rp_cs(ir->name), suffix);
     }
     s_(&pk->property, PROVEN_LIT("ProductName")); s_(&pk->property, RP_V(prodname));
     s_(&pk->property, PROVEN_LIT("ProductVersion")); s_(&pk->property, ir->version);
@@ -751,34 +751,34 @@ static void lower_properties(pkg_t *pk, const char *product_code) {
     if (ir->arp_help.ptr) { s_(&pk->property, PROVEN_LIT("ARPHELPLINK")); s_(&pk->property, ir->arp_help); }
     if (ir->arp_about.ptr) { s_(&pk->property, PROVEN_LIT("ARPURLINFOABOUT")); s_(&pk->property, ir->arp_about); }
     char *secure = kdup(k, ir->refuse_below.ptr ? "RP_NEWER_FOUND;RP_OLDER_FOUND;RP_REFUSED_OLD" : "RP_NEWER_FOUND;RP_OLDER_FOUND");
-    if (!ir->no_preflight && !ir->module) secure = kprintf(k, "%s;%s", secure, "RPCLOSE");     // the answer for a run without UI
+    if (!ir->no_preflight && !ir->module) secure = kprintf(k, "{};{}", secure, "RPCLOSE");     // the answer for a run without UI
     bool users_all = false;         // RFC-0030: the other users' too, for a removal without UI
     for (size_t i = 0; i < ir->remove_count; ++i) users_all |= ir->removes[i].users_all;
     for (size_t i = 0; i < ir->registry_count; ++i) users_all |= ir->registries[i].users_all;
-    if (users_all) secure = kprintf(k, "%s;%s", secure, "RPPURGEUSERS");
+    if (users_all) secure = kprintf(k, "{};{}", secure, "RPPURGEUSERS");
     for (size_t i = 0; i < ir->replace_count; ++i) {      // x47: the replaced products' action properties
         char n[40];
-        snprintf(n, sizeof n, "RP_REPLACED_%u", (unsigned)(i & 15));
-        secure = kprintf(k, "%s;%s", secure, n);
+        (void)proven_fmt_to(n, sizeof n, "RP_REPLACED_{}", proven_arg_u32((unsigned)(i & 15)));
+        secure = kprintf(k, "{};{}", secure, n);
     }
     char *hidden = NULL;
     for (size_t i = 0; i < ir->property_count; ++i) {
         const rp_ir_property_t *p = &ir->properties[i];
         s_(&pk->property, p->id);
         s_(&pk->property, p->value);
-        if (p->secure) secure = kprintf(k, "%s;%s", secure, rp_cs(p->id));
-        if (p->hidden) hidden = hidden ? kprintf(k, "%s;%s", hidden, rp_cs(p->id)) : kdup(k, rp_cs(p->id));
+        if (p->secure) secure = kprintf(k, "{};{}", secure, rp_cs(p->id));
+        if (p->hidden) hidden = hidden ? kprintf(k, "{};{}", hidden, rp_cs(p->id)) : kdup(k, rp_cs(p->id));
     }
-    for (size_t i = 0; i < ir->search_count; ++i) secure = kprintf(k, "%s;%s", secure, rp_cs(ir->searches[i].property));
+    for (size_t i = 0; i < ir->search_count; ++i) secure = kprintf(k, "{};{}", secure, rp_cs(ir->searches[i].property));
     // What an author's dialog collects runs the elevated part too (RFC-0005 K4).
     for (size_t i = 0; i < ir->dialog_control_count; ++i) {
         const char *pn = rp_cs(ir->dialog_controls[i].property);
         bool listed = false;
         for (size_t j = 0; pn && j < ir->property_count; ++j) listed |= ir->properties[j].secure && RP_EQ(ir->properties[j].id, pn);
-        if (pn && !listed) secure = kprintf(k, "%s;%s", secure, pn);
+        if (pn && !listed) secure = kprintf(k, "{};{}", secure, pn);
     }
     // The language chosen in the dialogs reaches the elevated part (the guard's message, RFC-0012).
-    if (ir->ui_lang_count > 1) secure = kprintf(k, "%s;%s", secure, "RPLANGUAGE");
+    if (ir->ui_lang_count > 1) secure = kprintf(k, "{};{}", secure, "RPLANGUAGE");
     s_(&pk->property, PROVEN_LIT("SecureCustomProperties")); s_(&pk->property, RP_V(secure));
     if (hidden) { s_(&pk->property, PROVEN_LIT("MsiHiddenProperties")); s_(&pk->property, RP_V(hidden)); }
 }
@@ -799,14 +799,14 @@ static void lower_directories(pkg_t *pk) {
             const dnode_t *par = find_node(dirs, n->parent);
             if (par && par->long_name == NULL) {
                 char suffix[24];
-                snprintf(suffix, sizeof suffix, " (instance %d)", pk->instance);
-                lname = kprintf(k, "%s%s", n->long_name, suffix);
+                (void)proven_fmt_to(suffix, sizeof suffix, " (instance {})", proven_arg_i32(pk->instance));
+                lname = kprintf(k, "{}{}", n->long_name, suffix);
             }
         }
         if (n->parent == NULL) s_(&pk->directory, PROVEN_LIT("SourceDir"));
         else if (lname == NULL) s_(&pk->directory, PROVEN_LIT("."));
         else if (strcmp(n->short_name, lname) == 0) s_(&pk->directory, RP_V(lname));
-        else s_(&pk->directory, RP_V(kprintf(k, "%s|%s", n->short_name, lname)));
+        else s_(&pk->directory, RP_V(kprintf(k, "{}|{}", n->short_name, lname)));
     }
 }
 
@@ -829,10 +829,10 @@ static void lower_features(pkg_t *pk) {
         if (f->when.ptr) {                  // off (level 0) unless its condition holds (RFC-0013 A2)
             // Only at the first installation: at removal the property is gone, and a feature turned
             // off then would keep its files (observed, r1-vm).
-            s_(&pk->condition, f->id); i_(&pk->condition, 0); s_(&pk->condition, RP_V(kprintf(k, "NOT Installed AND NOT (%s)", rp_cs(f->when), NULL)));
+            s_(&pk->condition, f->id); i_(&pk->condition, 0); s_(&pk->condition, RP_V(kprintf(k, "NOT Installed AND NOT ({})", rp_cs(f->when), NULL)));
         }
         if (f->default_when.ptr) {          // x48: level 1 - installed by default - when its condition holds
-            s_(&pk->condition, f->id); i_(&pk->condition, 1); s_(&pk->condition, RP_V(kprintf(k, "NOT Installed AND (%s)", rp_cs(f->default_when), NULL)));
+            s_(&pk->condition, f->id); i_(&pk->condition, 1); s_(&pk->condition, RP_V(kprintf(k, "NOT Installed AND ({})", rp_cs(f->default_when), NULL)));
         }
     }
 }
@@ -860,7 +860,7 @@ static bool dir_in_profile(const rp_ir_t *ir, proven_u8str_view_t id) {
 static const char *profile_keypath(pkg_t *pk, const char *ckey) {
     keep_t *k = pk->k;
     char rk[23];
-    rp_key_derive('R', kprintf(k, "component-keypath:%s", ckey, NULL), rk);
+    rp_key_derive('R', kprintf(k, "component-keypath:{}", ckey, NULL), rk);
     const char *rkey = kdup(k, rk);
     s_(&pk->registry, RP_V(rkey)); i_(&pk->registry, 1); s_(&pk->registry, PROVEN_LIT("Software\\[Manufacturer]\\[ProductName]\\Components"));
     s_(&pk->registry, RP_V(ckey)); s_(&pk->registry, PROVEN_LIT("1")); s_(&pk->registry, RP_V(ckey));
@@ -891,12 +891,12 @@ static void profile_folders(pkg_t *pk, const char *dir_key, const char *ckey) {
             const rp_msi_cell_t *c = &pk->removefile.cells[r];
             if (c[2].kind != RP_MSI_NULL || c[3].len != strlen(n->key) || memcmp(c[3].bytes, n->key, c[3].len) != 0) continue;
             char owner[73];
-            snprintf(owner, sizeof owner, "%.*s", (int)c[1].len, (const char *)c[1].bytes);
+            (void)proven_fmt_to(owner, sizeof owner, "{}", proven_arg_cstr_n((const char *)c[1].bytes, (int)c[1].len));
             covered = !removed || comp_removed(pk, owner);
         }
         if (covered) continue;
         char rk[23];
-        rp_key_derive('R', kprintf(k, "profile-folder:%s|%s", n->key, ckey), rk);
+        rp_key_derive('R', kprintf(k, "profile-folder:{}|{}", n->key, ckey), rk);
         s_(&pk->removefile, RP_V(kdup(k, rk))); s_(&pk->removefile, RP_V(ckey)); null_(&pk->removefile);
         s_(&pk->removefile, RP_V(n->key)); i_(&pk->removefile, 2);
     }
@@ -937,9 +937,9 @@ static void lower_files(pkg_t *pk) {
         // source fixed keeps the file as the key path (RP1320).
         bool profile = lf->f->component_guid.ptr == NULL && dir_in_profile(ir, lf->f->dir);
         if (lf->f->component_guid.ptr) {
-            snprintf(guid, sizeof guid, "%s", rp_cs(lf->f->component_guid));
+            (void)proven_fmt_to(guid, sizeof guid, "{}", proven_arg_cstr(rp_cs(lf->f->component_guid)));
         } else {
-            const char *logical = kprintf(k, "%s/%s", rp_cs(lf->f->dir), rp_cs(lf->f->name));
+            const char *logical = kprintf(k, "{}/{}", rp_cs(lf->f->dir), rp_cs(lf->f->name));
             const char *fields[] = { rp_cs(ir->upgrade_code), "machine", arch_text(ir->arch), logical, profile ? "file-hkcu" : "file", lf->key };
             rp_uuid_derive(comp_ns(pk), fields, 6, guid);
         }
@@ -962,15 +962,15 @@ static void lower_files(pkg_t *pk) {
         s_(&pk->file, RP_V(lf->key));
         s_(&pk->file, RP_V(lf->comp));
         if (RP_EQ(lf->short_name, lf->f->name)) s_(&pk->file, lf->f->name);
-        else s_(&pk->file, RP_V(kprintf(k, "%s|%s", lf->short_name, rp_cs(lf->f->name))));
+        else s_(&pk->file, RP_V(kprintf(k, "{}|{}", lf->short_name, rp_cs(lf->f->name))));
         i_(&pk->file, (int32_t)lf->size);
         // Versioned files carry their version and language; the others get a hash row.
         rp_pe_info_t pi;
         bool versioned = rp_pe_read(lf->data, lf->size, &pi) == PROVEN_OK && pi.has_version;
         if (versioned) {
             char vtext[32], ltext[8];
-            snprintf(vtext, sizeof vtext, "%u.%u.%u.%u", pi.version[0], pi.version[1], pi.version[2], pi.version[3]);
-            snprintf(ltext, sizeof ltext, "%u", pi.language);
+            (void)proven_fmt_to(vtext, sizeof vtext, "{}.{}.{}.{}", proven_arg_u32(pi.version[0]), proven_arg_u32(pi.version[1]), proven_arg_u32(pi.version[2]), proven_arg_u32(pi.version[3]));
+            (void)proven_fmt_to(ltext, sizeof ltext, "{}", proven_arg_u32(pi.language));
             s_(&pk->file, RP_V(kdup(k, vtext)));
             s_(&pk->file, RP_V(kdup(k, ltext)));
         } else {
@@ -999,8 +999,8 @@ static int cmp_cstr(const void *a, const void *b) { return strcmp(*(const char *
 static const char *plan_field(keep_t *k, const char *plan, const char *field) {
     rp_text_result_t u = rp_utf8_to_utf16((const uint8_t *)field, strlen(field), NULL, 0);
     char head[24];
-    snprintf(head, sizeof head, "%zu:", u.units);
-    return kprintf(k, "%s%s", kprintf(k, "%s%s", plan, head), field);
+    (void)proven_fmt_to(head, sizeof head, "{}:", proven_arg_u64(u.units));
+    return kprintf(k, "{}{}", kprintf(k, "{}{}", plan, head), field);
 }
 
 // [registry.*] (RFC-0004): own component per value (key path = the value) unless `with`.
@@ -1018,11 +1018,11 @@ static void lower_registry(pkg_t *pk) {
             }
         } else {
             char comp[23], guid[39];
-            const char *ident = kprintf(k, "registry:%s", rp_cs(r->id), NULL);
+            const char *ident = kprintf(k, "registry:{}", rp_cs(r->id), NULL);
             rp_key_derive('C', ident, comp);
             static const char *const roots[] = { "HKMU", "HKCR", "HKCU", "HKLM" };  // index root + 1
-            const char *logical = kprintf(k, "%s\\%s", roots[r->root + 1], rp_cs(r->key));
-            logical = kprintf(k, "%s\\%s", logical, r->name.ptr ? rp_cs(r->name) : "");
+            const char *logical = kprintf(k, "{}\\{}", roots[r->root + 1], rp_cs(r->key));
+            logical = kprintf(k, "{}\\{}", logical, r->name.ptr ? rp_cs(r->name) : "");
             const char *fields[] = { rp_cs(ir->upgrade_code), "machine", r->view32 ? "x86" : arch_text(ir->arch), logical, "registry", rp_cs(r->id)};
             rp_uuid_derive(comp_ns(pk), fields, 6, guid);
             ckey = kdup(k, comp);
@@ -1071,13 +1071,13 @@ static void lower_registry(pkg_t *pk) {
         const char *value = NULL;
         switch (r->type) {
         case RP_REG_QWORD: break;
-        case RP_REG_STRING: value = r->value.ptr[0] == '#' ? kprintf(k, "#%s", rp_cs(r->value), NULL) : rp_cs(r->value); break;
-        case RP_REG_EXPAND: value = kprintf(k, "#%%%s", rp_cs(r->value), NULL); break;
-        case RP_REG_DWORD: value = kprintf(k, "#%s", rp_cs(r->value), NULL); break;
-        case RP_REG_BINARY: value = kprintf(k, "#x%s", rp_cs(r->value), NULL); break;
+        case RP_REG_STRING: value = r->value.ptr[0] == '#' ? kprintf(k, "#{}", rp_cs(r->value), NULL) : rp_cs(r->value); break;
+        case RP_REG_EXPAND: value = kprintf(k, "#%{}", rp_cs(r->value), NULL); break;
+        case RP_REG_DWORD: value = kprintf(k, "#{}", rp_cs(r->value), NULL); break;
+        case RP_REG_BINARY: value = kprintf(k, "#x{}", rp_cs(r->value), NULL); break;
         case RP_REG_MULTI:
             value = "[~]";
-            for (size_t j = 0; j < r->item_count; ++j) value = kprintf(k, "%s%s[~]", value, r->items[j]);
+            for (size_t j = 0; j < r->item_count; ++j) value = kprintf(k, "{}{}[~]", value, r->items[j]);
             break;
         }
         s_(&pk->registry, r->id); i_(&pk->registry, (int32_t)r->root); s_(&pk->registry, RP_V(key)); s_(&pk->registry, RP_V(name));
@@ -1105,7 +1105,7 @@ static void lower_addon(pkg_t *pk) {
         s_(&pk->featurecomp, ir->features[i].id); s_(&pk->featurecomp, RP_V(ckey));
     }
     s_(&pk->registry, PROVEN_LIT("RP_AddonParent")); i_(&pk->registry, ir->scope == 0 ? 2 : ir->scope == 1 ? 1 : -1);
-    s_(&pk->registry, RP_V(kprintf(k, "SOFTWARE\\rubrapack\\Addons\\%s", rp_cs(ir->parent), NULL)));
+    s_(&pk->registry, RP_V(kprintf(k, "SOFTWARE\\rubrapack\\Addons\\{}", rp_cs(ir->parent), NULL)));
     s_(&pk->registry, PROVEN_LIT("[ProductCode]")); s_(&pk->registry, PROVEN_LIT("[ProductName]")); s_(&pk->registry, RP_V(ckey));
     pk->any_write = true;
 }
@@ -1133,7 +1133,7 @@ static void lower_shortcuts(pkg_t *pk) {
         const char *shortn = dirs->sc_short[i];
         s_(&pk->shortcut, sc->id);
         s_(&pk->shortcut, RP_V(sdir));
-        s_(&pk->shortcut, RP_V(RP_EQ(shortn, sc->name) ? rp_cs(sc->name) : kprintf(k, "%s|%s", shortn, rp_cs(sc->name))));
+        s_(&pk->shortcut, RP_V(RP_EQ(shortn, sc->name) ? rp_cs(sc->name) : kprintf(k, "{}|{}", shortn, rp_cs(sc->name))));
         // Every shortcut has a component of its own (RFC-0013 A2 for `when`, RFC-0016 1 for all):
         // Windows' rules (ICE43, ICE57) treat the Start menu and the desktop as per-user places,
         // even in a per-machine package, and want such a component keyed by an HKCU value, not by
@@ -1146,8 +1146,8 @@ static void lower_shortcuts(pkg_t *pk) {
         bool own = !sc->advertise;
         if (own) {
             char comp[23], guid[39], rk[23];
-            rp_key_derive('C', kprintf(k, "shortcut:%s", rp_cs(sc->id), NULL), comp);
-            rp_key_derive('R', kprintf(k, "shortcut-when:%s", rp_cs(sc->id), NULL), rk);
+            rp_key_derive('C', kprintf(k, "shortcut:{}", rp_cs(sc->id), NULL), comp);
+            rp_key_derive('R', kprintf(k, "shortcut-when:{}", rp_cs(sc->id), NULL), rk);
             const char *fields[] = { rp_cs(ir->upgrade_code), "machine", arch_text(ir->arch), rp_cs(sc->id), "shortcut", rp_cs(sc->id)};
             rp_uuid_derive(comp_ns(pk), fields, 6, guid);
             sc_comp = kdup(k, comp);
@@ -1164,7 +1164,7 @@ static void lower_shortcuts(pkg_t *pk) {
         // Target: an advertised shortcut names the feature (Windows installs it on demand and
         // repairs it when launched, RFC-0031 B8); an ordinary one names the target file's path.
         if (sc->advertise) s_(&pk->shortcut, target->f->feature);
-        else s_(&pk->shortcut, RP_V(kprintf(k, "[%s]%s", target->dir_key, escape_formatted(k, target->f->name))));
+        else s_(&pk->shortcut, RP_V(kprintf(k, "[{}]{}", target->dir_key, escape_formatted(k, target->f->name))));
         s_(&pk->shortcut, sc->args);                                            // formatted (H2)
         s_(&pk->shortcut, sc->description);                                     // Text, not formatted
         const char *sc_icon = pk->icons ? icon_name(alloc, k, &pk->icon, pk->icons, &pk->nicons, rp_cs(sc->icon_source), &pk->icon_err) : NULL;
@@ -1174,7 +1174,7 @@ static void lower_shortcuts(pkg_t *pk) {
         s_(&pk->shortcut, RP_V(dkey(ir, sc->working_dir)));
         for (const dnode_t *n = find_node(dirs, sdir); n && n->long_name && n->parent; n = find_node(dirs, n->parent)) {
             char rk[23];
-            rp_key_derive('R', kprintf(k, "shortcut-folder:%s", n->key, NULL), rk);
+            rp_key_derive('R', kprintf(k, "shortcut-folder:{}", n->key, NULL), rk);
             bool seen = false;
             for (size_t r = 0; r + 5 <= pk->removefile.filled; r += 5) {
                 const rp_msi_cell_t *c0 = &pk->removefile.cells[r];
@@ -1211,7 +1211,7 @@ static const char *remove_name(keep_t *k, const char *name) {
     }
     sh[n] = 0;
     if (ok) return name;
-    return kprintf(k, "%s|%s", kdup(k, sh[0] && sh[0] != '.' ? sh : "_"), name);
+    return kprintf(k, "{}|{}", kdup(k, sh[0] && sh[0] != '.' ? sh : "_"), name);
 }
 
 static void lower_removes(pkg_t *pk) {
@@ -1220,8 +1220,8 @@ static void lower_removes(pkg_t *pk) {
     for (size_t i = 0; i < ir->remove_count; ++i) {
         const rp_ir_remove_t *r = &ir->removes[i];
         char comp[23], guid[39];
-        rp_key_derive('C', kprintf(k, "remove:%s", rp_cs(r->id), NULL), comp);
-        const char *logical = kprintf(k, "%s/%s", rp_cs(r->dir), r->name.ptr ? rp_cs(r->name) : "");
+        rp_key_derive('C', kprintf(k, "remove:{}", rp_cs(r->id), NULL), comp);
+        const char *logical = kprintf(k, "{}/{}", rp_cs(r->dir), r->name.ptr ? rp_cs(r->name) : "");
         // A recursive remove of a folder in the user's profile: its component sits at TARGETDIR, as
         // the registry ones, and creates no folder - a component in the profile wants an HKCU key
         // path (ICE38). Elsewhere the folder is made at installation, by the installer, as before;
@@ -1274,7 +1274,7 @@ static void lower_env(pkg_t *pk) {
     for (size_t i = 0; i < ir->env_count; ++i) {
         const rp_ir_env_t *e = &ir->envs[i];
         char comp[23], guid[39];
-        rp_key_derive('C', kprintf(k, "env:%s", rp_cs(e->id), NULL), comp);
+        rp_key_derive('C', kprintf(k, "env:{}", rp_cs(e->id), NULL), comp);
         const char *fields[] = { rp_cs(ir->upgrade_code), "machine", arch_text(ir->arch), rp_cs(e->name), "env", rp_cs(e->id)};
         rp_uuid_derive(comp_ns(pk), fields, 6, guid);
         const char *ckey = kdup(k, comp);
@@ -1282,10 +1282,10 @@ static void lower_env(pkg_t *pk) {
         i_(&pk->component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (e->keep ? 16 : 0)); s_(&pk->component, e->when); null_(&pk->component);
         s_(&pk->featurecomp, e->feature); s_(&pk->featurecomp, RP_V(ckey));
         const char *prefix = ir->scope == 1 ? (!e->keep ? "=-" : "=") : (!e->keep ? "=-*" : "=*");  // no '*': user variable
-        const char *value = e->mode == 1 ? kprintf(k, "[~];%s", rp_cs(e->value), NULL)
-                          : e->mode == 2 ? kprintf(k, "%s;[~]", rp_cs(e->value), NULL)
+        const char *value = e->mode == 1 ? kprintf(k, "[~];{}", rp_cs(e->value), NULL)
+                          : e->mode == 2 ? kprintf(k, "{};[~]", rp_cs(e->value), NULL)
                                          : rp_cs(e->value);
-        s_(&pk->environment, e->id); s_(&pk->environment, RP_V(kprintf(k, "%s%s", prefix, rp_cs(e->name))));
+        s_(&pk->environment, e->id); s_(&pk->environment, RP_V(kprintf(k, "{}{}", prefix, rp_cs(e->name))));
         s_(&pk->environment, RP_V(value)); s_(&pk->environment, RP_V(ckey));
     }
 }
@@ -1299,10 +1299,10 @@ static void lower_ini(pkg_t *pk) {
     for (size_t i = 0; i < ir->ini_count; ++i) {
         const rp_ir_ini_t *x = &ir->inis[i];
         char comp[23], guid[39];
-        rp_key_derive('C', kprintf(k, "ini:%s", rp_cs(x->id), NULL), comp);
-        const char *logical = kprintf(k, "%s/%s", rp_cs(x->dir), rp_cs(x->file));
-        logical = kprintf(k, "%s[%s]", logical, rp_cs(x->section));
-        logical = kprintf(k, "%s%s", logical, rp_cs(x->key));
+        rp_key_derive('C', kprintf(k, "ini:{}", rp_cs(x->id), NULL), comp);
+        const char *logical = kprintf(k, "{}/{}", rp_cs(x->dir), rp_cs(x->file));
+        logical = kprintf(k, "{}[{}]", logical, rp_cs(x->section));
+        logical = kprintf(k, "{}{}", logical, rp_cs(x->key));
         bool profile = dir_in_profile(ir, x->dir);                 // RFC-0029: an HKCU key path
         const char *fields[] = { rp_cs(ir->upgrade_code), "machine", arch_text(ir->arch), logical, profile ? "ini-hkcu" : "ini", rp_cs(x->id)};
         rp_uuid_derive(comp_ns(pk), fields, 6, guid);
@@ -1314,7 +1314,7 @@ static void lower_ini(pkg_t *pk) {
         s_(&pk->createfolder, RP_V(dkey(ir, x->dir))); s_(&pk->createfolder, RP_V(ckey));     // its key path is the folder (ICE18)
         if (profile) profile_folders(pk, dkey(ir, x->dir), ckey);
         const char *shortn = dirs->ini_short[i];
-        const char *fname = shortn && !RP_EQ(shortn, x->file) ? kprintf(k, "%s|%s", shortn, rp_cs(x->file)) : rp_cs(x->file);
+        const char *fname = shortn && !RP_EQ(shortn, x->file) ? kprintf(k, "{}|{}", shortn, rp_cs(x->file)) : rp_cs(x->file);
         rows_t *t = x->mode == 2 ? &pk->removeini : &pk->inifile;
         s_(t, x->id); s_(t, RP_V(fname)); s_(t, RP_V(dkey(ir, x->dir)));
         s_(t, RP_V(escape_formatted(k, x->section))); s_(t, RP_V(escape_formatted(k, x->key)));
@@ -1398,7 +1398,7 @@ static void lower_helper_actions(pkg_t *pk) {
     rp_srcdiags_t *diags = pk->diags;
     const char *guard = NULL;
     for (size_t i = 0; i < ir->dir_count; ++i) {
-        if (ir->dirs[i].guard) guard = guard ? kprintf(k, "%s;%s", guard, dkey(ir, ir->dirs[i].id)) : dkey(ir, ir->dirs[i].id);
+        if (ir->dirs[i].guard) guard = guard ? kprintf(k, "{};{}", guard, dkey(ir, ir->dirs[i].id)) : dkey(ir, ir->dirs[i].id);
     }
     // The last pages' Save log button (RFC-0020): Windows Installer keeps a log of every run
     // (MsiLogging, unless /l names one), and RpSaveLog copies it where the user says.
@@ -1440,8 +1440,8 @@ static void lower_helper_actions(pkg_t *pk) {
             if ((own != NULL) != (pass == 0)) continue;
             for (size_t j = 0; j < (own ? nown : p ? p->langid_count : 0); ++j) {
                 char num[16];
-                snprintf(num, sizeof num, "%u", own ? (unsigned)own[j] : p->langids[j]);
-                map = kprintf(k, "%s%s", map, kprintf(k, "%s=%s;", kdup(k, num), langs[b]));
+                (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_u32(own ? (unsigned)own[j] : p->langids[j]));
+                map = kprintf(k, "{}{}", map, kprintf(k, "{}={};", kdup(k, num), langs[b]));
             }
         }
         if (*map) { s_(&pk->property, PROVEN_LIT("RP_LANGS")); s_(&pk->property, RP_V(map)); }
@@ -1471,7 +1471,7 @@ static void lower_helper_actions(pkg_t *pk) {
         }
         if (lf) {
             s_(&pk->customaction, PROVEN_LIT("RP_Launch")); i_(&pk->customaction, 34 | 0xC0); s_(&pk->customaction, RP_V(dkey(ir, lf->dir)));
-            s_(&pk->customaction, RP_V(ir->ui_launch_args.ptr ? kprintf(k, "\"[#%s]\" %s", rp_cs(lf->id), rp_cs(ir->ui_launch_args)) : kprintf(k, "\"[#%s]\"", rp_cs(lf->id), NULL)));
+            s_(&pk->customaction, RP_V(ir->ui_launch_args.ptr ? kprintf(k, "\"[#{}]\" {}", rp_cs(lf->id), rp_cs(ir->ui_launch_args)) : kprintf(k, "\"[#{}]\"", rp_cs(lf->id), NULL)));
         }
     }
     // The install folder page's question about a folder that holds something (ui.c, RpDirWarnDlg):
@@ -1504,9 +1504,9 @@ static void lower_helper_actions(pkg_t *pk) {
         };
         for (size_t t = 0; t < sizeof det / sizeof det[0]; ++t) {
             for (size_t b = 0; b < nlangs; ++b) {
-                const char *tr = strcmp(langs[b], "en") == 0 ? NULL : rp_langpack_text(rp_langpack_get(langs[b], NULL), "installer", kprintf(k, "Details.%s", det[t].op, NULL));
+                const char *tr = strcmp(langs[b], "en") == 0 ? NULL : rp_langpack_text(rp_langpack_get(langs[b], NULL), "installer", kprintf(k, "Details.{}", det[t].op, NULL));
                 if (tr == NULL && b) continue;          // English is what a language without it shows
-                s_(&pk->property, RP_V(kprintf(k, "RpDet_%s_%s", det[t].op, langs[b])));
+                s_(&pk->property, RP_V(kprintf(k, "RpDet_{}_{}", det[t].op, langs[b])));
                 s_(&pk->property, RP_V(tr ? tr : det[t].en));
             }
         }
@@ -1515,12 +1515,12 @@ static void lower_helper_actions(pkg_t *pk) {
         for (size_t li = 0; li < (ir->ui_lang_count ? ir->ui_lang_count : 1); ++li) {
             const char *code = ir->ui_lang_count ? ir->ui_langs[li].code : "en";
             const char *face = ir->ui_lang_count && ir->ui_langs[li].font.ptr ? rp_cs(ir->ui_langs[li].font) : "Segoe UI";
-            s_(&pk->property, RP_V(kprintf(k, "RpDetFont_%s", code, NULL))); s_(&pk->property, RP_V(face));
+            s_(&pk->property, RP_V(kprintf(k, "RpDetFont_{}", code, NULL))); s_(&pk->property, RP_V(face));
             // ... and its first LANGID, which gives the helper the language's character set.
             unsigned id = ir->ui_lang_count && ir->ui_langs[li].langid_count ? ir->ui_langs[li].langids[0] : 1033;
             char num[16];
-            snprintf(num, sizeof num, "%u", id);
-            s_(&pk->property, RP_V(kprintf(k, "RpDetLcid_%s", code, NULL))); s_(&pk->property, RP_V(kdup(k, num)));
+            (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_u32(id));
+            s_(&pk->property, RP_V(kprintf(k, "RpDetLcid_{}", code, NULL))); s_(&pk->property, RP_V(kdup(k, num)));
         }
         s_(&pk->customaction, PROVEN_LIT("RP_Details")); i_(&pk->customaction, 1 | 0x80); s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpDetails"));
         s_(&pk->customaction, PROVEN_LIT("RP_DetailsDone")); i_(&pk->customaction, 1); s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpDetailsDone"));
@@ -1529,7 +1529,7 @@ static void lower_helper_actions(pkg_t *pk) {
         if (!details) { s_(&pk->property, PROVEN_LIT("MsiLogging")); s_(&pk->property, PROVEN_LIT("voicewarmup")); }
         size_t nl = ir->ui_lang_count ? ir->ui_lang_count : 1;
         for (size_t li = 0; li < nl; ++li) {
-            s_(&pk->property, RP_V(kprintf(k, "RpLogMsg_%s", ir->ui_lang_count ? ir->ui_langs[li].code : "en", NULL)));
+            s_(&pk->property, RP_V(kprintf(k, "RpLogMsg_{}", ir->ui_lang_count ? ir->ui_langs[li].code : "en", NULL)));
             s_(&pk->property, RP_V(rp_ui_text_for(ir, "SaveLogFail", li)));
         }
         s_(&pk->customaction, PROVEN_LIT("RP_SaveLog")); i_(&pk->customaction, 1); s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpSaveLog"));
@@ -1540,7 +1540,7 @@ static void lower_helper_actions(pkg_t *pk) {
         s_(&pk->property, PROVEN_LIT("RP_GUARD")); s_(&pk->property, RP_V(guard));
         size_t nl = ir->ui_lang_count ? ir->ui_lang_count : 1;
         for (size_t li = 0; li < nl; ++li) {
-            s_(&pk->property, RP_V(kprintf(k, "RpGuardMsg_%s", ir->ui_lang_count ? ir->ui_langs[li].code : "en", NULL)));
+            s_(&pk->property, RP_V(kprintf(k, "RpGuardMsg_{}", ir->ui_lang_count ? ir->ui_langs[li].code : "en", NULL)));
             s_(&pk->property, RP_V(rp_ui_text_for(ir, "DirGuardText", li)));
         }
         s_(&pk->customaction, PROVEN_LIT("RP_GuardDirs")); i_(&pk->customaction, 1); s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpGuardDirs"));
@@ -1552,7 +1552,7 @@ static void lower_helper_actions(pkg_t *pk) {
     for (size_t m = 0; m < ir->menu_count; ++m) {
         const rp_ir_menu_t *x = &ir->menus[m];
         if (x->text_by_lang_count == 0) continue;
-        const char *prop = kprintf(k, "RpMenuT_%s", rp_cs(x->id), NULL);
+        const char *prop = kprintf(k, "RpMenuT_{}", rp_cs(x->id), NULL);
         for (size_t w = 0; w <= x->text_by_lang_count; ++w) {
             const char *code = w ? rp_cs(x->text_by_lang[w - 1].lang) : "en";
             const char *text = rp_cs(w ? x->text_by_lang[w - 1].text : x->text);
@@ -1572,20 +1572,20 @@ static void lower_helper_actions(pkg_t *pk) {
             rp_buf_byte(&lit, 0);
             const char *cond = NULL;
             if (w) {
-                cond = kprintf(k, "RPLANGUAGE = \"%s\"", code, NULL);
+                cond = kprintf(k, "RPLANGUAGE = \"{}\"", code, NULL);
                 for (size_t li = 1; li < ir->ui_lang_count; ++li) {
                     const rp_ir_ui_lang_t *L = &ir->ui_langs[li];
                     if (strcmp(L->code, code) != 0) continue;
                     for (size_t j = 0; j < L->langid_count; ++j) {
                         char id[16];
-                        snprintf(id, sizeof id, "%u", (unsigned)L->langids[j]);
-                        cond = kprintf(k, "%s OR (NOT RPLANGUAGE AND UserLanguageID = %s)", cond, id);
+                        (void)proven_fmt_to(id, sizeof id, "{}", proven_arg_u32((unsigned)L->langids[j]));
+                        cond = kprintf(k, "{} OR (NOT RPLANGUAGE AND UserLanguageID = {})", cond, id);
                     }
                 }
             }
-            const char *action = kprintf(k, "RpMenuT_%s_%s", rp_cs(x->id), code);
+            const char *action = kprintf(k, "RpMenuT_{}_{}", rp_cs(x->id), code);
             s_(&pk->customaction, RP_V(action)); i_(&pk->customaction, 51); s_(&pk->customaction, RP_V(prop));
-            s_(&pk->customaction, RP_V(lit.err == PROVEN_OK ? kprintf(k, "%s", (const char *)lit.data, NULL) : text));
+            s_(&pk->customaction, RP_V(lit.err == PROVEN_OK ? kprintf(k, "{}", (const char *)lit.data, NULL) : text));
             s_(&pk->iexec, RP_V(action)); s_(&pk->iexec, RP_V(cond)); i_(&pk->iexec, w ? 1013 : 1012);
             rp_buf_free(&lit);
         }
@@ -1599,25 +1599,25 @@ static void lower_helper_actions(pkg_t *pk) {
         char name[160], pub[8400], id[14], version[32];
         unsigned v[4] = { 0 };
         for (size_t i = 0; i < ir->version_count && i < 4; ++i) v[i] = ir->version_parts[i];
-        snprintf(version, sizeof version, "%u.%u.%u.%u", v[0], v[1], v[2], v[3]);
+        (void)proven_fmt_to(version, sizeof version, "{}.{}.{}.{}", proven_arg_u32(v[0]), proven_arg_u32(v[1]), proven_arg_u32(v[2]), proven_arg_u32(v[3]));
         rp_msix_sparse_identity(ir, rp_cs(ir->menu_publisher), name, pub);
         rp_msix_publisher_id(pub, id);
-        const char *full = kprintf(k, "%s_%s", name, kprintf(k, "%s_%s", version, kprintf(k, "%s__%s", arch[ir->arch], id)));
-        const char *family = kprintf(k, "%s_%s", name, id);
-        const char *data = kprintf(k, "RPM1|%s|%s", ir->scope == 0 ? "m" : "u",
-                                   kprintf(k, "%s|%s", ir->menu_publisher.ptr ? "s" : "u", kprintf(k, "%s|%s", full, family)));
+        const char *full = kprintf(k, "{}_{}", name, kprintf(k, "{}_{}", version, kprintf(k, "{}__{}", arch[ir->arch], id)));
+        const char *family = kprintf(k, "{}_{}", name, id);
+        const char *data = kprintf(k, "RPM1|{}|{}", ir->scope == 0 ? "m" : "u",
+                                   kprintf(k, "{}|{}", ir->menu_publisher.ptr ? "s" : "u", kprintf(k, "{}|{}", full, family)));
         // Then the classic verbs of the same items (their keys below Software\Classes): where the
         // package is registered Windows shows its items in the classic menu too, so the registry
         // verbs are switched off there (LegacyDisable) - or each item would be there twice.
         for (size_t m = 0; m < ir->menu_count; ++m) {
             const rp_ir_menu_t *x = &ir->menus[m];
             if (x->parent.ptr || !x->windows11) continue;
-            const char *prefix = kprintf(k, "%s.Verb", rp_cs(x->id), NULL);
+            const char *prefix = kprintf(k, "{}.Verb", rp_cs(x->id), NULL);
             for (size_t r = 0; r < ir->registry_count; ++r) {
                 const rp_ir_registry_t *g = &ir->registries[r];
                 if (g->root != RP_ROOT_HKCR || g->name.ptr == NULL || !RP_EQ(g->name, "MUIVerb")) continue;
                 if (strncmp(rp_cs(g->id), prefix, strlen(prefix)) != 0) continue;
-                data = kprintf(k, "%s|%s", data, rp_cs(g->key));
+                data = kprintf(k, "{}|{}", data, rp_cs(g->key));
             }
         }
         s_(&pk->property, PROVEN_LIT("RpMenuData")); s_(&pk->property, RP_V(data));
@@ -1626,7 +1626,7 @@ static void lower_helper_actions(pkg_t *pk) {
             { "RP_MenuRegisterRollback", "RpMenuRemove", 0x100 }, { "RP_MenuRegister", "RpMenuRegister", 0 },
             { "RP_MenuRemoveRollback", "RpMenuRegister", 0x100 }, { "RP_MenuRemove", "RpMenuRemove", 0 } };
         for (size_t i = 0; i < 4; ++i) {
-            const char *set = kprintf(k, "RP_MenuData%s", i == 0 ? "1" : i == 1 ? "2" : i == 2 ? "3" : "4", NULL);
+            const char *set = kprintf(k, "RP_MenuData{}", i == 0 ? "1" : i == 1 ? "2" : i == 2 ? "3" : "4", NULL);
             s_(&pk->customaction, RP_V(set)); i_(&pk->customaction, 51); s_(&pk->customaction, RP_V(acts[i].action)); s_(&pk->customaction, PROVEN_LIT("[#RpMenuPkg]|[RpMenuData]"));
             s_(&pk->customaction, RP_V(acts[i].action)); i_(&pk->customaction, 1 | 0x40 | 0x400 | acts[i].type | noimp);
             s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, RP_V(acts[i].entry));
@@ -1654,7 +1654,7 @@ static void lower_helper_actions(pkg_t *pk) {
         // A [folder.*] is the product's own too, not "not installed with it" (x67).
         for (size_t i = 0; keys && i < ir->folder_count; ++i) keys[nkeys++] = rp_cs(ir->folders[i].id);
         if (nkeys) rp_sort(keys, nkeys, sizeof *keys, cmp_cstr);
-        for (size_t i = 0; i < nkeys; ++i) dirs = *dirs ? kprintf(k, "%s;%s", dirs, keys[i]) : keys[i];
+        for (size_t i = 0; i < nkeys; ++i) dirs = *dirs ? kprintf(k, "{};{}", dirs, keys[i]) : keys[i];
         if (keys) rp_mem_free(pk->alloc, keys);
         if (*dirs) { s_(&pk->property, PROVEN_LIT("RP_PREFLIGHT_DIRS")); s_(&pk->property, RP_V(dirs)); }
         static const char *const modes[] = { "ask", "always", "never" };
@@ -1670,9 +1670,9 @@ static void lower_helper_actions(pkg_t *pk) {
         static const char *const ids[] = { "Ask", "Silent", "Folder", "Cache", "Extra", "ExtraSilent", "Users" };
         for (size_t t = 0; t < sizeof ids / sizeof ids[0]; ++t) {
             if (strcmp(ids[t], "Users") == 0 && !others) continue;
-            const char *id = kprintf(k, "Preflight%s", ids[t], NULL);
+            const char *id = kprintf(k, "Preflight{}", ids[t], NULL);
             for (size_t b = 0; b < nlangs; ++b) {       // English, the built-in packs, the dialogs' languages
-                s_(&pk->property, RP_V(kprintf(k, "RpPre%s_%s", ids[t], langs[b])));
+                s_(&pk->property, RP_V(kprintf(k, "RpPre{}_{}", ids[t], langs[b])));
                 s_(&pk->property, RP_V(rp_ui_text_lang(ir, id, langs[b])));
             }
         }
@@ -1686,17 +1686,17 @@ static void lower_helper_actions(pkg_t *pk) {
             if (x->msix.ptr) {
                 char id[14];
                 rp_msix_publisher_id(rp_cs(x->publisher), id);
-                what = kprintf(k, "%s_%s", rp_cs(x->msix), id);
+                what = kprintf(k, "{}_{}", rp_cs(x->msix), id);
             }
-            const char *one = kprintf(k, "%s|%s", x->msix.ptr ? "m" : "u", kprintf(k, "%s|%s", x->refuse ? "r" : "w", kprintf(k, "%s|%s", rp_cs(x->id), what)));
-            other = *other ? kprintf(k, "%s;%s", other, one) : one;
+            const char *one = kprintf(k, "{}|{}", x->msix.ptr ? "m" : "u", kprintf(k, "{}|{}", x->refuse ? "r" : "w", kprintf(k, "{}|{}", rp_cs(x->id), what)));
+            other = *other ? kprintf(k, "{};{}", other, one) : one;
             if (x->message.ptr == NULL) used[(x->msix.ptr ? 0 : 2) + (x->refuse ? 1 : 0)] = true;     // else the author's (in English too)
             if (x->message.ptr) {
-                s_(&pk->property, RP_V(kprintf(k, "RpPreOther_%s_en", rp_cs(x->id), NULL))); s_(&pk->property, x->message);
+                s_(&pk->property, RP_V(kprintf(k, "RpPreOther_{}_en", rp_cs(x->id), NULL))); s_(&pk->property, x->message);
             }
             for (size_t w = 0; w < x->message_by_lang_count; ++w) {
                 if (x->message.ptr && RP_EQ(x->message_by_lang[w].lang, "en")) continue;
-                s_(&pk->property, RP_V(kprintf(k, "RpPreOther_%s_%s", rp_cs(x->id), rp_cs(x->message_by_lang[w].lang))));
+                s_(&pk->property, RP_V(kprintf(k, "RpPreOther_{}_{}", rp_cs(x->id), rp_cs(x->message_by_lang[w].lang))));
                 s_(&pk->property, x->message_by_lang[w].text);
             }
         }
@@ -1705,9 +1705,9 @@ static void lower_helper_actions(pkg_t *pk) {
             static const char *const oids[] = { "OtherStore", "OtherStoreRefuse", "OtherMsi", "OtherMsiRefuse" };
             for (size_t t = 0; t < 4; ++t) {
                 if (!used[t]) continue;
-                const char *id = kprintf(k, "Preflight%s", oids[t], NULL);
+                const char *id = kprintf(k, "Preflight{}", oids[t], NULL);
                 for (size_t b = 0; b < nlangs; ++b) {
-                    s_(&pk->property, RP_V(kprintf(k, "RpPre%s_%s", oids[t], langs[b])));
+                    s_(&pk->property, RP_V(kprintf(k, "RpPre{}_{}", oids[t], langs[b])));
                     s_(&pk->property, RP_V(rp_ui_text_lang(ir, id, langs[b])));
                 }
             }
@@ -1722,13 +1722,13 @@ static void lower_helper_actions(pkg_t *pk) {
         for (size_t i = 0; i < ir->action_count; ++i) {
             const rp_ir_action_t *a = &ir->actions[i];
             if (a->kind != RP_ACT_PAIR || a->check_args.ptr == NULL || a->run_file.ptr == NULL) continue;
-            checks = kprintf(k, "%s%s", checks, kprintf(k, "%s\t%s\n", rp_cs(a->run_file), rp_cs(a->check_args)));     // the File key is the ID
+            checks = kprintf(k, "{}{}", checks, kprintf(k, "{}\t{}\n", rp_cs(a->run_file), rp_cs(a->check_args)));     // the File key is the ID
         }
         if (*checks) { s_(&pk->property, PROVEN_LIT("RP_REPORT")); s_(&pk->property, RP_V(checks)); }
         static const char *const rids[] = { "ReportInstall", "ReportUpgrade", "ReportRemove", "ReportRepair" };
         for (size_t t = 0; t < sizeof rids / sizeof rids[0]; ++t) {
             for (size_t b = 0; b < nlangs; ++b) {
-                s_(&pk->property, RP_V(kprintf(k, "RpPre%s_%s", rids[t], langs[b])));
+                s_(&pk->property, RP_V(kprintf(k, "RpPre{}_{}", rids[t], langs[b])));
                 s_(&pk->property, RP_V(rp_ui_text_lang(ir, rids[t], langs[b])));
             }
         }
@@ -1739,12 +1739,12 @@ static void lower_helper_actions(pkg_t *pk) {
         static const char *const ids[] = { "MaintTitle", "MaintText", "Repair", "Remove", "Cancel" };
         for (size_t t = 0; t < sizeof ids / sizeof ids[0]; ++t) {
             for (size_t b = 0; b < nlangs; ++b) {
-                s_(&pk->property, RP_V(kprintf(k, "RpPre%s_%s", ids[t], langs[b])));
+                s_(&pk->property, RP_V(kprintf(k, "RpPre{}_{}", ids[t], langs[b])));
                 s_(&pk->property, RP_V(rp_ui_text_lang(ir, ids[t], langs[b])));
             }
         }
         for (size_t b = 0; b < nlangs; ++b) {   // the second question before a removal
-            s_(&pk->property, RP_V(kprintf(k, "RpPreRemoveAsk_%s", langs[b], NULL)));
+            s_(&pk->property, RP_V(kprintf(k, "RpPreRemoveAsk_{}", langs[b], NULL)));
             s_(&pk->property, RP_V(rp_ui_text_lang(ir, rp_ui_wipes(ir) ? "RemoveAskAll" : "RemoveAsk", langs[b])));
         }
         s_(&pk->customaction, PROVEN_LIT("RP_Maintain")); i_(&pk->customaction, 1); s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpMaintain"));
@@ -1763,7 +1763,7 @@ static void lower_helper_actions(pkg_t *pk) {
             if (ir->dirs[i].part_count) keys[nkeys++] = dkey(ir, ir->dirs[i].id);
         }
         if (nkeys) rp_sort(keys, nkeys, sizeof *keys, cmp_cstr);
-        for (size_t i = 0; i < nkeys; ++i) dirs = *dirs ? kprintf(k, "%s;%s", dirs, keys[i]) : keys[i];
+        for (size_t i = 0; i < nkeys; ++i) dirs = *dirs ? kprintf(k, "{};{}", dirs, keys[i]) : keys[i];
         if (keys) rp_mem_free(pk->alloc, keys);
         s_(&pk->property, PROVEN_LIT("RP_CLEANUP_DIRS")); s_(&pk->property, RP_V(*dirs ? dirs : "TARGETDIR"));
         s_(&pk->property, PROVEN_LIT("RP_CLEANUP_SCOPE")); s_(&pk->property, RP_V(ir->scope == 0 ? "machine" : "user"));
@@ -1788,7 +1788,7 @@ static void lower_helper_actions(pkg_t *pk) {
     // [remove] upgrade = false: prepare (immediate; nothing when UPGRADINGPRODUCTCODE is set) ->
     // rollback twin -> apply (moves the files to a backup folder) -> commit (deletes the backup).
     if (pk->any_rplan) {
-        s_(&pk->property, PROVEN_LIT("RP_REMOVES")); s_(&pk->property, RP_V(kprintf(k, "%s%s", pk->rplan, NULL)));
+        s_(&pk->property, PROVEN_LIT("RP_REMOVES")); s_(&pk->property, RP_V(kprintf(k, "{}{}", pk->rplan, NULL)));
         s_(&pk->property, PROVEN_LIT("RP_REMOVES_ROOT")); s_(&pk->property, RP_V(ir->scope == 0 ? "volume" : "temp"));
         const int noimp = ir->scope == 0 ? 0x800 : 0;
         s_(&pk->customaction, PROVEN_LIT("RP_RemovePrepare")); i_(&pk->customaction, 1); s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpRemovePrepare"));
@@ -1804,7 +1804,7 @@ static void lower_helper_actions(pkg_t *pk) {
     // nothing: one as the user (the user's profile and HKCU), one - per machine - as SYSTEM. The
     // preflight adds the folders whose extra files the user chose to delete (extra-files).
     if (pk->any_purge || pk->extra) {
-        s_(&pk->property, PROVEN_LIT("RP_PURGE")); s_(&pk->property, RP_V(kprintf(k, "%s%s", pk->pplan, NULL)));
+        s_(&pk->property, PROVEN_LIT("RP_PURGE")); s_(&pk->property, RP_V(kprintf(k, "{}{}", pk->pplan, NULL)));
         // A dual package installed for all users (ALLUSERS=1) wipes its machine part as SYSTEM too (RFC-0031 L4).
         if (ir->scope != 1) { s_(&pk->property, PROVEN_LIT("RP_PURGE_SPLIT")); s_(&pk->property, PROVEN_LIT("1")); }
         s_(&pk->customaction, PROVEN_LIT("RP_PurgePrepare")); i_(&pk->customaction, 1 | 0x40); s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpPurgePrepare"));
@@ -1836,7 +1836,7 @@ static void lower_helper_actions(pkg_t *pk) {
     };
     for (size_t i = 0; i < sizeof commits / sizeof commits[0]; ++i) {
         if (!commits[i].have) continue;
-        s_(&pk->customaction, RP_V(kprintf(k, "%sNR", commits[i].name, NULL))); i_(&pk->customaction, commits[i].type);
+        s_(&pk->customaction, RP_V(kprintf(k, "{}NR", commits[i].name, NULL))); i_(&pk->customaction, commits[i].type);
         s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, RP_V(commits[i].entry));
     }
 }
@@ -1853,7 +1853,7 @@ static void lower_permissions(pkg_t *pk) {
         const char *lock = rp_cs(x->target);
         if (x->kind == 0) {
             char comp[23], guid[39];
-            rp_key_derive('C', kprintf(k, "permission:%s", rp_cs(x->id), NULL), comp);
+            rp_key_derive('C', kprintf(k, "permission:{}", rp_cs(x->id), NULL), comp);
             const char *fields[] = { rp_cs(ir->upgrade_code), "machine", arch_text(ir->arch), rp_cs(x->target), "permission", rp_cs(x->id)};
             rp_uuid_derive(comp_ns(pk), fields, 6, guid);
             const char *ckey = kdup(k, comp);
@@ -1882,7 +1882,7 @@ static void lower_searches(pkg_t *pk) {
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
     for (size_t i = 0; i < ir->require_count; ++i) {
-        s_(&pk->launch, RP_V(kprintf(k, "Installed OR (%s)", rp_cs(ir->requires[i].condition), NULL))); s_(&pk->launch, ir->requires[i].message);
+        s_(&pk->launch, RP_V(kprintf(k, "Installed OR ({})", rp_cs(ir->requires[i].condition), NULL))); s_(&pk->launch, ir->requires[i].message);
     }
     if (ir->scope == 1) {           // a per-user package stays per user
         s_(&pk->launch, PROVEN_LIT("Installed OR MSIINSTALLPERUSER = 1"));
@@ -1893,12 +1893,12 @@ static void lower_searches(pkg_t *pk) {
         // A search that fills a dir (RFC-0012 V5) lands in RpFound_<ID>; a type-51 action right
         // after AppSearch copies it to the dir only when the dir is still unset, so a value given on
         // the command line wins.
-        const char *found = x->fills_dir ? kprintf(k, "RpFound_%s", rp_cs(x->id), NULL) : rp_cs(x->property);
+        const char *found = x->fills_dir ? kprintf(k, "RpFound_{}", rp_cs(x->id), NULL) : rp_cs(x->property);
         s_(&pk->appsearch, RP_V(found)); s_(&pk->appsearch, x->id);
         if (x->fills_dir) {
-            const char *act = kprintf(k, "RpFill_%s", rp_cs(x->id), NULL);
-            s_(&pk->customaction, RP_V(act)); i_(&pk->customaction, 51); s_(&pk->customaction, x->property); s_(&pk->customaction, RP_V(kprintf(k, "[%s]", found, NULL)));
-            const char *cnd = kprintf(k, "%s AND NOT %s", found, rp_cs(x->property));
+            const char *act = kprintf(k, "RpFill_{}", rp_cs(x->id), NULL);
+            s_(&pk->customaction, RP_V(act)); i_(&pk->customaction, 51); s_(&pk->customaction, x->property); s_(&pk->customaction, RP_V(kprintf(k, "[{}]", found, NULL)));
+            const char *cnd = kprintf(k, "{} AND NOT {}", found, rp_cs(x->property));
             s_(&pk->iexec, RP_V(act)); s_(&pk->iexec, RP_V(cnd)); i_(&pk->iexec, 51);
             s_(&pk->iui, RP_V(act)); s_(&pk->iui, RP_V(cnd)); i_(&pk->iui, 51);
         }
@@ -1911,7 +1911,7 @@ static void lower_searches(pkg_t *pk) {
         case RP_SEARCH_FILE:
         case RP_SEARCH_DIR: {
             const char *std = standard_folder(rp_cs(x->base), ir->arch);
-            const char *path = x->path.ptr ? kprintf(k, "[%s]%s", std, rp_cs(x->path)) : kprintf(k, "[%s]", std, NULL);
+            const char *path = x->path.ptr ? kprintf(k, "[{}]{}", std, rp_cs(x->path)) : kprintf(k, "[{}]", std, NULL);
             s_(&pk->drlocator, x->id); null_(&pk->drlocator); s_(&pk->drlocator, RP_V(path)); i_(&pk->drlocator, 0);
             if (x->kind == RP_SEARCH_FILE) {
                 s_(&pk->signature, x->id); s_(&pk->signature, x->file_name); s_(&pk->signature, x->min_version);
@@ -1946,7 +1946,7 @@ static void lower_copies(pkg_t *pk) {
         const char *longn = rp_cs(cp->name.ptr ? cp->name : src->f->name);
         const char *shortn = dirs->cp_short[i];
         s_(&pk->duplicate, cp->id); s_(&pk->duplicate, RP_V(src->comp)); s_(&pk->duplicate, RP_V(src->key));
-        s_(&pk->duplicate, RP_V(strcmp(shortn, longn) == 0 ? longn : kprintf(k, "%s|%s", shortn, longn)));
+        s_(&pk->duplicate, RP_V(strcmp(shortn, longn) == 0 ? longn : kprintf(k, "{}|{}", shortn, longn)));
         s_(&pk->duplicate, RP_V(dkey(ir, cp->dir)));
         if (dir_in_profile(ir, cp->dir)) profile_folders(pk, dkey(ir, cp->dir), src->comp);       // ICE64 (RFC-0029)
     }
@@ -1985,7 +1985,7 @@ static const char *move_name(keep_t *k, const char *name) {
         if (sh[n - 1] == '.') --n;
     }
     sh[n] = 0;
-    return kprintf(k, "%s|%s", sh, name);
+    return kprintf(k, "{}|{}", sh, name);
 }
 
 // One ODBCAttribute / ODBCSourceAttribute row from "Key=Value" (the IR checked the '=').
@@ -2011,7 +2011,7 @@ static void lower_more(pkg_t *pk) {
         } else {
             // A component of its own in the destination folder (the folder its key path, ICE18).
             char ckey[23], guid[39];
-            rp_key_derive('C', kprintf(k, "move.%s", rp_cs(x->id), NULL), ckey);
+            rp_key_derive('C', kprintf(k, "move.{}", rp_cs(x->id), NULL), ckey);
             const char *fields[] = { rp_cs(ir->upgrade_code), "machine", arch_text(ir->arch), rp_cs(x->to_dir), "move", rp_cs(x->id)};
             rp_uuid_derive(comp_ns(pk), fields, 6, guid);
             comp = kdup(k, ckey);
@@ -2091,7 +2091,7 @@ static void lower_folders(pkg_t *pk) {
         const rp_ir_folder_t *f = &ir->folders[i];
         char comp[23], guid[39];
         rp_key_derive('C', rp_cs(f->id), comp);
-        const char *logical = kprintf(k, "%s/%s", rp_cs(f->dir), rp_cs(f->name));
+        const char *logical = kprintf(k, "{}/{}", rp_cs(f->dir), rp_cs(f->name));
         bool profile = dir_in_profile(ir, f->dir);                 // RFC-0029: an HKCU key path
         const char *fields[] = { rp_cs(ir->upgrade_code), "machine", arch_text(ir->arch), logical, profile ? "folder-hkcu" : "folder", rp_cs(f->id)};
         rp_uuid_derive(comp_ns(pk), fields, 6, guid);
@@ -2140,12 +2140,12 @@ static proven_err_t lower_cabinets(pkg_t *pk, const char *cab_stem, const rp_lim
     uint64_t embedded = 0;
     for (size_t g = 0, start = 0; err == PROVEN_OK && g < pk->ngroups; start = pk->group_end[g++]) {
         char num[24];
-        snprintf(num, sizeof num, "%zu", g + 1);
-        const char *name = !ir->cab_external ? kprintf(k, "cab%s.cab", num, NULL)
-                           : pk->ngroups == 1    ? kprintf(k, "%s.cab", cab_stem, NULL)
-                                             : kprintf(k, "%s-%s.cab", cab_stem, num);
+        (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_u64(g + 1));
+        const char *name = !ir->cab_external ? kprintf(k, "cab{}.cab", num, NULL)
+                           : pk->ngroups == 1    ? kprintf(k, "{}.cab", cab_stem, NULL)
+                                             : kprintf(k, "{}-{}.cab", cab_stem, num);
         i_(&pk->media, (int32_t)(g + 1)); i_(&pk->media, (int32_t)pk->group_end[g]); null_(&pk->media);
-        s_(&pk->media, RP_V(ir->cab_external ? name : kprintf(k, "#%s", name, NULL))); null_(&pk->media); null_(&pk->media);
+        s_(&pk->media, RP_V(ir->cab_external ? name : kprintf(k, "#{}", name, NULL))); null_(&pk->media); null_(&pk->media);
         size_t n = pk->group_end[g] - start;
         rp_cab_file_t *cf = rp_mem_alloc(alloc, n, sizeof *cf);
         uint8_t *cab = NULL;
@@ -2197,7 +2197,7 @@ static proven_err_t lower_cabinets(pkg_t *pk, const char *cab_stem, const rp_lim
                 rp_mem_free(alloc, cab);
                 break;
             }
-            s_(&pk->digsig, PROVEN_LIT("Media")); s_(&pk->digsig, RP_V(kprintf(k, "%s", num, NULL))); s_(&pk->digsig, PROVEN_LIT("RpCabSigner"));
+            s_(&pk->digsig, PROVEN_LIT("Media")); s_(&pk->digsig, RP_V(kprintf(k, "{}", num, NULL))); s_(&pk->digsig, PROVEN_LIT("RpCabSigner"));
             b_(&pk->digsig, sg->hash[g], sg->hash_len[g]);
             if (g == 0) { s_(&pk->digcert, PROVEN_LIT("RpCabSigner")); b_(&pk->digcert, sg->cert, sg->cert_len); }
         }
@@ -2237,24 +2237,24 @@ static void refusal(pkg_t *pk, const char *name, const char *id, const char *cus
     *cond = found;
     const char *base = custom ? escape_formatted(k, RP_V(custom)) : rp_ui_text_builtin(id, package_lang(ir));
     bool multi = ir->ui && ir->ui_lang_count > 1, table = multi && ir->ui_lang_count > RP_UI_LANG_ACTIONS;    // as ui.c, built later
-    if (custom == NULL && table) base = kprintf(k, "[RpT_%s]", id, NULL);
-    s_(&pk->customaction, RP_V(name)); i_(&pk->customaction, 19); null_(&pk->customaction); s_(&pk->customaction, RP_V(kprintf(k, "%s%s", base, suffix)));
+    if (custom == NULL && table) base = kprintf(k, "[RpT_{}]", id, NULL);
+    s_(&pk->customaction, RP_V(name)); i_(&pk->customaction, 19); null_(&pk->customaction); s_(&pk->customaction, RP_V(kprintf(k, "{}{}", base, suffix)));
     if (custom || !multi || table) return;
     const char *others = "";
     int seq = first;
     for (size_t li = 0; li < ir->ui_lang_count && li < RP_UI_LANG_ACTIONS; ++li) {
         const char *code = ir->ui_langs[li].code, *text = rp_ui_text_for(ir, id, li);
         if (text == NULL || strcmp(text, base) == 0) continue;
-        const char *act = kprintf(k, "%s_%s", name, code);
-        const char *is = kprintf(k, "RPLANGUAGE = \"%s\"", code, NULL);
-        s_(&pk->customaction, RP_V(act)); i_(&pk->customaction, 19); null_(&pk->customaction); s_(&pk->customaction, RP_V(kprintf(k, "%s%s", text, suffix)));
-        const char *c = kprintf(k, "%s AND %s", found, is);
+        const char *act = kprintf(k, "{}_{}", name, code);
+        const char *is = kprintf(k, "RPLANGUAGE = \"{}\"", code, NULL);
+        s_(&pk->customaction, RP_V(act)); i_(&pk->customaction, 19); null_(&pk->customaction); s_(&pk->customaction, RP_V(kprintf(k, "{}{}", text, suffix)));
+        const char *c = kprintf(k, "{} AND {}", found, is);
         s_(&pk->iexec, RP_V(act)); s_(&pk->iexec, RP_V(c)); i_(&pk->iexec, seq);
         s_(&pk->iui, RP_V(act)); s_(&pk->iui, RP_V(c)); i_(&pk->iui, seq);
         ++seq;
-        others = *others ? kprintf(k, "%s OR %s", others, is) : is;
+        others = *others ? kprintf(k, "{} OR {}", others, is) : is;
     }
-    if (*others) *cond = kprintf(k, "%s AND NOT (%s)", found, others);
+    if (*others) *cond = kprintf(k, "{} AND NOT ({})", found, others);
 }
 
 // Upgrade: detect same-or-newer (refused below), remove older (RFC-0001 9.5)
@@ -2275,7 +2275,7 @@ static void lower_upgrade(pkg_t *pk) {
     for (size_t i = 0; i < ir->replace_count; ++i) {
         s_(&pk->upgrade, RP_V(ir->replaces[i])); s_(&pk->upgrade, PROVEN_LIT("0.0.0")); null_(&pk->upgrade); null_(&pk->upgrade);
         char n[40];
-        snprintf(n, sizeof n, "RP_REPLACED_%u", (unsigned)(i & 15));
+        (void)proven_fmt_to(n, sizeof n, "RP_REPLACED_{}", proven_arg_u32((unsigned)(i & 15)));
         i_(&pk->upgrade, 0x100); null_(&pk->upgrade); s_(&pk->upgrade, RP_V(kdup(k, n)));
     }
 
@@ -2382,11 +2382,11 @@ static void lower_single_action(pkg_t *pk, const rp_ir_action_t *a) {
         if (as_system) type |= 0x800;          // no impersonation: the SYSTEM account (per-machine only)
     }
     if (a->ignore_exit) type |= 0x40;
-    const char *name = kprintf(k, "RP_Act_%s", rp_cs(a->id), NULL);
+    const char *name = kprintf(k, "RP_Act_{}", rp_cs(a->id), NULL);
     s_(&pk->customaction, RP_V(name)); i_(&pk->customaction, type); s_(&pk->customaction, RP_V(source)); s_(&pk->customaction, RP_V(target ? target : ""));
     // A deferred action's data: CustomActionData is set by an immediate action just before it.
     if (deferred && a->data.ptr) {
-        const char *setter = kprintf(k, "RP_ActData_%s", rp_cs(a->id), NULL);
+        const char *setter = kprintf(k, "RP_ActData_{}", rp_cs(a->id), NULL);
         s_(&pk->customaction, RP_V(setter)); i_(&pk->customaction, 51); s_(&pk->customaction, RP_V(name)); s_(&pk->customaction, a->data);
     }
     // Placement in the execute sequence. before/after give the named action's number +/- 1; a bare
@@ -2418,7 +2418,7 @@ static void lower_single_action(pkg_t *pk, const rp_ir_action_t *a) {
                        "(Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred",
                        rp_cs(a->id));
     }
-    if (deferred && a->data.ptr) { s_(&pk->iexec, RP_V(kprintf(k, "RP_ActData_%s", rp_cs(a->id), NULL))); s_(&pk->iexec, RP_V(when)); i_(&pk->iexec, seq - 1); }
+    if (deferred && a->data.ptr) { s_(&pk->iexec, RP_V(kprintf(k, "RP_ActData_{}", rp_cs(a->id), NULL))); s_(&pk->iexec, RP_V(when)); i_(&pk->iexec, seq - 1); }
     s_(&pk->iexec, RP_V(name)); s_(&pk->iexec, RP_V(when)); i_(&pk->iexec, seq);
 }
 
@@ -2534,13 +2534,13 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         for (int i = 0; i < 5; ++i) {
             if (!have[i]) continue;
             const char *cond = i == 3 && ir->scope == 2 ? "RollbackDisabled AND ALLUSERS=1" : "RollbackDisabled";
-            s_(&pk->iexec, RP_V(kprintf(k, "%sNR", commits[i], NULL))); s_(&pk->iexec, RP_V(cond)); i_(&pk->iexec, 6592 + i);
+            s_(&pk->iexec, RP_V(kprintf(k, "{}NR", commits[i], NULL))); s_(&pk->iexec, RP_V(cond)); i_(&pk->iexec, 6592 + i);
         }
     }
     if (pk->menu) {
         for (int i = 1; i <= 4; ++i) {
             char set[32];
-            snprintf(set, sizeof set, "RP_MenuData%d", i);
+            (void)proven_fmt_to(set, sizeof set, "RP_MenuData{}", proven_arg_i32(i));
             s_(&pk->iexec, RP_V(kdup(k, set))); null_(&pk->iexec); i_(&pk->iexec, 1013 + i);       // 1014..1017: each its own (ICE82)
         }
         s_(&pk->iexec, PROVEN_LIT("RP_MenuRemoveRollback")); s_(&pk->iexec, PROVEN_LIT("REMOVE = \"ALL\"")); i_(&pk->iexec, 3479);
@@ -2584,10 +2584,10 @@ static proven_err_t lower_sequences(pkg_t *pk) {
             break;
         }
         // $C: what this installation does to the exe's component; ?C: its state before.
-        const char *install = kprintf(k, "$%s>2", run->comp, NULL);
-        const char *fresh = kprintf(k, "$%s>2 AND ?%s<>3", run->comp, run->comp);
-        const char *again = kprintf(k, "$%s>2 AND ?%s=3", run->comp, run->comp);
-        const char *remove = kprintf(k, "$%s=2 AND ?%s=3", run->comp, run->comp);
+        const char *install = kprintf(k, "${}>2", run->comp, NULL);
+        const char *fresh = kprintf(k, "${}>2 AND ?{}<>3", run->comp, run->comp);
+        const char *again = kprintf(k, "${}>2 AND ?{}=3", run->comp, run->comp);
+        const char *remove = kprintf(k, "${}=2 AND ?{}=3", run->comp, run->comp);
         // Per machine the pair runs elevated (not impersonated); per user, as the user.
         const int noimp = ir->scope == 0 ? 0x800 : 0;
         const int FORWARD = 18 | 0x400 | noimp, ROLLBACK = 18 | 0x100 | 0x400 | noimp | 0x40;
@@ -2599,7 +2599,7 @@ static proven_err_t lower_sequences(pkg_t *pk) {
             { "Do", FORWARD, do_args, install, 4003 + 3 * (int)i },
         };
         for (size_t r = 0; r < sizeof rows / sizeof rows[0]; ++r) {
-            const char *name = kprintf(k, "RP_%s_%s", rp_cs(a->id), rows[r].suffix);
+            const char *name = kprintf(k, "RP_{}_{}", rp_cs(a->id), rows[r].suffix);
             s_(&pk->customaction, RP_V(name)); i_(&pk->customaction, rows[r].type); s_(&pk->customaction, RP_V(run->key));
             s_(&pk->customaction, RP_V(rows[r].args));
             s_(&pk->iexec, RP_V(name)); s_(&pk->iexec, RP_V(rows[r].cond)); i_(&pk->iexec, rows[r].seq);
@@ -2877,8 +2877,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     const char *subject = ir->summary_name.ptr ? rp_cs(ir->summary_name) : rp_is_ascii(rp_cs(ir->name)) ? rp_cs(ir->name) : "rubrapack package";
     const char *author = rp_is_ascii(rp_cs(ir->manufacturer)) ? rp_cs(ir->manufacturer) : "rubrapack";
     char tmpl[32];
-    snprintf(tmpl, sizeof tmpl, "%s;%u", ir->arch == RP_ARCH_X64 ? "x64" : ir->arch == RP_ARCH_ARM64 ? "Arm64" : "Intel",
-             ir->language);
+    (void)proven_fmt_to(tmpl, sizeof tmpl, "{};{}", proven_arg_cstr(ir->arch == RP_ARCH_X64 ? "x64" : ir->arch == RP_ARCH_ARM64 ? "Arm64" : "Intel"), proven_arg_u32(ir->language));
     rp_suminfo_t si = { .count = 0 };
     const char *app = "rubrapack " RUBRAPACK_VERSION_STRING;
     struct { uint32_t pid; const char *s; int32_t i; } props[] = {
@@ -3093,10 +3092,10 @@ static proven_err_t embed_instances(proven_allocator_t alloc, const rp_ir_t *ir,
     proven_err_t err = (list && bufs && names) ? load_pkg(alloc, base_bytes, base_len, limits, &base) : PROVEN_ERR_NOMEM;
     if (err == PROVEN_OK) err = copy_streams(alloc, &base.cfb, 0, list, &count, CAP, bufs, &nbuf, BUFCAP);
     char v3[24];
-    snprintf(v3, sizeof v3, "%u.%u.%u", ir->version_parts[0], ir->version_parts[1], ir->version_parts[2]);
+    (void)proven_fmt_to(v3, sizeof v3, "{}.{}.{}", proven_arg_u32(ir->version_parts[0]), proven_arg_u32(ir->version_parts[1]), proven_arg_u32(ir->version_parts[2]));
     for (int K = 1; err == PROVEN_OK && K < ir->instances; ++K) {
         char pcode[39], iK[16];
-        snprintf(iK, sizeof iK, "i%d", K);
+        (void)proven_fmt_to(iK, sizeof iK, "i{}", proven_arg_i32(K));
         const char *fields[] = { rp_cs(ir->upgrade_code), arch_text(ir->arch), "machine", v3, iK };
         rp_uuid_derive("rubrapack.product", fields, 5, pcode);
         uint8_t *vb = NULL, *mst = NULL;
@@ -3125,7 +3124,7 @@ static proven_err_t embed_instances(proven_allocator_t alloc, const rp_ir_t *ir,
         }
         if (err == PROVEN_OK) {
             char nm[24];
-            int nn = snprintf(nm, sizeof nm, "Instance%d", K);      // the substorage; install with TRANSFORMS=:InstanceK
+            int nn = rp_fmt_n(proven_fmt_to(nm, sizeof nm, "Instance{}", proven_arg_i32(K)));      // the substorage; install with TRANSFORMS=:InstanceK
             uint16_t *w = names[K - 1];
             for (int c = 0; c < nn; ++c) w[c] = (uint16_t)nm[c];
             if (count == CAP) err = PROVEN_ERR_OUT_OF_BOUNDS;
@@ -3250,7 +3249,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             err = PROVEN_ERR_INVALID_ARG;
             break;
         }
-        add_node(&dirs, kdup(&k, rp_cs(f->id)), kdup(&k, dkey(ir, f->dir)), kprintf(&k, "%s/%s", parent_logical, rp_cs(f->name)), kdup(&k, rp_cs(f->name)));
+        add_node(&dirs, kdup(&k, rp_cs(f->id)), kdup(&k, dkey(ir, f->dir)), kprintf(&k, "{}/{}", parent_logical, rp_cs(f->name)), kdup(&k, rp_cs(f->name)));
         if (find_node(&dirs, rp_cs(f->id))) find_node(&dirs, rp_cs(f->id))->pos = f->pos;
     }
 
@@ -3411,10 +3410,10 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     char product_code[39], package_code[39];
     if (err == PROVEN_OK) {
         if (ir->product_code.ptr) {
-            snprintf(product_code, sizeof product_code, "%s", rp_cs(ir->product_code));
+            (void)proven_fmt_to(product_code, sizeof product_code, "{}", proven_arg_cstr(rp_cs(ir->product_code)));
         } else {
             char v3[24];
-            snprintf(v3, sizeof v3, "%u.%u.%u", ir->version_parts[0], ir->version_parts[1], ir->version_parts[2]);
+            (void)proven_fmt_to(v3, sizeof v3, "{}.{}.{}", proven_arg_u32(ir->version_parts[0]), proven_arg_u32(ir->version_parts[1]), proven_arg_u32(ir->version_parts[2]));
             const char *fields[] = { rp_cs(ir->upgrade_code), arch_text(ir->arch), "machine", v3 };
             rp_uuid_derive("rubrapack.product", fields, 4, product_code);
         }
@@ -3440,7 +3439,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
                     proven_sha256((proven_mem_view_t){ both, sizeof both }, d);
                 }
                 char hex[65];
-                for (int i = 0; i < 32; ++i) snprintf(hex + 2 * i, 3, "%02x", d[i]);
+                for (int i = 0; i < 32; ++i) (void)proven_fmt_to(hex + 2 * i, 3, "{:02x}", proven_arg_u32(d[i]));
                 const char *fields[] = { hex };
                 rp_uuid_derive("rubrapack.package", fields, 1, package_code);
                 size_t zl = sizeof zero - 1, hits = 0, at = 0;

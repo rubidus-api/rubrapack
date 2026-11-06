@@ -7,6 +7,7 @@
 #include "rubrapack/lint.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/str.h"
 #include "rubrapack/suminfo.h"
 #include "rubrapack/text.h"
 
@@ -69,7 +70,7 @@ static size_t key_count(const rp_msi_wtable_t *t) {
 static void row_name(const rp_msi_wtable_t *t, size_t row, char *out, size_t cap) {
     size_t n = key_count(t), used = 0;
     if (n == 0) {
-        snprintf(out, cap, "#%zu", row + 1);
+        (void)proven_fmt_to(out, cap, "#{}", proven_arg_u64(row + 1));
         return;
     }
     out[0] = '\0';
@@ -77,9 +78,9 @@ static void row_name(const rp_msi_wtable_t *t, size_t row, char *out, size_t cap
         const rp_msi_cell_t *c = cell(t, row, k);
         const char *sep = k ? "/" : "";
         int w;
-        if (is_null(c)) w = snprintf(out + used, cap - used, "%snull", sep);
-        else if (c->kind == RP_MSI_INT) w = snprintf(out + used, cap - used, "%s%ld", sep, (long)c->i);
-        else w = snprintf(out + used, cap - used, "%s'%.*s'", sep, (int)(c->len > 60 ? 60 : c->len), (const char *)c->bytes);
+        if (is_null(c)) w = rp_fmt_n(proven_fmt_to(out + used, cap - used, "{}null", proven_arg_cstr(sep)));
+        else if (c->kind == RP_MSI_INT) w = rp_fmt_n(proven_fmt_to(out + used, cap - used, "{}{}", proven_arg_cstr(sep), proven_arg_i64((long)c->i)));
+        else w = rp_fmt_n(proven_fmt_to(out + used, cap - used, "{}'{}'", proven_arg_cstr(sep), proven_arg_cstr_n((const char *)c->bytes, (int)(c->len > 60 ? 60 : c->len))));
         if (w < 0) break;
         used += (size_t)w;
     }
@@ -95,9 +96,9 @@ static void finding(lint_t *l, const char *code, const rp_msi_wtable_t *t, size_
     if (t && row != SIZE_MAX) {
         char name[160];
         row_name(t, row, name, sizeof name);
-        snprintf(where, sizeof where, "%s row %s: ", t->name, name);
+        (void)proven_fmt_to(where, sizeof where, "{} row {}: ", proven_arg_cstr(t->name), proven_arg_cstr(name));
     } else if (t) {
-        snprintf(where, sizeof where, "%s: ", t->name);
+        (void)proven_fmt_to(where, sizeof where, "{}: ", proven_arg_cstr(t->name));
     }
     bool warning = l->opts.foreign && !l->opts.strict && !breaking(code);
     rp_srcdiag_add(l->diags, nopos(), code, warning, TR_N("lint: %s%s"), where, what);

@@ -3,6 +3,7 @@
 #include "rubrapack/diag.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/lang.h"
+#include "rubrapack/str.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -37,7 +38,7 @@ static void put_str(const char *s) {
             e[1] = (char)*p;
             put(e, 2);
         } else if (*p < 0x20 || *p == 0x7F) {
-            snprintf(e, sizeof e, "\\u%04x", *p);
+            (void)proven_fmt_to(e, sizeof e, "\\u{:04x}", proven_arg_u32(*p));
             put(e, 6);
         } else {
             put((const char *)p, 1);
@@ -57,7 +58,7 @@ void rp_diag_json_add(const char *path, unsigned line, unsigned col, const char 
     putz(json.len ? ",\n  {\"file\": " : "\n  {\"file\": ");
     if (path) put_str(path);
     else putz("null");
-    snprintf(num, sizeof num, ", \"line\": %u, \"column\": %u, ", line, col);
+    (void)proven_fmt_to(num, sizeof num, ", \"line\": {}, \"column\": {}, ", proven_arg_u32(line), proven_arg_u32(col));
     putz(num);
     putz(warning ? "\"severity\": \"warning\", \"code\": " : "\"severity\": \"error\", \"code\": ");
     put_str(code);
@@ -80,8 +81,7 @@ void rp_diag_json_end(const char *path, int rc) {
     (void)rp_pal_puts(RP_OUT_STDOUT, json.items + at);
     json.len = at;
     json.items[json.len] = '\0';
-    snprintf(head, sizeof head, ", \"exit\": %d, \"errors\": %zu, \"warnings\": %zu, \"not_shown\": %zu, \"diagnostics\": [", rc, json.errors,
-             json.warnings, json.not_shown + (json.full ? 1 : 0));
+    (void)proven_fmt_to(head, sizeof head, ", \"exit\": {}, \"errors\": {}, \"warnings\": {}, \"not_shown\": {}, \"diagnostics\": [", proven_arg_i32(rc), proven_arg_u64(json.errors), proven_arg_u64(json.warnings), proven_arg_u64(json.not_shown + (json.full ? 1 : 0)));
     (void)rp_pal_puts(RP_OUT_STDOUT, head);
     (void)rp_pal_puts(RP_OUT_STDOUT, json.items);
     (void)rp_pal_puts(RP_OUT_STDOUT, json.len ? "\n]}\n" : "]}\n");
@@ -109,7 +109,7 @@ static void emit(const char *kind, const char *code, const char *fmt, va_list ap
         return;
     }
     char line[1100];
-    int m = snprintf(line, sizeof line, "rubrapack: %s[%s]: %s\n", rp_tr(kind), code, msg);
+    int m = rp_fmt_n(proven_fmt_to(line, sizeof line, "rubrapack: {}[{}]: {}\n", proven_arg_cstr(rp_tr(kind)), proven_arg_cstr(code), proven_arg_cstr(msg)));
     if (m < 0) return;
     size_t len = strlen(line);
     (void)rp_pal_write(RP_OUT_STDERR, (const uint8_t *)line, len);

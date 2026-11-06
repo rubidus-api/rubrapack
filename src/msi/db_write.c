@@ -3,6 +3,7 @@
 #include "rubrapack/buf.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
+#include "rubrapack/str.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -342,14 +343,14 @@ proven_err_t rp_msi_write_to(proven_allocator_t alloc, const rp_msi_wdb_t *db, u
                 const rp_msi_cell_t *cell = &tb->cells[r * nc + c];
                 if (cell->kind != RP_MSI_BINARY) continue;
                 char name[128];
-                size_t o = (size_t)snprintf(name, sizeof name, "%s", tb->name);
+                size_t o = (size_t)rp_fmt_n(proven_fmt_to(name, sizeof name, "{}", proven_arg_cstr(tb->name)));
                 for (size_t k = 0; k < nc && o < sizeof name; ++k) {
                     if (!(tb->columns[k].type & RP_MSI_COL_KEY)) continue;
                     const rp_msi_cell_t *key = &tb->cells[r * nc + k];
                     if (key->kind == RP_MSI_STR) {
-                        o += (size_t)snprintf(name + o, sizeof name - o, ".%.*s", (int)key->len, (const char *)key->bytes);
+                        o += (size_t)rp_fmt_n(proven_fmt_to(name + o, sizeof name - o, ".{}", proven_arg_cstr_n((const char *)key->bytes, (int)key->len)));
                     } else {
-                        o += (size_t)snprintf(name + o, sizeof name - o, ".%ld", (long)key->i);
+                        o += (size_t)rp_fmt_n(proven_fmt_to(name + o, sizeof name - o, ".{}", proven_arg_i64((long)key->i)));
                     }
                 }
                 if (o >= sizeof name) {

@@ -22,12 +22,6 @@
 
 #include "new_int.h"
 
-// snprintf that may cut: the text is for messages and IDs checked afterwards.
-#define CUT(out, cap, ...)                                                           \
-    do {                                                                             \
-        if (snprintf((out), (cap), __VA_ARGS__) >= (int)(cap)) (out)[(cap) - 1] = 0; \
-    } while (0)
-
 // ---- the text and its parse ----------------------------------------------------------------
 
 typedef struct {
@@ -149,7 +143,7 @@ static const char *get(const src_t *s, const char *kind, const char *id, const c
 }
 
 static void header(char *out, size_t cap, const char *kind, const char *id) {
-    CUT(out, cap, "[%s%s%s]", kind, id ? "." : "", id ? id : "");
+    (void)proven_fmt_to(out, cap, "[{}{}{}]", proven_arg_cstr(kind), proven_arg_cstr(id ? "." : ""), proven_arg_cstr(id ? id : ""));
 }
 
 // Sets `key = literal` (a TOML value as text) in a table, making the key or the table as needed.
@@ -159,7 +153,7 @@ static bool set_raw(src_t *s, const char *kind, const char *id, const char *k, c
     if (t == NULL) {
         char h[200];
         header(h, sizeof h, kind, id);
-        CUT(line, sizeof line, "%s%s\n%s = %s\n", s->n && s->t[s->n - 1] != '\n' ? "\n\n" : "\n", h, k, literal);
+        (void)proven_fmt_to(line, sizeof line, "{}{}\n{} = {}\n", proven_arg_cstr(s->n && s->t[s->n - 1] != '\n' ? "\n\n" : "\n"), proven_arg_cstr(h), proven_arg_cstr(k), proven_arg_cstr(literal));
         return splice(s, s->n, s->n, line);
     }
     rp_tkey_t *x = key(t, k);
@@ -172,7 +166,7 @@ static bool set_raw(src_t *s, const char *kind, const char *id, const char *k, c
         rp_tkey_t *last = &t->keys[t->count - 1];
         at = after_line(s, value_end(s, value_start(s, last)));
     }
-    CUT(line, sizeof line, "%s = %s\n", k, literal);
+    (void)proven_fmt_to(line, sizeof line, "{} = {}\n", proven_arg_cstr(k), proven_arg_cstr(literal));
     return splice(s, at, at, line);
 }
 
@@ -217,19 +211,19 @@ static bool remove_table(src_t *s, const char *kind, const char *id) {
 static void all_ids(const src_t *s, ids_t *ids) {
     ids->n = 0;
     for (size_t i = 0; i < s->doc.count && ids->n < sizeof ids->v / sizeof ids->v[0]; ++i) {
-        if (s->doc.tables[i].id.ptr) CUT(ids->v[ids->n++], sizeof ids->v[0], "%s", rp_cs(s->doc.tables[i].id));
+        if (s->doc.tables[i].id.ptr) (void)proven_fmt_to(ids->v[ids->n++], sizeof ids->v[0], "{}", proven_arg_cstr(rp_cs(s->doc.tables[i].id)));
     }
 }
 
 // The program folder: the folder of the [file] sources (else of the [files] globs), or "dist".
 static void find_dist(const src_t *s, char *out, size_t cap) {
-    CUT(out, cap, "dist");
+    (void)proven_fmt_to(out, cap, "dist");
     for (size_t i = 0; i < s->doc.count; ++i) {
         const rp_ttable_t *t = &s->doc.tables[i];
         const char *v = RP_EQ(t->kind, "file") ? get(s, "file", rp_cs(t->id), "source") : RP_EQ(t->kind, "files") ? get(s, "files", rp_cs(t->id), "glob") : NULL;
         const char *slash = v ? strchr(v, '/') : NULL;
         if (slash && !strchr(slash + 1, '/') && RP_EQ(t->kind, "file")) {
-            CUT(out, cap, "%.*s", (int)(slash - v), v);
+            (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr_n(v, (int)(slash - v)));
             return;
         }
     }
@@ -238,7 +232,7 @@ static void find_dist(const src_t *s, char *out, size_t cap) {
         const char *v = RP_EQ(t->kind, "files") ? get(s, "files", rp_cs(t->id), "glob") : NULL;
         const char *slash = v ? strchr(v, '/') : NULL;
         if (slash) {
-            CUT(out, cap, "%.*s", (int)(slash - v), v);
+            (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr_n(v, (int)(slash - v)));
             return;
         }
     }
@@ -260,9 +254,9 @@ static size_t sub_folders(const src_t *s, const char *dist, sub_t *out, size_t c
         if (!glob || !d || strncmp(glob, dist, dl) != 0 || glob[dl] != '/') continue;
         const char *name = glob + dl + 1, *end = strstr(name, "/**");
         if (!end || end[3] != '\0' || memchr(name, '/', (size_t)(end - name))) continue;
-        CUT(out[n].name, sizeof out[n].name, "%.*s", (int)(end - name), name);
-        CUT(out[n].dir, sizeof out[n].dir, "%s", d);
-        CUT(out[n].files, sizeof out[n].files, "%s", rp_cs(t->id));
+        (void)proven_fmt_to(out[n].name, sizeof out[n].name, "{}", proven_arg_cstr_n(name, (int)(end - name)));
+        (void)proven_fmt_to(out[n].dir, sizeof out[n].dir, "{}", proven_arg_cstr(d));
+        (void)proven_fmt_to(out[n].files, sizeof out[n].files, "{}", proven_arg_cstr(rp_cs(t->id)));
         ++n;
     }
     return n;
@@ -312,7 +306,7 @@ static int install(src_t *s, ans_t *a) {
     if (p && strncmp(p, "$(ProgramFiles)/", 16) == 0 && !strchr(p + 16, '/')) {
         if ((rc = rpn_ask(a, TR_N("Folder name under Program Files"), p + 16, a->install_dir, sizeof a->install_dir, rpn_check_folder))) return rc;
         char path[300];
-        CUT(path, sizeof path, "$(ProgramFiles)/%s", a->install_dir);
+        (void)proven_fmt_to(path, sizeof path, "$(ProgramFiles)/{}", proven_arg_cstr(a->install_dir));
         set_str(s, "dir", "INSTALLDIR", "path", path);
     } else if (p) {
         char path[512];
@@ -368,8 +362,8 @@ static void give_main(src_t *s) {
         const rp_ttable_t *t = &s->doc.tables[i];
         if (t->id.ptr == NULL || key((rp_ttable_t *)t, "feature")) continue;
         char kind[64], id[128];
-        CUT(kind, sizeof kind, "%s", rp_cs(t->kind));
-        CUT(id, sizeof id, "%s", rp_cs(t->id));
+        (void)proven_fmt_to(kind, sizeof kind, "{}", proven_arg_cstr(rp_cs(t->kind)));
+        (void)proven_fmt_to(id, sizeof id, "{}", proven_arg_cstr(rp_cs(t->id)));
         bool need = false;
         for (size_t k = 0; own[k]; ++k) need |= strcmp(kind, own[k]) == 0;
         if (strcmp(kind, "registry") == 0 && key((rp_ttable_t *)t, "with")) need = false;
@@ -403,13 +397,13 @@ static int optional_parts(src_t *s, ans_t *a) {
         const char *f = get(s, "dir", subs[i].dir, "feature");
         if (f && (!mainf || strcmp(f, mainf) != 0)) {
             size_t o = strlen(cur);
-            CUT(cur + o, sizeof cur - o, "%s%s", o ? "," : "", subs[i].name);
+            (void)proven_fmt_to(cur + o, sizeof cur - o, "{}{}", proven_arg_cstr(o ? "," : ""), proven_arg_cstr(subs[i].name));
         }
     }
     char line[1400];
-    size_t o = (size_t)snprintf(line, sizeof line, "%s", TR("  sub folders:"));
-    for (size_t i = 0; i < n && o < sizeof line - 1; ++i) o += (size_t)snprintf(line + o, sizeof line - o, " %s", subs[i].name);
-    if (o < sizeof line - 1) CUT(line + o, sizeof line - o, "\n");
+    size_t o = (size_t)rp_fmt_n(proven_fmt_to(line, sizeof line, "{}", proven_arg_cstr(TR("  sub folders:"))));
+    for (size_t i = 0; i < n && o < sizeof line - 1; ++i) o += (size_t)rp_fmt_n(proven_fmt_to(line + o, sizeof line - o, " {}", proven_arg_cstr(subs[i].name)));
+    if (o < sizeof line - 1) (void)proven_fmt_to(line + o, sizeof line - o, "\n");
     say(line);
     int rc = rpn_ask(a, TR_N("Optional parts the user may tick (sub folders, commas; - for none)"), cur[0] ? cur : "-", a->optional,
                      sizeof a->optional, rpn_check_optional);
@@ -426,17 +420,17 @@ static int optional_parts(src_t *s, ans_t *a) {
         mainf = "Main";
     }
     char mainf_copy[64];
-    CUT(mainf_copy, sizeof mainf_copy, "%s", mainf ? mainf : "");
+    (void)proven_fmt_to(mainf_copy, sizeof mainf_copy, "{}", proven_arg_cstr(mainf ? mainf : ""));
     static ids_t ids;
     for (size_t i = 0; i < n; ++i) {
         char want[1100];
-        CUT(want, sizeof want, ",%s,", a->optional);
+        (void)proven_fmt_to(want, sizeof want, ",{},", proven_arg_cstr(a->optional));
         char needle[300];
-        CUT(needle, sizeof needle, ",%s,", subs[i].name);
+        (void)proven_fmt_to(needle, sizeof needle, ",{},", proven_arg_cstr(subs[i].name));
         bool opt = any && strstr(want, needle) != NULL;
         const char *f = get(s, "dir", subs[i].dir, "feature");
         char old[64] = "";
-        if (f) CUT(old, sizeof old, "%s", f);
+        if (f) (void)proven_fmt_to(old, sizeof old, "{}", proven_arg_cstr(f));
         if (opt) {
             if (old[0] && strcmp(old, mainf_copy) != 0 && table(s, "feature", old)) {
                 set_raw(s, "feature", old, "level", "2");
@@ -465,8 +459,8 @@ static size_t file_tables(const src_t *s, char (*ids)[64], char (*names)[256], s
         const char *src = RP_EQ(t->kind, "file") && t->id.ptr ? get(s, "file", rp_cs(t->id), "source") : NULL;
         if (!src) continue;
         const char *base = strrchr(src, '/');
-        CUT(ids[n], 64, "%s", rp_cs(t->id));
-        CUT(names[n], 256, "%s", base ? base + 1 : src);
+        (void)proven_fmt_to(ids[n], 64, "{}", proven_arg_cstr(rp_cs(t->id)));
+        (void)proven_fmt_to(names[n], 256, "{}", proven_arg_cstr(base ? base + 1 : src));
         ++n;
     }
     return n;
@@ -497,14 +491,14 @@ static int shortcuts(src_t *s, ans_t *a) {
     }
     const rp_ttable_t *start = shortcut_in(s, "Programs"), *desk = shortcut_in(s, "Desktop");
     char st_id[64] = "", dk_id[64] = "", cur[256] = "-";
-    if (start) CUT(st_id, sizeof st_id, "%s", rp_cs(start->id));
-    if (desk) CUT(dk_id, sizeof dk_id, "%s", rp_cs(desk->id));
+    if (start) (void)proven_fmt_to(st_id, sizeof st_id, "{}", proven_arg_cstr(rp_cs(start->id)));
+    if (desk) (void)proven_fmt_to(dk_id, sizeof dk_id, "{}", proven_arg_cstr(rp_cs(desk->id)));
     const char *target = start ? get(s, "shortcut", st_id, "target") : desk ? get(s, "shortcut", dk_id, "target") : NULL;
     for (size_t i = 0; i < n; ++i) {
-        if (target && strncmp(target, "file:", 5) == 0 && strcmp(target + 5, ids[i]) == 0) CUT(cur, sizeof cur, "%s", names[i]);
+        if (target && strncmp(target, "file:", 5) == 0 && strcmp(target + 5, ids[i]) == 0) (void)proven_fmt_to(cur, sizeof cur, "{}", proven_arg_cstr(names[i]));
     }
     for (size_t i = 0; strcmp(cur, "-") == 0 && !target && i < n; ++i) {
-        if (rpn_ends_ci(names[i], ".exe")) CUT(cur, sizeof cur, "%s", names[i]);
+        if (rpn_ends_ci(names[i], ".exe")) (void)proven_fmt_to(cur, sizeof cur, "{}", proven_arg_cstr(names[i]));
     }
     int rc;
     if ((rc = rpn_ask(a, TR_N("Program the shortcuts open (- for no shortcuts)"), cur, a->main, sizeof a->main, rpn_check_main))) return rc;
@@ -515,10 +509,10 @@ static int shortcuts(src_t *s, ans_t *a) {
     }
     char tgt[80] = "";
     for (size_t i = 0; i < n; ++i) {
-        if (strcmp(names[i], a->main) == 0) CUT(tgt, sizeof tgt, "file:%s", ids[i]);
+        if (strcmp(names[i], a->main) == 0) (void)proven_fmt_to(tgt, sizeof tgt, "file:{}", proven_arg_cstr(ids[i]));
     }
     char nm[256];                       // a copy: every change parses the text again
-    CUT(nm, sizeof nm, "%s", get(s, "package", NULL, "name") ? get(s, "package", NULL, "name") : a->main);
+    (void)proven_fmt_to(nm, sizeof nm, "{}", proven_arg_cstr(get(s, "package", NULL, "name") ? get(s, "package", NULL, "name") : a->main));
     struct { bool want; char *id; const char *dir, *fresh; } w[] = { { want_start, st_id, "Programs", "StartMenu" },
                                                                    { want_desk, dk_id, "Desktop", "Desktop" } };
     for (int k = 0; k < 2; ++k) {
@@ -531,7 +525,7 @@ static int shortcuts(src_t *s, ans_t *a) {
             all_ids(s, &used);
             char id[64];
             rpn_make_id(&used, w[k].fresh, "", id, sizeof id);
-            CUT(w[k].id, 64, "%s", id);
+            (void)proven_fmt_to(w[k].id, 64, "{}", proven_arg_cstr(id));
             set_str(s, "shortcut", w[k].id, "dir", w[k].dir);
             set_str(s, "shortcut", w[k].id, "name", nm);
         }
@@ -562,7 +556,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
     size_t ns = sub_folders(s, dist, subs, 4096);
     const char *mainf = get(s, "dir", "INSTALLDIR", "feature");
     char mainf_copy[64] = "";
-    if (mainf) CUT(mainf_copy, sizeof mainf_copy, "%s", mainf);
+    if (mainf) (void)proven_fmt_to(mainf_copy, sizeof mainf_copy, "{}", proven_arg_cstr(mainf));
     // Files that went away.
     for (size_t i = 0; i < n; ++i) {
         const char *src = get(s, "file", ids[i], "source");
@@ -570,7 +564,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         if (!src || rp_pal_stat(heap(), src, &size) == RP_FS_FILE) continue;
         bool target = false;
         char tgt[80];
-        CUT(tgt, sizeof tgt, "file:%s", ids[i]);
+        (void)proven_fmt_to(tgt, sizeof tgt, "file:{}", proven_arg_cstr(ids[i]));
         for (size_t t = 0; t < s->doc.count; ++t) {
             const char *v = s->doc.tables[t].id.ptr ? get(s, rp_cs(s->doc.tables[t].kind), rp_cs(s->doc.tables[t].id), "target") : NULL;
             target |= v && strcmp(v, tgt) == 0;
@@ -613,7 +607,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
     for (size_t i = 0; i < a->scan.files.n; ++i) {
         const char *f = a->scan.files.v[i];
         char src[800];
-        CUT(src, sizeof src, "%s/%s", dist, f);
+        (void)proven_fmt_to(src, sizeof src, "{}/{}", proven_arg_cstr(dist), proven_arg_cstr(f));
         bool known = false;
         for (size_t k = 0; k < n && !known; ++k) {
             const char *v = get(s, "file", ids[k], "source");
@@ -647,11 +641,11 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         char did[64], fid[64], v[800];
         rpn_make_id(&used, f, "_dir", did, sizeof did);
         rpn_make_id(&used, f, "_files", fid, sizeof fid);
-        CUT(v, sizeof v, "$(INSTALLDIR)/%s", f);
+        (void)proven_fmt_to(v, sizeof v, "$(INSTALLDIR)/{}", proven_arg_cstr(f));
         set_str(s, "dir", did, "path", v);
         if (mainf_copy[0]) set_str(s, "dir", did, "feature", mainf_copy);
         set_str(s, "files", fid, "dir", did);
-        CUT(v, sizeof v, "%s/%s/**", dist, f);
+        (void)proven_fmt_to(v, sizeof v, "{}/{}/**", proven_arg_cstr(dist), proven_arg_cstr(f));
         set_str(s, "files", fid, "glob", v);
         rp_lang_format(m, sizeof m, "  added [dir.%s] and [files.%s]\n", did, fid);
         say(m);
@@ -664,17 +658,17 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
 static bool split_name(const char *name, char *kind, char *id, char *k) {
     const char *dot = strrchr(name, '.');
     if (dot == NULL || dot == name || dot[1] == '\0' || strlen(name) > 190) return false;
-    CUT(k, 64, "%s", dot + 1);
+    (void)proven_fmt_to(k, 64, "{}", proven_arg_cstr(dot + 1));
     char t[200];
-    CUT(t, sizeof t, "%.*s", (int)(dot - name), name);
+    (void)proven_fmt_to(t, sizeof t, "{}", proven_arg_cstr_n(name, (int)(dot - name)));
     char *d2 = strchr(t, '.');
     if (d2) {
         *d2 = '\0';
-        CUT(id, 100, "%s", d2 + 1);
+        (void)proven_fmt_to(id, 100, "{}", proven_arg_cstr(d2 + 1));
     } else {
         id[0] = '\0';
     }
-    CUT(kind, 64, "%s", t);
+    (void)proven_fmt_to(kind, 64, "{}", proven_arg_cstr(t));
     return kind[0] != '\0';
 }
 
@@ -707,7 +701,7 @@ static int any_key(src_t *s, ans_t *a) {
 // Checks the text as it would be saved: written next to the source (sources are relative to it).
 static int check(src_t *s, char *argv0) {
     char tmp[1100];
-    CUT(tmp, sizeof tmp, "%s.rp-edit.toml", s->path);
+    (void)proven_fmt_to(tmp, sizeof tmp, "{}.rp-edit.toml", proven_arg_cstr(s->path));
     if (rp_pal_write_file_atomic(heap(), tmp, (const uint8_t *)s->t, s->n) != PROVEN_OK) {
         rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s' to check it", tmp);
         return RP_EXIT_IO;
@@ -765,7 +759,7 @@ int rp_cmd_edit(int argc, char **argv) {
         size_t pl = strlen(s.path);
         bool toml = pl > 5 && rp_ascii_ieq(s.path + pl - 5, ".toml");
         char stem[1024];
-        snprintf(stem, sizeof stem, "%.*s", toml ? (int)(pl - 5) : 0, s.path);
+        (void)proven_fmt_to(stem, sizeof stem, "{}", proven_arg_cstr_n(s.path, toml ? (int)(pl - 5) : 0));
         if (err == PROVEN_ERR_NOT_FOUND && toml) rp_diag_error(RP_DIAG_INPUT, TR_N("cannot find '%s'; make one with `rubrapack new %s`"), s.path, stem);
         else rp_diag_error(RP_DIAG_INPUT, TR_N("cannot read '%s'"), s.path);
         return RP_EXIT_IO;
@@ -803,7 +797,7 @@ int rp_cmd_edit(int argc, char **argv) {
                 bool set = argv[i][2] == 's';
                 char name[200];
                 const char *arg = argv[++i], *eq = set ? strchr(arg, '=') : NULL;
-                CUT(name, sizeof name, "%.*s", (int)(eq ? (size_t)(eq - arg) : strlen(arg)), arg);
+                (void)proven_fmt_to(name, sizeof name, "{}", proven_arg_cstr_n(arg, (int)(eq ? (size_t)(eq - arg) : strlen(arg))));
                 if ((set && !eq) || !split_name(name, kind, id, k)) {
                     rc = usage();
                 } else if (set ? !set_any(&s, kind, id, k, eq + 1) : !unset(&s, kind, id[0] ? id : NULL, k)) {

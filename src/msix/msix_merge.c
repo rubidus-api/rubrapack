@@ -47,11 +47,11 @@ static char *text(proven_allocator_t a, const rp_msi_cell_t *c) {
 // A DefaultDir's name on the target: "target:source" -> target; "short|long" -> long; "." -> none.
 static void dir_name(const char *dd, char *out, size_t cap) {
     char t[512];
-    snprintf(t, sizeof t, "%s", dd);
+    (void)proven_fmt_to(t, sizeof t, "{}", proven_arg_cstr(dd));
     char *colon = strchr(t, ':');
     if (colon) *colon = '\0';
     char *bar = strchr(t, '|');
-    snprintf(out, cap, "%s", bar ? bar + 1 : t);
+    (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr(bar ? bar + 1 : t));
     if (strcmp(out, ".") == 0) out[0] = '\0';
 }
 
@@ -96,7 +96,7 @@ static bool dir_path(proven_allocator_t a, const rp_msi_wtable_t *dirs, const rp
         if (name == NULL) return false;
         // A standard folder (its key, before the module's GUID, is the property's name).
         char base[128];
-        snprintf(base, sizeof base, "%s", name);
+        (void)proven_fmt_to(base, sizeof base, "{}", proven_arg_cstr(name));
         char *dot = strchr(base, '.');
         if (dot) *dot = '\0';
         const char *v = vfs_of(base);
@@ -119,7 +119,7 @@ static bool dir_path(proven_allocator_t a, const rp_msi_wtable_t *dirs, const rp
     size_t o = 0;
     out[0] = '\0';
     for (size_t i = n; i-- > 0;) {
-        int w = snprintf(out + o, cap - o, "%s%s", o ? "\\" : "", parts[i]);
+        int w = rp_fmt_n(proven_fmt_to(out + o, cap - o, "{}{}", proven_arg_cstr(o ? "\\" : ""), proven_arg_cstr(parts[i])));
         if (w < 0 || (size_t)w >= cap - o) return false;
         o += (size_t)w;
     }
@@ -158,7 +158,7 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
         const rp_msi_wtable_t *t = table(&m, refused[k]);
         if (t && t->row_count) {
             static char msg[128];
-            snprintf(msg, sizeof msg, "has %s rows, which an MSIX cannot carry", refused[k]);
+            (void)proven_fmt_to(msg, sizeof msg, "has {} rows, which an MSIX cannot carry", proven_arg_cstr(refused[k]));
             *why = msg;
             err = PROVEN_ERR_UNSUPPORTED;
         }
@@ -226,7 +226,7 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
                 break;
             }
             char *bar = strchr(fnv, '|');
-            snprintf(fname, sizeof fname, "%s", bar ? bar + 1 : fnv);
+            (void)proven_fmt_to(fname, sizeof fname, "{}", proven_arg_cstr(bar ? bar + 1 : fnv));
             rp_mem_free(a, fnv);
             rp_msix_module_file_t *mf = &out->files[out->file_count++];
             size_t rl = strlen(dpath) + strlen(fname) + 2;
@@ -236,7 +236,7 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
                 err = PROVEN_ERR_NOMEM;
                 break;
             }
-            snprintf(mf->rel, rl, "%s%s%s", dpath, dpath[0] ? "\\" : "", fname);
+            (void)proven_fmt_to(mf->rel, rl, "{}{}{}", proven_arg_cstr(dpath), proven_arg_cstr(dpath[0] ? "\\" : ""), proven_arg_cstr(fname));
             memcpy(mf->data, e->data, e->size);
             mf->len = e->size;
             mf->vfs = vfs;

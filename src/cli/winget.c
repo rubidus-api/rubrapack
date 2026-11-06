@@ -91,7 +91,7 @@ typedef struct {
 static void hex_sha(const uint8_t *data, size_t len, char out[65]) {
     proven_byte_t d[PROVEN_SHA256_SIZE];
     proven_sha256((proven_mem_view_t){ (const proven_byte_t *)data, len }, d);
-    for (size_t i = 0; i < PROVEN_SHA256_SIZE; ++i) snprintf(out + 2 * i, 3, "%02X", d[i]);
+    for (size_t i = 0; i < PROVEN_SHA256_SIZE; ++i) (void)proven_fmt_to(out + 2 * i, 3, "{:02X}", proven_arg_u32(d[i]));
 }
 
 static const char *winget_arch(const char *a) {
@@ -108,7 +108,7 @@ static void add_arch(facts_t *f, const char *a) {
     for (size_t k = 0; k < f->narch; ++k) {
         if (strcmp(f->archs[k], w) == 0) return;
     }
-    snprintf(f->archs[f->narch++], sizeof f->archs[0], "%s", w);
+    (void)proven_fmt_to(f->archs[f->narch++], sizeof f->archs[0], "{}", proven_arg_cstr(w));
 }
 
 static const char *property(const rp_msi_wdb_t *db, const char *name, char *out, size_t cap) {
@@ -119,7 +119,7 @@ static const char *property(const rp_msi_wdb_t *db, const char *name, char *out,
         for (size_t r = 0; r < tb->row_count; ++r) {
             const rp_msi_cell_t *k = rp_msi_wcell(tb, r, 0), *v = rp_msi_wcell(tb, r, 1);
             if (k->kind == RP_MSI_STR && k->len == strlen(name) && memcmp(k->bytes, name, k->len) == 0 && v->kind == RP_MSI_STR) {
-                snprintf(out, cap, "%.*s", (int)v->len, (const char *)v->bytes);
+                (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr_n((const char *)v->bytes, (int)v->len));
             }
         }
     }
@@ -153,7 +153,7 @@ static int msi_facts(proven_allocator_t alloc, const char *path, const rp_limits
 // The values of every `attribute` on an element named `element` (a bundle's Packages).
 static void each_attr(const char *xml, size_t len, const char *element, const char *attribute, facts_t *f) {
     char open[64];
-    snprintf(open, sizeof open, "<%s ", element);
+    (void)proven_fmt_to(open, sizeof open, "<{} ", proven_arg_cstr(element));
     const char *end = xml + len;
     for (const char *p = xml; p < end;) {
         const char *e = strstr(p, open);
@@ -192,7 +192,7 @@ static int msix_facts(proven_allocator_t alloc, const uint8_t *data, size_t len,
         }
         char id[14];
         rp_msix_publisher_id(publisher, id);
-        snprintf(f->family, sizeof f->family, "%s_%s", name, id);
+        (void)proven_fmt_to(f->family, sizeof f->family, "{}_{}", proven_arg_cstr(name), proven_arg_cstr(id));
     }
     rp_msix_files_free(alloc, files, nf);
     rp_mem_free(alloc, man);
@@ -236,7 +236,7 @@ static void tail(rp_buf_t *b, const char *type) {
 
 static bool write_one(proven_allocator_t alloc, const char *dir, const char *id, const char *suffix, rp_buf_t *b) {
     char path[2400];
-    snprintf(path, sizeof path, "%s/%s%s.yaml", dir, id, suffix);
+    (void)proven_fmt_to(path, sizeof path, "{}/{}{}.yaml", proven_arg_cstr(dir), proven_arg_cstr(id), proven_arg_cstr(suffix));
     if (b->err != PROVEN_OK || rp_pal_write_file_atomic(alloc, path, b->data, b->len) != PROVEN_OK) {
         rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", path);
         return false;
@@ -293,7 +293,7 @@ static bool msi_entries(proven_allocator_t alloc, const char *dir, const rp_wing
     size_t ne = 0;
     e[ne++] = (entry_t){ (const char *)mine.data, mine.len, arch_rank(f->narch ? f->archs[0] : "x86", f->narch ? strlen(f->archs[0]) : 3) };
     char path[2400];
-    snprintf(path, sizeof path, "%s/%s.installer.yaml", dir, w->id);
+    (void)proven_fmt_to(path, sizeof path, "{}/{}.installer.yaml", proven_arg_cstr(dir), proven_arg_cstr(w->id));
     rp_buf_t vb = rp_buf_new(alloc, 256);
     rp_buf_puts(&vb, "\nPackageIdentifier: ");
     rp_json_str(&vb, w->id, strlen(w->id));
@@ -405,7 +405,7 @@ int rp_winget_write(proven_allocator_t alloc, const rp_winget_t *w, const char *
     }
     tail(&b, "defaultLocale");
     char suffix[64];
-    snprintf(suffix, sizeof suffix, ".locale.%s", w->locale);
+    (void)proven_fmt_to(suffix, sizeof suffix, ".locale.{}", proven_arg_cstr(w->locale));
     ok = ok && write_one(alloc, dir, w->id, suffix, &b);
     for (size_t k = 0; ok && k < w->desc_count; ++k) {
         b.len = 0;
@@ -413,7 +413,7 @@ int rp_winget_write(proven_allocator_t alloc, const rp_winget_t *w, const char *
         kv(&b, "", "PackageLocale", w->descs[k].lang);
         kv(&b, "", "ShortDescription", w->descs[k].text);
         tail(&b, "locale");
-        snprintf(suffix, sizeof suffix, ".locale.%s", w->descs[k].lang);
+        (void)proven_fmt_to(suffix, sizeof suffix, ".locale.{}", proven_arg_cstr(w->descs[k].lang));
         ok = write_one(alloc, dir, w->id, suffix, &b);
     }
     rp_buf_free(&b);

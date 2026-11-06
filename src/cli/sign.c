@@ -427,8 +427,7 @@ void rp_iso_time(int64_t t, char out[64]) {
     int64_t z = days + 719468, era = (z >= 0 ? z : z - 146096) / 146097, doe = z - era * 146097;
     int64_t yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365, doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
     int64_t mp = (5 * doy + 2) / 153, d = doy - (153 * mp + 2) / 5 + 1, m = mp < 10 ? mp + 3 : mp - 9, y = yoe + era * 400 + (m <= 2);
-    snprintf(out, 64, "%04lld-%02lld-%02lldT%02lld:%02lld:%02lldZ", (long long)y, (long long)m, (long long)d, (long long)(secs / 3600),
-             (long long)(secs / 60 % 60), (long long)(secs % 60));
+    (void)proven_fmt_to(out, 64, "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z", proven_arg_i64((long long)y), proven_arg_i64((long long)m), proven_arg_i64((long long)d), proven_arg_i64((long long)(secs / 3600)), proven_arg_i64((long long)(secs / 60 % 60)), proven_arg_i64((long long)(secs % 60)));
 }
 
 // The time the checks use: now, or RUBRAPACK_TEST_NOW (seconds since 1970) - a test hook, so the
@@ -502,7 +501,7 @@ int rp_cmd_verify(int argc, char **argv) {
     bool ts_ok = true;
     int64_t at = now;
     if (!r.parsed) {
-        snprintf(ts_line, sizeof ts_line, "-");
+        (void)proven_fmt_to(ts_line, sizeof ts_line, "-");
     } else if (r.ts_bad) {
         ts_ok = false;
         ts_why = TR_N("the unsigned attributes are malformed or hold more than one timestamp");
@@ -512,7 +511,7 @@ int rp_cmd_verify(int argc, char **argv) {
         ts_why = TR_N("an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check");
         rp_lang_format(ts_line, sizeof ts_line, "unsupported - %s", ts_why);
     } else if (r.ts_token.n == 0) {
-        snprintf(ts_line, sizeof ts_line, "%s", TR("not-present"));
+        (void)proven_fmt_to(ts_line, sizeof ts_line, "{}", proven_arg_cstr(TR("not-present")));
     } else {
         rp_tsp_token_t t;
         if (!rp_tsp_token(r.ts_token.p, r.ts_token.n, r.sig.p, r.sig.n, NULL, &t, &ts_why)) {

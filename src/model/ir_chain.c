@@ -101,7 +101,7 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
         if (rp_langpack_get(code, opt->source_dir.ptr ? rp_cs(opt->source_dir) : ".") == NULL) {
             ERR(&c, lk->pos, "RP1509", "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)", code, code);
         } else if (out->language_count < 8) {
-            snprintf(out->languages[out->language_count++], 16, "%s", code);
+            (void)proven_fmt_to(out->languages[out->language_count++], 16, "{}", proven_arg_cstr(code));
         }
     }
     if (npkg == 0) ERR(&c, chain->pos, "RP1202", "a chain needs at least one [chain-package.ID]");
@@ -222,7 +222,7 @@ static const char *msix_codes(proven_allocator_t alloc, const uint8_t *data, siz
         size_t cn = strlen(name) + 15, vn = strlen(ver) + 1;
         *code = rp_mem_alloc(alloc, cn, 1);
         *version = rp_mem_alloc(alloc, vn, 1);
-        if (*code) snprintf(*code, cn, "%s_%s", name, id);
+        if (*code) (void)proven_fmt_to(*code, cn, "{}_{}", proven_arg_cstr(name), proven_arg_cstr(id));
         if (*version) memcpy(*version, ver, vn);
     }
     rp_msix_files_free(alloc, files, nf);
@@ -422,7 +422,7 @@ proven_err_t rp_chain_read(proven_allocator_t alloc, const uint8_t *exe, size_t 
         at += 4 + (size_t)l_;                                                             \
     } while (0)
     TAKE(s[0]);
-    if (name && name_cap) snprintf(name, name_cap, "%s", s[0]);
+    if (name && name_cap) (void)proven_fmt_to(name, name_cap, "{}", proven_arg_cstr(s[0]));
     TAKE(s[1]);
     TAKE(s[2]);
     for (uint32_t i = 0; i < n; ++i) {

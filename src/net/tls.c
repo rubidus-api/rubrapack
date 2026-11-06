@@ -52,7 +52,7 @@ static const char *why_of(rp_tls_t *t, proven_err_t err) {
     case PROVEN_CERT_FAULT_EXPIRED:
     case PROVEN_CERT_FAULT_NOT_YET_VALID: return "a certificate in the path is expired or not valid yet";
     case PROVEN_CERT_FAULT_NAME_MISMATCH:
-        snprintf(msg, sizeof msg, "the server's certificate is not for '%s' (subjectAltName)", t->host);
+        (void)proven_fmt_to(msg, sizeof msg, "the server's certificate is not for '{}' (subjectAltName)", proven_arg_cstr(t->host));
         return msg;
     case PROVEN_CERT_FAULT_USAGE: return TR_N("the server's certificate is not for TLS servers (its extended key usage)");
     case PROVEN_CERT_FAULT_MALFORMED: return "the server's certificate is malformed";
@@ -63,13 +63,12 @@ static const char *why_of(rp_tls_t *t, proven_err_t err) {
     if (got > 0) {
         const char *name = alert_name(got);
         bool early = !proven_tls_is_established(t->conn) && (got == 40 || got == 70 || got == 71);
-        snprintf(msg, sizeof msg, "the server ended the handshake with TLS alert %u%s%s%s%s", (unsigned)got, *name ? " (" : "", name,
-                 *name ? ")" : "", early ? " - it may not speak TLS 1.3, which rubrapack needs" : "");
+        (void)proven_fmt_to(msg, sizeof msg, "the server ended the handshake with TLS alert {}{}{}{}{}", proven_arg_u32((unsigned)got), proven_arg_cstr(*name ? " (" : ""), proven_arg_cstr(name), proven_arg_cstr(*name ? ")" : ""), proven_arg_cstr(early ? " - it may not speak TLS 1.3, which rubrapack needs" : ""));
         return msg;
     }
     if (proven_tls_alert_sent(t->conn) == 70) return "the server does not speak TLS 1.3 (TLS 1.2 and older are not supported)";
     if (err == PROVEN_ERR_UNTRUSTED) return "the server's certificate path does not reach a trusted certificate (--tls-trust, --system-roots)";
-    snprintf(msg, sizeof msg, "the server broke the TLS protocol (alert %d)", proven_tls_alert_sent(t->conn));
+    (void)proven_fmt_to(msg, sizeof msg, "the server broke the TLS protocol (alert {})", proven_arg_i32(proven_tls_alert_sent(t->conn)));
     return msg;
 }
 

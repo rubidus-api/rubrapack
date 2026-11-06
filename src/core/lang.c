@@ -3,6 +3,7 @@
 #include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/str.h"
 
 #include "proven/heap.h"
 
@@ -88,7 +89,7 @@ static rp_langpack_t *parse_pack(const char *code, char *text) {
     rp_langpack_t *pk = rp_mem_alloc(heap, 1, sizeof *pk);
     if (pk == NULL) return NULL;
     memset(pk, 0, sizeof *pk);
-    snprintf(pk->code, sizeof pk->code, "%s", code);
+    (void)proven_fmt_to(pk->code, sizeof pk->code, "{}", proven_arg_cstr(code));
     size_t cap = 0;
     char *r = text, *w = text;
     if ((unsigned char)r[0] == 0xEF && (unsigned char)r[1] == 0xBB && (unsigned char)r[2] == 0xBF) r += 3;
@@ -132,7 +133,7 @@ static rp_langpack_t *parse_pack(const char *code, char *text) {
 static char *file_text(const char *dir, const char *sub, const char *code) {
     proven_allocator_t heap = proven_heap_allocator();
     char path[1200];
-    int n = snprintf(path, sizeof path, "%s%s/%s.po", dir, sub, code);
+    int n = rp_fmt_n(proven_fmt_to(path, sizeof path, "{}{}/{}.po", proven_arg_cstr(dir), proven_arg_cstr(sub), proven_arg_cstr(code)));
     if (n < 0 || (size_t)n >= sizeof path) return NULL;
     uint8_t *data = NULL;
     size_t len = 0;

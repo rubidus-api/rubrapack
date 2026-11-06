@@ -62,7 +62,7 @@ static int family_of(proven_allocator_t heap, const char *path, char *out, size_
     } else {
         char id[14];
         rp_msix_publisher_id(publisher, id);
-        snprintf(out, cap, "%s_%s", name, id);
+        (void)proven_fmt_to(out, cap, "{}_{}", proven_arg_cstr(name), proven_arg_cstr(id));
     }
     rp_msix_files_free(heap, files, nf);
     rp_mem_free(heap, man);
@@ -99,7 +99,7 @@ int rp_cmd_container(int argc, char **argv) {
             int rc = family_of(heap, in[k], families[k], sizeof families[k]);
             if (rc != RP_EXIT_OK) return rc;
         } else if (rp_family_name_ok(in[k])) {
-            snprintf(families[k], sizeof families[k], "%s", in[k]);
+            (void)proven_fmt_to(families[k], sizeof families[k], "{}", proven_arg_cstr(in[k]));
         } else {
             rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)", in[k]);
             return RP_EXIT_USAGE;

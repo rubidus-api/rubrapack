@@ -97,7 +97,7 @@ static char *cx_dup(cx_t *c, const char *s) { return s ? dupn(c, s, strlen(s)) :
 static char *fmt2(cx_t *c, const char *f, const char *a, const char *b) {
     size_t n = strlen(f) + strlen(a) + (b ? strlen(b) : 0) + 1;
     char *d = own(c, rp_mem_alloc(c->alloc, n, 1));
-    if (d) snprintf(d, n, f, a, b);
+    if (d) (void)rp_fmt_strs(d, n, f, a, b ? b : "");
     return d;
 }
 
@@ -132,7 +132,7 @@ static proven_u8str_view_t str(cx_t *c, table_t t, size_t r, const char *name) {
     const rp_msi_cell_t *v = rp_msi_wcell(t.t, r, k);
     if (v->kind == RP_MSI_INT) {
         char num[16];
-        snprintf(num, sizeof num, "%ld", (long)v->i);
+        (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_i64((long)v->i));
         return RP_V(cx_dup(c, num));
     }
     if (v->kind != RP_MSI_STR) return PROVEN_LIT("");
@@ -215,7 +215,7 @@ static const char *long_name(cx_t *c, const char *s, bool split) {
 static void note(cx_t *c, const char *f, const char *a, const char *b) {
     rp_buf_puts(&c->notes, "# ");
     char line[1024];
-    snprintf(line, sizeof line, f, a ? a : "", b ? b : "");
+    (void)rp_fmt_strs(line, sizeof line, f, a ? a : "", b ? b : "");
     rp_buf_puts(&c->notes, line);
     rp_buf_byte(&c->notes, '\n');
 }
@@ -372,11 +372,11 @@ static const char *make_id(cx_t *c, const char *key, int kind) {
     }
     base[n] = '\0';
     char id[80];
-    snprintf(id, sizeof id, "%s%s", n == 0 || (base[0] >= '0' && base[0] <= '9') || strncmp(base, "RP_", 3) == 0 || strncmp(base, "Rp", 2) == 0 ? "K_" : "", base);
-    if (reserved(id)) snprintf(id, sizeof id, "K_%.60s", base);       // base is at most 56 characters
+    (void)proven_fmt_to(id, sizeof id, "{}{}", proven_arg_cstr(n == 0 || (base[0] >= '0' && base[0] <= '9') || strncmp(base, "RP_", 3) == 0 || strncmp(base, "Rp", 2) == 0 ? "K_" : ""), proven_arg_cstr(base));
+    if (reserved(id)) (void)proven_fmt_to(id, sizeof id, "K_{}", proven_arg_cstr_n(base, 60));       // base is at most 56 characters
     char cand[96];
-    snprintf(cand, sizeof cand, "%s", id);
-    for (int k = 2; id_used(c, cand) && k < 100000; ++k) snprintf(cand, sizeof cand, "%s_%d", id, k);
+    (void)proven_fmt_to(cand, sizeof cand, "{}", proven_arg_cstr(id));
+    for (int k = 2; id_used(c, cand) && k < 100000; ++k) (void)proven_fmt_to(cand, sizeof cand, "{}_{}", proven_arg_cstr(id), proven_arg_i32(k));
     const char *out = cx_dup(c, cand);
     if (out == NULL) return "";
     remember(c, out);
@@ -413,7 +413,7 @@ static const char *follow(cx_t *c, const char *v) {
         int kind = *in == '#' || *in == '!' ? 'f' : 'd';
         const char *name = kind == 'f' ? in + 1 : in;
         char key[128];
-        snprintf(key, sizeof key, "%.*s", (int)(close - name), name);
+        (void)proven_fmt_to(key, sizeof key, "{}", proven_arg_cstr_n(name, (int)(close - name)));
         rp_buf_byte(&b, '[');
         if (kind == 'f') rp_buf_byte(&b, (uint8_t)*in);
         rp_buf_puts(&b, renamed(c, key, kind));
@@ -459,7 +459,7 @@ static void tstr(rp_buf_t *b, const char *s) {
             rp_buf_puts(b, "\\t");
         } else if (*p < 0x20 || *p == 0x7F) {
             char u[8];
-            snprintf(u, sizeof u, "\\u%04X", *p);
+            (void)proven_fmt_to(u, sizeof u, "\\u{:04X}", proven_arg_u32(*p));
             rp_buf_puts(b, u);
         } else if (*p == '$') {
             rp_buf_puts(b, "$$");
@@ -570,25 +570,25 @@ static void dir_resolve(cx_t *c, dirs_t *ds, dir_t *x, unsigned depth) {
         pname = e.err == PROVEN_OK ? dupn(c, (const char *)e.data, e.len) : name;
         rp_buf_free(&e);
     }
-    x->target = dot ? (is_root(p) ? x->key : p->target) : (p->target[0] ? fmt2(c, "%s/%s", p->target, name) : cx_dup(c, name));
+    x->target = dot ? (is_root(p) ? x->key : p->target) : (p->target[0] ? fmt2(c, "{}/{}", p->target, name) : cx_dup(c, name));
     // Its rubrapack path: under a standard folder ($(Base)/name), under another [dir] ($(ID)/name).
     const char *base = standard_base(x->key, c->arch);
     if (standard_key(x->key)) {
-        x->path = base ? fmt2(c, "$(%s)", base, NULL) : NULL;
+        x->path = base ? fmt2(c, "$({})", base, NULL) : NULL;
     } else if (dot) {
         x->alias = p->id ? p->id : NULL;
         x->path = p->path;
     } else if (is_root(p)) {
         // A folder straight under the root: the root of a drive. rubrapack has no such base; it goes
         // under Program Files instead, said in a note.
-        x->path = fmt2(c, "$(ProgramFiles)/%s", pname, NULL);
-        note(c, "Directory '%s' was at the root of a drive (\\%s); here it is under Program Files.", x->key, name);
+        x->path = fmt2(c, "$(ProgramFiles)/{}", pname, NULL);
+        note(c, "Directory '{}' was at the root of a drive (\\{}); here it is under Program Files.", x->key, name);
     } else if (p->id) {
-        x->path = fmt2(c, "$(%s)/%s", p->id, pname);
+        x->path = fmt2(c, "$({})/{}", p->id, pname);
     } else if (p->path) {
-        x->path = fmt2(c, "%s/%s", p->path, pname);
+        x->path = fmt2(c, "{}/{}", p->path, pname);
     } else {
-        note(c, "Directory '%s' is under '%s', a folder rubrapack has no path for; what it holds is left out.", x->key, x->parent);
+        note(c, "Directory '{}' is under '{}', a folder rubrapack has no path for; what it holds is left out.", x->key, x->parent);
     }
     x->state = 2;
 }
@@ -617,7 +617,7 @@ static uint16_t arch_machine(int arch) { return arch == 1 ? 0x14C : arch == 2 ? 
 // Reads a stream of the package (an icon) into dist, returning its source path, or NULL.
 static const char *save_stream(cx_t *c, const char *table_name, const char *key, const char *dist, const char *dist_rel, const char *name) {
     char sname[160];
-    snprintf(sname, sizeof sname, "%s.%s", table_name, key);
+    (void)proven_fmt_to(sname, sizeof sname, "{}.{}", proven_arg_cstr(table_name), proven_arg_cstr(key));
     uint16_t packed[32];
     size_t plen;
     uint32_t id;
@@ -653,16 +653,16 @@ static const char *save_stream(cx_t *c, const char *table_name, const char *key,
     plain[w] = '\0';
     name = plain;
     nl = w;
-    if (nl < 4 || (strcmp(name + nl - 4, ".ico") != 0 && strcmp(name + nl - 4, ".ICO") != 0)) name = fmt2(c, "%s.ico", name, NULL);
+    if (nl < 4 || (strcmp(name + nl - 4, ".ico") != 0 && strcmp(name + nl - 4, ".ICO") != 0)) name = fmt2(c, "{}.ico", name, NULL);
     if (name == NULL) return NULL;
-    char *folder = fmt2(c, "%s/_icons", dist, NULL);
+    char *folder = fmt2(c, "{}/_icons", dist, NULL);
     if (folder == NULL) return NULL;
     if (rp_pal_stat(c->alloc, folder, NULL) == RP_FS_NONE && rp_pal_mkdir_new(c->alloc, folder) != PROVEN_OK) return NULL;
-    char *path = fmt2(c, "%s/%s", folder, name);
+    char *path = fmt2(c, "{}/{}", folder, name);
     if (path == NULL) return NULL;
     // The same icon named twice (the product's and a shortcut's) is written once.
     if (rp_pal_stat(c->alloc, path, NULL) == RP_FS_NONE && rp_pal_write_file_new(c->alloc, path, buf, n) != PROVEN_OK) return NULL;
-    return fmt2(c, "%s/_icons/%s", dist_rel, name);
+    return fmt2(c, "{}/_icons/{}", dist_rel, name);
 }
 
 static const char *const handled_tables[] = {
@@ -702,9 +702,9 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     else note(c, "The package had no UpgradeCode; give [package] upgrade-code before building.", NULL, NULL);
     // The product code is not carried: each new version needs its own (rubrapack derives one), or
     // Windows takes the new package for the installed one (1638). Said in a note.
-    if (product && product[0]) note(c, "The original's ProductCode was %s; this package gets its own, so raise the version to upgrade it.", product, NULL);
+    if (product && product[0]) note(c, "The original's ProductCode was {}; this package gets its own, so raise the version to upgrade it.", product, NULL);
     if (lang && strcmp(lang, "1042") == 0) kv(b, "language", "ko-KR");
-    else if (lang && strcmp(lang, "1033") != 0) note(c, "ProductLanguage %s became en-US (rubrapack writes en-US and ko-KR packages).", lang, NULL);
+    else if (lang && strcmp(lang, "1033") != 0) note(c, "ProductLanguage {} became en-US (rubrapack writes en-US and ko-KR packages).", lang, NULL);
     // Scope: ALLUSERS=1 per machine; ALLUSERS=2 with MSIINSTALLPERUSER=1 per user, or dual when no
     // launch condition holds it to per-user.
     bool user_only = false;
@@ -712,7 +712,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     for (size_t r = 0; r < rows(lc); ++r) user_only |= RP_EQ(str(c, lc, r, "Condition"), "Installed OR MSIINSTALLPERUSER = 1");
     bool per_user = allusers && strcmp(allusers, "2") == 0 && peruser && strcmp(peruser, "1") == 0;
     if (per_user) kv(b, "scope", user_only ? "user" : "dual");
-    else if (!allusers || strcmp(allusers, "1") != 0) note(c, "ALLUSERS was '%s'; the package installs per machine here (scope).", allusers ? allusers : "", NULL);
+    else if (!allusers || strcmp(allusers, "1") != 0) note(c, "ALLUSERS was '{}'; the package installs per machine here (scope).", allusers ? allusers : "", NULL);
     table_t dlg = table(c, "Dialog");
     if (rows(dlg)) {
         // The nearest of rubrapack's dialog sets, by what the original's pages were for.
@@ -726,7 +726,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         const char *set = features ? "features" : installdir ? "installdir" : welcome ? "minimal" : "basic";
         kv(b, "ui", set);
         bool own_set = find(c, dlg, "Dialog", "RpExitDlg") != SIZE_MAX;
-        if (!own_set) note(c, "The original's own dialogs are replaced by rubrapack's \"%s\" set (ui).", set, NULL);
+        if (!own_set) note(c, "The original's own dialogs are replaced by rubrapack's \"{}\" set (ui).", set, NULL);
     }
     table_t ca0 = table(c, "CustomAction");
     size_t dg = find(c, ca0, "Action", "RP_RefuseDowngrade");
@@ -831,7 +831,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
                 if ((*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9')) clean[n++] = *q;
             }
             clean[n] = '\0';
-            x->id = make_id(c, fmt2(c, "%sDir", clean, NULL), 0);
+            x->id = make_id(c, fmt2(c, "{}Dir", clean, NULL), 0);
         }
     }
     for (size_t r = 0; r < ds.n; ++r) {
@@ -925,10 +925,10 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             if (num(cond, k, "Level", 1) == 0 && off == NULL) {
                 // rubrapack's own form for `when` ("NOT Installed AND NOT (X)") goes back to X.
                 if (strncmp(cc, "NOT Installed AND NOT (", 23) == 0 && cl > 24 && cc[cl - 1] == ')') off = dupn(c, cc + 23, cl - 24);
-                else off = fmt2(c, "NOT (%s)", cc, NULL);
+                else off = fmt2(c, "NOT ({})", cc, NULL);
                 continue;
             }
-            note(c, "A Condition row of feature '%s' sets another level (%s); left out.", rp_cs(str(c, fe, r, "Feature")), cc);
+            note(c, "A Condition row of feature '{}' sets another level ({}); left out.", rp_cs(str(c, fe, r, "Feature")), cc);
         }
         if (off) kv(b, "when", off);
     }
@@ -949,13 +949,13 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         if (d && d->alias) d = dir_find(&ds, d->parent);
         const char *fname = long_name(c, rp_cs(str(c, ft, r, "FileName")), false);
         if (k == NULL || d == NULL || d->id == NULL || d->path == NULL) {
-            note(c, "File '%s' is in a folder rubrapack cannot name; left out (%s).", key, fname);
+            note(c, "File '{}' is in a folder rubrapack cannot name; left out ({}).", key, fname);
             continue;
         }
         head(b, "file", id);
         kv(b, "dir", d->id);
-        const char *src = d->target[0] ? fmt2(c, "%s/%s", d->target, fname) : fname;
-        kv(b, "source", fmt2(c, "%s/%s", dist_rel, src));
+        const char *src = d->target[0] ? fmt2(c, "{}/{}", d->target, fname) : fname;
+        kv(b, "source", fmt2(c, "{}/{}", dist_rel, src));
         int32_t fattr = num(ft, r, "Attributes", 0);
         if (!(fattr & 0x200)) kb(b, "vital", false);
         if (k->keyfile && strcmp(k->keyfile, id) == 0 && k->id_guid && k->id_guid[0]) kv(b, "component-guid", k->id_guid);
@@ -963,7 +963,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         if (k->feature && features_out) kv(b, "feature", k->feature);
         if (k->cond && k->cond[0]) kv(b, "when", k->cond);
         // A program or library of another architecture than the package's says so (any-arch).
-        char *path = fmt2(c, "%s/%s", dist, src);
+        char *path = fmt2(c, "{}/{}", dist, src);
         uint8_t *data = NULL;
         size_t len = 0;
         if (path && rp_pal_read_file(c->alloc, path, 1u << 30, &data, &len) == PROVEN_OK) {
@@ -979,7 +979,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         if (d == NULL || !empty[d - ds.d] || d->id) continue;
         dir_t *pd = dir_find(&ds, d->parent);
         if (pd == NULL || pd->id == NULL) {
-            note(c, "The empty folder '%s' is in a folder rubrapack cannot name; left out.", d->key, NULL);
+            note(c, "The empty folder '{}' is in a folder rubrapack cannot name; left out.", d->key, NULL);
             continue;
         }
         head(b, "folder", make_id(c, d->key, 'd'));
@@ -999,11 +999,11 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         bool null_value = is_null(rt, r, "Value");
         const char *v = null_value ? NULL : rp_cs(str(c, rt, r, "Value"));
         if (null_value && (rn[0] == '\0' || strcmp(rn, "+") == 0 || strcmp(rn, "-") == 0 || strcmp(rn, "*") == 0)) {
-            note(c, "Registry '%s' only creates or removes the key %s; left out.", key, rk);
+            note(c, "Registry '{}' only creates or removes the key {}; left out.", key, rk);
             continue;
         }
         if (root < -1 || root > 2) {
-            note(c, "Registry '%s' is under HKEY_USERS; left out.", key, NULL);
+            note(c, "Registry '{}' is under HKEY_USERS; left out.", key, NULL);
             continue;
         }
         // A shortcut's component keeps a value as its key path; rubrapack makes that itself.
@@ -1011,7 +1011,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         for (size_t s2 = 0; k && s2 < rows(st); ++s2) shortcut_comp |= RP_EQ(str(c, st, s2, "Component_"), k->key);
         if (shortcut_comp && k->keypath && strcmp(k->keypath, key) == 0) continue;
         if (root == 1 && !per_user) {
-            note(c, "Registry '%s' writes HKCU in a per-machine package (it would be the installing user's); left out.", key, NULL);
+            note(c, "Registry '{}' writes HKCU in a per-machine package (it would be the installing user's); left out.", key, NULL);
             continue;
         }
         const char *id = make_id(c, key, 0);
@@ -1035,7 +1035,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
                 char u[16];
                 long long sv = 0;
                 for (const char *q = v + 2; *q >= '0' && *q <= '9'; ++q) sv = sv * 10 + (*q - '0');
-                snprintf(u, sizeof u, "%lu", (unsigned long)(uint32_t)(int32_t)-sv);
+                (void)proven_fmt_to(u, sizeof u, "{}", proven_arg_u64((unsigned long)(uint32_t)(int32_t)-sv));
                 rp_buf_puts(b, "value = ");
                 rp_buf_puts(b, u);
                 rp_buf_byte(b, '\n');
@@ -1063,7 +1063,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             kv(b, "value", follow(c, v));
         }
         if (k && c->arch != 1 && !(k->attr & 0x100)) kv(b, "view", "32");
-        if (k && k->keyfile) kv(b, "with", fmt2(c, "file:%s", k->keyfile, NULL));
+        if (k && k->keyfile) kv(b, "with", fmt2(c, "file:{}", k->keyfile, NULL));
         else {
             if (k && k->feature && features_out) kv(b, "feature", k->feature);
             if (k && k->cond && k->cond[0]) kv(b, "when", k->cond);
@@ -1104,13 +1104,13 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             tfile = k->keyfile;         // an advertised shortcut: the component's key file
         }
         if (dir == NULL || tfile == NULL) {
-            note(c, "Shortcut '%s' (target %s) has no folder or file rubrapack can name; left out.", key, target);
+            note(c, "Shortcut '{}' (target {}) has no folder or file rubrapack can name; left out.", key, target);
             continue;
         }
         head(b, "shortcut", make_id(c, key, 0));
         kv(b, "dir", dir);
         kv(b, "name", long_name(c, rp_cs(str(c, st, r, "Name")), false));
-        kv(b, "target", fmt2(c, "file:%s", tfile, NULL));
+        kv(b, "target", fmt2(c, "file:{}", tfile, NULL));
         const char *args = rp_cs(str(c, st, r, "Arguments")), *desc = rp_cs(str(c, st, r, "Description")), *wk = rp_cs(str(c, st, r, "WkDir")), *ic = rp_cs(str(c, st, r, "Icon_"));
         if (args && args[0]) kv(b, "args", follow(c, args));
         if (desc && desc[0]) kv(b, "description", desc);
@@ -1136,7 +1136,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             ++n;
         }
         if (remove_on_install || v == NULL) {
-            note(c, "Environment '%s' removes %s at installation; left out.", key, n);
+            note(c, "Environment '{}' removes {} at installation; left out.", key, n);
             continue;
         }
         const char *mode = NULL;
@@ -1166,7 +1166,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             dir_t *d = dp[0] ? dir_find(&ds, dp) : NULL;
             if (d && d->alias) d = dir_find(&ds, d->parent);
             if (d == NULL || d->id == NULL) {
-                note(c, "IniFile '%s' is in a folder rubrapack cannot name (%s); left out.", key, dp[0] ? dp : "the Windows folder");
+                note(c, "IniFile '{}' is in a folder rubrapack cannot name ({}); left out.", key, dp[0] ? dp : "the Windows folder");
                 continue;
             }
             int32_t action = num(t, r, "Action", 0);
@@ -1191,11 +1191,11 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         const char *key = rp_cs(str(c, sv, r, "ServiceInstall")), *sname = rp_cs(str(c, sv, r, "Name"));
         comp_t *k = comp_find(comps, &comp_ix, rp_cs(str(c, sv, r, "Component_")));
         if (k == NULL || k->keyfile == NULL) {
-            note(c, "Service '%s' has no program as its component's key file; left out.", sname, NULL);
+            note(c, "Service '{}' has no program as its component's key file; left out.", sname, NULL);
             continue;
         }
         head(b, "service", make_id(c, key, 0));
-        kv(b, "file", fmt2(c, "file:%s", k->keyfile, NULL));
+        kv(b, "file", fmt2(c, "file:{}", k->keyfile, NULL));
         kv(b, "name", sname);
         const char *dn = rp_cs(str(c, sv, r, "DisplayName")), *desc = rp_cs(str(c, sv, r, "Description")), *acct = rp_cs(str(c, sv, r, "StartName")),
                    *args = rp_cs(str(c, sv, r, "Arguments"));
@@ -1207,7 +1207,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             const char *a = strstr(acct, "LocalService") ? "LocalService" : strstr(acct, "NetworkService") ? "NetworkService"
                           : strcmp(acct, "LocalSystem") == 0 ? "LocalSystem" : NULL;
             if (a) kv(b, "account", a);
-            else note(c, "Service '%s' ran as '%s'; here as LocalSystem.", sname, acct);
+            else note(c, "Service '{}' ran as '{}'; here as LocalSystem.", sname, acct);
         }
         if (args && args[0]) kv(b, "args", follow(c, args));
         for (size_t s = 0; s < rows(sc); ++s) {
@@ -1231,7 +1231,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         if (strncmp(tg, "\"[#", 3) == 0) {
             const char *close = strstr(tg + 3, "]\"");
             if (close) {
-                launch = fmt2(c, "file:%s", renamed(c, dupn(c, tg + 3, (size_t)(close - tg - 3)), 'f'), NULL);
+                launch = fmt2(c, "file:{}", renamed(c, dupn(c, tg + 3, (size_t)(close - tg - 3)), 'f'), NULL);
                 if (close[2] == ' ' && close[3]) launch_args = follow(c, close + 3);
             }
         }
@@ -1256,9 +1256,9 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         if (strncmp(an, "RP_", 3) != 0 || al < 7 || strcmp(an + al - 3, "_Do") != 0 || (num(cat, r, "Type", 0) & 0x3F) != 18) continue;
         const char *aid = dupn(c, an + 3, al - 6);
         head(b, "action", make_id(c, aid, 0));
-        kv(b, "run", fmt2(c, "file:%s", renamed(c, rp_cs(str(c, cat, r, "Source")), 'f'), NULL));
+        kv(b, "run", fmt2(c, "file:{}", renamed(c, rp_cs(str(c, cat, r, "Source")), 'f'), NULL));
         kv(b, "do", rp_cs(str(c, cat, r, "Target")));
-        size_t ur = find(c, cat, "Action", fmt2(c, "RP_%s_Undo", aid, NULL));
+        size_t ur = find(c, cat, "Action", fmt2(c, "RP_{}_Undo", aid, NULL));
         if (ur != SIZE_MAX) kv(b, "undo", rp_cs(str(c, cat, ur, "Target")));
     }
 
@@ -1290,17 +1290,17 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             }
             if (!ok) break;
             char qid[32];
-            snprintf(qid, sizeof qid, "Qword%d", ++nq);
+            (void)proven_fmt_to(qid, sizeof qid, "Qword{}", proven_arg_i32(++nq));
             comp_t *k = comp_find(comps, &comp_ix, f[5]);
             head(b, "registry", make_id(c, qid, 0));
             kv(b, "root", f[0]);
             kv(b, "key", follow(c, f[2]));
             if (f[3][0]) kv(b, "name", follow(c, f[3]));
             kv(b, "type", "qword");
-            kv(b, "value", fmt2(c, "0x%s", f[4], NULL));
+            kv(b, "value", fmt2(c, "0x{}", f[4], NULL));
             if (strcmp(f[1], "32") == 0 && c->arch != 1) kv(b, "view", "32");
             if (strcmp(f[6], "1") == 0) kb(b, "keep", true);
-            if (k && k->keyfile) kv(b, "with", fmt2(c, "file:%s", k->keyfile, NULL));
+            if (k && k->keyfile) kv(b, "with", fmt2(c, "file:{}", k->keyfile, NULL));
             else if (k && k->feature && features_out) kv(b, "feature", k->feature);
         }
     }
@@ -1318,7 +1318,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             }
         }
         ident[n] = '\0';
-        if (n < 3) snprintf(ident, sizeof ident, "Converted.Package");
+        if (n < 3) (void)proven_fmt_to(ident, sizeof ident, "Converted.Package");
         head(b, "msix", NULL);
         kv(b, "identity-name", ident);
         kv(b, "publisher", c->publisher);
@@ -1389,8 +1389,8 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     }
     if (private_props) {
         char n[24];
-        snprintf(n, sizeof n, "%zu", private_props);
-        note(c, "%s private properties (mixed case names) are left out; they belong to the original's own UI and actions.", n, NULL);
+        (void)proven_fmt_to(n, sizeof n, "{}", proven_arg_u64(private_props));
+        note(c, "{} private properties (mixed case names) are left out; they belong to the original's own UI and actions.", n, NULL);
     }
 
     // ---- launch conditions
@@ -1398,7 +1398,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         const char *cnd = rp_cs(str(c, lc, r, "Condition"));
         if (strcmp(cnd, "Installed OR MSIINSTALLPERUSER = 1") == 0) continue;      // rubrapack's scope = "user"
         char idn[32];
-        snprintf(idn, sizeof idn, "Require%zu", r + 1);
+        (void)proven_fmt_to(idn, sizeof idn, "Require{}", proven_arg_u64(r + 1));
         head(b, "require", make_id(c, idn, 0));
         kv(b, "condition", cnd);
         kv(b, "message", rp_cs(str(c, lc, r, "Description")));
@@ -1412,11 +1412,11 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         dir_t *d = dir_find(&ds, df && df[0] ? df : (k ? k->dir : NULL));
         if (d && d->alias) d = dir_find(&ds, d->parent);
         if (d == NULL || d->id == NULL) {
-            note(c, "DuplicateFile '%s' goes to a folder rubrapack cannot name; left out.", key, NULL);
+            note(c, "DuplicateFile '{}' goes to a folder rubrapack cannot name; left out.", key, NULL);
             continue;
         }
         head(b, "copy", make_id(c, key, 0));
-        kv(b, "source", fmt2(c, "file:%s", src, NULL));
+        kv(b, "source", fmt2(c, "file:{}", src, NULL));
         kv(b, "dir", d->id);
         const char *dn = rp_cs(str(c, dup_t, r, "DestName"));
         if (dn && dn[0]) kv(b, "name", long_name(c, dn, false));
@@ -1427,7 +1427,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         dir_t *d = dir_find(&ds, dp);
         if (d && d->alias) d = dir_find(&ds, d->parent);
         if (d == NULL || d->id == NULL) {
-            note(c, "RemoveFile '%s' names a folder rubrapack cannot name (%s); left out.", key, dp);
+            note(c, "RemoveFile '{}' names a folder rubrapack cannot name ({}); left out.", key, dp);
             continue;
         }
         int32_t mode = num(rf, r, "InstallMode", 2);
@@ -1452,8 +1452,8 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     table_t fo = table(c, "Font");
     for (size_t r = 0; r < rows(fo); ++r) {
         const char *fk = rp_cs(str(c, fo, r, "File_"));
-        head(b, "font", make_id(c, fmt2(c, "Font_%s", fk, NULL), 0));
-        kv(b, "file", fmt2(c, "file:%s", renamed(c, fk, 'f'), NULL));
+        head(b, "font", make_id(c, fmt2(c, "Font_{}", fk, NULL), 0));
+        kv(b, "file", fmt2(c, "file:{}", renamed(c, fk, 'f'), NULL));
         const char *title = rp_cs(str(c, fo, r, "FontTitle"));
         if (title && title[0]) kv(b, "title", title);
     }
@@ -1461,15 +1461,15 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     for (size_t r = 0; r < rows(lp); ++r) {
         const char *key = rp_cs(str(c, lp, r, "MsiLockPermissionsEx")), *obj = rp_cs(str(c, lp, r, "LockObject")), *tn = rp_cs(str(c, lp, r, "Table"));
         const char *target = NULL;
-        if (strcmp(tn, "File") == 0) target = fmt2(c, "file:%s", renamed(c, obj, 'f'), NULL);
+        if (strcmp(tn, "File") == 0) target = fmt2(c, "file:{}", renamed(c, obj, 'f'), NULL);
         else if (strcmp(tn, "Directory") == 0 || strcmp(tn, "CreateFolder") == 0) {
             dir_t *d = dir_find(&ds, obj);
-            if (d && d->id) target = fmt2(c, "dir:%s", d->id, NULL);
+            if (d && d->id) target = fmt2(c, "dir:{}", d->id, NULL);
         } else if (strcmp(tn, "Registry") == 0) {
-            target = fmt2(c, "registry:%s", obj, NULL);
+            target = fmt2(c, "registry:{}", obj, NULL);
         }
         if (target == NULL || !is_null(lp, r, "Condition")) {
-            note(c, "MsiLockPermissionsEx '%s' (%s) is left out.", key, tn);
+            note(c, "MsiLockPermissionsEx '{}' ({}) is left out.", key, tn);
             continue;
         }
         head(b, "permission", make_id(c, key, 0));
@@ -1500,7 +1500,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     rp_buf_t rest = rp_buf_new(c->alloc, 1u << 20);
     if (ncustom) {
         char n[24];
-        snprintf(n, sizeof n, "%zu", ncustom);
+        (void)proven_fmt_to(n, sizeof n, "{}", proven_arg_u64(ncustom));
         rp_buf_puts(&rest, "#   CustomAction: ");
         rp_buf_puts(&rest, n);
         rp_buf_puts(&rest, " (");
@@ -1520,19 +1520,19 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         const rp_msi_wtable_t *t = &c->db->tables[i];
         if (t->row_count == 0 || rp_str_in_list(t->name, handled_tables)) continue;
         char line[160];
-        snprintf(line, sizeof line, "#   %s: %zu rows\n", t->name, t->row_count);
+        (void)proven_fmt_to(line, sizeof line, "#   {}: {} rows\n", proven_arg_cstr(t->name), proven_arg_u64(t->row_count));
         rp_buf_puts(&rest, line);
     }
     table_t up = table(c, "Upgrade");
     for (size_t r = 0; r < rows(up); ++r) {
         const char *uc = rp_cs(str(c, up, r, "UpgradeCode"));
-        if (upgrade && strcasecmp(uc, upgrade) != 0) note(c, "Upgrade row for another product (%s) is left out.", uc, NULL);
+        if (upgrade && strcasecmp(uc, upgrade) != 0) note(c, "Upgrade row for another product ({}) is left out.", uc, NULL);
     }
     for (size_t r = 0; r < ncomp; ++r) {
         bool has_shortcut = false;
         for (size_t s2 = 0; s2 < rows(st); ++s2) has_shortcut |= RP_EQ(str(c, st, s2, "Component_"), comps[r].key);
         if (!has_shortcut && comps[r].keyfile == NULL && comps[r].keypath && comps[r].keypath[0] && find(c, rt, "Registry", comps[r].keypath) != SIZE_MAX) {
-            note(c, "Component '%s' had a registry key path; its values get a component of their own here.", comps[r].key, NULL);
+            note(c, "Component '{}' had a registry key path; its values get a component of their own here.", comps[r].key, NULL);
         }
     }
     rp_buf_puts(b, "\n# ---- not carried over from ");
@@ -1640,7 +1640,7 @@ int rpn_new_from(const char *source, const char *input, const char *dist, const 
     }
     if (rc == RP_EXIT_OK) {
         char line[512];
-        snprintf(line, sizeof line, "wrote %s and %s/ (build it with: rubrapack build %s -o <package>.msi)\n", source, dist, source);
+        (void)proven_fmt_to(line, sizeof line, "wrote {} and {}/ (build it with: rubrapack build {} -o <package>.msi)\n", proven_arg_cstr(source), proven_arg_cstr(dist), proven_arg_cstr(source));
         (void)rp_pal_puts(RP_OUT_STDOUT, line);
     }
     rp_buf_free(&b);

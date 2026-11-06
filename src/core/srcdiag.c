@@ -3,6 +3,7 @@
 #include "rubrapack/pal.h"
 #include "rubrapack/srcdiag.h"
 #include "rubrapack/lang.h"
+#include "rubrapack/str.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -18,7 +19,7 @@ void rp_srcdiag_add(rp_srcdiags_t *d, rp_pos_t pos, const char *code, bool warni
     rp_srcdiag_t *e = &d->items[d->count++];
     e->pos = pos;
     e->warning = warning;
-    snprintf(e->code, sizeof e->code, "%s", code);
+    (void)proven_fmt_to(e->code, sizeof e->code, "{}", proven_arg_cstr(code));
     va_list ap;
     va_start(ap, fmt);
     int n = rp_lang_vformat(e->msg, sizeof e->msg, fmt, ap);
@@ -47,10 +48,9 @@ void rp_srcdiag_print(const rp_srcdiags_t *d, const char *path) {
     for (size_t i = 0; i < d->count; ++i) {
         const rp_srcdiag_t *e = &d->items[i];
         if (e->pos.line == 0) {         // about the output as a whole, not a source line
-            snprintf(line, sizeof line, "%s: %s[%s]: %s\n", path, rp_tr(e->warning ? "warning" : "error"), e->code, e->msg);
+            (void)proven_fmt_to(line, sizeof line, "{}: {}[{}]: {}\n", proven_arg_cstr(path), proven_arg_cstr(rp_tr(e->warning ? "warning" : "error")), proven_arg_cstr(e->code), proven_arg_cstr(e->msg));
         } else {
-            snprintf(line, sizeof line, "%s:%u:%u: %s[%s]: %s\n", path, (unsigned)e->pos.line, (unsigned)e->pos.col,
-                     rp_tr(e->warning ? "warning" : "error"), e->code, e->msg);
+            (void)proven_fmt_to(line, sizeof line, "{}:{}:{}: {}[{}]: {}\n", proven_arg_cstr(path), proven_arg_u32((unsigned)e->pos.line), proven_arg_u32((unsigned)e->pos.col), proven_arg_cstr(rp_tr(e->warning ? "warning" : "error")), proven_arg_cstr(e->code), proven_arg_cstr(e->msg));
         }
         (void)rp_pal_puts(RP_OUT_STDERR, line);
     }

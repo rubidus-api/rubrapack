@@ -1,6 +1,7 @@
 // src/model/ident.c - deterministic GUIDs and MSI keys (include/rubrapack/ident.h).
 
 #include "rubrapack/ident.h"
+#include "rubrapack/str.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -16,8 +17,7 @@ static void feed(proven_sha256_t *h, const void *p, size_t n) {
 }
 
 static void uuid_text(const uint8_t b[16], char out[39]) {
-    snprintf(out, 39, "{%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}", b[0], b[1], b[2], b[3],
-             b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
+    (void)proven_fmt_to(out, 39, "{{{:02X}{:02X}{:02X}{:02X}-{:02X}{:02X}-{:02X}{:02X}-{:02X}{:02X}-{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}}}", proven_arg_u32(b[0]), proven_arg_u32(b[1]), proven_arg_u32(b[2]), proven_arg_u32(b[3]), proven_arg_u32(b[4]), proven_arg_u32(b[5]), proven_arg_u32(b[6]), proven_arg_u32(b[7]), proven_arg_u32(b[8]), proven_arg_u32(b[9]), proven_arg_u32(b[10]), proven_arg_u32(b[11]), proven_arg_u32(b[12]), proven_arg_u32(b[13]), proven_arg_u32(b[14]), proven_arg_u32(b[15]));
 }
 
 void rp_uuid_derive(const char *tag, const char *const *fields, size_t count, char out[39]) {

@@ -5,6 +5,7 @@
 
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/str.h"
 #include "rubrapack/text.h"
 
 #include <stdio.h>
@@ -157,7 +158,7 @@ static proven_err_t wait_fd(int fd, short events, int timeout_ms) {
 
 proven_err_t rp_pal_tcp_connect(proven_allocator_t alloc, const char *host, uint16_t port, int timeout_ms, rp_sock_t **out) {
     char service[8];
-    snprintf(service, sizeof service, "%u", (unsigned)port);
+    (void)proven_fmt_to(service, sizeof service, "{}", proven_arg_u32((unsigned)port));
     struct addrinfo hints = { 0 }, *list = NULL;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_family = AF_UNSPEC;
@@ -324,7 +325,7 @@ proven_err_t rp_pal_outmap_create(proven_allocator_t alloc, const char *path_utf
         outmap_free(alloc, m);
         return PROVEN_ERR_NOMEM;
     }
-    snprintf(m->tmp, n + 16, "%s.rp-map", path_utf8);
+    (void)proven_fmt_to(m->tmp, n + 16, "{}.rp-map", proven_arg_cstr(path_utf8));
     memcpy(m->path, path_utf8, n + 1);
     m->fd = open(m->tmp, O_RDWR | O_CREAT | O_TRUNC | O_CLOEXEC, 0666);
     if (m->fd < 0) {

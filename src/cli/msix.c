@@ -61,7 +61,7 @@ int rp_msix_inspect(const char *path, const char *what) {
         rc = out((const char *)p.manifest);
     } else if (what) {
         for (size_t i = 0; i < p.count && rc == RP_EXIT_OK; ++i) {
-            snprintf(line, sizeof line, "%s\t%llu\t%s\n", p.files[i].name, (unsigned long long)p.files[i].size, p.files[i].deflated ? "deflate" : "stored");
+            (void)proven_fmt_to(line, sizeof line, "{}\t{}\t{}\n", proven_arg_cstr(p.files[i].name), proven_arg_u64((unsigned long long)p.files[i].size), proven_arg_cstr(p.files[i].deflated ? "deflate" : "stored"));
             rc = out(line);
         }
     } else {
@@ -73,17 +73,17 @@ int rp_msix_inspect(const char *path, const char *what) {
         bool bundle = strstr((const char *)p.manifest, "<Bundle") != NULL;
         for (size_t i = 0; i < (bundle ? 3 : sizeof fields / sizeof fields[0]) && rc == RP_EXIT_OK; ++i) {
             char v[4200];
-            if (!rp_xml_attr((const char *)p.manifest, p.manifest_len, fields[i][0], fields[i][1], v, sizeof v)) snprintf(v, sizeof v, "-");
-            snprintf(line, sizeof line, "%s: %s\n", fields[i][1], v);
+            if (!rp_xml_attr((const char *)p.manifest, p.manifest_len, fields[i][0], fields[i][1], v, sizeof v)) (void)proven_fmt_to(v, sizeof v, "-");
+            (void)proven_fmt_to(line, sizeof line, "{}: {}\n", proven_arg_cstr(fields[i][1]), proven_arg_cstr(v));
             rc = out(line);
         }
         if (bundle) {               // its packages (after the manifest), each opened and checked
             for (size_t i = 1; i < p.count && rc == RP_EXIT_OK; ++i) {
-                snprintf(line, sizeof line, "package: %s (%llu bytes)\n", p.files[i].name, (unsigned long long)p.files[i].size);
+                (void)proven_fmt_to(line, sizeof line, "package: {} ({} bytes)\n", proven_arg_cstr(p.files[i].name), proven_arg_u64((unsigned long long)p.files[i].size));
                 rc = out(line);
             }
         } else {
-            snprintf(line, sizeof line, "files: %zu (%llu bytes, block hashes checked)\n", p.count, (unsigned long long)total);
+            (void)proven_fmt_to(line, sizeof line, "files: {} ({} bytes, block hashes checked)\n", proven_arg_u64(p.count), proven_arg_u64((unsigned long long)total));
             if (rc == RP_EXIT_OK) rc = out(line);
         }
     }
@@ -117,7 +117,7 @@ int rp_msix_lint(const char *path, bool strict) {
         } else {                    // <Logo>text</Logo>
             const char *s = strstr((const char *)p.manifest, "<Logo>"), *e = s ? strstr(s, "</Logo>") : NULL;
             have = s && e && (size_t)(e - s - 6) < sizeof v;
-            if (have) snprintf(v, sizeof v, "%.*s", (int)(e - s - 6), s + 6);
+            if (have) (void)proven_fmt_to(v, sizeof v, "{}", proven_arg_cstr_n(s + 6, (int)(e - s - 6)));
         }
         if (!have) continue;
         bool found = false;

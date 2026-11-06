@@ -18,6 +18,7 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/pki.h"
 #include "rubrapack/sign.h"
+#include "rubrapack/str.h"
 #include "rubrapack/text.h"
 
 #include <stdio.h>
@@ -49,7 +50,7 @@ bool rp_sxs_token(const uint8_t *cert, size_t len, char token[17], const char **
     for (size_t i = c.rsa_n.n; i-- > 0;) rp_sha1_update(&h, &c.rsa_n.p[i], 1);     // little-endian
     uint8_t d[20];
     rp_sha1_final(&h, d);
-    for (int i = 0; i < 8; ++i) snprintf(token + 2 * i, 3, "%02x", d[19 - i]);
+    for (int i = 0; i < 8; ++i) (void)proven_fmt_to(token + 2 * i, 3, "{:02x}", proven_arg_u32(d[19 - i]));
     return true;
 }
 
@@ -108,8 +109,7 @@ static void utc_time(int64_t t, char out[16]) {
     int64_t y = yoe + era * 400, doy = doe - (365 * yoe + yoe / 4 - yoe / 100), mp = (5 * doy + 2) / 153;
     int64_t dd = doy - (153 * mp + 2) / 5 + 1, mm = mp < 10 ? mp + 3 : mp - 9;
     if (mm <= 2) ++y;
-    snprintf(out, 16, "%02u%02u%02u%02u%02u%02uZ", (unsigned)(y % 100) % 100, (unsigned)mm % 100, (unsigned)dd % 100, (unsigned)(sec / 3600) % 100,
-             (unsigned)(sec / 60 % 60), (unsigned)(sec % 60));
+    (void)proven_fmt_to(out, 16, "{:02}{:02}{:02}{:02}{:02}{:02}Z", proven_arg_u32((unsigned)(y % 100) % 100), proven_arg_u32((unsigned)mm % 100), proven_arg_u32((unsigned)dd % 100), proven_arg_u32((unsigned)(sec / 3600) % 100), proven_arg_u32((unsigned)(sec / 60 % 60)), proven_arg_u32((unsigned)(sec % 60)));
 }
 
 proven_err_t rp_sxs_catalog(proven_allocator_t alloc, const char *manifest_name, const uint8_t *manifest, size_t mlen, int64_t this_update,
@@ -124,7 +124,7 @@ proven_err_t rp_sxs_catalog(proven_allocator_t alloc, const char *manifest_name,
     rp_sha1_update(&s1, manifest, mlen);
     rp_sha1_final(&s1, sha1);
     char hex[41], t[16];
-    for (int i = 0; i < 20; ++i) snprintf(hex + 2 * i, 3, "%02X", sha1[i]);
+    for (int i = 0; i < 20; ++i) (void)proven_fmt_to(hex + 2 * i, 3, "{:02X}", proven_arg_u32(sha1[i]));
     utc_time(this_update, t);
     rp_hash_t h;                    // the list identifier: from the manifest and the time (makecat's is random)
     rp_hash_init(&h, RP_HASH_SHA256);

@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "proven/fmt.h"
 #include "proven/u8str.h"
 
 // ASCII lowercase of one byte; bytes outside A-Z pass through unchanged.
@@ -111,5 +112,25 @@ static inline char *rp_ws(proven_u8str_view_t v) { return (char *)v.ptr; }
 // unsigned, the shorter first - strcmp's order for text without NUL bytes).
 #define RP_EQ(a, b) (proven_u8str_view_eq(RP_V(a), RP_V(b)) != 0)
 #define RP_CMP(a, b) proven_u8str_view_cmp(RP_V(a), RP_V(b))
+
+// What snprintf would have returned for a proven_fmt_to call: the length of the whole text (also
+// when it was cut to fit), or -1 for a format error. Text is formatted with proven_fmt_to.
+static inline int rp_fmt_n(proven_fmt_result_t r) {
+    return r.err == PROVEN_OK || r.err == PROVEN_ERR_OUT_OF_BOUNDS ? (int)r.required : -1;
+}
+
+// proven_fmt_to for the helpers that take a format naming at most two C strings, a then b (`{}`
+// each): only as many arguments as the format names are passed, as proven requires. A format
+// naming more than two is an error (PROVEN_ERR_INVALID_FORMAT, empty text).
+static inline proven_fmt_result_t rp_fmt_strs(char *out, size_t cap, const char *fmt, const char *a, const char *b) {
+    proven_result_size_t n = proven_fmt_arg_count(fmt);
+    if (n.err != PROVEN_OK || n.value > 2) {
+        if (cap) out[0] = '\0';
+        return (proven_fmt_result_t){ .err = PROVEN_ERR_INVALID_FORMAT };
+    }
+    if (n.value == 0) return proven_fmt_to(out, cap, fmt);
+    if (n.value == 1) return proven_fmt_to(out, cap, fmt, proven_arg_cstr(a));
+    return proven_fmt_to(out, cap, fmt, proven_arg_cstr(a), proven_arg_cstr(b));
+}
 
 #endif // RUBRAPACK_STR_H

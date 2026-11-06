@@ -426,7 +426,7 @@ static void ui_all_languages(rp_ir_t *ir) {
             bool built_in = pass == 1;
             for (size_t e = 0; !built_in && e < rp_lang_embedded_count; ++e) built_in = strcmp(rp_lang_embedded[e].code, code) == 0;
             if (!built_in || ui_lang_index(ir, code) >= 0 || ir->ui_lang_count == RP_UI_LANG_MAX) continue;
-            snprintf(ir->ui_langs[ir->ui_lang_count++].code, sizeof ir->ui_langs[0].code, "%s", code);
+            (void)proven_fmt_to(ir->ui_langs[ir->ui_lang_count++].code, sizeof ir->ui_langs[0].code, "{}", proven_arg_cstr(code));
         }
     }
 }
@@ -546,7 +546,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
         bool text_license = L->license_source.ptr && !rp_ascii_ends_with_ci(rp_cs(L->license_source), ".rtf");
         if (text_license && L->font.ptr && rp_ui_face_ascii(rp_cs(L->font)) == NULL) {
             char key[16];
-            snprintf(key, sizeof key, "font-%s", L->code);
+            (void)proven_fmt_to(key, sizeof key, "font-{}", proven_arg_cstr(L->code));
             rp_srcdiag_add(c->d, uit ? ir_key_pos(uit, key) : pos, "RP1319", true,
                            "%s '%s': the license text needs the face's English name, so it shows in the language's own face; "
                            "write the English name (like \"Malgun Gothic\") to use this face there too", key, rp_cs(L->font));

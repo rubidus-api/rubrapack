@@ -10,6 +10,7 @@
 #include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pki.h"
+#include "rubrapack/str.h"
 #include "rubrapack/text.h"
 
 #include <stdio.h>
@@ -451,7 +452,7 @@ static bool pem_blocks(ctx_t *c, const uint8_t *text, size_t len, bool (*each)(c
         label[le - ls] = 0;
         size_t body = le + 5;
         char end_line[64];
-        int en = snprintf(end_line, sizeof end_line, "-----END %s-----", label);
+        int en = rp_fmt_n(proven_fmt_to(end_line, sizeof end_line, "-----END {}-----", proven_arg_cstr(label)));
         const uint8_t *end = NULL;
         for (size_t k = body; k + (size_t)en <= len && end == NULL; ++k) {
             if (text[k] == '-' && memcmp(text + k, end_line, (size_t)en) == 0) end = text + k;

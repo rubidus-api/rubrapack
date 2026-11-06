@@ -25,7 +25,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     kv(&b, "arch", RP_V(archs[ir->arch]));
     kv(&b, "upgrade-code", ir->upgrade_code);
     kv(&b, "product-code", ir->product_code);
-    snprintf(num, sizeof num, "%u", ir->language);
+    (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_u32(ir->language));
     kv(&b, "language", RP_V(num));
     kv(&b, "reboot", RP_V(ir->reboot_suppress ? "suppress" : "allow"));
     if (ir->no_cleanup) kv(&b, "cleanup", PROVEN_LIT("false"));
@@ -36,11 +36,11 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     if (ir->remove_addons) kv(&b, "remove-addons", PROVEN_LIT("true"));
     for (size_t i = 0; i < ir->replace_count; ++i) kv(&b, "replaces", RP_V(ir->replaces[i]));
     kv(&b, "downgrade-message", ir->downgrade_message);
-    if (ir->compress >= RP_CAB_LZX(15)) snprintf(num, sizeof num, "lzx:%d", ir->compress - RP_CAB_LZX(0));
-    else snprintf(num, sizeof num, "%d", ir->compress);
+    if (ir->compress >= RP_CAB_LZX(15)) (void)proven_fmt_to(num, sizeof num, "lzx:{}", proven_arg_i32(ir->compress - RP_CAB_LZX(0)));
+    else (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_i32(ir->compress));
     kv(&b, "compress", RP_V(ir->compress < 0 ? "none" : num));
     if (ir->scope) kv(&b, "scope", RP_V(ir->scope == 1 ? "user" : "dual"));      // only when set: older goldens stay
-    if (ir->instances) { char n[16]; snprintf(n, sizeof n, "%d", ir->instances); kv(&b, "instances", RP_V(n)); }
+    if (ir->instances) { char n[16]; (void)proven_fmt_to(n, sizeof n, "{}", proven_arg_i32(ir->instances)); kv(&b, "instances", RP_V(n)); }
     if (ir->ui) {
         static const char *const sets[] = { "none", "basic", "minimal", "installdir", "features" };
         kv(&b, "ui", RP_V(sets[ir->ui]));
@@ -50,7 +50,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     if (ir->ui_embedded_shown.ptr) kv(&b, "embedded-ui", ir->ui_embedded_shown);
     if (ir->cab_external || ir->cab_max) {
         kv(&b, "cab", RP_V(ir->cab_external ? "external" : "embed"));
-        snprintf(num, sizeof num, "%llu", (unsigned long long)(ir->cab_max >> 20));
+        (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_u64((unsigned long long)(ir->cab_max >> 20)));
         kv(&b, "cab-max-size", RP_V(num));
     }
     if (ir->refuse_below.ptr) {         // only when set: older goldens stay as they are
@@ -85,7 +85,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
                 rp_buf_putv(&b, f->id);
                 kv(&b, "title", f->title);
                 kv(&b, "description", f->description);
-                snprintf(num, sizeof num, "%d", f->level);
+                (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_i32(f->level));
                 kv(&b, "level", RP_V(num));
                 kv(&b, "hidden", RP_V(f->hidden ? "1" : "0"));
                 kv(&b, "parent", f->parent);
@@ -116,7 +116,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
                 kv(&b, "dir", f->dir);
                 kv(&b, "source", f->source);
                 kv(&b, "name", f->name);
-                snprintf(num, sizeof num, "%llu", (unsigned long long)f->size);
+                (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_u64((unsigned long long)f->size));
                 kv(&b, "size", RP_V(num));
                 kv(&b, "vital", RP_V(f->vital ? "1" : "0"));
                 kv(&b, "any-arch", RP_V(f->any_arch ? "1" : "0"));
@@ -196,7 +196,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
             if (a->data.ptr) kv(&b, "data", a->data);
             if (a->before.ptr) kv(&b, "before", a->before);
             if (a->after.ptr) kv(&b, "after", a->after);
-            if (a->sequence) { char n[12]; snprintf(n, sizeof n, "%d", (int)a->sequence); kv(&b, "sequence", RP_V(n)); }
+            if (a->sequence) { char n[12]; (void)proven_fmt_to(n, sizeof n, "{}", proven_arg_i32((int)a->sequence)); kv(&b, "sequence", RP_V(n)); }
             if (a->ignore_exit) kv(&b, "ignore-exit", PROVEN_LIT("1"));
         }
         rp_buf_byte(&b, '\n');
@@ -259,7 +259,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     char lkey[32];
 #define KV_LANG(base, lang, val)                                     \
     do {                                                             \
-        snprintf(lkey, sizeof lkey, "%s-%s", (base), rp_cs(lang)); \
+        (void)proven_fmt_to(lkey, sizeof lkey, "{}-{}", proven_arg_cstr((base)), proven_arg_cstr(rp_cs(lang))); \
         kv(&b, lkey, RP_V(val));                              \
     } while (0)
     for (size_t k = 1; k < ir->ui_lang_count; ++k) {      // RFC-0012: English (0) is always there
@@ -267,7 +267,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         char ids[RP_UI_LANGID_MAX * 6 + 1] = "";
         for (size_t j = 0; j < L->langid_count; ++j) {
             size_t n = strlen(ids);
-            snprintf(ids + n, sizeof ids - n, "%s%u", j ? "," : "", (unsigned)L->langids[j]);
+            (void)proven_fmt_to(ids + n, sizeof ids - n, "{}{}", proven_arg_cstr(j ? "," : ""), proven_arg_u32((unsigned)L->langids[j]));
         }
         rp_buf_puts(&b, "ui-language ");
         rp_buf_puts(&b, L->code);
@@ -303,7 +303,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         rp_buf_putv(&b, x->id);
         kv(&b, "dialog", x->dialog);
         kv(&b, "type", RP_V(x->type >= 0 && x->type < (int)(sizeof types / sizeof *types) ? types[x->type] : "-"));
-        snprintf(geo, sizeof geo, "%d,%d,%d,%d", x->x, x->y, x->width, x->height);
+        (void)proven_fmt_to(geo, sizeof geo, "{},{},{},{}", proven_arg_i32(x->x), proven_arg_i32(x->y), proven_arg_i32(x->width), proven_arg_i32(x->height));
         kv(&b, "at", RP_V(geo));
         kv(&b, "text", x->text);
         kv(&b, "property", x->property);
@@ -325,7 +325,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         rp_buf_putv(&b, x->id);
         kv(&b, "image", x->image_shown);
         kv(&b, "feature", x->feature);
-        if (x->order) { snprintf(num, sizeof num, "%d", x->order); kv(&b, "order", RP_V(num)); }
+        if (x->order) { (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_i32(x->order)); kv(&b, "order", RP_V(num)); }
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->font_count; ++k) {

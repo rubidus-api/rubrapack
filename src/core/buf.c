@@ -2,6 +2,7 @@
 
 #include "rubrapack/buf.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/str.h"
 
 #include <stdckdint.h>
 #include <stdio.h>
@@ -54,7 +55,7 @@ void rp_buf_byte(rp_buf_t *b, uint8_t c) { rp_buf_put(b, &c, 1); }
 
 void rp_buf_long(rp_buf_t *b, long long v) {
     char t[24];
-    int n = snprintf(t, sizeof t, "%lld", v);
+    int n = rp_fmt_n(proven_fmt_to(t, sizeof t, "{}", proven_arg_i64(v)));
     if (n > 0) rp_buf_put(b, t, (size_t)n);
 }
 

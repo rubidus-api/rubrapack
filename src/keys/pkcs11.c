@@ -10,6 +10,7 @@
 #include "rubrapack/crypto.h"
 #include "rubrapack/der.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/str.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -130,8 +131,8 @@ static const char *rv_text(CK_RV rv) {
 
 static const char *fail_rv(const char *what, CK_RV rv) {
     const char *t = rv_text(rv);
-    if (t) snprintf(msg, sizeof msg, "%s: %s", what, t);
-    else snprintf(msg, sizeof msg, "%s failed (PKCS#11 error 0x%lX)", what, (unsigned long)rv);
+    if (t) (void)proven_fmt_to(msg, sizeof msg, "{}: {}", proven_arg_cstr(what), proven_arg_cstr(t));
+    else (void)proven_fmt_to(msg, sizeof msg, "{} failed (PKCS#11 error 0x{:X})", proven_arg_cstr(what), proven_arg_u64((unsigned long)rv));
     return msg;
 }
 
@@ -213,7 +214,7 @@ static proven_err_t p11_load(proven_allocator_t alloc, const char *module, p11_t
     p->alloc = alloc;
     p->lib = dlopen(module, RTLD_NOW | RTLD_LOCAL);
     if (p->lib == NULL) {
-        snprintf(msg, sizeof msg, "cannot load the PKCS#11 module '%.300s'", module);
+        (void)proven_fmt_to(msg, sizeof msg, "cannot load the PKCS#11 module '{}'", proven_arg_cstr_n(module, 300));
         *why = msg;
         rp_mem_free(alloc, p);
         return PROVEN_ERR_NOT_FOUND;
@@ -263,7 +264,8 @@ static proven_err_t find_slots(p11_t *p, const char *want, CK_SLOT_ID *slots, CK
         if (want == NULL || strcmp(label, want) == 0) slots[(*n)++] = all[i];
     }
     if (*n == 0) {
-        snprintf(msg, sizeof msg, want ? "no token labelled '%.100s' is present" : "no token is present", want);
+        if (want) (void)proven_fmt_to(msg, sizeof msg, "no token labelled '{}' is present", proven_arg_cstr_n(want, 100));
+        else (void)proven_fmt_to(msg, sizeof msg, "no token is present");
         *why = msg;
         return PROVEN_ERR_NOT_FOUND;
     }
@@ -338,8 +340,9 @@ proven_err_t rp_pkcs11_open(proven_allocator_t alloc, const char *module, const 
         CK_OBJECT_HANDLE o[2];
         CK_ULONG n = find(p, t, 2, o, 2);
         if (n != 1) {
-            snprintf(msg, sizeof msg, n ? "more than one private key is labelled '%.100s'" : "no private key labelled '%.100s' on the token%s", key_label,
-                     pin ? "" : " (give the PIN: --pin-env or --pin-file)");
+            if (n) (void)proven_fmt_to(msg, sizeof msg, "more than one private key is labelled '{}'", proven_arg_cstr_n(key_label, 100));
+            else (void)proven_fmt_to(msg, sizeof msg, "no private key labelled '{}' on the token{}", proven_arg_cstr_n(key_label, 100),
+                                     proven_arg_cstr(pin ? "" : " (give the PIN: --pin-env or --pin-file)"));
             *why = msg;
             err = PROVEN_ERR_NOT_FOUND;
         } else {
@@ -423,7 +426,7 @@ proven_err_t rp_pkcs11_list(proven_allocator_t alloc, const char *module, const 
             CK_ULONG kt = 99;
             if (type && tl == sizeof kt) memcpy(&kt, type, sizeof kt);
             char hex[130] = "";
-            for (size_t i = 0; id && i < il && i < 64; ++i) snprintf(hex + 2 * i, 3, "%02x", id[i]);
+            for (size_t i = 0; id && i < il && i < 64; ++i) (void)proven_fmt_to(hex + 2 * i, 3, "{:02x}", proven_arg_u32(id[i]));
             if (id) {
                 CK_ULONG cc = CKO_CERTIFICATE;
                 CK_ATTRIBUTE ct[2] = { { CKA_CLASS, &cc, sizeof cc }, { CKA_ID, id, (CK_ULONG)il } };

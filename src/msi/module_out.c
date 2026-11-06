@@ -250,7 +250,7 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
 
     // ModuleSignature, ModuleComponents, ModuleInstallExecuteSequence.
     char *module_id = keep(&m, rp_mem_alloc(alloc, ir->name.size + 40, 1));
-    if (module_id) snprintf(module_id, ir->name.size + 40, "%s%s", rp_cs(ir->name), m.sfx);
+    if (module_id) (void)proven_fmt_to(module_id, ir->name.size + 40, "{}{}", proven_arg_cstr(rp_cs(ir->name)), proven_arg_cstr(m.sfx));
     rp_msi_cell_t *sig = cells(&m, 3);
     if (err == PROVEN_OK && sig && module_id) {
         sig[0] = rp_msi_str_cell(module_id);
@@ -314,7 +314,7 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
     size_t summary_len = 0;
     if (err == PROVEN_OK) {
         char tmpl[32];
-        snprintf(tmpl, sizeof tmpl, "%s;%u", ir->arch == RP_ARCH_X64 ? "x64" : ir->arch == RP_ARCH_ARM64 ? "Arm64" : "Intel", ir->language);
+        (void)proven_fmt_to(tmpl, sizeof tmpl, "{};{}", proven_arg_cstr(ir->arch == RP_ARCH_X64 ? "x64" : ir->arch == RP_ARCH_ARM64 ? "Arm64" : "Intel"), proven_arg_u32(ir->language));
         bool ascii = true;
         for (const char *p = rp_cs(ir->manufacturer); p && *p; ++p) ascii &= (unsigned char)*p < 0x80;
         const char *app = "rubrapack " RUBRAPACK_VERSION_STRING;

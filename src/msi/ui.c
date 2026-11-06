@@ -441,7 +441,7 @@ static const char *keep(ctx_t *c, const char *a, const char *b) {
         c->nomem = true;
         return "";
     }
-    snprintf(s, n, "%s%s", a, b ? b : "");
+    (void)proven_fmt_to(s, n, "{}{}", proven_arg_cstr(a), proven_arg_cstr(b ? b : ""));
     if (c->nstr == c->capstr) {
         size_t cap = c->capstr ? c->capstr * 2 : 128;
         char **v = rp_mem_alloc(c->alloc, cap, sizeof *v);
@@ -582,7 +582,7 @@ static const char *AT(ctx_t *c, const char *all, const rp_ir_ltext_t *by, size_t
         }
     }
     char key[24];
-    snprintf(key, sizeof key, "c%zu", ++c->ncustom);
+    (void)proven_fmt_to(key, sizeof key, "c{}", proven_arg_u64(++c->ncustom));
     return reg_text(c, keep(c, key, NULL), src, title);
 }
 
@@ -755,12 +755,12 @@ static void frame_text(ctx_t *c, const char *dlg, const char *title, const char 
 #define RP_REMOVAL_COND "RP_REMOVING = \"1\" OR REMOVE = \"ALL\""
 static void frame_removal(ctx_t *c, const char *dlg, const char *title, const char *text) {
     char id[64];
-    snprintf(id, sizeof id, "Removal%s", title);
+    (void)proven_fmt_to(id, sizeof id, "Removal{}", proven_arg_cstr(title));
     control(c, dlg, "RemovalTitle", "Text", 15, 7, 330, 15, TRANSPARENT | NOPREFIX, NULL, TT(c, keep(c, id, "")), NULL);
     cond(c, dlg, "RemovalTitle", "Show", RP_REMOVAL_COND);
     cond(c, dlg, "Title", "Hide", RP_REMOVAL_COND);
     if (text) {
-        snprintf(id, sizeof id, "Removal%s", text);
+        (void)proven_fmt_to(id, sizeof id, "Removal{}", proven_arg_cstr(text));
         control(c, dlg, "RemovalDescription", "Text", 25, 22, 330, 20, TRANSPARENT | NOPREFIX, NULL, T(c, keep(c, id, "")), NULL);
         cond(c, dlg, "RemovalDescription", "Show", RP_REMOVAL_COND);
         cond(c, dlg, "Description", "Hide", RP_REMOVAL_COND);
@@ -1344,13 +1344,13 @@ static void grouped_page(ctx_t *c, const char *title, const char *text) {
     char name[24], val[16], cnd[48];
     dialog(c, d, 370, 270, 3, "RpLangGroup", "Next", "Cancel");
     frame_text(c, d, title, text);
-    snprintf(name, sizeof name, "RpLangG_%d", first);
+    (void)proven_fmt_to(name, sizeof name, "RpLangG_{}", proven_arg_i32(first));
     control(c, d, "RpLangGroup", "RadioButtonGroup", 25, 60, 145, 14 * ng, VIS | EN, "RpLangGroup", NULL, keep(c, name, NULL));
     prop(c, "RpLangGroup", "6");                    // English's, until RpLangApply settles the language
     for (int g = 1, k = 0; g <= 9; ++g) {
         if (count[g] == 0) continue;
-        snprintf(val, sizeof val, "%d", g);
-        snprintf(name, sizeof name, "LangGroup%d", g);
+        (void)proven_fmt_to(val, sizeof val, "{}", proven_arg_i32(g));
+        (void)proven_fmt_to(name, sizeof name, "LangGroup{}", proven_arg_i32(g));
         if (!c->rtl) {
             rows_t *r = &c->radio;
             s_(c, r, PROVEN_LIT("RpLangGroup")); i_(c, r, k + 1); s_(c, r, RP_V(keep(c, val, NULL))); i_(c, r, 0);
@@ -1363,8 +1363,8 @@ static void grouped_page(ctx_t *c, const char *title, const char *text) {
         int next = 0;
         for (int h = g + 1; h <= 9 && next == 0; ++h) next = count[h] ? h : 0;
         char nname[24];
-        snprintf(name, sizeof name, "RpLangG_%d", g);
-        snprintf(nname, sizeof nname, "RpLangG_%d", next);
+        (void)proven_fmt_to(name, sizeof name, "RpLangG_{}", proven_arg_i32(g));
+        (void)proven_fmt_to(nname, sizeof nname, "RpLangG_{}", proven_arg_i32(next));
         const char *ctl = keep(c, name, NULL);
         control(c, d, ctl, "RadioButtonGroup", 180, 60, 165, 14 * count[g], VIS | EN, ctl, NULL, g == last ? "Back" : keep(c, nname, NULL));
         for (size_t li = 0, k = 0; li < c->nlang; ++li) {
@@ -1378,10 +1378,10 @@ static void grouped_page(ctx_t *c, const char *title, const char *text) {
             }
             ++k;
         }
-        snprintf(cnd, sizeof cnd, "RpLangGroup = \"%d\"", g);
+        (void)proven_fmt_to(cnd, sizeof cnd, "RpLangGroup = \"{}\"", proven_arg_i32(g));
         cond(c, d, ctl, "Show", keep(c, cnd, NULL));
         event(c, d, "Next", "[RPLANGUAGE]", keep(c, "[", keep(c, ctl, "]")), keep(c, cnd, NULL), 0);
-        snprintf(cnd, sizeof cnd, "RpLangGroup <> \"%d\"", g);
+        (void)proven_fmt_to(cnd, sizeof cnd, "RpLangGroup <> \"{}\"", proven_arg_i32(g));
         cond(c, d, ctl, "Hide", keep(c, cnd, NULL));
     }
     control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), "Next");
@@ -1522,18 +1522,18 @@ static void language_rows(ctx_t *c) {
         const char *u = "", *sy = "";
         for (size_t j = 0; j < L->langid_count; ++j) {
             char id[16];
-            snprintf(id, sizeof id, "%u", (unsigned)L->langids[j]);
+            (void)proven_fmt_to(id, sizeof id, "{}", proven_arg_u32((unsigned)L->langids[j]));
             u = keep(c, u, keep(c, j ? " OR UserLanguageID = " : "UserLanguageID = ", id));
             sy = keep(c, sy, keep(c, j ? " OR SystemLanguageID = " : "SystemLanguageID = ", id));
         }
-        snprintf(name, sizeof name, "RpLangU_%s", L->code);
+        (void)proven_fmt_to(name, sizeof name, "RpLangU_{}", proven_arg_cstr(L->code));
         ca(c, keep(c, name, NULL), "RPLANGUAGE", L->code);
         // Each its own number (ICE82), in the order of [ui] languages, user languages before system
         // ones, ending at 17 and 18 as with one language: the first that matches sets RPLANGUAGE.
         int nl = (int)c->nlang - 1;
         seq(c, keep(c, name, NULL), keep(c, "NOT RPLANGUAGE AND (", keep(c, u, ")")), 18 - 2 * nl + (int)li);
         if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
-        snprintf(name, sizeof name, "RpLangS_%s", L->code);
+        (void)proven_fmt_to(name, sizeof name, "RpLangS_{}", proven_arg_cstr(L->code));
         ca(c, keep(c, name, NULL), "RPLANGUAGE", L->code);
         seq(c, keep(c, name, NULL), keep(c, "NOT RPLANGUAGE AND (", keep(c, sy, ")")), 18 - nl + (int)li);
         if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
@@ -1553,7 +1553,7 @@ static void language_rows(ctx_t *c) {
         const char *code = lang_code(c, li), *cnd = lang_cond(c, li);
         const char *font = keep(c, "RpNormal_", code);
         if (li) {
-            snprintf(name, sizeof name, "RpL_%s_font", code);
+            (void)proven_fmt_to(name, sizeof name, "RpL_{}_font", proven_arg_cstr(code));
             ca(c, keep(c, name, NULL), "DefaultUIFont", font);
             seq(c, keep(c, name, NULL), cnd, lang_seq(c));
         }
@@ -1576,7 +1576,7 @@ static void language_rows(ctx_t *c) {
             }
             if (c->page) page_event(c, keep(c, "[", keep(c, target, "]")), arg, cnd);
             if (li || v == NULL) {
-                snprintf(name, sizeof name, "RpL_%s_%d", code, ++n);
+                (void)proven_fmt_to(name, sizeof name, "RpL_{}_{}", proven_arg_cstr(code), proven_arg_i32(++n));
                 ca(c, keep(c, name, NULL), target, arg);
                 seq(c, keep(c, name, NULL), cnd, lang_seq(c));
                 // The status line is formatted where the installation is done (observed, x55): the
@@ -1599,7 +1599,7 @@ static void language_table(ctx_t *c) {
         const rp_ir_ui_lang_t *L = &c->ir->ui_langs[li];
         for (size_t j = 0; j < L->langid_count; ++j) {
             char id[16];
-            snprintf(id, sizeof id, "%u=", (unsigned)L->langids[j]);
+            (void)proven_fmt_to(id, sizeof id, "{}=", proven_arg_u32((unsigned)L->langids[j]));
             map = keep(c, map, keep(c, id, keep(c, L->code, ";")));
         }
     }
@@ -1627,8 +1627,8 @@ static void language_table(ctx_t *c) {
         s_(c, t, RP_V(code)); s_(c, t, PROVEN_LIT("DefaultUIFont")); s_(c, t, RP_V(keep(c, "RpNormal_", code))); i_(c, t, 0);
         if (c->grouped && c->page) {        // the grouped page opens on the language's region and on it
             char g[16], ctl[24];
-            snprintf(g, sizeof g, "%d", lang_group(c, li));
-            snprintf(ctl, sizeof ctl, "RpLangG_%d", lang_group(c, li));
+            (void)proven_fmt_to(g, sizeof g, "{}", proven_arg_i32(lang_group(c, li)));
+            (void)proven_fmt_to(ctl, sizeof ctl, "RpLangG_{}", proven_arg_i32(lang_group(c, li)));
             s_(c, t, RP_V(code)); s_(c, t, PROVEN_LIT("RpLangGroup")); s_(c, t, RP_V(keep(c, g, NULL))); i_(c, t, 0);
             s_(c, t, RP_V(code)); s_(c, t, RP_V(keep(c, ctl, NULL))); s_(c, t, RP_V(code)); i_(c, t, 0);
         }
@@ -2004,11 +2004,11 @@ static uint32_t utf8_next(const uint8_t *t, size_t len, size_t *i) {
 
 // A code point as RTF text: ASCII as it is (\\, \{, \} escaped), the rest as \uN? (UTF-16 units).
 static size_t rtf_char(char *s, size_t cap, uint32_t cp) {
-    if (cp == '\\' || cp == '{' || cp == '}') return (size_t)snprintf(s, cap, "\\%c", (char)cp);
-    if (cp < 0x80) return (size_t)snprintf(s, cap, "%c", (char)cp);
-    if (cp < 0x10000) return (size_t)snprintf(s, cap, "\\u%d?", (int)(int16_t)cp);
+    if (cp == '\\' || cp == '{' || cp == '}') return (size_t)rp_fmt_n(proven_fmt_to(s, cap, "\\{}", proven_arg_char((char)cp)));
+    if (cp < 0x80) return (size_t)rp_fmt_n(proven_fmt_to(s, cap, "{}", proven_arg_char((char)cp)));
+    if (cp < 0x10000) return (size_t)rp_fmt_n(proven_fmt_to(s, cap, "\\u{}?", proven_arg_i32((int)(int16_t)cp)));
     uint32_t v = cp - 0x10000;      // a surrogate pair, each as its own \uN
-    return (size_t)snprintf(s, cap, "\\u%d?\\u%d?", (int)(int16_t)(0xD800 + (v >> 10)), (int)(int16_t)(0xDC00 + (v & 0x3FF)));
+    return (size_t)rp_fmt_n(proven_fmt_to(s, cap, "\\u{}?\\u{}?", proven_arg_i32((int)(int16_t)(0xD800 + (v >> 10))), proven_arg_i32((int)(int16_t)(0xDC00 + (v & 0x3FF)))));
 }
 
 proven_err_t rp_ui_text_to_rtf(proven_allocator_t alloc, const uint8_t *text, size_t len, const char *face, uint8_t **out,
@@ -2017,18 +2017,18 @@ proven_err_t rp_ui_text_to_rtf(proven_allocator_t alloc, const uint8_t *text, si
     size_t cap = 256 + flen * 12 + len * 10, n = 0;
     char *s = rp_mem_alloc(alloc, cap, 1);
     if (s == NULL) return PROVEN_ERR_NOMEM;
-    n += (size_t)snprintf(s, cap, "{\\rtf1\\ansi\\ansicpg1252\\deff0{\\fonttbl{\\f0\\fnil ");
+    n += (size_t)rp_fmt_n(proven_fmt_to(s, cap, "{{\\rtf1\\ansi\\ansicpg1252\\deff0{{\\fonttbl{{\\f0\\fnil "));
     for (size_t j = 0; j < flen;) n += rtf_char(s + n, cap - n, utf8_next((const uint8_t *)face, flen, &j));
-    n += (size_t)snprintf(s + n, cap - n, ";}}\\fs18 ");
+    n += (size_t)rp_fmt_n(proven_fmt_to(s + n, cap - n, ";}}}}\\fs18 "));
     size_t i = 0;
     if (len >= 3 && text[0] == 0xEF && text[1] == 0xBB && text[2] == 0xBF) i = 3;
     while (i < len && n + 16 < cap) {
         uint32_t cp = utf8_next(text, len, &i);
         if (cp == '\r') continue;
-        if (cp == '\n') n += (size_t)snprintf(s + n, cap - n, "\\par\n");
+        if (cp == '\n') n += (size_t)rp_fmt_n(proven_fmt_to(s + n, cap - n, "\\par\n"));
         else n += rtf_char(s + n, cap - n, cp);
     }
-    n += (size_t)snprintf(s + n, cap - n, "}");
+    n += (size_t)rp_fmt_n(proven_fmt_to(s + n, cap - n, "}}"));
     *out = (uint8_t *)s;
     *out_len = n;
     return PROVEN_OK;

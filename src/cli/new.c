@@ -67,35 +67,33 @@ static int fixed_starter(const char *name, const char *ext) {
     bool all_ascii;
     ascii_form(name, ascii, sizeof ascii, &all_ascii);
     char summary[192] = "";
-    if (!all_ascii) snprintf(summary, sizeof summary, "summary-name = \"%s\"         # ASCII: the file properties show this\n",
-                             ascii[0] ? ascii : "package");
+    if (!all_ascii) (void)proven_fmt_to(summary, sizeof summary, "summary-name = \"{}\"         # ASCII: the file properties show this\n", proven_arg_cstr(ascii[0] ? ascii : "package"));
     char text[4096];
-    int len = snprintf(text, sizeof text,
-        "# %s%s - made by `rubrapack new`. Put the program's files in dist/ next to this file, then:\n"
-        "#   rubrapack build \"%s%s\" -o \"%s.msi\"\n"
+    int len = rp_fmt_n(proven_fmt_to(text, sizeof text,
+        "# {}{} - made by `rubrapack new`. Put the program's files in dist/ next to this file, then:\n"
+        "#   rubrapack build \"{}{}\" -o \"{}.msi\"\n"
         "# Every table and key is described in the manual: https://rubidus-api.github.io/rubrapack/\n"
         "\n"
         "format = 1                         # the source format this rubrapack reads\n"
         "\n"
         "[package]\n"
-        "name = \"%s\"\n"
-        "%s"
-        "manufacturer = \"%s authors\"     # shown in Settings > Installed apps\n"
+        "name = \"{}\"\n"
+        "{}"
+        "manufacturer = \"{} authors\"     # shown in Settings > Installed apps\n"
         "version = \"1.0.0\"\n"
         "arch = \"x64\"                      # x64, arm64 or x86\n"
-        "upgrade-code = \"%s\"   # keep it in every later version: it ties the upgrades together\n"
+        "upgrade-code = \"{}\"   # keep it in every later version: it ties the upgrades together\n"
         "language = \"en-US\"                # or \"ko-KR\"\n"
         "\n"
         "[dir.INSTALLDIR]\n"
-        "path = \"$(ProgramFiles)/%s\"\n"
+        "path = \"$(ProgramFiles)/{}\"\n"
         "\n"
         "[files.App]\n"
         "dir = \"INSTALLDIR\"\n"
-        "glob = \"dist/*\"\n",
-        name, ext, name, ext, name, name, summary, name, code, name);
+        "glob = \"dist/*\"\n", proven_arg_cstr(name), proven_arg_cstr(ext), proven_arg_cstr(name), proven_arg_cstr(ext), proven_arg_cstr(name), proven_arg_cstr(name), proven_arg_cstr(summary), proven_arg_cstr(name), proven_arg_cstr(code), proven_arg_cstr(name)));
     if (len < 0 || (size_t)len >= sizeof text) return RP_EXIT_IO;
     char path[160];
-    snprintf(path, sizeof path, "%s%s", name, ext);
+    (void)proven_fmt_to(path, sizeof path, "{}{}", proven_arg_cstr(name), proven_arg_cstr(ext));
     proven_err_t err = rp_pal_write_file_new(proven_heap_allocator(), path, (const uint8_t *)text, (size_t)len);
     if (err == PROVEN_ERR_BUSY) {
         rp_diag_error(RP_DIAG_OUTPUT, "'%s' already exists; it is left as it is", path);
@@ -218,7 +216,7 @@ const char *rpn_pe_arch(const char *path) {
 void rpn_find_license(const char *dist, char *out, size_t cap) {
     proven_allocator_t heap = proven_heap_allocator();
     const char *where[] = { ".", dist };
-    snprintf(out, cap, "-");
+    (void)proven_fmt_to(out, cap, "-");
     for (int w = 0; w < 2; ++w) {
         names_t x = { 0 };
         if (rp_pal_list_dir(heap, where[w], &x.v, &x.n) != PROVEN_OK) continue;
@@ -227,7 +225,7 @@ void rpn_find_license(const char *dist, char *out, size_t cap) {
             const char *s = x.v[i];
             bool lic = (s[0] == 'L' || s[0] == 'l') && strlen(s) > 8 && (rpn_ends_ci(s, ".txt") || rpn_ends_ci(s, ".md") || rpn_ends_ci(s, ".rtf"));
             for (size_t k = 0; lic && k < 7; ++k) lic = (s[k] | 32) == "license"[k];
-            if (lic && s[7] == '.') snprintf(out, cap, "%s%s%s", w ? dist : "", w ? "/" : "", s);
+            if (lic && s[7] == '.') (void)proven_fmt_to(out, cap, "{}{}{}", proven_arg_cstr(w ? dist : ""), proven_arg_cstr(w ? "/" : ""), proven_arg_cstr(s));
         }
         rpn_names_free(&x);
         if (strcmp(out, "-") != 0) return;
@@ -305,7 +303,7 @@ const char *rpn_check_folder(ans_t *a, char *v) {
 const char *rpn_check_optional(ans_t *a, char *v) {
     if (strcmp(v, "-") == 0) return NULL;
     char copy[1024];
-    snprintf(copy, sizeof copy, "%s", v);
+    (void)proven_fmt_to(copy, sizeof copy, "{}", proven_arg_cstr(v));
     size_t count = 0;
     for (char *t = strtok(copy, ","); t; t = strtok(NULL, ",")) {
         if (!rpn_in_names(&a->scan.dirs, t)) return TR_N("give sub folders of the program folder, separated by commas, or - for none");
@@ -341,7 +339,7 @@ static const char *check_stem(ans_t *a, char *v) {
     (void)a;
     if (rpn_name_problem(v)) return TR_N("a file name without / \\ : * ? \" < > | $");
     char path[160];
-    snprintf(path, sizeof path, "%s%s", v, a->ext);
+    (void)proven_fmt_to(path, sizeof path, "{}{}", proven_arg_cstr(v), proven_arg_cstr(a->ext));
     uint64_t size = 0;
     if (rp_pal_stat(proven_heap_allocator(), path, &size) != RP_FS_NONE) return TR_N("that file exists already; give another name");
     return NULL;
@@ -352,7 +350,7 @@ int rpn_ask(ans_t *a, const char *question, const char *dflt, char *out, size_t 
     proven_allocator_t heap = proven_heap_allocator();
     for (;;) {
         char prompt[1400];
-        snprintf(prompt, sizeof prompt, "%s%s%s%s: ", rp_tr(question), dflt[0] ? " [" : "", dflt, dflt[0] ? "]" : "");
+        (void)proven_fmt_to(prompt, sizeof prompt, "{}{}{}{}: ", proven_arg_cstr(rp_tr(question)), proven_arg_cstr(dflt[0] ? " [" : ""), proven_arg_cstr(dflt), proven_arg_cstr(dflt[0] ? "]" : ""));
         if (rp_pal_puts(RP_OUT_STDERR, prompt) != PROVEN_OK) return RP_EXIT_IO;
         char *line = NULL;
         proven_err_t err = rp_pal_read_line(heap, 4096, &line);
@@ -375,12 +373,12 @@ int rpn_ask(ans_t *a, const char *question, const char *dflt, char *out, size_t 
             (void)rp_pal_puts(RP_OUT_STDERR, TR("  too long; again, please\n"));
             continue;
         }
-        snprintf(out, cap, "%s", s);
+        (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr(s));
         rp_mem_free(heap, line);
         const char *why = check ? check(a, out) : NULL;
         if (why == NULL) return 0;
         char msg[300];
-        snprintf(msg, sizeof msg, "  %s\n", rp_tr(why));
+        (void)proven_fmt_to(msg, sizeof msg, "  {}\n", proven_arg_cstr(rp_tr(why)));
         (void)rp_pal_puts(RP_OUT_STDERR, msg);
     }
 }
@@ -402,10 +400,10 @@ int rpn_ask_yes(ans_t *a, const char *question, bool dflt, bool *yes) {
 
 // Defaults that depend on earlier answers.
 static void default_main(ans_t *a, char *out, size_t cap) {
-    snprintf(out, cap, "-");
+    (void)proven_fmt_to(out, cap, "-");
     for (size_t i = 0; i < a->scan.files.n; ++i) {
         if (rpn_ends_ci(a->scan.files.v[i], ".exe")) {
-            snprintf(out, cap, "%s", a->scan.files.v[i]);
+            (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr(a->scan.files.v[i]));
             return;
         }
     }
@@ -418,11 +416,11 @@ static void default_arch(ans_t *a, char *out, size_t cap) {
         if (p) arch = rpn_pe_arch(p);
         rp_mem_free(proven_heap_allocator(), p);
     }
-    snprintf(out, cap, "%s", arch ? arch : "x64");
+    (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr(arch ? arch : "x64"));
 }
 
 static void default_stem(const ans_t *a, char *out, size_t cap) {
-    snprintf(out, cap, "%s", rpn_name_problem(a->name) ? "app" : a->name);       // .toml is added
+    (void)proven_fmt_to(out, cap, "{}", proven_arg_cstr(rpn_name_problem(a->name) ? "app" : a->name));       // .toml is added
 }
 
 static int interview(ans_t *a, const char *stem) {
@@ -430,7 +428,7 @@ static int interview(ans_t *a, const char *stem) {
     (void)rp_pal_puts(RP_OUT_STDERR, TR("rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"));
     if ((rc = rpn_ask(a, TR_N("Product name"), stem ? stem : "", a->name, sizeof a->name, rpn_check_product))) return rc;
     char d[512];
-    snprintf(d, sizeof d, "%s authors", a->name);
+    (void)proven_fmt_to(d, sizeof d, "{} authors", proven_arg_cstr(a->name));
     if ((rc = rpn_ask(a, TR_N("Manufacturer (shown in Installed apps)"), d, a->manufacturer, sizeof a->manufacturer, rpn_check_product))) return rc;
     if ((rc = rpn_ask(a, TR_N("Version"), "1.0.0", a->version, sizeof a->version, rpn_check_version))) return rc;
     if ((rc = rpn_ask(a, TR_N("Folder with the files to install"), "dist", a->dist, sizeof a->dist, rpn_check_dist))) return rc;
@@ -444,37 +442,37 @@ static int interview(ans_t *a, const char *stem) {
     if ((rc = rpn_ask(a, TR_N("Folder name under Program Files"), rpn_name_problem(a->name) ? "" : a->name, a->install_dir, sizeof a->install_dir,
                   rpn_check_folder))) return rc;
     if ((rc = rpn_ask(a, TR_N("Install for (machine, user, dual)"), "machine", a->scope, sizeof a->scope, rpn_check_scope))) return rc;
-    snprintf(a->optional, sizeof a->optional, "-");
+    (void)proven_fmt_to(a->optional, sizeof a->optional, "-");
     if (a->scan.dirs.n) {
-        size_t o = (size_t)snprintf(line, sizeof line, "%s", TR("  sub folders:"));
-        for (size_t i = 0; i < a->scan.dirs.n && o < sizeof line - 1; ++i) o += (size_t)snprintf(line + o, sizeof line - o, " %s", a->scan.dirs.v[i]);
-        if (o < sizeof line - 1) snprintf(line + o, sizeof line - o, "\n");
+        size_t o = (size_t)rp_fmt_n(proven_fmt_to(line, sizeof line, "{}", proven_arg_cstr(TR("  sub folders:"))));
+        for (size_t i = 0; i < a->scan.dirs.n && o < sizeof line - 1; ++i) o += (size_t)rp_fmt_n(proven_fmt_to(line + o, sizeof line - o, " {}", proven_arg_cstr(a->scan.dirs.v[i])));
+        if (o < sizeof line - 1) (void)proven_fmt_to(line + o, sizeof line - o, "\n");
         (void)rp_pal_puts(RP_OUT_STDERR, line);
         if ((rc = rpn_ask(a, TR_N("Optional parts the user may tick (sub folders, commas; - for none)"), "-", a->optional, sizeof a->optional,
                       rpn_check_optional))) return rc;
     }
     if ((rc = rpn_ask(a, TR_N("Dialogs (none, basic, minimal, installdir, features)"), strcmp(a->optional, "-") ? "features" : "installdir", a->ui,
                   sizeof a->ui, rpn_check_ui))) return rc;
-    snprintf(a->license, sizeof a->license, "-");
+    (void)proven_fmt_to(a->license, sizeof a->license, "-");
     if (strcmp(a->ui, "none") != 0 && strcmp(a->ui, "basic") != 0) {
         rpn_find_license(a->dist, d, sizeof d);
         if ((rc = rpn_ask(a, TR_N("License to accept (.txt, .md, .rtf; - for none)"), d, a->license, sizeof a->license, rpn_check_license))) return rc;
     }
-    snprintf(a->languages, sizeof a->languages, "-");
+    (void)proven_fmt_to(a->languages, sizeof a->languages, "-");
     if (strcmp(a->ui, "none") != 0) {
         bool ko = false;
         if ((rc = rpn_ask_yes(a, TR_N("Korean dialogs as well as English?"), false, &ko))) return rc;
-        if (ko) snprintf(a->languages, sizeof a->languages, "ko");
+        if (ko) (void)proven_fmt_to(a->languages, sizeof a->languages, "ko");
     }
-    snprintf(a->shortcuts, sizeof a->shortcuts, "none");
+    (void)proven_fmt_to(a->shortcuts, sizeof a->shortcuts, "none");
     if (strcmp(a->main, "-") != 0) {
         bool start = true, desk = false;
         if ((rc = rpn_ask_yes(a, TR_N("Start menu shortcut?"), true, &start))) return rc;
         if ((rc = rpn_ask_yes(a, TR_N("Desktop shortcut?"), false, &desk))) return rc;
-        snprintf(a->shortcuts, sizeof a->shortcuts, "%s", start && desk ? "start,desktop" : start ? "start" : desk ? "desktop" : "none");
+        (void)proven_fmt_to(a->shortcuts, sizeof a->shortcuts, "{}", proven_arg_cstr(start && desk ? "start,desktop" : start ? "start" : desk ? "desktop" : "none"));
     }
     if (stem) {
-        snprintf(a->stem, sizeof a->stem, "%s", stem);
+        (void)proven_fmt_to(a->stem, sizeof a->stem, "{}", proven_arg_cstr(stem));
         if (check_stem(a, a->stem) == NULL) return 0;
     }
     default_stem(a, d, sizeof d);
@@ -504,14 +502,14 @@ const char *rpn_make_id(ids_t *ids, const char *name, const char *suffix, char *
     base[n] = '\0';
     bool letters = false;
     for (size_t i = 0; i < n; ++i) letters |= base[i] != '_';
-    if (!letters) snprintf(base, sizeof base, "Item");
+    if (!letters) (void)proven_fmt_to(base, sizeof base, "Item");
     for (int k = 1; k < 10000; ++k) {
         char num[12] = "";
-        if (k > 1) snprintf(num, sizeof num, "_%d", k);
-        snprintf(out, cap, "%s%s%s%s", base[0] >= '0' && base[0] <= '9' ? "_" : "", base, suffix, num);
+        if (k > 1) (void)proven_fmt_to(num, sizeof num, "_{}", proven_arg_i32(k));
+        (void)proven_fmt_to(out, cap, "{}{}{}{}", proven_arg_cstr(base[0] >= '0' && base[0] <= '9' ? "_" : ""), proven_arg_cstr(base), proven_arg_cstr(suffix), proven_arg_cstr(num));
         if (!rpn_id_used(ids, out)) break;
     }
-    if (ids->n < sizeof ids->v / sizeof ids->v[0]) snprintf(ids->v[ids->n++], sizeof ids->v[0], "%s", out);
+    if (ids->n < sizeof ids->v / sizeof ids->v[0]) (void)proven_fmt_to(ids->v[ids->n++], sizeof ids->v[0], "{}", proven_arg_cstr(out));
     return out;
 }
 
@@ -549,12 +547,11 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
     if (err != PROVEN_OK) return err;
     rp_buf_t b = rp_buf_new(proven_heap_allocator(), (size_t)1 << 22);
     char line[1200];
-    snprintf(line, sizeof line,
-             "# %s%s - made by `rubrapack new`. Build it, and the next version, with:\n"
-             "#   rubrapack build \"%s%s\" -o \"%s.msi\"\n"
-             "#   rubrapack build \"%s%s\" -o \"%s-1.0.1.msi\" -D VERSION=1.0.1\n"
-             "# Every table and key is described in the manual: https://rubidus-api.github.io/rubrapack/\n\n",
-             a->stem, a->ext, a->stem, a->ext, a->stem, a->stem, a->ext, a->stem);
+    (void)proven_fmt_to(line, sizeof line,
+             "# {}{} - made by `rubrapack new`. Build it, and the next version, with:\n"
+             "#   rubrapack build \"{}{}\" -o \"{}.msi\"\n"
+             "#   rubrapack build \"{}{}\" -o \"{}-1.0.1.msi\" -D VERSION=1.0.1\n"
+             "# Every table and key is described in the manual: https://rubidus-api.github.io/rubrapack/\n\n", proven_arg_cstr(a->stem), proven_arg_cstr(a->ext), proven_arg_cstr(a->stem), proven_arg_cstr(a->ext), proven_arg_cstr(a->stem), proven_arg_cstr(a->stem), proven_arg_cstr(a->ext), proven_arg_cstr(a->stem));
     rp_buf_puts(&b, line);
     rp_buf_puts(&b, "format = 1                       # the source format this rubrapack reads\n\n[package]\n");
     kv(&b, "name", a->name, NULL);
@@ -578,7 +575,7 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
     ids.n = 0;
     char tmp[64];
     static const char *const fixed[] = { "INSTALLDIR", "Main", "StartMenu", "Desktop", "VERSION" };
-    for (size_t i = 0; i < sizeof fixed / sizeof fixed[0]; ++i) snprintf(ids.v[ids.n++], sizeof ids.v[0], "%s", fixed[i]);
+    for (size_t i = 0; i < sizeof fixed / sizeof fixed[0]; ++i) (void)proven_fmt_to(ids.v[ids.n++], sizeof ids.v[0], "{}", proven_arg_cstr(fixed[i]));
     bool optional = strcmp(a->optional, "-") != 0;
     if (optional) {
         rp_buf_puts(&b, "\n[feature.Main]\n");
@@ -598,18 +595,18 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
         rp_buf_puts(&b, "level = 2                        # offered, not ticked by default\n");
     }
     rp_buf_puts(&b, "\n[dir.INSTALLDIR]\n");
-    snprintf(line, sizeof line, "$(ProgramFiles)/%s", a->install_dir);
+    (void)proven_fmt_to(line, sizeof line, "$(ProgramFiles)/{}", proven_arg_cstr(a->install_dir));
     kv(&b, "path", line, strcmp(a->scope, "machine") == 0 ? NULL : "under %LOCALAPPDATA%\\Programs when installed per user");
     if (optional) kv(&b, "feature", "Main", NULL);
     char main_id[64] = "";
     for (size_t i = 0; i < a->scan.files.n; ++i) {
         const char *f = a->scan.files.v[i];
         rpn_make_id(&ids, f, "", tmp, sizeof tmp);
-        if (strcmp(f, a->main) == 0) snprintf(main_id, sizeof main_id, "%s", tmp);
-        snprintf(line, sizeof line, "\n[file.%s]\n", tmp);
+        if (strcmp(f, a->main) == 0) (void)proven_fmt_to(main_id, sizeof main_id, "{}", proven_arg_cstr(tmp));
+        (void)proven_fmt_to(line, sizeof line, "\n[file.{}]\n", proven_arg_cstr(tmp));
         rp_buf_puts(&b, line);
         kv(&b, "dir", "INSTALLDIR", NULL);
-        snprintf(line, sizeof line, "%s/%s", a->dist, f);
+        (void)proven_fmt_to(line, sizeof line, "{}/{}", proven_arg_cstr(a->dist), proven_arg_cstr(f));
         kv(&b, "source", line, NULL);
     }
     for (size_t i = 0; i < a->scan.dirs.n; ++i) {
@@ -617,28 +614,28 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
         char dir_id[64], files_id[64];
         rpn_make_id(&ids, f, "_dir", dir_id, sizeof dir_id);
         rpn_make_id(&ids, f, "_files", files_id, sizeof files_id);
-        snprintf(line, sizeof line, "\n[dir.%s]\n", dir_id);
+        (void)proven_fmt_to(line, sizeof line, "\n[dir.{}]\n", proven_arg_cstr(dir_id));
         rp_buf_puts(&b, line);
-        snprintf(line, sizeof line, "$(INSTALLDIR)/%s", f);
+        (void)proven_fmt_to(line, sizeof line, "$(INSTALLDIR)/{}", proven_arg_cstr(f));
         kv(&b, "path", line, NULL);
         if (i < 4096 && feat[i][0]) kv(&b, "feature", feat[i], NULL);
         else if (optional) kv(&b, "feature", "Main", NULL);      // a dir does not take its parent's feature
-        snprintf(line, sizeof line, "\n[files.%s]\n", files_id);
+        (void)proven_fmt_to(line, sizeof line, "\n[files.{}]\n", proven_arg_cstr(files_id));
         rp_buf_puts(&b, line);
         kv(&b, "dir", dir_id, NULL);
-        snprintf(line, sizeof line, "%s/%s/**", a->dist, f);
+        (void)proven_fmt_to(line, sizeof line, "{}/{}/**", proven_arg_cstr(a->dist), proven_arg_cstr(f));
         kv(&b, "glob", line, NULL);
     }
     if (main_id[0] && listed(a->shortcuts, "start")) {
         rp_buf_puts(&b, "\n[shortcut.StartMenu]\ndir = \"Programs\"\n");
         kv(&b, "name", a->name, NULL);
-        snprintf(line, sizeof line, "file:%s", main_id);
+        (void)proven_fmt_to(line, sizeof line, "file:{}", proven_arg_cstr(main_id));
         kv(&b, "target", line, NULL);
     }
     if (main_id[0] && listed(a->shortcuts, "desktop")) {
         rp_buf_puts(&b, "\n[shortcut.Desktop]\ndir = \"Desktop\"\n");
         kv(&b, "name", a->name, NULL);
-        snprintf(line, sizeof line, "file:%s", main_id);
+        (void)proven_fmt_to(line, sizeof line, "file:{}", proven_arg_cstr(main_id));
         kv(&b, "target", line, NULL);
     }
     return rp_buf_take(&b, out, len);
@@ -693,9 +690,9 @@ static int new_from(int argc, char **argv) {
 #endif
     size_t dir = slash ? (size_t)(slash - source) + 1 : 0;
     char path[1024], file[1024];
-    if (dist) snprintf(path, sizeof path, "%.*s%s", (int)dir, source, dist);
-    else snprintf(path, sizeof path, "%s-files", source);
-    snprintf(file, sizeof file, "%s.toml", source);       // the name given and .toml, always
+    if (dist) (void)proven_fmt_to(path, sizeof path, "{}{}", proven_arg_cstr_n(source, (int)dir), proven_arg_cstr(dist));
+    else (void)proven_fmt_to(path, sizeof path, "{}-files", proven_arg_cstr(source));
+    (void)proven_fmt_to(file, sizeof file, "{}.toml", proven_arg_cstr(source));       // the name given and .toml, always
     return rpn_new_from(file, input, path, publisher);
 }
 
@@ -731,7 +728,7 @@ int rp_cmd_new(int argc, char **argv) {
             if (strcmp(s, opts[k].key) != 0) continue;
             known = true;
             if (i + 1 >= argc || strlen(argv[i + 1]) >= opts[k].cap) rc = usage();
-            else snprintf(opts[k].field, opts[k].cap, "%s", argv[++i]);
+            else (void)proven_fmt_to(opts[k].field, opts[k].cap, "{}", proven_arg_cstr(argv[++i]));
             options = true;
         }
         if (known) continue;
@@ -746,11 +743,11 @@ int rp_cmd_new(int argc, char **argv) {
     }
     // `new app` writes app.toml - the name given and .toml, whatever it ends with (app.toml ->
     // app.toml.toml).
-    snprintf(a->ext, sizeof a->ext, ".toml");
+    (void)proven_fmt_to(a->ext, sizeof a->ext, ".toml");
     if (rc == RP_EXIT_OK && name) {
         uint64_t size = 0;
         char path[160];
-        snprintf(path, sizeof path, "%s%s", name, a->ext);
+        (void)proven_fmt_to(path, sizeof path, "{}{}", proven_arg_cstr(name), proven_arg_cstr(a->ext));
         if (!rpn_name_problem(name) && rp_pal_stat(proven_heap_allocator(), path, &size) != RP_FS_NONE) {
             rp_diag_error(RP_DIAG_OUTPUT, "'%s' exists already; change it with `rubrapack edit %s`", path, path);
             rc = RP_EXIT_IO;
@@ -791,25 +788,25 @@ int rp_cmd_new(int argc, char **argv) {
             { a->license, sizeof a->license, rpn_check_license, "--license" }, { a->languages, sizeof a->languages, rpn_check_languages, "--languages" },
             { a->shortcuts, sizeof a->shortcuts, check_shortcuts, "--shortcuts" }, { a->stem, sizeof a->stem, check_stem, "the source file" },
         };
-        if (rc == RP_EXIT_OK) snprintf(a->stem, sizeof a->stem, "%s", name);
+        if (rc == RP_EXIT_OK) (void)proven_fmt_to(a->stem, sizeof a->stem, "{}", proven_arg_cstr(name));
         for (size_t k = 0; rc == RP_EXIT_OK && k < sizeof chk / sizeof chk[0]; ++k) {
             char *f = chk[k].field;
             if (f[0] == '\0') {             // the default, from the answers before it
-                if (f == a->name) snprintf(f, chk[k].cap, "%s", name);
-                else if (f == a->manufacturer) snprintf(f, chk[k].cap, "%s authors", a->name);
-                else if (f == a->version) snprintf(f, chk[k].cap, "1.0.0");
-                else if (f == a->dist) snprintf(f, chk[k].cap, "dist");
+                if (f == a->name) (void)proven_fmt_to(f, chk[k].cap, "{}", proven_arg_cstr(name));
+                else if (f == a->manufacturer) (void)proven_fmt_to(f, chk[k].cap, "{} authors", proven_arg_cstr(a->name));
+                else if (f == a->version) (void)proven_fmt_to(f, chk[k].cap, "1.0.0");
+                else if (f == a->dist) (void)proven_fmt_to(f, chk[k].cap, "dist");
                 else if (f == a->main) default_main(a, f, chk[k].cap);
                 else if (f == a->arch) default_arch(a, f, chk[k].cap);
-                else if (f == a->install_dir) snprintf(f, chk[k].cap, "%s", rpn_name_problem(a->name) ? name : a->name);
-                else if (f == a->scope) snprintf(f, chk[k].cap, "machine");
-                else if (f == a->optional) snprintf(f, chk[k].cap, "-");
-                else if (f == a->ui) snprintf(f, chk[k].cap, "%s", strcmp(a->optional, "-") ? "features" : "installdir");
+                else if (f == a->install_dir) (void)proven_fmt_to(f, chk[k].cap, "{}", proven_arg_cstr(rpn_name_problem(a->name) ? name : a->name));
+                else if (f == a->scope) (void)proven_fmt_to(f, chk[k].cap, "machine");
+                else if (f == a->optional) (void)proven_fmt_to(f, chk[k].cap, "-");
+                else if (f == a->ui) (void)proven_fmt_to(f, chk[k].cap, "{}", proven_arg_cstr(strcmp(a->optional, "-") ? "features" : "installdir"));
                 else if (f == a->license) {
                     if (strcmp(a->ui, "none") && strcmp(a->ui, "basic")) rpn_find_license(a->dist, f, chk[k].cap);
-                    else snprintf(f, chk[k].cap, "-");
-                } else if (f == a->languages) snprintf(f, chk[k].cap, "-");
-                else if (f == a->shortcuts) snprintf(f, chk[k].cap, "%s", strcmp(a->main, "-") ? "start" : "none");
+                    else (void)proven_fmt_to(f, chk[k].cap, "-");
+                } else if (f == a->languages) (void)proven_fmt_to(f, chk[k].cap, "-");
+                else if (f == a->shortcuts) (void)proven_fmt_to(f, chk[k].cap, "{}", proven_arg_cstr(strcmp(a->main, "-") ? "start" : "none"));
             }
             const char *why = chk[k].check(a, f);
             if (why) {
@@ -825,7 +822,7 @@ int rp_cmd_new(int argc, char **argv) {
     uint8_t *text = NULL;
     size_t len = 0;
     char path[160];
-    snprintf(path, sizeof path, "%s%s", a->stem, a->ext);
+    (void)proven_fmt_to(path, sizeof path, "{}{}", proven_arg_cstr(a->stem), proven_arg_cstr(a->ext));
     if (rc == RP_EXIT_OK && make_source(a, &text, &len) != PROVEN_OK) rc = RP_EXIT_IO;
     if (rc == RP_EXIT_OK) {
         proven_err_t err = rp_pal_write_file_new(proven_heap_allocator(), path, text, len);
@@ -867,6 +864,6 @@ int rp_cmd_guid(int argc, char **argv) {
         return RP_EXIT_USAGE;
     }
     char line[48];
-    snprintf(line, sizeof line, "%s\n", out);
+    (void)proven_fmt_to(line, sizeof line, "{}\n", proven_arg_cstr(out));
     return rp_pal_puts(RP_OUT_STDOUT, line) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
 }

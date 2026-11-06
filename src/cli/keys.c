@@ -27,13 +27,12 @@ static void show(void *ctx, const rp_key_entry_t *e) {
     rp_cert_t c;
     if (e->cert && rp_cert_parse(e->cert, e->cert_len, &c, NULL)) {
         rp_iso_time(c.not_after, until);
-        if (!rp_msix_publisher_of(proven_heap_allocator(), e->cert, e->cert_len, publisher, sizeof publisher)) snprintf(publisher, sizeof publisher, "?");
+        if (!rp_msix_publisher_of(proven_heap_allocator(), e->cert, e->cert_len, publisher, sizeof publisher)) (void)proven_fmt_to(publisher, sizeof publisher, "?");
     }
     if (e->label[0]) {
-        snprintf(line, sizeof line, "%s\tlabel=%s\tid=%s\t%s\tpublisher=%s\tuntil=%s%s\n", e->where, e->label, e->id_hex, e->kind, publisher, until,
-                 e->cert ? "" : "\t(no certificate on the token)");
+        (void)proven_fmt_to(line, sizeof line, "{}\tlabel={}\tid={}\t{}\tpublisher={}\tuntil={}{}\n", proven_arg_cstr(e->where), proven_arg_cstr(e->label), proven_arg_cstr(e->id_hex), proven_arg_cstr(e->kind), proven_arg_cstr(publisher), proven_arg_cstr(until), proven_arg_cstr(e->cert ? "" : "\t(no certificate on the token)"));
     } else {
-        snprintf(line, sizeof line, "%s\tthumbprint=%s\t%s\tpublisher=%s\tuntil=%s\n", e->where, e->id_hex, e->kind, publisher, until);
+        (void)proven_fmt_to(line, sizeof line, "{}\tthumbprint={}\t{}\tpublisher={}\tuntil={}\n", proven_arg_cstr(e->where), proven_arg_cstr(e->id_hex), proven_arg_cstr(e->kind), proven_arg_cstr(publisher), proven_arg_cstr(until));
     }
     if (rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK) l->rc = RP_EXIT_IO;
     ++l->count;

@@ -10,6 +10,7 @@
 #include "rubrapack/crypto.h"
 #include "rubrapack/der.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/str.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -64,8 +65,7 @@ static proven_err_t nk_sign(void *ctx, int alg, const uint8_t *digest, uint8_t *
         st = NCryptSignHash(k->key, &pad, (PBYTE)digest, hl, raw, sizeof raw, &got, BCRYPT_PAD_PKCS1);
     }
     if (st != ERROR_SUCCESS) {
-        snprintf(msg, sizeof msg, "NCryptSignHash failed (0x%08lX)%s", (unsigned long)st,
-                 st == (SECURITY_STATUS)0x8010006E ? ": the user cancelled the PIN prompt" : "");
+        (void)proven_fmt_to(msg, sizeof msg, "NCryptSignHash failed (0x{:08X}){}", proven_arg_u64((unsigned long)st), proven_arg_cstr(st == (SECURITY_STATUS)0x8010006E ? ": the user cancelled the PIN prompt" : ""));
         *why = msg;
         return PROVEN_ERR_IO;
     }
@@ -141,7 +141,7 @@ proven_err_t rp_ncrypt_open(proven_allocator_t alloc, const char *thumbprint, bo
         BOOL must_free = FALSE;
         if (!CryptAcquireCertificatePrivateKey(cert, CRYPT_ACQUIRE_ONLY_NCRYPT_KEY_FLAG, NULL, &h, &spec, &must_free) ||
             spec != CERT_NCRYPT_KEY_SPEC) {
-            snprintf(msg, sizeof msg, "the certificate has no private key NCrypt can use (0x%08lX)", (unsigned long)GetLastError());
+            (void)proven_fmt_to(msg, sizeof msg, "the certificate has no private key NCrypt can use (0x{:08X})", proven_arg_u64((unsigned long)GetLastError()));
             *why = msg;
             err = PROVEN_ERR_NOT_FOUND;
         } else {
@@ -208,7 +208,7 @@ proven_err_t rp_ncrypt_list(proven_allocator_t alloc, void (*visit)(void *ctx, c
             DWORD hl = sizeof sha1;
             char hex[41] = "";
             if (CertGetCertificateContextProperty(c, CERT_SHA1_HASH_PROP_ID, sha1, &hl)) {
-                for (int i = 0; i < 20; ++i) snprintf(hex + 2 * i, 3, "%02x", sha1[i]);
+                for (int i = 0; i < 20; ++i) (void)proven_fmt_to(hex + 2 * i, 3, "{:02x}", proven_arg_u32(sha1[i]));
             }
             rp_cert_t pc;
             const char *kind = "other";

@@ -482,7 +482,7 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
     if (err == PROVEN_OK) {
         rp_buf_t *b = &sec[2].data;
         char unique[300];
-        snprintf(unique, sizeof unique, "ms-appx://%s/", identity);
+        (void)proven_fmt_to(unique, sizeof unique, "ms-appx://{}/", proven_arg_cstr(identity));
         size_t un = u16_len(unique) + 1, nn = u16_len(identity) + 1;
         rp_buf_u16le(b, 1);
         rp_buf_u16le(b, (uint16_t)un);

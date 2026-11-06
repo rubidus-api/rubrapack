@@ -65,7 +65,7 @@ static void attr(rp_buf_t *b, const char *name, proven_u8str_view_t value) {
 
 static void attr_u64(rp_buf_t *b, const char *name, uint64_t v) {
     char t[24];
-    snprintf(t, sizeof t, "%llu", (unsigned long long)v);
+    (void)proven_fmt_to(t, sizeof t, "{}", proven_arg_u64((unsigned long long)v));
     attr(b, name, RP_V(t));
 }
 
@@ -398,7 +398,7 @@ static bool below_root(const rp_ir_t *ir, const char *dir, const rp_ir_dir_t **r
     path[0] = 0;
     for (size_t i = n - 1; i-- > 0;) {
         for (size_t k = 0; k < chain[i]->part_count; ++k) {
-            int w = snprintf(path + o, cap - o, "%s%s", o ? "\\" : "", chain[i]->parts[k]);
+            int w = rp_fmt_n(proven_fmt_to(path + o, cap - o, "{}{}", proven_arg_cstr(o ? "\\" : ""), proven_arg_cstr(chain[i]->parts[k])));
             if (w < 0 || (size_t)w >= cap - o) return false;
             o += (size_t)w;
         }
@@ -488,7 +488,7 @@ static bool reserved(const char *path) {
     }
     char top[16];
     size_t n = strcspn(path, "\\");
-    snprintf(top, sizeof top, "%.*s", (int)(n < 15 ? n : 15), path);
+    (void)proven_fmt_to(top, sizeof top, "{}", proven_arg_cstr_n(path, (int)(n < 15 ? n : 15)));
     return n < 15 && path[n] == '\\' && (rp_ascii_ieq(top, "AppxMetadata") || rp_ascii_ieq(top, "VFS"));
 }
 
@@ -577,8 +577,8 @@ static bool add_registry(proven_allocator_t alloc, const rp_ir_registry_t *r, rp
     }
     char path[2048];
     const char *below = key[8] ? key + 9 : "";
-    if (hkcu) snprintf(path, sizeof path, "Software%s%s", below[0] ? "\\" : "", below);
-    else snprintf(path, sizeof path, "REGISTRY\\MACHINE\\SOFTWARE%s%s%s", r->view32 ? "\\WOW6432Node" : "", below[0] ? "\\" : "", below);
+    if (hkcu) (void)proven_fmt_to(path, sizeof path, "Software{}{}", proven_arg_cstr(below[0] ? "\\" : ""), proven_arg_cstr(below));
+    else (void)proven_fmt_to(path, sizeof path, "REGISTRY\\MACHINE\\SOFTWARE{}{}{}", proven_arg_cstr(r->view32 ? "\\WOW6432Node" : ""), proven_arg_cstr(below[0] ? "\\" : ""), proven_arg_cstr(below));
     rp_buf_t data = rp_buf_new(alloc, 1u << 24);
     uint32_t type = 0;
     bool ok = true;
@@ -758,7 +758,7 @@ static void payload_free(payload_t *x) {
 static proven_err_t commit(rp_zip_writer_t *z, rp_buf_t *bm, const char *path, const char *zip_name, const payload_t *x) {
     if (x->err != PROVEN_OK) return x->err;
     char part[3200];
-    if (zip_name) snprintf(part, sizeof part, "%s", zip_name);
+    if (zip_name) (void)proven_fmt_to(part, sizeof part, "{}", proven_arg_cstr(zip_name));
     else part_name(path, part, sizeof part);
     size_t lfh = 0;
     rp_zip_add(z, part, x->deflate ? 8 : 0, x->deflate ? x->comp.data : x->data, x->deflate ? x->comp.len : x->n, x->crc, x->n, &lfh);
@@ -812,7 +812,7 @@ typedef struct {
 
 static const char *loc_dup(loc_t *l, const char *fmt, const char *a, const char *b) {
     char buf[2400];
-    snprintf(buf, sizeof buf, fmt, a, b);
+    (void)rp_fmt_strs(buf, sizeof buf, fmt, a, b);
     size_t n = strlen(buf);
     if (l->nown == sizeof l->own / sizeof l->own[0]) {
         l->full = true;
@@ -845,7 +845,7 @@ static void loc_add(loc_t *l, const char *name, int qualifier, const char *qvalu
 // A text with -xx variants becomes Resources/<name> in each language; false when it has none.
 static bool loc_text(loc_t *l, const char *name, const char *text, const rp_ir_ltext_t *by_lang, size_t count, rp_pos_t pos, rp_srcdiags_t *d) {
     if (count == 0) return false;
-    const char *res = loc_dup(l, "Resources/%s%s", name, "");
+    const char *res = loc_dup(l, "Resources/{}{}", name, "");
     loc_add(l, res, RP_PRI_LANGUAGE, l->default_lang, false, false, text);
     for (size_t k = 0; k < count; ++k) {
         if (strncmp(rp_cs(by_lang[k].lang), l->default_lang, 2) == 0) {
@@ -919,30 +919,30 @@ static int place(const rp_ir_t *ir, const rp_ir_dir_t *root, const char *dir_id,
     char dir[1024];
     if (!below_root(ir, dir_id, &r, dir, sizeof dir)) return -1;
     if (r == root) {
-        snprintf(out, cap, "%s%s%s", dir, dir[0] ? "\\" : "", name);
+        (void)proven_fmt_to(out, cap, "{}{}{}", proven_arg_cstr(dir), proven_arg_cstr(dir[0] ? "\\" : ""), proven_arg_cstr(name));
         return 2;
     }
     if (RP_EQ(r->base, "Fonts") && font) {
         // A [font.*] (RFC-0010 N4): in the package's Fonts folder, shared through uap4:SharedFonts.
-        snprintf(out, cap, "Fonts\\%s", name);
+        (void)proven_fmt_to(out, cap, "Fonts\\{}", proven_arg_cstr(name));
         return 1;
     }
     // Elsewhere: the package's virtual file system, under the folder's own path.
     static char because[256];
     const char *vfs = vfs_folder(rp_cs(r->base), ir->arch, why);
     if (vfs == NULL) {
-        snprintf(because, sizeof because, "%s: %s", rp_cs(r->base), *why ? *why : "no place in an MSIX");
+        (void)proven_fmt_to(because, sizeof because, "{}: {}", proven_arg_cstr(rp_cs(r->base)), proven_arg_cstr(*why ? *why : "no place in an MSIX"));
         *why = because;
         return 0;
     }
     char top[1024] = "";
     size_t o = 0;
     for (size_t k = 0; k < r->part_count && o < sizeof top; ++k) {
-        int w = snprintf(top + o, sizeof top - o, "%s%s", o ? "\\" : "", r->parts[k]);
+        int w = rp_fmt_n(proven_fmt_to(top + o, sizeof top - o, "{}{}", proven_arg_cstr(o ? "\\" : ""), proven_arg_cstr(r->parts[k])));
         if (w < 0) break;
         o += (size_t)w;
     }
-    snprintf(out, cap, "VFS\\%s%s%s%s%s\\%s", vfs, top[0] ? "\\" : "", top, dir[0] ? "\\" : "", dir, name);
+    (void)proven_fmt_to(out, cap, "VFS\\{}{}{}{}{}\\{}", proven_arg_cstr(vfs), proven_arg_cstr(top[0] ? "\\" : ""), proven_arg_cstr(top), proven_arg_cstr(dir[0] ? "\\" : ""), proven_arg_cstr(dir), proven_arg_cstr(name));
     return 1;
 }
 
@@ -1125,8 +1125,8 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     char version[32], publisher[8400];
     unsigned v[4] = { 0 };
     for (size_t i = 0; i < ir->version_count && i < 4; ++i) v[i] = ir->version_parts[i];
-    snprintf(version, sizeof version, "%u.%u.%u.%u", v[0], v[1], v[2], v[3]);
-    snprintf(publisher, sizeof publisher, "%s%s%s", rp_cs(ir->msix_publisher), opt->unsigned_test ? ", " : "", opt->unsigned_test ? UNSIGNED_OID : "");
+    (void)proven_fmt_to(version, sizeof version, "{}.{}.{}.{}", proven_arg_u32(v[0]), proven_arg_u32(v[1]), proven_arg_u32(v[2]), proven_arg_u32(v[3]));
+    (void)proven_fmt_to(publisher, sizeof publisher, "{}{}{}", proven_arg_cstr(rp_cs(ir->msix_publisher)), proven_arg_cstr(opt->unsigned_test ? ", " : ""), proven_arg_cstr(opt->unsigned_test ? UNSIGNED_OID : ""));
     rp_buf_puts(m, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
                    "<Package xmlns=\"http://schemas.microsoft.com/appx/manifest/foundation/windows10\"\r\n"
                    "         xmlns:uap=\"http://schemas.microsoft.com/appx/manifest/uap/windows10\"\r\n"
@@ -1217,9 +1217,9 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         rp_buf_puts(m, ir->msix_external ? " uap10:TrustLevel=\"mediumIL\" uap10:RuntimeBehavior=\"win32App\">\r\n      <uap:VisualElements"
                                          : " EntryPoint=\"Windows.FullTrustApplication\">\r\n      <uap:VisualElements");
         char res[160];
-        snprintf(res, sizeof res, "ms-resource:%sDisplayName", rp_cs(a->id));
+        (void)proven_fmt_to(res, sizeof res, "ms-resource:{}DisplayName", proven_arg_cstr(rp_cs(a->id)));
         attr(m, "DisplayName", RP_V(ap[i].loc_display ? res : display));
-        snprintf(res, sizeof res, "ms-resource:%sDescription", rp_cs(a->id));
+        (void)proven_fmt_to(res, sizeof res, "ms-resource:{}Description", proven_arg_cstr(rp_cs(a->id)));
         attr(m, "Description", RP_V(ap[i].loc_description ? res : a->description.ptr ? rp_cs(a->description) : display));
         attr(m, "BackgroundColor", RP_V(a->background.ptr ? rp_cs(a->background) : "transparent"));
         attr(m, "Square150x150Logo", RP_V(ap[i].logo[0]));
@@ -1361,7 +1361,7 @@ static void handler_list(rp_buf_t *b, const rp_ir_t *ir, bool (*keep)(const rp_i
             const rp_ir_handler_t *h = &ir->handlers[k];
             if (h->kind != order[o] || !packaged_handler(h) || !keep(h, arg)) continue;
             char guid[37];
-            snprintf(guid, sizeof guid, "%.36s", h->clsid.ptr ? rp_cs(h->clsid) + 1 : "");
+            (void)proven_fmt_to(guid, sizeof guid, "{}", proven_arg_cstr_n(h->clsid.ptr ? rp_cs(h->clsid) + 1 : "", 36));
             rp_buf_puts(b, "            <");
             rp_buf_puts(b, el[h->kind]);
             attr(b, "Clsid", RP_V(guid));
@@ -1541,7 +1541,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             }
             NEED(h->pos, "an Explorer handler", 14393u);
             char name[64];
-            snprintf(name, sizeof name, "rp-handler-");
+            (void)proven_fmt_to(name, sizeof name, "rp-handler-");
             size_t o = strlen(name);
             for (const char *q = rp_cs(h->id); *q && o + 1 < sizeof name; ++q) name[o++] = (*q >= 'A' && *q <= 'Z') ? (char)(*q + 32) : *q == '_' ? '-' : *q;
             name[o] = 0;
@@ -1677,7 +1677,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         } else {
             NEED(x->pos, "an AutoPlay handler", 16299u);
             char guid[37];
-            snprintf(guid, sizeof guid, "%.36s", x->clsid.ptr ? rp_cs(x->clsid) + 1 : "");
+            (void)proven_fmt_to(guid, sizeof guid, "{}", proven_arg_cstr_n(x->clsid.ptr ? rp_cs(x->clsid) + 1 : "", 36));
             rp_buf_puts(b, "        <desktop3:Extension Category=\"windows.autoPlayHandler\">\r\n          <desktop3:AutoPlayHandler>\r\n"
                            "            <desktop3:InvokeAction");
             attr(b, "ActionDisplayName", x->action);
@@ -1739,9 +1739,9 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             attr(pk, "Direction", RP_V(y->outbound ? "out" : "in"));
             attr(pk, "IPProtocol", RP_V(y->udp ? "UDP" : "TCP"));
             if (y->port_min) {
-                snprintf(port, sizeof port, "%u", y->port_min);
+                (void)proven_fmt_to(port, sizeof port, "{}", proven_arg_u32(y->port_min));
                 attr(pk, "LocalPortMin", RP_V(port));
-                snprintf(port, sizeof port, "%u", y->port_max);
+                (void)proven_fmt_to(port, sizeof port, "{}", proven_arg_u32(y->port_max));
                 attr(pk, "LocalPortMax", RP_V(port));
             }
             attr(pk, "Profile", RP_V(y->profile.ptr ? rp_cs(y->profile) : "all"));
@@ -1808,7 +1808,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
                 continue;
             }
             char guid[37];
-            snprintf(guid, sizeof guid, "%.36s", x->clsid.ptr ? rp_cs(x->clsid) + 1 : "");
+            (void)proven_fmt_to(guid, sizeof guid, "{}", proven_arg_cstr_n(x->clsid.ptr ? rp_cs(x->clsid) + 1 : "", 36));
             const rp_ir_msix_app_t *app = &ir->msix_apps[a];
             const char *display = rp_cs(x->display.ptr ? x->display : app->display.ptr ? app->display : ir->name);
             NEED(x->pos, x->kind == RP_MSIX_EXT_CONTEXT_MENU ? "a context menu" : "a COM class", x->kind == RP_MSIX_EXT_CONTEXT_MENU ? 17134u : 14393u);
@@ -1869,7 +1869,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
                     for (size_t u = 0; u < y->type_count; ++u) {
                         if (strcmp(y->types[u], x->types[t]) != 0) continue;
                         char g[37];
-                        snprintf(g, sizeof g, "%.36s", y->clsid.ptr ? rp_cs(y->clsid) + 1 : "");
+                        (void)proven_fmt_to(g, sizeof g, "{}", proven_arg_cstr_n(y->clsid.ptr ? rp_cs(y->clsid) + 1 : "", 36));
                         rp_buf_puts(&menus, "              <");
                         rp_buf_puts(&menus, ins);
                         rp_buf_puts(&menus, ":Verb");
@@ -1930,7 +1930,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             }
             NEED(x->pos, "a desktop shortcut", 19645u);
             char file[600];
-            snprintf(file, sizeof file, "$(Desktop)\\%s.lnk", rp_cs(x->name));
+            (void)proven_fmt_to(file, sizeof file, "$(Desktop)\\{}.lnk", proven_arg_cstr(rp_cs(x->name)));
             rp_buf_puts(&ext[a], "        <desktop7:Extension Category=\"windows.shortcut\">\r\n          <desktop7:Shortcut");
             attr(&ext[a], "File", RP_V(file));
             attr(&ext[a], "Icon", RP_V(ap[a].exe));
@@ -1968,9 +1968,9 @@ proven_err_t rp_msix_appinstaller(proven_allocator_t alloc, const rp_ir_t *ir, c
     char version[32], hours[8], publisher[8400];
     unsigned v[4] = { 0 };
     for (size_t i = 0; i < ir->version_count && i < 4; ++i) v[i] = ir->version_parts[i];
-    snprintf(version, sizeof version, "%u.%u.%u.%u", v[0], v[1], v[2], v[3]);
-    snprintf(hours, sizeof hours, "%d", ir->msix_update_hours);
-    snprintf(publisher, sizeof publisher, "%s%s%s", rp_cs(ir->msix_publisher), opt->unsigned_test ? ", " : "", opt->unsigned_test ? UNSIGNED_OID : "");
+    (void)proven_fmt_to(version, sizeof version, "{}.{}.{}.{}", proven_arg_u32(v[0]), proven_arg_u32(v[1]), proven_arg_u32(v[2]), proven_arg_u32(v[3]));
+    (void)proven_fmt_to(hours, sizeof hours, "{}", proven_arg_i32(ir->msix_update_hours));
+    (void)proven_fmt_to(publisher, sizeof publisher, "{}{}{}", proven_arg_cstr(rp_cs(ir->msix_publisher)), proven_arg_cstr(opt->unsigned_test ? ", " : ""), proven_arg_cstr(opt->unsigned_test ? UNSIGNED_OID : ""));
     rp_buf_t b = rp_buf_new(alloc, 1u << 20);
     rp_buf_puts(&b, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<AppInstaller xmlns=\"http://schemas.microsoft.com/appx/appinstaller/2018\"");
     attr(&b, "Version", RP_V(version));
@@ -2005,9 +2005,9 @@ static proven_err_t langpack(proven_allocator_t alloc, const rp_ir_t *ir, const 
     char version[32], publisher[8400], rid[48];
     unsigned v[4] = { 0 };
     for (size_t i = 0; i < ir->version_count && i < 4; ++i) v[i] = ir->version_parts[i];
-    snprintf(version, sizeof version, "%u.%u.%u.%u", v[0], v[1], v[2], v[3]);
-    snprintf(publisher, sizeof publisher, "%s%s%s", rp_cs(ir->msix_publisher), opt->unsigned_test ? ", " : "", opt->unsigned_test ? UNSIGNED_OID : "");
-    snprintf(rid, sizeof rid, "language-%s", lang);
+    (void)proven_fmt_to(version, sizeof version, "{}.{}.{}.{}", proven_arg_u32(v[0]), proven_arg_u32(v[1]), proven_arg_u32(v[2]), proven_arg_u32(v[3]));
+    (void)proven_fmt_to(publisher, sizeof publisher, "{}{}{}", proven_arg_cstr(rp_cs(ir->msix_publisher)), proven_arg_cstr(opt->unsigned_test ? ", " : ""), proven_arg_cstr(opt->unsigned_test ? UNSIGNED_OID : ""));
+    (void)proven_fmt_to(rid, sizeof rid, "language-{}", proven_arg_cstr(lang));
     rp_buf_t m = rp_buf_new(alloc, 1u << 20);
     rp_buf_puts(&m, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
                     "<Package xmlns=\"http://schemas.microsoft.com/appx/manifest/foundation/windows10\"\r\n"
@@ -2031,7 +2031,7 @@ static proven_err_t langpack(proven_allocator_t alloc, const rp_ir_t *ir, const 
     attr(&m, "MinVersion", RP_V(ir->msix_min_version.ptr ? rp_cs(ir->msix_min_version) : "10.0.17763.0"));
     rp_buf_puts(&m, " MaxVersionTested=\"10.0.26100.0\" />\r\n  </Dependencies>\r\n</Package>\r\n");
     item_t it = { .file_id = NULL, .data = pri, .data_len = pri_len };
-    snprintf(it.path, sizeof it.path, "resources.pri");
+    (void)proven_fmt_to(it.path, sizeof it.path, "resources.pri");
     rp_zip_writer_t z;
     rp_zip_begin(&z, alloc, (size_t)1 << 40);
     rp_buf_t bm = rp_buf_new(alloc, 1u << 20), ct = rp_buf_new(alloc, 1u << 20);
@@ -2073,19 +2073,19 @@ static void plain_name(const char *s, bool spaces, char *out, size_t cap) {
 
 void rp_msix_sparse_identity(const rp_ir_t *ir, const char *publisher, char name[160], char pub[8400]) {
     if (ir->msix_identity_name.ptr) {
-        snprintf(name, 160, "%s", rp_cs(ir->msix_identity_name));
+        (void)proven_fmt_to(name, 160, "{}", proven_arg_cstr(rp_cs(ir->msix_identity_name)));
     } else {
         char a[64], b[64];
         plain_name(rp_cs(ir->manufacturer), false, a, sizeof a);
         plain_name(rp_cs(ir->name), false, b, sizeof b);
-        snprintf(name, 160, "%.40s%s%.40s.Menu", a[0] ? a : "Rp", ".", b[0] ? b : "Product");
+        (void)proven_fmt_to(name, 160, "{}{}{}.Menu", proven_arg_cstr_n(a[0] ? a : "Rp", 40), proven_arg_cstr("."), proven_arg_cstr_n(b[0] ? b : "Product", 40));
     }
     if (publisher) {
-        snprintf(pub, 8400, "%s", publisher);
+        (void)proven_fmt_to(pub, 8400, "{}", proven_arg_cstr(publisher));
     } else {
         char cn[128];
         plain_name(rp_cs(ir->manufacturer), true, cn, sizeof cn);
-        snprintf(pub, 8400, "CN=%s, %s", cn[0] ? cn : "Unknown", UNSIGNED_OID);
+        (void)proven_fmt_to(pub, 8400, "CN={}, {}", proven_arg_cstr(cn[0] ? cn : "Unknown"), proven_arg_cstr(UNSIGNED_OID));
     }
 }
 
@@ -2095,7 +2095,7 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
     char version[32], name[160], pub[8400];
     unsigned v[4] = { 0 };
     for (size_t i = 0; i < ir->version_count && i < 4; ++i) v[i] = ir->version_parts[i];
-    snprintf(version, sizeof version, "%u.%u.%u.%u", v[0], v[1], v[2], v[3]);
+    (void)proven_fmt_to(version, sizeof version, "{}.{}.{}.{}", proven_arg_u32(v[0]), proven_arg_u32(v[1]), proven_arg_u32(v[2]), proven_arg_u32(v[3]));
     rp_msix_sparse_identity(ir, publisher, name, pub);
     *out = NULL;
     *len = 0;
@@ -2189,7 +2189,7 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
             }
             if (!here) continue;
             char clsid[40];
-            snprintf(clsid, sizeof clsid, "%.36s", rp_cs(x->clsid) + 1);
+            (void)proven_fmt_to(clsid, sizeof clsid, "{}", proven_arg_cstr_n(rp_cs(x->clsid) + 1, 36));
             rp_buf_puts(&m, "              <");
             rp_buf_puts(&m, ns);
             rp_buf_puts(&m, ":Verb");
@@ -2210,7 +2210,7 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
         const rp_ir_menu_t *x = &ir->menus[k];
         if (x->parent.ptr || !x->windows11 || x->clsid.ptr == NULL) continue;
         char clsid[40];
-        snprintf(clsid, sizeof clsid, "%.36s", rp_cs(x->clsid) + 1);
+        (void)proven_fmt_to(clsid, sizeof clsid, "{}", proven_arg_cstr_n(rp_cs(x->clsid) + 1, 36));
         rp_buf_puts(&m, "              <com:Class");
         attr(&m, "Id", RP_V(clsid));
         attr(&m, "Path", RP_V(dll));
@@ -2242,7 +2242,7 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
         if (pe != PROVEN_OK) pic = NULL;
     }
     for (size_t i = 0; i < 3 && err == PROVEN_OK; ++i) {
-        snprintf(items[i].path, sizeof items[i].path, "%s", logos[i].path);
+        (void)proven_fmt_to(items[i].path, sizeof items[i].path, "{}", proven_arg_cstr(logos[i].path));
         err = pic ? logo_scale(alloc, pic, pw, ph, logos[i].size, &items[i].data, &items[i].data_len) : PROVEN_ERR_NOT_FOUND;
         if (err == PROVEN_ERR_NOT_FOUND) err = default_logo(alloc, logos[i].size, &items[i].data, &items[i].data_len);
         if (err == PROVEN_OK) err = add_payload(alloc, &z, &bm, logos[i].path, NULL, items[i].data, items[i].data_len, false);
@@ -2451,7 +2451,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             const rp_msix_module_file_t *mf = &mods[k].files[i];
             item_t *it = &items[n];
             if (mf->vfs) {
-                snprintf(it->path, sizeof it->path, "VFS\\%s\\%s", mf->vfs, mf->rel);
+                (void)proven_fmt_to(it->path, sizeof it->path, "VFS\\{}\\{}", proven_arg_cstr(mf->vfs), proven_arg_cstr(mf->rel));
             } else {
                 const char *why = NULL;
                 int placed = place(ir, root, rp_cs(x->dir), mf->rel, false, it->path, sizeof it->path, &why);
@@ -2501,16 +2501,16 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     // config.json, which must name every application by its Id (in "applications").
     char launcher[256] = "";
     if (ir->has_psf) {
-        snprintf(launcher, sizeof launcher, "%s", ir->psf_launcher.ptr ? rp_cs(ir->psf_launcher)
-                                                  : ir->arch == RP_ARCH_X86 ? "PsfLauncher32.exe" : ir->arch == RP_ARCH_X64 ? "PsfLauncher64.exe" : "");
+        (void)proven_fmt_to(launcher, sizeof launcher, "{}", proven_arg_cstr(ir->psf_launcher.ptr ? rp_cs(ir->psf_launcher)
+                                                  : ir->arch == RP_ARCH_X86 ? "PsfLauncher32.exe" : ir->arch == RP_ARCH_X64 ? "PsfLauncher64.exe" : ""));
         bool found = false;
         for (size_t i = 0; i < npsf; ++i) {
             char path[2400];
-            snprintf(path, sizeof path, "%s/%s", rp_cs(ir->psf_files), psf_names[i]);
+            (void)proven_fmt_to(path, sizeof path, "{}/{}", proven_arg_cstr(rp_cs(ir->psf_files)), proven_arg_cstr(psf_names[i]));
             uint64_t size = 0;
             if (rp_pal_stat(alloc, path, &size) != RP_FS_FILE) continue;       // the PSF's own subfolders (PsfMonitor) stay out
             item_t *it = &items[n];
-            snprintf(it->path, sizeof it->path, "%s", psf_names[i]);
+            (void)proven_fmt_to(it->path, sizeof it->path, "{}", proven_arg_cstr(psf_names[i]));
             if (reserved(it->path)) DERR(ir->psf_pos, "RP1610", "'%s' is a name the MSIX format keeps for itself", it->path);
             if (rp_pal_read_file(alloc, path, (size_t)1 << 30, &it->data, &it->data_len) != PROVEN_OK) {
                 DERR(ir->psf_pos, "RP1507", "cannot read '%s'", path);
@@ -2522,13 +2522,13 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         }
         if (launcher[0] && !found && ir->psf_files.ptr) DERR(ir->psf_pos, "RP1617", "[msix-psf]: files has no '%s' (the launcher)", launcher);
         item_t *it = &items[n];
-        snprintf(it->path, sizeof it->path, "config.json");
+        (void)proven_fmt_to(it->path, sizeof it->path, "config.json");
         it->pos = ir->psf_pos;
         if (ir->psf_config.ptr && rp_pal_read_file(alloc, rp_cs(ir->psf_config), 1u << 24, &it->data, &it->data_len) == PROVEN_OK) {
             ++n;
             for (size_t a = 0; a < ir->msix_app_count; ++a) {
                 char want[200];
-                snprintf(want, sizeof want, "\"%s\"", rp_cs(ir->msix_apps[a].id));
+                (void)proven_fmt_to(want, sizeof want, "\"{}\"", proven_arg_cstr(rp_cs(ir->msix_apps[a].id)));
                 proven_u8str_view_t text = { .ptr = it->data, .size = it->data_len };
                 proven_size_t at = proven_u8str_view_find(text, 0, PROVEN_LIT("\"applications\""));
                 if (at == PROVEN_INDEX_NOT_FOUND || proven_u8str_view_find(text, at, proven_u8str_view_from_cstr(want)) == PROVEN_INDEX_NOT_FOUND) {
@@ -2576,12 +2576,12 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         } else if (!rp_ascii_ieq(extension(x->path) ? extension(x->path) : "", "exe")) {
             DERR(app->pos, "RP1607", "the executable '%s' must be an .exe", x->path);
         } else {
-            snprintf(ap[a].exe, sizeof ap[a].exe, "%s", x->path);
+            (void)proven_fmt_to(ap[a].exe, sizeof ap[a].exe, "{}", proven_arg_cstr(x->path));
             // [env.*] (RFC-0019): the application starts through rubrapack's launcher (added below).
             bool env = false;
             for (size_t i = 0; i < ir->env_count && !env; ++i) env = !ir->envs[i].msi_only;
-            if (env) snprintf(ap[a].start, sizeof ap[a].start, "rubrapack\\%s.exe", rp_cs(app->id));
-            else if (launcher[0]) snprintf(ap[a].start, sizeof ap[a].start, "%s", launcher);      // RFC-0031 B26
+            if (env) (void)proven_fmt_to(ap[a].start, sizeof ap[a].start, "rubrapack\\{}.exe", proven_arg_cstr(rp_cs(app->id)));
+            else if (launcher[0]) (void)proven_fmt_to(ap[a].start, sizeof ap[a].start, "{}", proven_arg_cstr(launcher));      // RFC-0031 B26
         }
         for (int k = 0; k < 3; ++k) {
             // RFC-0016 3: Logo.scale-NNN.png next to the logo - the logo in several scales, found
@@ -2593,7 +2593,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             const char *dot = app->logo_path[k] ? strrchr(app->logo_path[k], '.') : NULL, *sl = app->logo_path[k] ? strrchr(app->logo_path[k], '/') : NULL;
             for (int v = 0; dot && (!sl || dot > sl) && v < 5; ++v) {
                 uint64_t size;
-                snprintf(vpath[v], sizeof vpath[v], "%.*s.scale-%s%s", (int)(dot - app->logo_path[k]), app->logo_path[k], scale_of[v], dot);
+                (void)proven_fmt_to(vpath[v], sizeof vpath[v], "{}.scale-{}{}", proven_arg_cstr_n(app->logo_path[k], (int)(dot - app->logo_path[k])), proven_arg_cstr(scale_of[v]), proven_arg_cstr(dot));
                 have[v] = rp_pal_stat(alloc, vpath[v], &size) == RP_FS_FILE;
                 any |= have[v];
             }
@@ -2604,7 +2604,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                     DERR(app->pos, "RP1608", "logo '%s' and its .scale-100 variant are both there: keep one", app->logo[k]);
                 } else if (base) {
                     have[0] = true;
-                    snprintf(vpath[0], sizeof vpath[0], "%s", app->logo_path[k]);
+                    (void)proven_fmt_to(vpath[0], sizeof vpath[0], "{}", proven_arg_cstr(app->logo_path[k]));
                 }
                 const char *b = strrchr(app->logo[k], '/');
                 b = b ? b + 1 : app->logo[k];
@@ -2615,8 +2615,8 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                     DERR(app->pos, "RP1608", "logo '%s': a logo with scale variants needs an ASCII file name with an extension", app->logo[k]);
                     continue;
                 }
-                snprintf(ap[a].logo[k], sizeof ap[a].logo[k], "Assets\\%s", b);
-                const char *res = loc_dup(&loc, "Files/Assets/%s%s", b, "");
+                (void)proven_fmt_to(ap[a].logo[k], sizeof ap[a].logo[k], "Assets\\{}", proven_arg_cstr(b));
+                const char *res = loc_dup(&loc, "Files/Assets/{}{}", b, "");
                 for (int v = 0; v < 5; ++v) {
                     if (!have[v]) continue;
                     uint8_t *png = NULL;
@@ -2630,14 +2630,14 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                     }
                     rp_mem_free(alloc, png);
                     char pbuf[2300];
-                    snprintf(pbuf, sizeof pbuf, "Assets\\%.*s.scale-%s%s", (int)(bdot - b), b, scale_of[v], bdot);
-                    const char *pp = loc_dup(&loc, "%s%s", pbuf, "");
+                    (void)proven_fmt_to(pbuf, sizeof pbuf, "Assets\\{}.scale-{}{}", proven_arg_cstr_n(b, (int)(bdot - b)), proven_arg_cstr(scale_of[v]), proven_arg_cstr(bdot));
+                    const char *pp = loc_dup(&loc, "{}{}", pbuf, "");
                     bool dup = false;
                     for (size_t i = 0; i < n; ++i) dup |= strcmp(items[i].path, pp) == 0;
                     if (!dup) {
                         item_t *it = &items[n++];
-                        snprintf(it->path, sizeof it->path, "%s", pp);
-                        it->source = loc_dup(&loc, "%s%s", vpath[v], "");
+                        (void)proven_fmt_to(it->path, sizeof it->path, "{}", proven_arg_cstr(pp));
+                        it->source = loc_dup(&loc, "{}{}", vpath[v], "");
                         it->pos = app->pos;
                     }
                     loc_add(&loc, res, RP_PRI_SCALE, scale_of[v], false, true, pp);
@@ -2660,34 +2660,34 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                 }
                 rp_mem_free(alloc, png);
                 if (found) {
-                    snprintf(ap[a].logo[k], sizeof ap[a].logo[k], "%s", found->path);
+                    (void)proven_fmt_to(ap[a].logo[k], sizeof ap[a].logo[k], "{}", proven_arg_cstr(found->path));
                 } else {
                     // Not otherwise installed: it goes in under Assets\ with its own name.
                     const char *b = strrchr(app->logo[k], '/');
                     item_t *it = &items[n++];
-                    snprintf(it->path, sizeof it->path, "Assets\\%s", b ? b + 1 : app->logo[k]);
+                    (void)proven_fmt_to(it->path, sizeof it->path, "Assets\\{}", proven_arg_cstr(b ? b + 1 : app->logo[k]));
                     it->source = app->logo_path[k];
                     it->pos = app->pos;
-                    snprintf(ap[a].logo[k], sizeof ap[a].logo[k], "%s", it->path);
+                    (void)proven_fmt_to(ap[a].logo[k], sizeof ap[a].logo[k], "{}", proven_arg_cstr(it->path));
                 }
             } else {
                 if (!defaults_made) {
                     for (int q = 0; q < 3; ++q) {
                         item_t *it = &items[n++];
-                        snprintf(it->path, sizeof it->path, "%s", logo_default[q]);
+                        (void)proven_fmt_to(it->path, sizeof it->path, "{}", proven_arg_cstr(logo_default[q]));
                         it->pos = app->pos;
                         if (default_logo(alloc, logo_px[q], &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1608", "cannot make a default logo");
                     }
                     defaults_made = true;
                 }
-                snprintf(ap[a].logo[k], sizeof ap[a].logo[k], "%s", logo_default[k]);
+                (void)proven_fmt_to(ap[a].logo[k], sizeof ap[a].logo[k], "{}", proven_arg_cstr(logo_default[k]));
             }
         }
     }
     const char *store_logo = ir->msix_app_count ? ap[0].logo[2] : logo_default[2];
     if (ir->msix_app_count == 0) {          // the package's logo (an optional or modification package)
         item_t *it = &items[n++];
-        snprintf(it->path, sizeof it->path, "%s", logo_default[2]);
+        (void)proven_fmt_to(it->path, sizeof it->path, "{}", proven_arg_cstr(logo_default[2]));
         it->pos = top;
         if (default_logo(alloc, logo_px[2], &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1608", "cannot make a default logo");
     }
@@ -2725,8 +2725,8 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         const char *sdot = strrchr(rp_cs(x->logo), '.'), *ssl = strrchr(rp_cs(x->logo), '/');
         uint64_t size;
         for (int v = 0; dot && (!sl || dot > sl) && sdot && (!ssl || sdot > ssl) && v < NFORMS; ++v) {
-            snprintf(vpath[v], sizeof vpath[v], "%.*s%s%s", (int)(dot - rp_cs(x->logo_path)), rp_cs(x->logo_path), forms[v].suffix, dot);
-            snprintf(shown[v], sizeof shown[v], "%.*s%s%s", (int)(sdot - rp_cs(x->logo)), rp_cs(x->logo), forms[v].suffix, sdot);
+            (void)proven_fmt_to(vpath[v], sizeof vpath[v], "{}{}{}", proven_arg_cstr_n(rp_cs(x->logo_path), (int)(dot - rp_cs(x->logo_path))), proven_arg_cstr(forms[v].suffix), proven_arg_cstr(dot));
+            (void)proven_fmt_to(shown[v], sizeof shown[v], "{}{}{}", proven_arg_cstr_n(rp_cs(x->logo), (int)(sdot - rp_cs(x->logo))), proven_arg_cstr(forms[v].suffix), proven_arg_cstr(sdot));
             have[v] = rp_pal_stat(alloc, vpath[v], &size) == RP_FS_FILE;
             any |= have[v];
         }
@@ -2738,11 +2738,11 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         if (!any && !base) continue;            // RP1507 already
         if (base) {
             have[0] = true;
-            snprintf(vpath[0], sizeof vpath[0], "%s", rp_cs(x->logo_path));
-            snprintf(shown[0], sizeof shown[0], "%s", rp_cs(x->logo));
+            (void)proven_fmt_to(vpath[0], sizeof vpath[0], "{}", proven_arg_cstr(rp_cs(x->logo_path)));
+            (void)proven_fmt_to(shown[0], sizeof shown[0], "{}", proven_arg_cstr(rp_cs(x->logo)));
         }
         type_name(rp_cs(x->prog_id), name);
-        const char *res = any ? loc_dup(&loc, "Files/Assets/Types/%s%s", name, ".png") : NULL;
+        const char *res = any ? loc_dup(&loc, "Files/Assets/Types/{}{}", name, ".png") : NULL;
         for (int v = 0; v < NFORMS; ++v) {
             if (!have[v]) continue;
             uint8_t *png = NULL;
@@ -2758,10 +2758,10 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             }
             rp_mem_free(alloc, png);
             item_t *it = &items[n++];
-            snprintf(it->path, sizeof it->path, "Assets\\Types\\%s%s.png", name, any ? forms[v].suffix : "");
-            it->source = any ? loc_dup(&loc, "%s%s", vpath[v], "") : rp_cs(x->logo_path);
+            (void)proven_fmt_to(it->path, sizeof it->path, "Assets\\Types\\{}{}.png", proven_arg_cstr(name), proven_arg_cstr(any ? forms[v].suffix : ""));
+            it->source = any ? loc_dup(&loc, "{}{}", vpath[v], "") : rp_cs(x->logo_path);
             it->pos = x->pos;
-            if (any) loc_add(&loc, res, forms[v].qualifier, forms[v].qvalue, forms[v].unplated, true, loc_dup(&loc, "%s%s", it->path, ""));
+            if (any) loc_add(&loc, res, forms[v].qualifier, forms[v].qvalue, forms[v].unplated, true, loc_dup(&loc, "{}{}", it->path, ""));
         }
     }
     // Texts in several languages (RFC-0016 3), then resources.pri when anything needs it.
@@ -2773,9 +2773,9 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         const rp_ir_msix_app_t *app = &ir->msix_apps[a];
         const char *display = rp_cs(app->display.ptr ? app->display : ir->name);
         char name[128];
-        snprintf(name, sizeof name, "%sDisplayName", rp_cs(app->id));
+        (void)proven_fmt_to(name, sizeof name, "{}DisplayName", proven_arg_cstr(rp_cs(app->id)));
         ap[a].loc_display = loc_text(&loc, name, display, app->display_by_lang, app->display_by_lang_count, app->pos, d);
-        snprintf(name, sizeof name, "%sDescription", rp_cs(app->id));
+        (void)proven_fmt_to(name, sizeof name, "{}Description", proven_arg_cstr(rp_cs(app->id)));
         ap[a].loc_description = loc_text(&loc, name, app->description.ptr ? rp_cs(app->description) : display, app->description_by_lang,
                                          app->description_by_lang_count, app->pos, d);
     }
@@ -2784,7 +2784,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     bool split = opt->langpacks && !ir->msix_no_langpacks && loc.nlangs > 0;
     if (loc.n && d->errors == errors) {
         item_t *it = &items[n++];
-        snprintf(it->path, sizeof it->path, "resources.pri");
+        (void)proven_fmt_to(it->path, sizeof it->path, "resources.pri");
         it->pos = top;
         if (rp_pri_write_part(alloc, rp_cs(ir->msix_identity_name), loc.default_lang, loc.c, loc.n, split ? "" : NULL, &it->data, &it->data_len) !=
             PROVEN_OK) {
@@ -2799,7 +2799,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             uint8_t *pri = NULL;
             size_t pl = 0;
             rp_msix_langpack_t *p = &lp[nlp];
-            snprintf(p->language, sizeof p->language, "%s", loc.langs[k]);
+            (void)proven_fmt_to(p->language, sizeof p->language, "{}", proven_arg_cstr(loc.langs[k]));
             const char *disp = loc.pkg_display ? "ms-resource:PackageDisplayName" : rp_cs(ir->msix_display.ptr ? ir->msix_display : ir->name);
             const char *pub = loc.pub_display ? "ms-resource:PublisherDisplayName" : rp_cs(ir->msix_publisher_display.ptr ? ir->msix_publisher_display : ir->manufacturer);
             if (rp_pri_write_part(alloc, rp_cs(ir->msix_identity_name), loc.default_lang, loc.c, loc.n, loc.langs[k], &pri, &pl) != PROVEN_OK ||
@@ -2836,7 +2836,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             if (!top->windows11 || top->clsid.ptr == NULL) continue;
             char key[400], val[2400], text[8192];
             static const char *const multi[] = { "each", "one", "single" };
-            snprintf(key, sizeof key, "REGISTRY\\MACHINE\\SOFTWARE\\rubrapack\\Menu\\%s%s%s", rp_cs(top->clsid), up ? "\\" : "", up ? rp_cs(x->id) : "");
+            (void)proven_fmt_to(key, sizeof key, "REGISTRY\\MACHINE\\SOFTWARE\\rubrapack\\Menu\\{}{}{}", proven_arg_cstr(rp_cs(top->clsid)), proven_arg_cstr(up ? "\\" : ""), proven_arg_cstr(up ? rp_cs(x->id) : ""));
             rp_buf_t data = rp_buf_new(alloc, 1u << 20);
 #define MENU_SZ(name, value)                                                                                    \
     do {                                                                                                        \
@@ -2849,13 +2849,13 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                 bool en = RP_EQ(x->text_by_lang[w].lang, "en");
                 if (en || (x->text.ptr == NULL && w == 0)) MENU_SZ("Text", x->text_by_lang[w].text);
                 if (!en) {
-                    snprintf(val, sizeof val, "Text.%s", rp_cs(x->text_by_lang[w].lang));
+                    (void)proven_fmt_to(val, sizeof val, "Text.{}", proven_arg_cstr(rp_cs(x->text_by_lang[w].lang)));
                     MENU_SZ(val, x->text_by_lang[w].text);
                 }
             }
             const char *icon = item_path(items, n, x->icon_file.ptr ? x->icon_file : x->target_file);
             if (icon) {
-                snprintf(val, sizeof val, "%%PKG%%\\%s%s", icon, x->icon_file.ptr ? "" : ",0");
+                (void)proven_fmt_to(val, sizeof val, "%PKG%\\{}{}", proven_arg_cstr(icon), proven_arg_cstr(x->icon_file.ptr ? "" : ",0"));
                 MENU_SZ("Icon", val);
             }
             const char *prog = item_path(items, n, x->target_file);
@@ -2869,7 +2869,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             } else if (prog == NULL) {
                 DERR(x->pos, "RP1612", "[menu.%s]: its program is not in the MSIX (msi-only?)", rp_cs(x->id));
             } else {
-                snprintf(val, sizeof val, "%%PKG%%\\%s", prog);
+                (void)proven_fmt_to(val, sizeof val, "%PKG%\\{}", proven_arg_cstr(prog));
                 MENU_SZ("Command", val);
                 if (!literal(x->args.ptr ? rp_cs(x->args) : "\"%1\"", text, sizeof text)) {
                     DERR(x->pos, "RP1612", "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only", rp_cs(x->id));
@@ -2900,7 +2900,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         rp_regf_t *hive = h ? user : machine;
         if (!(h ? used_u : used_m) || d->errors != errors) continue;
         item_t *it = &items[n++];
-        snprintf(it->path, sizeof it->path, "%s", h ? "User.dat" : "Registry.dat");
+        (void)proven_fmt_to(it->path, sizeof it->path, "{}", proven_arg_cstr(h ? "User.dat" : "Registry.dat"));
         it->pos = top;
         if (rp_regf_write(hive, &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1612", "cannot write %s", it->path);
     }
@@ -2950,7 +2950,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                            : ir->arch == RP_ARCH_X86 ? (console ? rp_launchc_x86_len : rp_launch_x86_len)
                                                      : (console ? rp_launchc_arm64_len : rp_launch_arm64_len);
             item_t *it = &items[n++];
-            snprintf(it->path, sizeof it->path, "%s", ap[a].start);
+            (void)proven_fmt_to(it->path, sizeof it->path, "{}", proven_arg_cstr(ap[a].start));
             it->pos = app->pos;
             it->data = rp_mem_alloc(alloc, bin_len ? bin_len : 1, 1);
             if (it->data == NULL) {
@@ -2961,7 +2961,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             it->data_len = bin_len;
         }
         item_t *it = &items[n++];
-        snprintf(it->path, sizeof it->path, "rubrapack\\launch.txt");
+        (void)proven_fmt_to(it->path, sizeof it->path, "rubrapack\\launch.txt");
         it->pos = top;
         if (rp_buf_take(&lt, &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1612", "out of memory");
     }
@@ -3286,7 +3286,7 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
             *why = TR_N("a Package of the bundle manifest without FileName, Offset or Size");
             return PROVEN_ERR_INVALID_FORMAT;
         }
-        if (!attr_value(from, te, "Type", type, sizeof type)) snprintf(type, sizeof type, "application");
+        if (!attr_value(from, te, "Type", type, sizeof type)) (void)proven_fmt_to(type, sizeof type, "application");
         // RFC-0019: a resource package (a language's resources) has a ResourceId instead of an architecture.
         bool resource = strcmp(type, "resource") == 0;
         if (!resource && strcmp(type, "application") != 0) {
@@ -3300,7 +3300,7 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
                             : "a Package of the bundle manifest without Version or Architecture";
             return PROVEN_ERR_INVALID_FORMAT;
         }
-        if (resource) snprintf(arch, sizeof arch, "~%.14s", rid);   // kept apart from the architectures below
+        if (resource) (void)proven_fmt_to(arch, sizeof arch, "~{}", proven_arg_cstr_n(rid, 14));   // kept apart from the architectures below
         if (outside) {
             for (size_t i = 0; i < narch; ++i) {
                 if (strcmp(archs[i], arch) == 0) {
@@ -3312,7 +3312,7 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
                 *why = TR_N("too many packages in the bundle");
                 return PROVEN_ERR_INVALID_FORMAT;
             }
-            snprintf(archs[narch++], sizeof archs[0], "%s", arch);
+            (void)proven_fmt_to(archs[narch++], sizeof archs[0], "{}", proven_arg_cstr(arch));
             continue;
         }
         size_t k = SIZE_MAX;
@@ -3337,7 +3337,7 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
             *why = TR_N("too many packages in the bundle");
             return PROVEN_ERR_INVALID_FORMAT;
         }
-        snprintf(archs[narch++], sizeof archs[0], "%s", arch);
+        (void)proven_fmt_to(archs[narch++], sizeof archs[0], "{}", proven_arg_cstr(arch));
         used[k] = true;
         // The package itself, as a package; its identity must be the one the bundle states.
         rp_msix_file_t *inner = NULL;

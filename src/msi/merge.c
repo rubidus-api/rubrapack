@@ -144,7 +144,7 @@ const rp_msi_wtable_t *rp_msi_module_validation(const rp_msi_module_t *m) { retu
 static proven_err_t binary_bytes(rp_msi_module_t *m, const rp_msi_wtable_t *t, const rp_msi_cell_t *row, rp_msi_cell_t *cell) {
     char key[300];
     if (row[0].kind != RP_MSI_STR || row[0].len + strlen(t->name) + 2 > sizeof key) return PROVEN_ERR_INVALID_FORMAT;
-    snprintf(key, sizeof key, "%s.%.*s", t->name, (int)row[0].len, (const char *)row[0].bytes);
+    (void)proven_fmt_to(key, sizeof key, "{}.{}", proven_arg_cstr(t->name), proven_arg_cstr_n((const char *)row[0].bytes, (int)row[0].len));
     uint16_t name[32];
     size_t nl;
     uint32_t sid;
@@ -468,7 +468,7 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
                 else if (it->format == 2) {
                     int32_t v = 0;
                     (void)int_text(it->value, &v);
-                    snprintf(num, sizeof num, "%d", (int)v);
+                    (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_i32((int)v));
                     piece = num;
                 } else {
                     int32_t v = 0;
@@ -705,8 +705,8 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
             return PROVEN_ERR_INVALID_STATE;
         }
         char name[32], ref[34];
-        snprintf(name, sizeof name, "msm%u.cab", index);
-        snprintf(ref, sizeof ref, "#%s", name);
+        (void)proven_fmt_to(name, sizeof name, "msm{}.cab", proven_arg_u32(index));
+        (void)proven_fmt_to(ref, sizeof ref, "#{}", proven_arg_cstr(name));
         char *sn = keep_str(m, name), *sr = keep_str(m, ref);
         if (sn == NULL || sr == NULL) return PROVEN_ERR_NOMEM;
         rp_msi_cell_t row[6] = { { .kind = RP_MSI_INT, .i = max_int(media, "DiskId") + 1 }, { .kind = RP_MSI_INT, .i = last },

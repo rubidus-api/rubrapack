@@ -123,10 +123,10 @@ static bool windows_name(proven_allocator_t alloc, rp_der_span_t name, char *out
                     if (oid.val.p[k] & 0x80) continue;
                     if (head) {
                         unsigned first_arc = acc < 40 ? 0 : acc < 80 ? 1 : 2;
-                        snprintf(t, sizeof t, "%u.%llu", first_arc, (unsigned long long)(acc - 40 * first_arc));
+                        (void)proven_fmt_to(t, sizeof t, "{}.{}", proven_arg_u32(first_arc), proven_arg_u64((unsigned long long)(acc - 40 * first_arc)));
                         head = false;
                     } else {
-                        snprintf(t, sizeof t, ".%llu", (unsigned long long)acc);
+                        (void)proven_fmt_to(t, sizeof t, ".{}", proven_arg_u64((unsigned long long)acc));
                     }
                     rp_buf_puts(&b, t);
                     acc = 0;
@@ -316,7 +316,7 @@ static bool full_name(const char *man, size_t ml, char *out, size_t cap) {
         id[i] = a32[(shift >= 0 ? v >> shift : v << -shift) & 31];
     }
     id[13] = 0;
-    return (size_t)snprintf(out, cap, "%s_%s_%s_%s_%s", name, ver, arch, res, id) < cap;
+    return (size_t)rp_fmt_n(proven_fmt_to(out, cap, "{}_{}_{}_{}_{}", proven_arg_cstr(name), proven_arg_cstr(ver), proven_arg_cstr(arch), proven_arg_cstr(res), proven_arg_cstr(id))) < cap;
 }
 
 static void utc_time(int64_t t, char out[32]) {
@@ -327,8 +327,7 @@ static void utc_time(int64_t t, char out[32]) {
     int64_t y = yoe + era * 400, doy = doe - (365 * yoe + yoe / 4 - yoe / 100), mp = (5 * doy + 2) / 153;
     int64_t dd = doy - (153 * mp + 2) / 5 + 1, mm = mp < 10 ? mp + 3 : mp - 9;
     if (mm <= 2) ++y;
-    snprintf(out, 32, "%02u%02u%02u%02u%02u%02uZ", (unsigned)(y % 100) % 100, (unsigned)mm % 100, (unsigned)dd % 100, (unsigned)(sec / 3600) % 100,
-             (unsigned)(sec / 60 % 60), (unsigned)(sec % 60));
+    (void)proven_fmt_to(out, 32, "{:02}{:02}{:02}{:02}{:02}{:02}Z", proven_arg_u32((unsigned)(y % 100) % 100), proven_arg_u32((unsigned)mm % 100), proven_arg_u32((unsigned)dd % 100), proven_arg_u32((unsigned)(sec / 3600) % 100), proven_arg_u32((unsigned)(sec / 60 % 60)), proven_arg_u32((unsigned)(sec % 60)));
 }
 
 static proven_err_t code_integrity(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_zip_entry_t *e, size_t ne,
@@ -566,9 +565,8 @@ proven_err_t rp_msix_sign(proven_allocator_t alloc, const uint8_t *pkg, size_t l
             *why = TR_N("the certificate's subject cannot be written as an MSIX publisher");
             err = PROVEN_ERR_INVALID_ARG;
         } else if (strcmp(publisher, subject) != 0) {
-            snprintf(why_buf, sizeof why_buf,
-                     "the package's publisher \"%.600s\" is not the certificate's subject \"%.600s\"; set [msix] publisher to it (without --unsigned-test)",
-                     publisher, subject);
+            (void)proven_fmt_to(why_buf, sizeof why_buf,
+                     "the package's publisher \"{}\" is not the certificate's subject \"{}\"; set [msix] publisher to it (without --unsigned-test)", proven_arg_cstr_n(publisher, 600), proven_arg_cstr_n(subject, 600));
             *why = why_buf;
             err = PROVEN_ERR_INVALID_ARG;
         }
@@ -672,8 +670,8 @@ void rp_msix_verify(proven_allocator_t alloc, const uint8_t *pkg, size_t len, rp
         rp_msix_verify(alloc, files[i].data, (size_t)files[i].size, &ir, &isig, &iwhy);
         if (!(ir.parsed && ir.digest_ok && ir.attrs_ok && ir.signature_ok)) {
             char inner[700];
-            snprintf(inner, sizeof inner, "%s", iwhy ? iwhy : "its signature does not verify");     // iwhy may be why_buf
-            snprintf(why_buf, sizeof why_buf, "the package %.300s inside the bundle: %.650s", files[i].name, inner);
+            (void)proven_fmt_to(inner, sizeof inner, "{}", proven_arg_cstr(iwhy ? iwhy : "its signature does not verify"));     // iwhy may be why_buf
+            (void)proven_fmt_to(why_buf, sizeof why_buf, "the package {} inside the bundle: {}", proven_arg_cstr_n(files[i].name, 300), proven_arg_cstr_n(inner, 650));
             *why = why_buf;
             r->digest_ok = false;
         }

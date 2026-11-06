@@ -66,8 +66,8 @@ int rp_cmd_try(int argc, char **argv) {
         return RP_EXIT_USAGE;
     }
     char dir[2048];
-    snprintf(dir, sizeof dir, "%.*s", slash ? (int)(slash - pkg) : 1, slash ? pkg : ".");
-    if (slash == pkg) snprintf(dir, sizeof dir, "/");
+    (void)proven_fmt_to(dir, sizeof dir, "{}", proven_arg_cstr_n(slash ? pkg : ".", slash ? (int)(slash - pkg) : 1));
+    if (slash == pkg) (void)proven_fmt_to(dir, sizeof dir, "/");
     char *full = host ? NULL : rp_pal_full_path(heap, dir);
     if (host == NULL && full == NULL) {
         rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", dir);
@@ -76,12 +76,12 @@ int rp_cmd_try(int argc, char **argv) {
     char wsb[2100];
     if (out == NULL) {
         const char *dot = strrchr(pkg, '.');
-        snprintf(wsb, sizeof wsb, "%.*s.wsb", (int)(dot - pkg), pkg);
+        (void)proven_fmt_to(wsb, sizeof wsb, "{}.wsb", proven_arg_cstr_n(pkg, (int)(dot - pkg)));
         out = wsb;
     }
     char stem[512];
     const char *ndot = strrchr(name, '.');
-    snprintf(stem, sizeof stem, "%.*s", (int)(ndot - name), name);
+    (void)proven_fmt_to(stem, sizeof stem, "{}", proven_arg_cstr_n(name, (int)(ndot - name)));
 
     rp_buf_t b = rp_buf_new(heap, 1u << 20);
     rp_buf_puts(&b, "<Configuration>\r\n  <Networking>");
@@ -92,10 +92,11 @@ int rp_cmd_try(int argc, char **argv) {
                     "      <ReadOnly>true</ReadOnly>\r\n    </MappedFolder>\r\n  </MappedFolders>\r\n  <LogonCommand>\r\n    <Command>");
     char cmd[3000];
     if (msi) {
-        snprintf(cmd, sizeof cmd, "msiexec.exe /i \"" SANDBOX_DESKTOP "\\rubrapack-try\\%s\" /l*v \"" SANDBOX_DESKTOP "\\%s-install.log\"", name, stem);
+        (void)proven_fmt_to(cmd, sizeof cmd, "msiexec.exe /i \"" SANDBOX_DESKTOP "\\rubrapack-try\\{}\" /l*v \"" SANDBOX_DESKTOP "\\{}-install.log\"",
+                            proven_arg_cstr(name), proven_arg_cstr(stem));
     } else {
-        snprintf(cmd, sizeof cmd, "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"Add-AppxPackage -AllowUnsigned -Path '"
-                 SANDBOX_DESKTOP "\\rubrapack-try\\%s'\"", name);
+        (void)proven_fmt_to(cmd, sizeof cmd, "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"Add-AppxPackage -AllowUnsigned -Path '"
+                            SANDBOX_DESKTOP "\\rubrapack-try\\{}'\"", proven_arg_cstr(name));
     }
     xml_escaped(&b, cmd);
     rp_buf_puts(&b, "</Command>\r\n  </LogonCommand>\r\n</Configuration>\r\n");

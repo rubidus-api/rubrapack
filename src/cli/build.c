@@ -32,7 +32,7 @@ static bool write_appinstaller(proven_allocator_t heap, const char *out, const u
     if (data == NULL) return true;
     char path[1536];
     const char *dot = strrchr(out, '.');
-    snprintf(path, sizeof path, "%.*s.appinstaller", (int)(dot ? (size_t)(dot - out) : strlen(out)), out);
+    (void)proven_fmt_to(path, sizeof path, "{}.appinstaller", proven_arg_cstr_n(out, (int)(dot ? (size_t)(dot - out) : strlen(out))));
     if (rp_pal_write_file_atomic(heap, path, data, len) != PROVEN_OK) {
         rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", path);
         return false;
@@ -63,7 +63,7 @@ static int menu_files(proven_allocator_t heap, const rp_tdoc_t *doc, rp_ir_optio
     // otherwise Windows' unsigned form, which an elevated installation may register.
     bool sign_it = !msix && rp_sign_wanted(sign) && ir->msix_publisher.ptr;
     static char publisher[8400];
-    if (sign_it) snprintf(publisher, sizeof publisher, "%s", rp_cs(ir->msix_publisher));
+    if (sign_it) (void)proven_fmt_to(publisher, sizeof publisher, "{}", proven_arg_cstr(rp_cs(ir->msix_publisher)));
     uint8_t *pkg = NULL;
     size_t pkg_len = 0;
     int rc = RP_EXIT_OK;
@@ -78,8 +78,8 @@ static int menu_files(proven_allocator_t heap, const rp_tdoc_t *doc, rp_ir_optio
             pkg_len = signed_len;
         }
     }
-    snprintf(dll, cap, "%s.rp-menu-dll.tmp", out);
-    if (!msix) snprintf(pkg_path, cap, "%s.rp-menu-pkg.tmp", out);
+    (void)proven_fmt_to(dll, cap, "{}.rp-menu-dll.tmp", proven_arg_cstr(out));
+    if (!msix) (void)proven_fmt_to(pkg_path, cap, "{}.rp-menu-pkg.tmp", proven_arg_cstr(out));
     if (rc == RP_EXIT_OK && (rp_pal_write_file_atomic(heap, dll, part, part_len) != PROVEN_OK ||
                              (!msix && rp_pal_write_file_atomic(heap, pkg_path, pkg, pkg_len) != PROVEN_OK))) {
         rp_diag_error(RP_DIAG_OUTPUT, "cannot write the menu files beside '%s'", out);
@@ -174,7 +174,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         char menu_dll[1600] = "", menu_none[8] = "";
         if (err == PROVEN_OK) {
             char stem[1500];
-            snprintf(stem, sizeof stem, "%s.%zu", out, k);
+            (void)proven_fmt_to(stem, sizeof stem, "{}.{}", proven_arg_cstr(out), proven_arg_u64(k));
             if (menu_files(heap, doc, &opt, &ir, d, true, sign, stem, menu_dll, menu_none, sizeof menu_dll, &err) != RP_EXIT_OK) err = PROVEN_ERR_IO;
         }
         if (err != PROVEN_OK) {
@@ -196,11 +196,11 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         if (err == PROVEN_OK) {
             unsigned v[4] = { 0 };
             for (size_t i = 0; i < ir.version_count && i < 4; ++i) v[i] = ir.version_parts[i];
-            snprintf(names[n], sizeof names[n], "%s_%u.%u.%u.%u_%s.msix", rp_cs(ir.msix_identity_name), v[0], v[1], v[2], v[3], arch_names[ir.arch]);
-            if (n == 0) snprintf(lp_prefix, sizeof lp_prefix, "%s_%u.%u.%u.%u", rp_cs(ir.msix_identity_name), v[0], v[1], v[2], v[3]);
-            if (n == 0) snprintf(bundle_name, sizeof bundle_name, "%s", lp_prefix);
+            (void)proven_fmt_to(names[n], sizeof names[n], "{}_{}.{}.{}.{}_{}.msix", proven_arg_cstr(rp_cs(ir.msix_identity_name)), proven_arg_u32(v[0]), proven_arg_u32(v[1]), proven_arg_u32(v[2]), proven_arg_u32(v[3]), proven_arg_cstr(arch_names[ir.arch]));
+            if (n == 0) (void)proven_fmt_to(lp_prefix, sizeof lp_prefix, "{}_{}.{}.{}.{}", proven_arg_cstr(rp_cs(ir.msix_identity_name)), proven_arg_u32(v[0]), proven_arg_u32(v[1]), proven_arg_u32(v[2]), proven_arg_u32(v[3]));
+            if (n == 0) (void)proven_fmt_to(bundle_name, sizeof bundle_name, "{}", proven_arg_cstr(lp_prefix));
             size_t bn = strlen(bundle_name);
-            snprintf(bundle_name + bn, sizeof bundle_name - bn, "_%s", arch_names[ir.arch]);
+            (void)proven_fmt_to(bundle_name + bn, sizeof bundle_name - bn, "_{}", proven_arg_cstr(arch_names[ir.arch]));
             parts[n] = (rp_msix_part_t){ names[n], pkgs[n], len };
             ++n;
         }
@@ -231,8 +231,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
             if (err == PROVEN_OK) {
                 unsigned v[4] = { 0 };
                 for (size_t i = 0; i < ir.version_count && i < 4; ++i) v[i] = ir.version_parts[i];
-                snprintf(sym_names[nsym], sizeof sym_names[nsym], "%s_%u.%u.%u.%u_%s.appxsym", rp_cs(ir.msix_identity_name), v[0], v[1], v[2], v[3],
-                         arch_names[ir.arch]);
+                (void)proven_fmt_to(sym_names[nsym], sizeof sym_names[nsym], "{}_{}.{}.{}.{}_{}.appxsym", proven_arg_cstr(rp_cs(ir.msix_identity_name)), proven_arg_u32(v[0]), proven_arg_u32(v[1]), proven_arg_u32(v[2]), proven_arg_u32(v[3]), proven_arg_cstr(arch_names[ir.arch]));
                 size_t sl = 0;
                 err = rp_msix_plain_zip(heap, pdb, np, true, &sym_data[nsym], &sl);
                 if (err == PROVEN_OK) syms[nsym] = (rp_msix_part_t){ sym_names[nsym], sym_data[nsym], sl }, ++nsym;
@@ -249,7 +248,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
             err = PROVEN_ERR_INVALID_ARG;
             break;
         }
-        snprintf(names[n], sizeof names[n], "%s_language-%s.msix", lp_prefix, lp[i].language);
+        (void)proven_fmt_to(names[n], sizeof names[n], "{}_language-{}.msix", proven_arg_cstr(lp_prefix), proven_arg_cstr(lp[i].language));
         parts[n] = (rp_msix_part_t){ names[n], lp[i].data, lp[i].len };
         pkgs[n++] = lp[i].data;
         lp[i].data = NULL;
@@ -289,7 +288,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
             rp_msix_part_t up[4];
             size_t nu = 0;
             size_t bn = strlen(bundle_name);
-            snprintf(bundle_name + bn, sizeof bundle_name - bn, ".msixbundle");
+            (void)proven_fmt_to(bundle_name + bn, sizeof bundle_name - bn, ".msixbundle");
             up[nu++] = (rp_msix_part_t){ bundle_name, b, bl };
             for (size_t i = 0; i < nsym; ++i) up[nu++] = syms[i];
             uint8_t *u = NULL;
@@ -319,7 +318,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
             const char *bslash = strrchr(out, '\\');
             if (bslash && (!slash || bslash > slash)) slash = bslash;
 #endif
-            snprintf(path, sizeof path, "%.*s%s", slash ? (int)(slash - out + 1) : 0, out, parts[i].file_name);
+            (void)proven_fmt_to(path, sizeof path, "{}{}", proven_arg_cstr_n(out, slash ? (int)(slash - out + 1) : 0), proven_arg_cstr(parts[i].file_name));
             if (rp_pal_write_file_atomic(heap, path, parts[i].data, parts[i].len) != PROVEN_OK) {
                 rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", path);
                 rc = RP_EXIT_IO;
@@ -678,8 +677,8 @@ static int run(int argc, char **argv, bool lint) {
         const char *bslash = strrchr(src, '\\');
         if (bslash && (!slash || bslash > slash)) slash = bslash;
 #endif
-        if (slash) snprintf(dir, sizeof dir, "%.*s", (int)(slash - src), src);
-        else snprintf(dir, sizeof dir, ".");
+        if (slash) (void)proven_fmt_to(dir, sizeof dir, "{}", proven_arg_cstr_n(src, (int)(slash - src)));
+        else (void)proven_fmt_to(dir, sizeof dir, ".");
 
         rp_srcdiags_t d = { 0 };
         rp_tdoc_t doc;
@@ -766,7 +765,7 @@ static int run(int argc, char **argv, bool lint) {
             if (bs && (!base || bs > base)) base = bs;
 #endif
             base = base ? base + 1 : out;
-            snprintf(stem, sizeof stem, "%.*s", (int)(strlen(base) - 4), base);
+            (void)proven_fmt_to(stem, sizeof stem, "{}", proven_arg_cstr_n(base, (int)(strlen(base) - 4)));
             size_t outdir = (size_t)(base - out);
             outfile_t of = { heap, out, NULL, false };
             rp_out_sink_t sink = { outfile_get, outfile_drop, &of };
@@ -777,7 +776,7 @@ static int run(int argc, char **argv, bool lint) {
             cab_sign_t cs = { &sign, cablabel, &signer, RP_EXIT_OK };
             uint8_t *cert = NULL;
             if (!lint && ir.cab_external && rp_sign_wanted(&sign)) {
-                snprintf(cablabel, sizeof cablabel, "%.*s%s.cab", (int)outdir, out, stem);
+                (void)proven_fmt_to(cablabel, sizeof cablabel, "{}{}.cab", proven_arg_cstr_n(out, (int)outdir), proven_arg_cstr(stem));
                 int crc = rp_sign_cert(&sign, &cert, &signer.cert_len);
                 if (crc != RP_EXIT_OK) {
                     rp_ir_free(&ir);
@@ -828,7 +827,7 @@ static int run(int argc, char **argv, bool lint) {
             // RFC-0001 7.1: never overwrite part of an earlier multi-file output; cabinets first, the
             // package last, so a package on disk always has its cabinets.
             for (size_t i = 0; !lint && err == PROVEN_OK && i < ncabs; ++i) {
-                snprintf(cabpath, sizeof cabpath, "%.*s%s", (int)outdir, out, cabs[i].name);
+                (void)proven_fmt_to(cabpath, sizeof cabpath, "{}{}", proven_arg_cstr_n(out, (int)outdir), proven_arg_cstr(cabs[i].name));
                 uint64_t size = 0;
                 if (rp_pal_stat(heap, cabpath, &size) != RP_FS_NONE) {
                     rp_diag_error(RP_DIAG_OUTPUT, "'%s' already exists; remove it or build into another folder", cabpath);
@@ -836,7 +835,7 @@ static int run(int argc, char **argv, bool lint) {
                 }
             }
             for (size_t i = 0; !lint && err == PROVEN_OK && i < ncabs; ++i) {
-                snprintf(cabpath, sizeof cabpath, "%.*s%s", (int)outdir, out, cabs[i].name);
+                (void)proven_fmt_to(cabpath, sizeof cabpath, "{}{}", proven_arg_cstr_n(out, (int)outdir), proven_arg_cstr(cabs[i].name));
                 err = rp_pal_write_file_atomic(heap, cabpath, cabs[i].data, cabs[i].len);
                 if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", cabpath);
             }

@@ -128,7 +128,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
     // Each architecture is its own upgrade family: a build for another architecture than the
     // source's own needs upgrade-code-<arch>, so one UpgradeCode never spans two architectures.
     char code_key[32];
-    snprintf(code_key, sizeof code_key, "upgrade-code-%s", arch ? arch : "");
+    (void)proven_fmt_to(code_key, sizeof code_key, "upgrade-code-{}", proven_arg_cstr(arch ? arch : ""));
     char *own = arch ? ir_get_str(c, t, code_key, false, NULL) : NULL;
     if (own && !ir_guid_ok(own)) ERR(c, ir_key_pos(t, code_key), "RP1308", "%s must be a GUID", code_key);
     if (own) {
@@ -487,7 +487,7 @@ void ir_parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
         c->nomem = true;
         return;
     }
-    snprintf(sp_, n, "%s/%s", dir, s);
+    (void)proven_fmt_to(sp_, n, "{}/{}", proven_arg_cstr(dir), proven_arg_cstr(s));
     f->source_path = RP_V(sp_);
     rp_fskind_t kind = rp_pal_stat(c->alloc, rp_cs(f->source_path), &f->size);
     if (kind == RP_FS_NONE) ERR(c, sp, "RP1507", "source file '%s' not found", s);
@@ -573,7 +573,7 @@ char *ir_join(ctx_t *c, const char *a, const char *b) {
         c->nomem = true;
         return NULL;
     }
-    snprintf(r, n, "%s/%s", a, b);
+    (void)proven_fmt_to(r, n, "{}/{}", proven_arg_cstr(a), proven_arg_cstr(b));
     return r;
 }
 

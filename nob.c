@@ -154,6 +154,7 @@ static const char *const proven_sources[] = {
     "src/proven/map.c",
     "src/proven/memory.c",
     "src/proven/mmap.c",
+    "src/proven/panic.c",
     "src/proven/random.c",
     "src/proven/scan.c",
     "src/proven/sign.c",
@@ -530,9 +531,13 @@ static int build(const target_t *t) {
 
     const char *own =
         "-std=c23 -Wall -Wextra -pedantic -Werror -Iinclude -Ivendor/proven/include -Ivendor/proven/net/include";
-    const char *vendor =
-        "-std=c23 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror "
-        "-Ivendor/proven/include -Ivendor/proven/platform -Ivendor/proven/net/include";
+    // The sanitized build's proven stops at a formatting call whose arguments do not match its
+    // format (PROVEN_FMT_CHECK_ARGS); the release build writes nothing for it instead.
+    const char *vendor = t->sanitize
+        ? "-std=c23 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -DPROVEN_FMT_CHECK_ARGS "
+          "-Ivendor/proven/include -Ivendor/proven/platform -Ivendor/proven/net/include"
+        : "-std=c23 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror "
+          "-Ivendor/proven/include -Ivendor/proven/platform -Ivendor/proven/net/include";
 
     char gen_dir[192], gen_c[256];
     snprintf(gen_dir, sizeof gen_dir, "%s/gen", dir);

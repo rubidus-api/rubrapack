@@ -251,9 +251,9 @@ static proven_err_t read_head(conn_t *c, head_t *h, const char **why) {
             }
             h->chunked = true;
         } else if (ieq_prefix(line, "location")) {
-            snprintf(h->location, sizeof h->location, "%s", value_of(line));
+            (void)proven_fmt_to(h->location, sizeof h->location, "{}", proven_arg_cstr(value_of(line)));
         } else if (ieq_prefix(line, "content-type")) {
-            snprintf(h->content_type, sizeof h->content_type, "%s", value_of(line));
+            (void)proven_fmt_to(h->content_type, sizeof h->content_type, "{}", proven_arg_cstr(value_of(line)));
         }
     }
     if (h->chunked && h->has_length) {
@@ -424,7 +424,7 @@ static proven_err_t choose_proxy(proven_allocator_t alloc, const rp_http_req_t *
         url = env;
     }
     char full[1024];
-    snprintf(full, sizeof full, "%s%s", strstr(url, "://") ? "" : "http://", url);
+    (void)proven_fmt_to(full, sizeof full, "{}{}", proven_arg_cstr(strstr(url, "://") ? "" : "http://"), proven_arg_cstr(url));
     bool proxy_https = false;
     char path[256];
     proven_err_t err = PROVEN_OK;
@@ -447,8 +447,8 @@ static proven_err_t choose_proxy(proven_allocator_t alloc, const rp_http_req_t *
 // Asks the proxy for a tunnel to host:port (RFC 9110 9.3.6).
 static proven_err_t tunnel(conn_t *c, const char *hostport, const char **why) {
     char line[700];
-    int n = snprintf(line, sizeof line, "CONNECT %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: rubrapack/" RUBRAPACK_VERSION_STRING "\r\n\r\n",
-                     hostport, hostport);
+    int n = rp_fmt_n(proven_fmt_to(line, sizeof line, "CONNECT {} HTTP/1.1\r\nHost: {}\r\nUser-Agent: rubrapack/" RUBRAPACK_VERSION_STRING "\r\n\r\n",
+                                   proven_arg_cstr(hostport), proven_arg_cstr(hostport)));
     if (n < 0 || (size_t)n >= sizeof line) return PROVEN_ERR_OUT_OF_BOUNDS;
     proven_err_t err = conn_send(c, (const uint8_t *)line, (size_t)n);
     head_t h;
@@ -463,7 +463,7 @@ static proven_err_t tunnel(conn_t *c, const char *hostport, const char **why) {
     }
     if (h.status < 200 || h.status > 299) {
         static char msg[80];
-        snprintf(msg, sizeof msg, "the proxy refused the tunnel (HTTP status %d)", h.status);
+        (void)proven_fmt_to(msg, sizeof msg, "the proxy refused the tunnel (HTTP status {})", proven_arg_i32(h.status));
         *why = msg;
         return PROVEN_ERR_PERMISSION;
     }
@@ -494,21 +494,22 @@ static proven_err_t exchange(proven_allocator_t alloc, const rp_http_req_t *req,
     }
     char head_text[4096], hostport[300], target[2600];
     bool v6 = strchr(host, ':') != NULL;
-    if (port == (https ? 443 : 80)) snprintf(hostport, sizeof hostport, "%s%s%s", v6 ? "[" : "", host, v6 ? "]" : "");
-    else snprintf(hostport, sizeof hostport, "%s%s%s:%u", v6 ? "[" : "", host, v6 ? "]" : "", (unsigned)port);
+    if (port == (https ? 443 : 80)) (void)proven_fmt_to(hostport, sizeof hostport, "{}{}{}", proven_arg_cstr(v6 ? "[" : ""), proven_arg_cstr(host), proven_arg_cstr(v6 ? "]" : ""));
+    else (void)proven_fmt_to(hostport, sizeof hostport, "{}{}{}:{}", proven_arg_cstr(v6 ? "[" : ""), proven_arg_cstr(host), proven_arg_cstr(v6 ? "]" : ""), proven_arg_u32((unsigned)port));
     if (px->on && https) {
         char hp[300];                                     // CONNECT always names the port
-        snprintf(hp, sizeof hp, "%s%s%s:%u", v6 ? "[" : "", host, v6 ? "]" : "", (unsigned)port);
+        (void)proven_fmt_to(hp, sizeof hp, "{}{}{}:{}", proven_arg_cstr(v6 ? "[" : ""), proven_arg_cstr(host), proven_arg_cstr(v6 ? "]" : ""), proven_arg_u32((unsigned)port));
         err = tunnel(c, hp, why);
     }
     if (err == PROVEN_OK && https) err = tls_start(alloc, c, req, host, why);
     // Through a proxy, plain http asks for the absolute URL (RFC 9112 3.2.2).
-    snprintf(target, sizeof target, "%s%s%s", px->on && !https ? "http://" : "", px->on && !https ? hostport : "", path);
-    int hn = snprintf(head_text, sizeof head_text,
-                      "POST %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: rubrapack/" RUBRAPACK_VERSION_STRING "\r\n"
-                      "Content-Type: %s\r\n%s%s%sContent-Length: %zu\r\nConnection: close\r\n\r\n",
-                      target, hostport, req->content_type, req->accept ? "Accept: " : "", req->accept ? req->accept : "",
-                      req->accept ? "\r\n" : "", req->len);
+    (void)proven_fmt_to(target, sizeof target, "{}{}{}", proven_arg_cstr(px->on && !https ? "http://" : ""), proven_arg_cstr(px->on && !https ? hostport : ""), proven_arg_cstr(path));
+    int hn = rp_fmt_n(proven_fmt_to(head_text, sizeof head_text,
+                                    "POST {} HTTP/1.1\r\nHost: {}\r\nUser-Agent: rubrapack/" RUBRAPACK_VERSION_STRING "\r\n"
+                                    "Content-Type: {}\r\n{}{}{}Content-Length: {}\r\nConnection: close\r\n\r\n",
+                                    proven_arg_cstr(target), proven_arg_cstr(hostport), proven_arg_cstr(req->content_type),
+                                    proven_arg_cstr(req->accept ? "Accept: " : ""), proven_arg_cstr(req->accept ? req->accept : ""),
+                                    proven_arg_cstr(req->accept ? "\r\n" : ""), proven_arg_u64(req->len)));
     if (err == PROVEN_OK && (hn < 0 || (size_t)hn >= sizeof head_text)) err = PROVEN_ERR_OUT_OF_BOUNDS;
     if (err == PROVEN_OK) err = conn_send(c, (const uint8_t *)head_text, (size_t)hn);
     if (err == PROVEN_OK) err = conn_send(c, req->body, req->len);
@@ -531,7 +532,7 @@ proven_err_t rp_http_post(proven_allocator_t alloc, const rp_http_req_t *req, rp
     *why = NULL;
     int64_t deadline = rp_pal_now_ms() + (req->total_ms ? req->total_ms : TOTAL_MS);
     char url[2048];
-    snprintf(url, sizeof url, "%s", req->url);
+    (void)proven_fmt_to(url, sizeof url, "{}", proven_arg_cstr(req->url));
     bool was_https = false;
     for (int redirects = 0;; ++redirects) {
         bool https;
@@ -578,8 +579,7 @@ proven_err_t rp_http_post(proven_allocator_t alloc, const rp_http_req_t *req, rp
             }
             if (head.location[0] == '/') {          // a path on the same server
                 char base[512];
-                snprintf(base, sizeof base, "%s://%s%s%s:%u", https ? "https" : "http", strchr(host, ':') ? "[" : "", host,
-                         strchr(host, ':') ? "]" : "", (unsigned)port);
+                (void)proven_fmt_to(base, sizeof base, "{}://{}{}{}:{}", proven_arg_cstr(https ? "https" : "http"), proven_arg_cstr(strchr(host, ':') ? "[" : ""), proven_arg_cstr(host), proven_arg_cstr(strchr(host, ':') ? "]" : ""), proven_arg_u32((unsigned)port));
                 if (strlen(base) + strlen(head.location) >= sizeof url) {
                     *why = TR_N("the redirect location is too long");
                     return PROVEN_ERR_OUT_OF_BOUNDS;
@@ -587,14 +587,14 @@ proven_err_t rp_http_post(proven_allocator_t alloc, const rp_http_req_t *req, rp
                 memcpy(url, base, strlen(base));
                 memcpy(url + strlen(base), head.location, strlen(head.location) + 1);
             } else {
-                snprintf(url, sizeof url, "%s", head.location);
+                (void)proven_fmt_to(url, sizeof url, "{}", proven_arg_cstr(head.location));
             }
             continue;
         }
         resp->status = head.status;
         resp->body = body;
         resp->len = blen;
-        snprintf(resp->content_type, sizeof resp->content_type, "%s", head.content_type);
+        (void)proven_fmt_to(resp->content_type, sizeof resp->content_type, "{}", proven_arg_cstr(head.content_type));
         return PROVEN_OK;
     }
 }

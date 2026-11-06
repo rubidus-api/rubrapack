@@ -140,7 +140,7 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
                 if (path == NULL) {
                     c->nomem = true;
                 } else {
-                    snprintf(path, n, "%s/%s", dir, s);
+                    (void)proven_fmt_to(path, n, "{}/{}", proven_arg_cstr(dir), proven_arg_cstr(s));
                     uint64_t size = 0;
                     if (rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) ERR(c, sym->pos, "RP1507", "source file '%s' not found", s);
                     ir->msix_symbols[ir->msix_symbol_count++] = path;
@@ -201,7 +201,7 @@ char *ir_logo_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool sizes, 
         for (size_t k = 0; dot && (!slash || dot > slash) && !variant && k < (sizes ? 10u : 5u); ++k) {
             for (int u = 0; u < (k < 5 ? 1 : 2) && !variant; ++u) {
                 char v[2048];
-                snprintf(v, sizeof v, "%.*s.%s%s%s", (int)(dot - path), path, forms[k], u ? "_altform-unplated" : "", dot);
+                (void)proven_fmt_to(v, sizeof v, "{}.{}{}{}", proven_arg_cstr_n(path, (int)(dot - path)), proven_arg_cstr(forms[k]), proven_arg_cstr(u ? "_altform-unplated" : ""), proven_arg_cstr(dot));
                 variant = rp_pal_stat(c->alloc, v, &size) == RP_FS_FILE;
             }
         }
@@ -300,7 +300,7 @@ static char *psf_path(ctx_t *c, const rp_ttable_t *t, const char *key, rp_fskind
     if (path == NULL) {
         c->nomem = true;
     } else {
-        snprintf(path, n, "%s/%s", dir, s);
+        (void)proven_fmt_to(path, n, "{}/{}", proven_arg_cstr(dir), proven_arg_cstr(s));
         uint64_t size = 0;
         rp_fskind_t kind = rp_pal_stat(c->alloc, path, &size);
         if (kind == RP_FS_NONE) ERR(c, ir_key_pos(t, key), "RP1507", "source file '%s' not found", s);
@@ -631,7 +631,7 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
     switch (r->type) {
     case RP_REG_QWORD:              // an integer, or "0x" and up to 16 hex digits for values past 2^63
         if (v->val.kind == RP_TV_INT && v->val.i >= 0) {
-            snprintf(num, sizeof num, "%016llX", (unsigned long long)v->val.i);
+            (void)proven_fmt_to(num, sizeof num, "{:016X}", proven_arg_u64((unsigned long long)v->val.i));
         } else if (v->val.kind == RP_TV_STRING && v->val.s.ptr[0] == '0' && (v->val.s.ptr[1] | 32) == 'x' && v->val.s.size > 2 && v->val.s.size <= 18) {
             bool ok = true;
             for (size_t k = 2; k < v->val.s.size; ++k) ok &= ir_is_hex(v->val.s.ptr[k]);
@@ -641,7 +641,7 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
             }
             uint64_t q = 0;
             (void)rp_read_hex64(rp_cs(v->val.s) + 2, NULL, &q);      // checked above: 1 to 16 hex digits
-            snprintf(num, sizeof num, "%016llX", (unsigned long long)q);
+            (void)proven_fmt_to(num, sizeof num, "{:016X}", proven_arg_u64((unsigned long long)q));
         } else {
             ERR(c, v->pos, "RP1316", "a qword value is an integer or \"0x\" and 1 to 16 hex digits");
             return;
@@ -653,7 +653,7 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
             ERR(c, v->pos, "RP1316", "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)");
             return;
         }
-        snprintf(num, sizeof num, "%lld", (long long)v->val.i);
+        (void)proven_fmt_to(num, sizeof num, "{}", proven_arg_i64((long long)v->val.i));
         r->value = RP_V(ir_dup(c, num));
         return;
     case RP_REG_MULTI:

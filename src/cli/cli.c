@@ -7,6 +7,7 @@
 #include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/str.h"
 #include "rubrapack/text.h"
 #include "rubrapack/version.h"
 
@@ -81,9 +82,9 @@ static const command_t *find_command(const char *name) {
 
 // The languages this rubrapack has built in, for the error of a code it does not know: "en, ko, ...".
 static const char *built_in_langs(char *out, size_t cap) {
-    size_t o = (size_t)snprintf(out, cap, "en");
+    size_t o = (size_t)rp_fmt_n(proven_fmt_to(out, cap, "en"));
     for (size_t i = 0; i < rp_lang_embedded_count && o < cap; ++i)
-        o += (size_t)snprintf(out + o, cap - o, ", %s", rp_lang_embedded[i].code);
+        o += (size_t)rp_fmt_n(proven_fmt_to(out + o, cap - o, ", {}", proven_arg_cstr(rp_lang_embedded[i].code)));
     return out;
 }
 
@@ -101,7 +102,7 @@ static const char *shown(const char *arg, char *out, size_t cap) {
             return out;
         }
         if (control) {
-            snprintf(out + o, cap - o, "\\x%02X", c);
+            (void)proven_fmt_to(out + o, cap - o, "\\x{:02X}", proven_arg_u32(c));
         } else {
             memcpy(out + o, arg + i, n);
         }
@@ -123,8 +124,7 @@ static int print_usage(rp_out_t out) {
                                   "commands:\n"));
     }
     for (size_t i = 0; i < COMMAND_COUNT && err == PROVEN_OK; ++i) {
-        snprintf(line, sizeof line, "  %-9s %s%s\n", commands[i].name, rp_tr(commands[i].summary),
-                 commands[i].implemented ? "" : " (not implemented yet)");
+        (void)proven_fmt_to(line, sizeof line, "  {:<9} {}{}\n", proven_arg_cstr(commands[i].name), proven_arg_cstr(rp_tr(commands[i].summary)), proven_arg_cstr(commands[i].implemented ? "" : " (not implemented yet)"));
         err = rp_pal_puts(out, line);
     }
     if (err == PROVEN_OK) {
