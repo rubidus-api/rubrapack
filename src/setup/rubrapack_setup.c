@@ -23,7 +23,6 @@
 #define UNICODE
 #endif
 #include <windows.h>
-#include <bcrypt.h>
 #include <msi.h>
 #include <sddl.h>
 #include <shellapi.h>
@@ -33,6 +32,9 @@
 
 #include "../ca/rp_appx.h"
 #include "../ca/rp_ask.h"
+
+#include "proven/hash.h"
+#include "proven/utf.h"
 
 enum {
     TRAILER = 32,
@@ -117,13 +119,19 @@ static void say_done(const wchar_t *title, const wchar_t *text, int result) {
     say(title, text, false);
 }
 
-// UTF-8 to a new wide string (LocalFree), or NULL.
+// UTF-8 to a new wide string (LocalFree), or NULL when it is not UTF-8 (proven's conversion).
 static wchar_t *wide(const char *s, uint32_t n) {
-    int w = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, s, (int)n, NULL, 0);
-    if (n && w <= 0) return NULL;
-    wchar_t *out = LocalAlloc(LMEM_FIXED, ((size_t)w + 1) * sizeof *out);
+    proven_u8str_view_t v = { (const proven_byte_t *)s, n };
+    proven_result_size_t m = proven_utf8_to_utf16_size(v);
+    if (m.err != PROVEN_OK) return NULL;
+    size_t w = m.value;
+    wchar_t *out = LocalAlloc(LMEM_FIXED, (w + 1) * sizeof *out);
     if (out == NULL) return NULL;
-    if (n) MultiByteToWideChar(CP_UTF8, 0, s, (int)n, out, w);
+    size_t got = 0;
+    if (proven_utf8_to_utf16(v, (proven_u16 *)out, w, &got) != PROVEN_OK) {
+        LocalFree(out);
+        return NULL;
+    }
     out[w] = 0;
     return out;
 }
@@ -245,24 +253,23 @@ static void texts_load(const uint8_t *m, uint32_t n, uint32_t at, const wchar_t 
     }
 }
 
-// Copies bytes [at, at + size) of f to a new file `path`, checking their SHA-256.
+// Copies bytes [at, at + size) of f to a new file `path`, checking their SHA-256 (proven's).
 static bool extract(HANDLE f, uint64_t at, uint64_t size, const uint8_t want[32], const wchar_t *path) {
-    BCRYPT_ALG_HANDLE alg = NULL;
-    BCRYPT_HASH_HANDLE h = NULL;
     HANDLE out = CreateFileW(path, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
-    bool ok = out != INVALID_HANDLE_VALUE && BCryptOpenAlgorithmProvider(&alg, BCRYPT_SHA256_ALGORITHM, NULL, 0) == 0 &&
-              BCryptCreateHash(alg, &h, NULL, 0, NULL, 0, 0) == 0;
+    bool ok = out != INVALID_HANDLE_VALUE;
+    proven_sha256_t h;
+    proven_sha256_init(&h);
     static uint8_t buf[1 << 16];
     for (uint64_t done = 0; ok && done < size;) {
         uint32_t n = size - done < sizeof buf ? (uint32_t)(size - done) : (uint32_t)sizeof buf;
         DWORD wrote = 0;
-        ok = read_at(f, at + done, buf, n) && BCryptHashData(h, buf, n, 0) == 0 && WriteFile(out, buf, n, &wrote, NULL) && wrote == n;
+        ok = read_at(f, at + done, buf, n) && WriteFile(out, buf, n, &wrote, NULL) && wrote == n;
+        if (ok) proven_sha256_update(&h, (proven_mem_view_t){ buf, n });
         done += n;
     }
     uint8_t got[32];
-    if (ok) ok = BCryptFinishHash(h, got, 32, 0) == 0 && memcmp(got, want, 32) == 0;
-    if (h) BCryptDestroyHash(h);
-    if (alg) BCryptCloseAlgorithmProvider(alg, 0);
+    proven_sha256_final(&h, got);
+    if (ok) ok = memcmp(got, want, 32) == 0;
     if (out != INVALID_HANDLE_VALUE) CloseHandle(out);
     if (!ok) DeleteFileW(path);
     return ok;

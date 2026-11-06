@@ -19,6 +19,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "proven/utf.h"
+
 enum { MAX_TEXT = 1 << 20, MAX_VALUE = 32767 };
 
 static void fail(const wchar_t *what) {
@@ -40,10 +42,11 @@ static size_t next_line(const char *t, size_t len, size_t *at, wchar_t *out, siz
     while (e < len && t[e] != '\n') ++e;
     *at = e + 1;
     if (e > s && t[e - 1] == '\r') --e;
-    int n = MultiByteToWideChar(CP_UTF8, 0, t + s, (int)(e - s), out, (int)cap - 1);
-    if (n < 0) n = 0;
+    // proven's conversion; a line that is not UTF-8 or does not fit reads as empty.
+    size_t n = 0;
+    if (proven_utf8_to_utf16((proven_u8str_view_t){ (const proven_byte_t *)t + s, e - s }, (proven_u16 *)out, cap - 1, &n) != PROVEN_OK) n = 0;
     out[n] = 0;
-    return (size_t)n + 1;
+    return n + 1;
 }
 
 static bool starts(const wchar_t *s, const wchar_t *p) { return wcsncmp(s, p, wcslen(p)) == 0; }

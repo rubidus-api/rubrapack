@@ -343,6 +343,13 @@ static unsigned char *read_all(const char *path, size_t *len) {
     return buf;
 }
 
+// The proven_c_lib files the Windows parts link (UTF-8/UTF-16 and SHA-256), with its include
+// paths; unused functions are dropped at link time.
+#define PART_PROVEN                                                                                                       \
+    "-Ivendor/proven/include -Ivendor/proven/platform -ffunction-sections -fdata-sections -Wl,--gc-sections "             \
+    "vendor/proven/src/proven/utf.c vendor/proven/src/proven/u8str.c vendor/proven/src/proven/u16str.c "                  \
+    "vendor/proven/src/proven/buffer.c vendor/proven/src/proven/memory.c vendor/proven/platform/proven_sys_mem.c "
+
 // ./nob parts: the helper DLL for the three architectures, reproducibly (no timestamp, no paths,
 // stripped), and their SHA-256 sums.
 static int parts(void) {
@@ -414,8 +421,8 @@ static int parts(void) {
         snprintf(out, sizeof out, "resources/bin/rubrapack_setup-%s.exe", part_archs[i][0]);
         n = snprintf(cmd, sizeof cmd,
                      "%s/bin/%s-w64-mingw32-clang -std=c23 -O2 -Wall -Wextra -Werror -municode -mwindows -s "
-                     "-ffile-prefix-map=$PWD=. -Wl,--no-insert-timestamp -Wl,--build-id=none src/setup/rubrapack_setup.c "
-                     "-lmsi -lbcrypt -lshell32 -luser32 -ladvapi32 -lruntimeobject -lole32 -o %s",
+                     "-ffile-prefix-map=$PWD=. -Wl,--no-insert-timestamp -Wl,--build-id=none src/setup/rubrapack_setup.c " PART_PROVEN
+                     "vendor/proven/src/proven/hash.c -lmsi -lshell32 -luser32 -ladvapi32 -lruntimeobject -lole32 -o %s",
                      root, part_archs[i][1], out);
         if (n < 0 || (size_t)n >= sizeof cmd || run(cmd) != 0 || (data = read_all(out, &len)) == NULL) {
             rc = 1;
@@ -430,7 +437,7 @@ static int parts(void) {
             snprintf(out, sizeof out, "resources/bin/%s-%s.exe", launch[v][0], part_archs[i][0]);
             n = snprintf(cmd, sizeof cmd,
                          "%s/bin/%s-w64-mingw32-clang -std=c23 -O2 -Wall -Wextra -Werror -municode %s -s "
-                         "-ffile-prefix-map=$PWD=. -Wl,--no-insert-timestamp -Wl,--build-id=none src/launch/rubrapack_launch.c %s -o %s",
+                         "-ffile-prefix-map=$PWD=. -Wl,--no-insert-timestamp -Wl,--build-id=none src/launch/rubrapack_launch.c " PART_PROVEN "%s -o %s",
                          root, part_archs[i][1], launch[v][1], launch[v][2], out);
             if (n < 0 || (size_t)n >= sizeof cmd || run(cmd) != 0 || (data = read_all(out, &len)) == NULL) {
                 rc = 1;
@@ -445,7 +452,7 @@ static int parts(void) {
             snprintf(out, sizeof out, "resources/bin/rubrapack_menu-%s.dll", part_archs[i][0]);
             n = snprintf(cmd, sizeof cmd,
                          "%s/bin/%s-w64-mingw32-clang -std=c23 -O2 -Wall -Wextra -Werror -shared -s -ffile-prefix-map=$PWD=. "
-                         "-Wl,--no-insert-timestamp -Wl,--build-id=none src/menu/rubrapack_menu.c src/menu/rubrapack_menu.def "
+                         "-Wl,--no-insert-timestamp -Wl,--build-id=none src/menu/rubrapack_menu.c src/menu/rubrapack_menu.def " PART_PROVEN
                          "-lole32 -lshlwapi -ladvapi32 -luser32 -luuid -o %s",
                          root, part_archs[i][1], out);
             if (n < 0 || (size_t)n >= sizeof cmd || run(cmd) != 0 || (data = read_all(out, &len)) == NULL) {

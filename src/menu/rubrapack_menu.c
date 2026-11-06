@@ -39,6 +39,8 @@
 #include <shobjidl.h>
 #include <shlwapi.h>
 
+#include "proven/utf.h"
+
 enum { TEXT_CAP = 1024, PATH_CAP = 32768, MAX_ITEMS = 64, MAX_RUNS = 64, MAX_PATHS = 65536 };
 
 static LONG live;                   // objects and locks: DllCanUnloadNow
@@ -317,11 +319,12 @@ static bool write_list(wchar_t **paths, DWORD count, wchar_t *file) {
     char *utf8 = HeapAlloc(GetProcessHeap(), 0, 3 * PATH_CAP + 2);
     bool ok = utf8 != NULL;
     for (DWORD i = 0; ok && i < count; ++i) {
-        int m = WideCharToMultiByte(CP_UTF8, 0, paths[i], -1, utf8, 3 * PATH_CAP, NULL, NULL);
+        // proven's conversion: a path with an unpaired surrogate is refused, not written changed.
+        size_t m = 0;
         DWORD put = 0;
-        ok = m > 0;
+        ok = proven_utf16_to_utf8((const proven_u16 *)paths[i], wcslen(paths[i]), (proven_byte_t *)utf8, 3 * PATH_CAP, &m) == PROVEN_OK;
         if (ok) {
-            utf8[m - 1] = '\n';
+            utf8[m++] = '\n';
             ok = WriteFile(f, utf8, (DWORD)m, &put, NULL) && put == (DWORD)m;
         }
     }

@@ -10,8 +10,11 @@
 `resources/bin/rubrapack_ca-{x64,x86,arm64}.dll` are built from `src/ca/` by `./nob parts` with
 llvm-mingw 20260922 (LLVM, Apache-2.0 with LLVM exception; mingw-w64 runtime, permissive licenses:
 its startup code and import libraries are linked into the DLLs). They import only Windows
-components (kernel32, advapi32, msi and the Universal CRT). `resources/bin/SHA256SUMS` lists their
-hashes; the same toolchain rebuilds them byte for byte.
+components (kernel32, advapi32, msi and the Universal CRT). The chain's setup program, the MSIX
+launcher and the Explorer menu part (`rubrapack_setup-*.exe`, `rubrapack_launch*-*.exe`,
+`rubrapack_menu-*.dll`, built the same way) also contain parts of the vendored proven_c_lib (MIT,
+same author: UTF-8/UTF-16 conversion, SHA-256). `resources/bin/SHA256SUMS` lists their hashes; the
+same toolchain rebuilds them byte for byte.
 
 ## Fonts in the published manual
 
