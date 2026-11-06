@@ -7,27 +7,31 @@ proven_size_t proven_hmac_size(proven_hmac_hash_t hash) {
         case PROVEN_HMAC_SHA256: return PROVEN_SHA256_SIZE;
         case PROVEN_HMAC_SHA384: return PROVEN_SHA384_SIZE;
         case PROVEN_HMAC_SHA512: return PROVEN_SHA512_SIZE;
+        case PROVEN_HMAC_SHA1: return PROVEN_SHA1_SIZE;
         default: return 0;
     }
 }
 
 static proven_size_t hmac_block_size(proven_hmac_hash_t hash) {
-    return hash == PROVEN_HMAC_SHA256 ? 64 : 128;
+    return hash == PROVEN_HMAC_SHA256 || hash == PROVEN_HMAC_SHA1 ? 64 : 128;
 }
 
 static void hmac_hash_init(proven_hmac_t *h) {
     if (h->hash == PROVEN_HMAC_SHA256) proven_sha256_init(&h->inner.s256);
+    else if (h->hash == PROVEN_HMAC_SHA1) proven_sha1_init(&h->inner.s1);
     else if (h->hash == PROVEN_HMAC_SHA384) proven_sha384_init(&h->inner.s512);
     else proven_sha512_init(&h->inner.s512);
 }
 
 static void hmac_hash_update(proven_hmac_t *h, proven_mem_view_t data) {
     if (h->hash == PROVEN_HMAC_SHA256) proven_sha256_update(&h->inner.s256, data);
+    else if (h->hash == PROVEN_HMAC_SHA1) proven_sha1_update(&h->inner.s1, data);
     else proven_sha512_update(&h->inner.s512, data);
 }
 
 static void hmac_hash_final(proven_hmac_t *h, proven_byte_t out[PROVEN_HMAC_MAX_SIZE]) {
     if (h->hash == PROVEN_HMAC_SHA256) proven_sha256_final(&h->inner.s256, out);
+    else if (h->hash == PROVEN_HMAC_SHA1) proven_sha1_final(&h->inner.s1, out);
     else if (h->hash == PROVEN_HMAC_SHA384) proven_sha384_final(&h->inner.s512, out);
     else proven_sha512_final(&h->inner.s512, out);
 }
@@ -138,4 +142,42 @@ proven_err_t proven_hkdf(proven_hmac_hash_t hash, proven_mem_view_t salt, proven
     if (e == PROVEN_OK) e = proven_hkdf_expand(hash, (proven_mem_view_t){ .ptr = prk, .size = n }, info, out);
     proven_mem_wipe((proven_mem_mut_t){ .ptr = prk, .size = sizeof prk });
     return e;
+}
+
+/* RFC 8018 section 5.2. T_i = U_1 ^ U_2 ^ ... ^ U_c, U_1 = PRF(P, S | INT(i)), U_j = PRF(P, U_j-1).
+ * The keyed state after the password is made once and copied for every PRF call: the key
+ * schedule is two of the four compressions an HMAC of a short message costs. */
+proven_err_t proven_pbkdf2(proven_hmac_hash_t hash, proven_mem_view_t password, proven_mem_view_t salt,
+                           proven_u32 iterations, proven_mem_mut_t out) {
+    const proven_size_t hlen = proven_hmac_size(hash);
+    if (hlen == 0 || iterations == 0 || out.size == 0 || !out.ptr || (password.size > 0 && !password.ptr) || (salt.size > 0 && !salt.ptr))
+        return PROVEN_ERR_INVALID_ARG;
+    const proven_size_t blocks = out.size / hlen + (out.size % hlen != 0);
+    if (blocks > 0xffffffffu) return PROVEN_ERR_OUT_OF_BOUNDS;
+    proven_hmac_t keyed, h;
+    proven_err_t e = proven_hmac_init(&keyed, hash, password);
+    if (e != PROVEN_OK) return e;
+    proven_byte_t u[PROVEN_HMAC_MAX_SIZE], t[PROVEN_HMAC_MAX_SIZE];
+    for (proven_size_t b = 1, done = 0; b <= blocks; ++b) {
+        const proven_byte_t index[4] = { (proven_byte_t)(b >> 24), (proven_byte_t)(b >> 16), (proven_byte_t)(b >> 8), (proven_byte_t)b };
+        h = keyed;
+        proven_hmac_update(&h, salt);
+        proven_hmac_update(&h, (proven_mem_view_t){ .ptr = index, .size = 4 });
+        proven_hmac_final(&h, u);
+        for (proven_size_t i = 0; i < hlen; ++i) t[i] = u[i];
+        for (proven_u32 j = 1; j < iterations; ++j) {
+            h = keyed;
+            proven_hmac_update(&h, (proven_mem_view_t){ .ptr = u, .size = hlen });
+            proven_hmac_final(&h, u);
+            for (proven_size_t i = 0; i < hlen; ++i) t[i] ^= u[i];
+        }
+        const proven_size_t take = out.size - done < hlen ? out.size - done : hlen;
+        for (proven_size_t i = 0; i < take; ++i) out.ptr[done + i] = t[i];
+        done += take;
+    }
+    proven_mem_wipe((proven_mem_mut_t){ .ptr = (proven_byte_t *)&keyed, .size = sizeof keyed });
+    proven_mem_wipe((proven_mem_mut_t){ .ptr = (proven_byte_t *)&h, .size = sizeof h });
+    proven_mem_wipe((proven_mem_mut_t){ .ptr = u, .size = sizeof u });
+    proven_mem_wipe((proven_mem_mut_t){ .ptr = t, .size = sizeof t });
+    return PROVEN_OK;
 }

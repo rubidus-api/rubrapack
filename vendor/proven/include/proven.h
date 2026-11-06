@@ -3,7 +3,9 @@
 
 /**
  * @file proven.h
- * @brief Unified entry point for the proven library.
+ * @brief Unified entry point for the proven library: the base library, proven_base - and the
+ *        network library, proven_net, when its headers (net/include in the source tree) are on
+ *        the include path (RFC-0043).
  */
 
 #include "proven/types.h"
@@ -34,15 +36,12 @@
 #include "proven/brotli.h"
 #endif
 #include "proven/cert.h"
-#include "proven/tls.h"
+#include "proven/der.h"
+#include "proven/sign.h"
+#include "proven/aes.h"
+#include "proven/aead.h"
+#include "proven/kex.h"
 #include "proven/url.h"
-#include "proven/http.h"
-#include "proven/hpack.h"
-#include "proven/h2.h"
-#include "proven/http_auth.h"
-#include "proven/http_cookie.h"
-#include "proven/sse.h"
-#include "proven/ws.h"
 #include "proven/encode.h"
 #include "proven/utf.h"
 #include "proven/random.h"
@@ -54,22 +53,16 @@
 #include "proven/mmap.h"
 #ifndef PROVEN_FREESTANDING
 #include "proven/stream.h"
-#ifndef PROVEN_NO_NET
-#include "proven/net.h"
-#endif
 #endif
 #include "proven/sysio.h"
 #include "proven/job.h"
-#if !defined(PROVEN_FREESTANDING) && !defined(PROVEN_NO_NET)
-#include "proven/http_client.h"
-#include "proven/http_server.h"
-#include "proven/ws_conn.h"
-#include "proven/loop.h"
-#include "proven/http_event.h"
-#include "proven/ws_event.h"
-#include "proven/http_event_client.h"
-#endif
 #include "proven/scan.h"
 #include "proven/coro.h"
+
+#if defined(__has_include)
+#if __has_include("proven_net.h")
+#include "proven_net.h"
+#endif
+#endif
 
 #endif /* PROVEN_H */

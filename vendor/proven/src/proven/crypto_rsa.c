@@ -14,6 +14,7 @@
 static proven_size_t g_rsa_min_bits = PROVEN_CRYPTO_RSA_MIN_BITS;
 void proven_crypto_rsa_test_min_bits(proven_size_t bits);
 void proven_crypto_rsa_test_min_bits(proven_size_t bits) { g_rsa_min_bits = bits ? bits : PROVEN_CRYPTO_RSA_MIN_BITS; }
+proven_size_t proven_crypto_rsa_min_bits(void) { return g_rsa_min_bits; }
 
 #define RSA_E_LIMBS PROVEN_CRYPTO_MP_LIMBS(8)                    /* a public exponent: 64 bits at most */
 
@@ -44,6 +45,18 @@ static proven_size_t rsa_public(proven_mem_view_t n, proven_mem_view_t e, proven
 static const proven_byte_t RSA_DI_SHA256[] = { 0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20 };
 static const proven_byte_t RSA_DI_SHA384[] = { 0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05, 0x00, 0x04, 0x30 };
 static const proven_byte_t RSA_DI_SHA512[] = { 0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40 };
+static const proven_byte_t RSA_DI_SHA1[] = { 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a, 0x05, 0x00, 0x04, 0x14 };
+
+/* The DigestInfo that goes before a digest of `hash`, and its length; null for another hash. */
+static const proven_byte_t *rsa_digest_info(int hash, proven_size_t *len) {
+    *len = 19;
+    if (hash == PROVEN_HMAC_SHA256) return RSA_DI_SHA256;
+    if (hash == PROVEN_HMAC_SHA384) return RSA_DI_SHA384;
+    if (hash == PROVEN_HMAC_SHA512) return RSA_DI_SHA512;
+    *len = sizeof RSA_DI_SHA1;
+    if (hash == PROVEN_HMAC_SHA1) return RSA_DI_SHA1;
+    return (const proven_byte_t *)0;
+}
 
 bool proven_crypto_rsa_verify_pkcs1(proven_mem_view_t n, proven_mem_view_t e, int hash,
                                     proven_mem_view_t digest, proven_mem_view_t sig) {
@@ -51,16 +64,14 @@ bool proven_crypto_rsa_verify_pkcs1(proven_mem_view_t n, proven_mem_view_t e, in
     proven_size_t bits = 0;
     const proven_byte_t *di;
     proven_size_t hlen = proven_hmac_size((proven_hmac_hash_t)hash);
-    if (hash == PROVEN_HMAC_SHA256) di = RSA_DI_SHA256;
-    else if (hash == PROVEN_HMAC_SHA384) di = RSA_DI_SHA384;
-    else if (hash == PROVEN_HMAC_SHA512) di = RSA_DI_SHA512;
-    else return false;
+    proven_size_t di_len = 0;
+    if (!(di = rsa_digest_info(hash, &di_len))) return false;
     if (!digest.ptr || digest.size != hlen) return false;
     proven_size_t k = rsa_public(n, e, sig, em, &bits);
     if (k == 0) return false;
     /* The whole encoding is rebuilt and compared: 00 01 FF..FF 00 DigestInfo. Parsing what the
      * signature decrypts to is how forgeries with trailing garbage have been accepted. */
-    const proven_size_t di_len = 19, t_len = di_len + hlen;
+    const proven_size_t t_len = di_len + hlen;
     if (k < t_len + 11) return false;
     proven_byte_t diff = 0;
     proven_size_t pad_end = k - t_len - 1;
@@ -74,7 +85,12 @@ bool proven_crypto_rsa_verify_pkcs1(proven_mem_view_t n, proven_mem_view_t e, in
 }
 
 static void rsa_hash(int hash, proven_mem_view_t a, proven_mem_view_t b, proven_mem_view_t c, proven_byte_t out[PROVEN_HMAC_MAX_SIZE]) {
-    if (hash == PROVEN_HMAC_SHA256) {
+    if (hash == PROVEN_HMAC_SHA1) {
+        proven_sha1_t h;
+        proven_sha1_init(&h);
+        proven_sha1_update(&h, a); proven_sha1_update(&h, b); proven_sha1_update(&h, c);
+        proven_sha1_final(&h, out);
+    } else if (hash == PROVEN_HMAC_SHA256) {
         proven_sha256_t h;
         proven_sha256_init(&h);
         proven_sha256_update(&h, a); proven_sha256_update(&h, b); proven_sha256_update(&h, c);
@@ -380,11 +396,9 @@ bool proven_crypto_rsa_sign_pkcs1(const proven_crypto_rsa_key_t *k, const proven
     const proven_byte_t *di;
     proven_size_t hlen = proven_hmac_size((proven_hmac_hash_t)hash);
     if (!k || !sig || !digest.ptr || hlen == 0 || digest.size != hlen) return false;
-    if (hash == PROVEN_HMAC_SHA256) di = RSA_DI_SHA256;
-    else if (hash == PROVEN_HMAC_SHA384) di = RSA_DI_SHA384;
-    else if (hash == PROVEN_HMAC_SHA512) di = RSA_DI_SHA512;
-    else return false;
-    const proven_size_t di_len = 19, t_len = di_len + hlen, len = k->n_len;
+    proven_size_t di_len = 0;
+    if (!(di = rsa_digest_info(hash, &di_len))) return false;
+    const proven_size_t t_len = di_len + hlen, len = k->n_len;
     if (len > RSA_SIGN_BYTES || len < t_len + 11) return false;
     /* 00 01 FF..FF 00 DigestInfo digest */
     proven_size_t pad_end = len - t_len - 1;

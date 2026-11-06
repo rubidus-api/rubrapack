@@ -118,4 +118,12 @@ void proven_md5(proven_mem_view_t data, proven_byte_t out[PROVEN_MD5_SIZE]);
  *         the spelling `md5sum` prints. */
 void proven_md5_to_hex(const proven_byte_t digest[PROVEN_MD5_SIZE], char out[33]);
 
+/**
+ * @brief SHA-1's and MD5's compression functions over one 64-byte block, with no padding and
+ *        no length, as proven_sha256_compress (hash.h): for a constant-time MAC of the legacy
+ *        TLS records. Since v0.111.0.
+ */
+void proven_sha1_compress(proven_u32 state[5], const proven_byte_t block[64]);
+void proven_md5_compress(proven_u32 state[4], const proven_byte_t block[64]);
+
 #endif /* PROVEN_HASH_LEGACY_H */

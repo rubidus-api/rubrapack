@@ -130,16 +130,21 @@ static const char *const win32_sources[] = {
 
 // The parts of proven_c_lib rubrapack links, relative to vendor/proven/.
 static const char *const proven_sources[] = {
+    "src/proven/aead.c",
+    "src/proven/aes.c",
     "src/proven/algorithm.c",
     "src/proven/array.c",
     "src/proven/buffer.c",
     "src/proven/cert.c",
+    "src/proven/cert_issue.c",
     "src/proven/crypto_25519.c",
     "src/proven/crypto_aes.c",
     "src/proven/crypto_chacha.c",
     "src/proven/crypto_ec.c",
     "src/proven/crypto_mp.c",
     "src/proven/crypto_rsa.c",
+    "src/proven/der.c",
+    "src/proven/dh.c",
     "src/proven/encode.c",
     "src/proven/float_decimal.c",
     "src/proven/float_format.c",
@@ -149,20 +154,14 @@ static const char *const proven_sources[] = {
     "src/proven/hash_legacy.c",
     "src/proven/heap.c",
     "src/proven/hmac.c",
+    "src/proven/kex.c",
     "src/proven/map.c",
     "src/proven/memory.c",
     "src/proven/mmap.c",
-    "src/proven/quic_crypto.c",
     "src/proven/random.c",
     "src/proven/scan.c",
+    "src/proven/sign.c",
     "src/proven/time.c",
-    "src/proven/tls12_keys.c",
-    "src/proven/tls13.c",
-    "src/proven/tls_config.c",
-    "src/proven/tls_dh.c",
-    "src/proven/tls_issue.c",
-    "src/proven/tls_keys.c",
-    "src/proven/tls_legacy.c",
     "src/proven/u16str.c",
     "src/proven/u8str.c",
     "src/proven/utf.c",
@@ -175,6 +174,13 @@ static const char *const proven_sources[] = {
     "platform/proven_sys_random.c",
     "platform/proven_sys_thread.c",
     "platform/proven_sys_time.c",
+    // proven_net (v0.111.0 keeps the network library in net/): the TLS engine.
+    "net/src/quic_crypto.c",
+    "net/src/tls12_keys.c",
+    "net/src/tls13.c",
+    "net/src/tls_config.c",
+    "net/src/tls_keys.c",
+    "net/src/tls_legacy.c",
 };
 
 #define COUNT(a) (sizeof(a) / sizeof((a)[0]))
@@ -520,10 +526,10 @@ static int build(const target_t *t) {
     if (mkdirs(obj_dir) != 0) return 1;
 
     const char *own =
-        "-std=c23 -Wall -Wextra -pedantic -Werror -Iinclude -Ivendor/proven/include";
+        "-std=c23 -Wall -Wextra -pedantic -Werror -Iinclude -Ivendor/proven/include -Ivendor/proven/net/include";
     const char *vendor =
         "-std=c23 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror "
-        "-Ivendor/proven/include -Ivendor/proven/platform";
+        "-Ivendor/proven/include -Ivendor/proven/platform -Ivendor/proven/net/include";
 
     char gen_dir[192], gen_c[256];
     snprintf(gen_dir, sizeof gen_dir, "%s/gen", dir);

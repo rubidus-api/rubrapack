@@ -9,6 +9,7 @@
 
 #include "proven/types.h"
 #include "proven/memory.h"
+#include "proven/aead.h"
 
 /* Where secret-derived data becomes public on purpose - a tag that matched, a signature, the
  * fact that a key is in range - the code says so with this. It does nothing in any build of
@@ -231,11 +232,9 @@ void proven_crypto_ed25519_sign(proven_byte_t sig[64], const proven_byte_t seed[
 [[nodiscard]] bool proven_crypto_ed25519_test_base_mul(const proven_byte_t k_le[32]);
 [[nodiscard]] bool proven_crypto_ed25519_test_mul2(const proven_byte_t s_le[32], const proven_byte_t k_le[32], const proven_byte_t q_enc[32]);
 
-/* ---- Hash block functions, exposed for the constant-time record MAC of tls_legacy.c ---- */
-void proven_sha1_compress_(proven_u32 state[5], const proven_byte_t block[64]);
-void proven_md5_compress_(proven_u32 state[4], const proven_byte_t block[64]);
-void proven_sha256_compress_(proven_u32 state[8], const proven_byte_t block[64]);
-void proven_sha512_compress_(proven_u64 state[8], const proven_byte_t block[128]);
+/* The hash block functions tls_legacy.c's constant-time record MAC uses are public since v0.111.0:
+ * proven_sha256_compress and proven_sha512_compress (hash.h), proven_sha1_compress and
+ * proven_md5_compress (hash_legacy.h). */
 
 /* ---- AES-GCM (NIST SP 800-38D), 96-bit nonces ---- */
 
@@ -244,21 +243,12 @@ void proven_sha512_compress_(proven_u64 state[8], const proven_byte_t block[128]
  * and GHASH multiplies bit by bit under masks. The hardware one (platform/proven_sys_aes.c)
  * uses the AES and carry-less multiply instructions where the processor has them, chosen at
  * run time. There is no table-driven AES here in any configuration. */
-typedef struct {
-    int rounds;                                  /* 10 or 14 */
-    bool hw;
-    bool one_pass;                               /* the hardware path seals and opens in one pass (RFC-0023) */
-    proven_byte_t rk[240];                       /* round keys as bytes */
-    proven_byte_t h[16];                         /* the GHASH key */
-    proven_byte_t hpow[112];                     /* H^2..H^8 in the one-pass code's form, when one_pass; zeros otherwise */
-} proven_crypto_aes_gcm_t;
-
-/* The block cipher alone, with no GHASH key: QUIC's header protection. */
-typedef struct {
-    int rounds;
-    bool hw;
-    proven_byte_t rk[240];
-} proven_crypto_aes_t;
+/* The contexts are aead.h's public types (since v0.111.0): rounds 10, 12 or 14; hw; one_pass -
+ * the hardware path seals and opens in one pass (RFC-0023); rk the round keys as bytes; h the
+ * GHASH key; hpow H^2..H^8 in the one-pass code's form, when one_pass, zeros otherwise.
+ * proven_crypto_aes_t is the block cipher alone, with no GHASH key: QUIC's header protection. */
+typedef proven_aes_gcm_t proven_crypto_aes_gcm_t;
+typedef proven_aes_t proven_crypto_aes_t;
 
 /* key_len is 16 or 32. False otherwise. SECRET: key. */
 [[nodiscard]] bool proven_crypto_aes_init(proven_crypto_aes_t *ctx, const proven_byte_t *key, proven_size_t key_len);
@@ -279,6 +269,8 @@ void proven_crypto_aes_encrypt_block(const proven_crypto_aes_gcm_t *ctx, const p
  * elsewhere decryption is the portable, bitsliced inverse cipher. Neither takes a time that
  * depends on the data. These exist for the legacy TLS suites.
  * SECRET: the key, and the plaintext. */
+/* A context for CBC alone: 16-, 24- or 32-byte keys, no GHASH key (aes.h). SECRET: key. */
+[[nodiscard]] bool proven_crypto_aes_cbc_init(proven_crypto_aes_gcm_t *ctx, const proven_byte_t *key, proven_size_t key_len);
 void proven_crypto_aes_cbc_encrypt(const proven_crypto_aes_gcm_t *ctx, proven_byte_t iv[16], proven_byte_t *data, proven_size_t len);
 void proven_crypto_aes_cbc_decrypt(const proven_crypto_aes_gcm_t *ctx, proven_byte_t iv[16], proven_byte_t *data, proven_size_t len);
 /* A test hook: when set, contexts initialised afterwards use the portable code even where the
@@ -291,6 +283,9 @@ bool proven_crypto_aes_hw_available(void);
 
 #define PROVEN_CRYPTO_RSA_MIN_BITS 2048
 #define PROVEN_CRYPTO_RSA_MAX_BITS 8192
+/* The smallest modulus verified and encrypted to: PROVEN_CRYPTO_RSA_MIN_BITS, or what a test set
+ * with proven_crypto_rsa_test_min_bits (declared by the tests that use it). */
+proven_size_t proven_crypto_rsa_min_bits(void);
 
 /* `hash` is a proven_hmac_hash_t naming the digest's hash. `n` and `e` are big-endian. Both
  * refuse a modulus outside 2048..8192 bits, an even or tiny exponent, and a signature that is

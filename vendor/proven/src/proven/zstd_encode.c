@@ -2110,9 +2110,12 @@ proven_err_t proven_zstd_encode(proven_zstd_encoder_t *z, proven_mem_view_t in, 
             z->header_done = true;
             continue;
         }
-        /* Take input. When the buffer is full, it slides; it grows until it is full size. */
+        /* Take input. When the buffer is full and its whole blocks have gone, it slides - as far as
+         * it can, for a slide goes through all the tables (80 MiB of them at level 19; sliding a
+         * block at a time once made a stream twice as slow as in place). It grows until it is
+         * full size. */
         if (in_at < in.size) {
-            if (z->fill == z->buf_max && z->pos > z->window) slide(z);
+            if (z->fill == z->buf_max && z->pos > z->window && z->fill - z->pos < z->block_size) slide(z);
             if (z->fill == z->buf_cap && z->buf_cap < z->buf_max) {
                 proven_size_t want = z->buf_cap ? z->buf_cap * 2 : 64 * 1024;
                 if (want < z->fill + (in.size - in_at)) want = z->fill + (in.size - in_at);

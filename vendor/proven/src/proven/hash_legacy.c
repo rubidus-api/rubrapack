@@ -108,9 +108,7 @@ static void sha1_compress(proven_u32 *state, const proven_byte_t block[64]) {
 
 /* The block functions by themselves, for the legacy TLS unit: its constant-time record MAC
  * runs them over blocks it assembles under masks. Declared in proven_internal_crypto.h. */
-void proven_sha1_compress_(proven_u32 state[5], const proven_byte_t block[64]);
-void proven_md5_compress_(proven_u32 state[4], const proven_byte_t block[64]);
-void proven_sha1_compress_(proven_u32 state[5], const proven_byte_t block[64]) { sha1_compress(state, block); }
+void proven_sha1_compress(proven_u32 state[5], const proven_byte_t block[64]) { sha1_compress(state, block); }
 
 void proven_sha1_init(proven_sha1_t *ctx) {
     if (!ctx) return;
@@ -194,7 +192,7 @@ static void md5_compress(proven_u32 *state, const proven_byte_t block[64]) {
     state[0] += a; state[1] += b; state[2] += c; state[3] += d;
 }
 
-void proven_md5_compress_(proven_u32 state[4], const proven_byte_t block[64]) { md5_compress(state, block); }
+void proven_md5_compress(proven_u32 state[4], const proven_byte_t block[64]) { md5_compress(state, block); }
 
 void proven_md5_init(proven_md5_t *ctx) {
     if (!ctx) return;

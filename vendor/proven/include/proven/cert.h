@@ -62,7 +62,9 @@ typedef enum {
 #define PROVEN_CERT_EKU_SERVER_AUTH ((proven_u32)1 << 0)
 #define PROVEN_CERT_EKU_CLIENT_AUTH ((proven_u32)1 << 1)
 #define PROVEN_CERT_EKU_ANY         ((proven_u32)1 << 2)
-#define PROVEN_CERT_EKU_OTHER       ((proven_u32)1 << 3)
+#define PROVEN_CERT_EKU_OTHER       ((proven_u32)1 << 3)   /**< A purpose not named here. */
+#define PROVEN_CERT_EKU_CODE_SIGNING ((proven_u32)1 << 4)  /**< id-kp-codeSigning (since v0.109.0; OTHER before). */
+#define PROVEN_CERT_EKU_TIME_STAMPING ((proven_u32)1 << 5) /**< id-kp-timeStamping (since v0.109.0; OTHER before). */
 
 /**
  * @brief One parsed certificate. Every view points into the DER it was parsed from, which
@@ -93,6 +95,10 @@ typedef struct {
     proven_u32        key_usage;         /**< PROVEN_CERT_KU_* */
     bool              has_ext_key_usage;
     proven_u32        ext_key_usage;     /**< PROVEN_CERT_EKU_* */
+    bool              ext_key_usage_critical; /**< extendedKeyUsage is marked critical (RFC 3161 asks it of a TSA). */
+    proven_u32        ext_key_usage_count;    /**< How many purposes it lists. */
+    proven_mem_view_t subject_key_id;    /**< subjectKeyIdentifier's octets; empty when absent. */
+    proven_mem_view_t authority_key_id;  /**< authorityKeyIdentifier's keyIdentifier octets; empty when absent. */
     proven_mem_view_t alt_names;         /**< subjectAltName's GeneralNames content; empty when absent. */
     proven_mem_view_t name_constraints;  /**< nameConstraints content; empty when absent. */
     bool              unknown_critical;  /**< A critical extension this library does not understand. */
@@ -200,7 +206,15 @@ proven_size_t proven_cert_store_count(const proven_cert_store_t *store);
 
 typedef enum {
     PROVEN_CERT_USE_SERVER = 0,          /**< The peer is a server: its certificate must allow serverAuth. */
-    PROVEN_CERT_USE_CLIENT               /**< The peer is a client: clientAuth. */
+    PROVEN_CERT_USE_CLIENT,              /**< The peer is a client: clientAuth. */
+    /** Code signing (Authenticode and the like), since v0.109.0: the leaf's extendedKeyUsage must
+     *  be present and name codeSigning, its keyUsage (if any) allow digitalSignature; an issuer
+     *  that lists purposes must allow codeSigning or any. Set `host` empty. */
+    PROVEN_CERT_USE_CODE_SIGNING,
+    /** A time-stamping authority (RFC 3161 section 2.3), since v0.109.0: the leaf's
+     *  extendedKeyUsage must be critical and name timeStamping and nothing else; keyUsage as
+     *  above; issuers as above. Set `host` empty. */
+    PROVEN_CERT_USE_TIMESTAMPING
 } proven_cert_use_t;
 
 /** @brief Exactly what was wrong, for a log line. The error code is the coarse answer. */

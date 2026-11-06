@@ -80,6 +80,10 @@ static bool der_time(proven_der_t *in, proven_i64 *out) {
 #define OID_EKU_SERVER "\x2b\x06\x01\x05\x05\x07\x03\x01"
 #define OID_EKU_CLIENT "\x2b\x06\x01\x05\x05\x07\x03\x02"
 #define OID_EKU_ANY "\x55\x1d\x25\x00"
+#define OID_EKU_CODE_SIGNING "\x2b\x06\x01\x05\x05\x07\x03\x03"
+#define OID_EKU_TIME_STAMPING "\x2b\x06\x01\x05\x05\x07\x03\x08"
+#define OID_EXT_SKI "\x55\x1d\x0e"
+#define OID_EXT_AKI "\x55\x1d\x23"
 
 static bool hash_from_oid(const proven_der_t *oid, int *hash) {
     if (DER_IS(oid, OID_SHA256)) *hash = PROVEN_HMAC_SHA256;
@@ -210,14 +214,29 @@ static bool parse_extensions(proven_der_t exts, proven_cert_t *c) {
             bit = 4;
             if (!der_expect(&value, DER_SEQUENCE, &seq, NULL) || value.n != 0 || seq.n == 0) return false;
             c->has_ext_key_usage = true;
+            c->ext_key_usage_critical = critical;
             while (seq.n > 0) {
                 proven_der_t purpose;
                 if (!der_expect(&seq, DER_OID, &purpose, NULL)) return false;
+                c->ext_key_usage_count++;
                 if (DER_IS(&purpose, OID_EKU_SERVER)) c->ext_key_usage |= PROVEN_CERT_EKU_SERVER_AUTH;
                 else if (DER_IS(&purpose, OID_EKU_CLIENT)) c->ext_key_usage |= PROVEN_CERT_EKU_CLIENT_AUTH;
                 else if (DER_IS(&purpose, OID_EKU_ANY)) c->ext_key_usage |= PROVEN_CERT_EKU_ANY;
+                else if (DER_IS(&purpose, OID_EKU_CODE_SIGNING)) c->ext_key_usage |= PROVEN_CERT_EKU_CODE_SIGNING;
+                else if (DER_IS(&purpose, OID_EKU_TIME_STAMPING)) c->ext_key_usage |= PROVEN_CERT_EKU_TIME_STAMPING;
                 else c->ext_key_usage |= PROVEN_CERT_EKU_OTHER;
             }
+        } else if (DER_IS(&oid, OID_EXT_SKI)) {
+            proven_der_t id;
+            bit = 32;
+            if (!der_expect(&value, DER_OCTETS, &id, NULL) || value.n != 0) return false;
+            c->subject_key_id.ptr = id.p; c->subject_key_id.size = id.n;
+        } else if (DER_IS(&oid, OID_EXT_AKI)) {
+            /* AuthorityKeyIdentifier ::= SEQUENCE { [0] keyIdentifier OPTIONAL, [1] issuer OPTIONAL, [2] serial OPTIONAL } */
+            proven_der_t seq, id;
+            bit = 64;
+            if (!der_expect(&value, DER_SEQUENCE, &seq, NULL) || value.n != 0) return false;
+            if (der_expect(&seq, 0x80, &id, NULL)) { c->authority_key_id.ptr = id.p; c->authority_key_id.size = id.n; }
         } else if (DER_IS(&oid, OID_EXT_ALT_NAME)) {
             proven_der_t seq;
             bit = 8;
@@ -299,7 +318,6 @@ bool proven_cert_alt_name_next(const proven_cert_t *cert, proven_size_t *pos,
     return true;
 }
 
-static proven_byte_t lower(proven_byte_t c) { return (c >= 'A' && c <= 'Z') ? (proven_byte_t)(c + 32) : c; }
 
 static bool ascii_eq_nocase(const proven_byte_t *a, const proven_byte_t *b, proven_size_t n) {
     return proven_u8str_view_eq_ascii_ci(proven_u8str_view_from_bytes(a, n), proven_u8str_view_from_bytes(b, n));
@@ -333,7 +351,7 @@ static bool parse_ipv6(const proven_byte_t *s, proven_size_t n, proven_byte_t ou
         proven_u32 v = 0;
         proven_size_t digits = 0;
         while (i < n && digits < 5) {
-            proven_byte_t c = lower(s[i]);
+            proven_byte_t c = proven_ascii_lower(s[i]);
             if (c >= '0' && c <= '9') v = v * 16 + (proven_u32)(c - '0');
             else if (c >= 'a' && c <= 'f') v = v * 16 + (proven_u32)(c - 'a' + 10);
             else break;
@@ -731,7 +749,17 @@ static void cv_note(proven_cv_t *cv, proven_cert_fault_t f) {
 
 /* A complete path: path[0] the leaf ... path[n-1] the anchor. Everything but signatures. */
 static proven_cert_fault_t cv_check_path(const proven_cv_t *cv, proven_size_t n) {
-    const proven_u32 want = cv->opt->use == PROVEN_CERT_USE_CLIENT ? PROVEN_CERT_EKU_CLIENT_AUTH : PROVEN_CERT_EKU_SERVER_AUTH;
+    const proven_cert_use_t use = cv->opt->use;
+    const proven_u32 want = use == PROVEN_CERT_USE_CLIENT ? PROVEN_CERT_EKU_CLIENT_AUTH
+                          : use == PROVEN_CERT_USE_CODE_SIGNING ? PROVEN_CERT_EKU_CODE_SIGNING
+                          : use == PROVEN_CERT_USE_TIMESTAMPING ? PROVEN_CERT_EKU_TIME_STAMPING : PROVEN_CERT_EKU_SERVER_AUTH;
+    if (use == PROVEN_CERT_USE_CODE_SIGNING || use == PROVEN_CERT_USE_TIMESTAMPING) {
+        /* The leaf must say the purpose itself - no extension is not "any" here - and be able to sign. */
+        const proven_cert_t *leaf = cv->path[0];
+        if (!leaf->has_ext_key_usage || !(leaf->ext_key_usage & want)) return PROVEN_CERT_FAULT_USAGE;
+        if (use == PROVEN_CERT_USE_TIMESTAMPING && (!leaf->ext_key_usage_critical || leaf->ext_key_usage_count != 1)) return PROVEN_CERT_FAULT_USAGE;
+        if (leaf->has_key_usage && !(leaf->key_usage & PROVEN_CERT_KU_DIGITAL_SIGNATURE)) return PROVEN_CERT_FAULT_USAGE;
+    }
     for (proven_size_t i = 0; i + 1 < n; ++i) if (cv->path[i]->unknown_critical) return PROVEN_CERT_FAULT_CRITICAL_EXTENSION;
     for (proven_size_t i = 1; i < n; ++i) {
         const proven_cert_t *ca = cv->path[i];

@@ -466,8 +466,7 @@ static void sha256_compress(proven_u32 state[8], const proven_byte_t block[64]) 
 }
 
 /* The block function by itself, for the legacy TLS unit (see hash_legacy.c). */
-void proven_sha256_compress_(proven_u32 state[8], const proven_byte_t block[64]);
-void proven_sha256_compress_(proven_u32 state[8], const proven_byte_t block[64]) { sha256_compress(state, block); }
+void proven_sha256_compress(proven_u32 state[8], const proven_byte_t block[64]) { sha256_compress(state, block); }
 
 void proven_sha256_init(proven_sha256_t *ctx) {
     if (!ctx) return;
@@ -611,8 +610,7 @@ static void sha512_compress(proven_u64 state[8], const proven_byte_t block[128])
 }
 
 /* The block function by itself, for the legacy TLS unit (see hash_legacy.c). */
-void proven_sha512_compress_(proven_u64 state[8], const proven_byte_t block[128]);
-void proven_sha512_compress_(proven_u64 state[8], const proven_byte_t block[128]) { sha512_compress(state, block); }
+void proven_sha512_compress(proven_u64 state[8], const proven_byte_t block[128]) { sha512_compress(state, block); }
 
 void proven_sha512_init(proven_sha512_t *ctx) {
     if (!ctx) return;

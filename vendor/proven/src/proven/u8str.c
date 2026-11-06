@@ -493,11 +493,10 @@ int proven_u8str_view_starts_with(proven_u8str_view_t str, proven_u8str_view_t p
     return proven_sys_mem_cmp(str.ptr, prefix.ptr, prefix.size) == 0;
 }
 
-static proven_byte_t ascii_lower(proven_byte_t c) { return c >= 'A' && c <= 'Z' ? (proven_byte_t)(c + ('a' - 'A')) : c; }
 
 /* `n` bytes at each, equal with ASCII letters folded. */
 static int ascii_ci_same(const proven_byte_t *a, const proven_byte_t *b, proven_size_t n) {
-    for (proven_size_t i = 0; i < n; ++i) if (ascii_lower(a[i]) != ascii_lower(b[i])) return 0;
+    for (proven_size_t i = 0; i < n; ++i) if (proven_ascii_lower(a[i]) != proven_ascii_lower(b[i])) return 0;
     return 1;
 }
 

@@ -276,6 +276,15 @@ bool proven_crypto_aes_init(proven_crypto_aes_t *ctx, const proven_byte_t *key, 
     return true;
 }
 
+bool proven_crypto_aes_cbc_init(proven_crypto_aes_gcm_t *ctx, const proven_byte_t *key, proven_size_t key_len) {
+    if (!ctx || !key || (key_len != 16 && key_len != 24 && key_len != 32)) return false;
+    proven_mem_wipe((proven_mem_mut_t){ .ptr = (proven_byte_t *)ctx, .size = sizeof *ctx });
+    ctx->rounds = key_len == 16 ? 10 : key_len == 24 ? 12 : 14;
+    ctx->hw = proven_crypto_aes_hw_available();
+    aes_schedule(ctx->rk, ctx->rounds, ctx->hw, key, key_len);
+    return true;
+}
+
 void proven_crypto_aes_block(const proven_crypto_aes_t *ctx, const proven_byte_t in[16], proven_byte_t out[16]) {
     aes_block(ctx->rk, ctx->rounds, ctx->hw, in, out);
 }

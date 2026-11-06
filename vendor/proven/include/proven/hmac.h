@@ -5,10 +5,12 @@
 #include "proven/error.h"
 #include "proven/memory.h"
 #include "proven/hash.h"
+#include "proven/hash_legacy.h"
 
 /**
  * @file hmac.h
- * @brief HMAC (RFC 2104) and HKDF (RFC 5869) over SHA-256, SHA-384 and SHA-512.
+ * @brief HMAC (RFC 2104), HKDF (RFC 5869) and PBKDF2 (RFC 8018) over SHA-256, SHA-384 and
+ *        SHA-512 - and SHA-1, for the formats that still name it (PKCS #12, old signatures).
  *
  * Two different jobs that are built from the same piece:
  *
@@ -23,7 +25,8 @@
  *
  * Neither is for passwords. A password has little entropy, and both of these are fast - an
  * attacker tries billions a second. Stretching a password needs a function made slow on
- * purpose (PBKDF2, scrypt, Argon2), which this library does not have.
+ * purpose: proven_pbkdf2 is the one here (since v0.109.0), for reading what other tools wrote
+ * (PKCS #8 and PKCS #12 key files); scrypt and Argon2 are not in this library.
  *
  * Pure computation: no allocation, no OS; part of the freestanding profile.
  */
@@ -31,13 +34,16 @@
 typedef enum {
     PROVEN_HMAC_SHA256 = 0,
     PROVEN_HMAC_SHA384,
-    PROVEN_HMAC_SHA512
+    PROVEN_HMAC_SHA512,
+    /** SHA-1 (v0.109.0): for PBKDF2 in PKCS #12 files, RSA signatures that name it, and old
+     *  signatures. Its collisions are practical: never for a new signature or a new design. */
+    PROVEN_HMAC_SHA1
 } proven_hmac_hash_t;
 
 /** @brief The largest MAC any of the three produces: a buffer of this size always fits. */
 #define PROVEN_HMAC_MAX_SIZE ((proven_size_t)64)
 
-/** @brief Bytes in a MAC made with `hash`: 32, 48 or 64. 0 for a value that is not one of them. */
+/** @brief Bytes in a MAC made with `hash`: 32, 48, 64, or 20 for SHA-1. 0 for a value that is not one of them. */
 [[nodiscard]]
 proven_size_t proven_hmac_size(proven_hmac_hash_t hash);
 
@@ -50,6 +56,7 @@ typedef struct {
     union {
         proven_sha256_t s256;
         proven_sha512_t s512;
+        proven_sha1_t s1;
     } inner;
     proven_byte_t outer_key[128];   /* the key XORed with the outer pad, kept for the second pass */
     bool ready;
@@ -62,7 +69,7 @@ typedef struct {
  * RFC says), but a key shorter than the MAC is weaker than the MAC: use at least
  * proven_hmac_size(hash) bytes from a cryptographic source.
  *
- * @return PROVEN_ERR_INVALID_ARG for a hash that is not one of the three, or a null key with a
+ * @return PROVEN_ERR_INVALID_ARG for a hash that is not one of the four, or a null key with a
  *         non-zero size.
  */
 [[nodiscard]]
@@ -117,5 +124,22 @@ proven_err_t proven_hkdf_expand(proven_hmac_hash_t hash, proven_mem_view_t prk, 
 [[nodiscard]]
 proven_err_t proven_hkdf(proven_hmac_hash_t hash, proven_mem_view_t salt, proven_mem_view_t ikm,
                          proven_mem_view_t info, proven_mem_mut_t out);
+
+/**
+ * @brief PBKDF2 (RFC 8018 section 5.2) with HMAC over `hash`: `out.size` bytes of key from a
+ *        password and a salt, the HMAC iterated `iterations` times for each block.
+ *
+ * For reading key files that other tools encrypted (PBES2 in PKCS #8, PKCS #12 with
+ * PBKDF2); for storing passwords prefer a memory-hard function. The password may be any bytes
+ * (PKCS #12's BMPString form is the caller's to make). The work is iterations times the blocks:
+ * a caller reading an untrusted file bounds `iterations` itself.
+ *
+ * @return PROVEN_ERR_INVALID_ARG for an unknown hash, `iterations` 0, an empty `out`, or a null
+ *         pointer with a non-zero size; PROVEN_ERR_OUT_OF_BOUNDS when `out` is longer than
+ *         (2^32 - 1) blocks. Nothing is written on error.
+ */
+[[nodiscard]]
+proven_err_t proven_pbkdf2(proven_hmac_hash_t hash, proven_mem_view_t password, proven_mem_view_t salt,
+                           proven_u32 iterations, proven_mem_mut_t out);
 
 #endif /* PROVEN_HMAC_H */

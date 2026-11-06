@@ -188,6 +188,15 @@ typedef struct {
  */
 [[nodiscard]] int proven_u8str_view_eq_ascii_ci(proven_u8str_view_t a, proven_u8str_view_t b);
 [[nodiscard]] int proven_u8str_view_starts_with_ascii_ci(proven_u8str_view_t str, proven_u8str_view_t prefix);
+/**
+ * @brief One byte with an ASCII letter made lower case, by the rule above: 'A' to 'Z' become 'a'
+ * to 'z' and every other byte - anything from 0x80 included - is returned as it is. No locale.
+ * For writing a name in its canonical form (HTTP/2 and HTTP/3 field names, a host in a cache
+ * key) where proven_u8str_view_eq_ascii_ci compares two. Since v0.110.0.
+ */
+[[nodiscard]] static inline proven_byte_t proven_ascii_lower(proven_byte_t c) {
+    return c >= 'A' && c <= 'Z' ? (proven_byte_t)(c + ('a' - 'A')) : c;
+}
 [[nodiscard]] proven_u8str_view_t proven_u8str_view_slice(proven_u8str_view_t str, proven_size_t index, proven_size_t len);
 
 // -------------------------------------------------------------
