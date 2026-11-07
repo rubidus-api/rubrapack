@@ -54,7 +54,7 @@ static bool buf_own(proven_http_event_client_t *cl, proven_cl_buf_t *b, proven_s
     while (cap < have + more) { if (cap > (proven_size_t)-1 / 2) return false; cap *= 2; }
     proven_byte_t *p = cl_alloc(cl->alloc, cap);
     if (!p) return false;
-    proven_net_mem_copy(p, b->ptr + b->off, have);
+    proven_net_mem_copy(p, PROVEN_NET_AT(b->ptr, b->off), have);
     if (b->ptr && !b->borrowed) cl->alloc.free_fn(cl->alloc.ctx, b->ptr);
     b->ptr = p; b->len = have; b->off = 0; b->cap = cap; b->borrowed = false;
     return true;
@@ -677,7 +677,7 @@ static bool cl_flush(proven_http_event_request_t *c) {
     if (k->tls && !proven_tls_is_established(k->tls) && c->early_len == 0 && buf_pending(&c->out) > 0 && proven_tls_early_room_(k->tls) > 0) {
         /* The request as early data (RFC-0027), up to what the ticket allows. Its bytes are kept
          * until the server has said whether it read them. */
-        proven_result_size_t w = proven_tls_write(k->tls, (proven_mem_view_t){ .ptr = c->out.ptr + c->out.off, .size = buf_pending(&c->out) });
+        proven_result_size_t w = proven_tls_write(k->tls, (proven_mem_view_t){ .ptr = PROVEN_NET_AT(c->out.ptr, c->out.off), .size = buf_pending(&c->out) });
         if (w.err != PROVEN_OK) { cl_kill(c, PROVEN_ERR_RESET); return false; }
         c->early_len = (proven_u32)w.value;
         c->out.off += w.value;
@@ -687,13 +687,13 @@ static bool cl_flush(proven_http_event_request_t *c) {
     cl_settle_early(c);
     for (;;) {
         if (k->tls && buf_pending(&c->out) > 0 && proven_tls_is_established(k->tls)) {
-            proven_result_size_t w = proven_tls_write(k->tls, (proven_mem_view_t){ .ptr = c->out.ptr + c->out.off, .size = buf_pending(&c->out) });
+            proven_result_size_t w = proven_tls_write(k->tls, (proven_mem_view_t){ .ptr = PROVEN_NET_AT(c->out.ptr, c->out.off), .size = buf_pending(&c->out) });
             if (w.err != PROVEN_OK) { cl_kill(c, PROVEN_ERR_RESET); return false; }
             c->out.off += w.value;
             if (w.value > 0) c->sent = true;
         }
         proven_mem_view_t pending = k->tls ? proven_tls_pending_output(k->tls)
-                                           : (proven_mem_view_t){ .ptr = c->out.ptr + c->out.off, .size = buf_pending(&c->out) };
+                                           : (proven_mem_view_t){ .ptr = PROVEN_NET_AT(c->out.ptr, c->out.off), .size = buf_pending(&c->out) };
         if (pending.size == 0) break;
         /* To the loop: straight to the socket when nothing waits there, the rest held. (A
          * request that may be sent again keeps its own bytes too: see cl_conn_give.) */
@@ -743,7 +743,7 @@ static bool cl_decode(proven_http_event_request_t *c) {
     proven_http_event_client_t *cl = c->h.client;
     proven_cl_dec_t *x = c->dec;
     if (!x->have) {
-        proven_mem_view_t in = { .ptr = c->stash.ptr + c->stash.off, .size = buf_pending(&c->stash) };
+        proven_mem_view_t in = { .ptr = PROVEN_NET_AT(c->stash.ptr, c->stash.off), .size = buf_pending(&c->stash) };
         if (in.size == 0) return false;
         proven_size_t used = 0;
         proven_mem_view_t payload = { 0 };
@@ -794,7 +794,7 @@ static void cl_process(proven_http_event_request_t *c) {
     c->processing = true;
     cl_enter(c);
     while (!c->dead) {
-        proven_mem_view_t in = { .ptr = c->stash.ptr + c->stash.off, .size = buf_pending(&c->stash) };
+        proven_mem_view_t in = { .ptr = PROVEN_NET_AT(c->stash.ptr, c->stash.off), .size = buf_pending(&c->stash) };
         if (c->state == CL_HEAD) {
             if (in.size == 0) break;
             proven_http_response_t res;

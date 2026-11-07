@@ -514,6 +514,24 @@ int proven_u8str_view_starts_with_ascii_ci(proven_u8str_view_t str, proven_u8str
     return ascii_ci_same(str.ptr, prefix.ptr, prefix.size);
 }
 
+int proven_u8str_view_ends_with_ascii_ci(proven_u8str_view_t str, proven_u8str_view_t suffix) {
+    if (suffix.size == 0) return 1;
+    if (str.size < suffix.size) return 0;
+    if (!str.ptr || !suffix.ptr) return 0;
+    return ascii_ci_same(str.ptr + (str.size - suffix.size), suffix.ptr, suffix.size);
+}
+
+int proven_u8str_view_cmp_ascii_ci(proven_u8str_view_t a, proven_u8str_view_t b) {
+    if (a.size > 0 && !a.ptr) a.size = 0;
+    if (b.size > 0 && !b.ptr) b.size = 0;
+    proven_size_t n = a.size < b.size ? a.size : b.size;
+    for (proven_size_t i = 0; i < n; ++i) {
+        proven_byte_t x = proven_ascii_lower(a.ptr[i]), y = proven_ascii_lower(b.ptr[i]);
+        if (x != y) return x < y ? -1 : 1;
+    }
+    return (a.size > b.size) - (a.size < b.size);
+}
+
 int proven_u8str_view_ends_with(proven_u8str_view_t str, proven_u8str_view_t suffix) {
     if (suffix.size == 0) return 1;
     if (str.size < suffix.size) return 0;

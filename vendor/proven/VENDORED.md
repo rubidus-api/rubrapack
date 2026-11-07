@@ -3,7 +3,7 @@
 A copied snapshot of proven_c_lib (MIT, same author). Do not edit files here; if a proven
 defect is found, report it to proven_c_lib and resync from a fixed release.
 
-- Snapshot: tag `v0.111.0`, commit `ad892607`, taken 2026-11-06 with `git archive v0.111.0`
+- Snapshot: tag `v0.112.1`, commit `ea571ee8`, taken 2026-11-07 with `git archive v0.112.1`
   (`include/`, `src/`, `platform/`, `net/`, `LICENSE`, `THIRD_PARTY_NOTICES.md`). From v0.111.0 the
   network library (proven_net: sockets, TLS, HTTP, ...) is in `net/`; rubrapack uses its TLS engine,
   so `net/` is vendored and `net/include` is on the include path.

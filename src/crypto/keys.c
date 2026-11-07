@@ -6,7 +6,6 @@
 // while PBES2 encryption feeds the password's UTF-8 bytes to PBKDF2. The MAC is checked before any
 // decryption, in constant time.
 
-#include "rubrapack/limits.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pki.h"
@@ -537,8 +536,7 @@ proven_err_t rp_keyfile_load(proven_allocator_t alloc, const uint8_t *data, size
         // Binary: a PKCS#12 file (possibly BER) or a DER PKCS#8 key.
         uint8_t *der = NULL;
         size_t der_len = 0;
-        rp_limits_t lim = rp_limits_default();
-        if (rp_ber_to_der(alloc, data, len, lim.max_depth, MAX_FILE, &der, &der_len) != PROVEN_OK) {
+        if (rp_ber_to_der(alloc, data, len, MAX_FILE, &der, &der_len) != PROVEN_OK) {
             *why = TR_N("not a PEM, PKCS#8 or PKCS#12 file");
             return PROVEN_ERR_INVALID_FORMAT;
         }

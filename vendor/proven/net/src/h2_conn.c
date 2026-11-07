@@ -1447,7 +1447,7 @@ proven_result_size_t proven_h2_conn_send_data(proven_h2_conn_t *c, proven_u32 st
             const proven_size_t piece = take - done < frame ? take - done : frame;
             const bool last = i == frames - 1;
             h2c_put_header(c->out + c->out_len, piece, PROVEN_H2_DATA, last && all && end_stream ? PROVEN_H2_FLAG_END_STREAM : 0, stream_id);
-            h2c_copy(c->out + c->out_len + 9, data.ptr + done, piece);
+            h2c_copy(c->out + c->out_len + 9, PROVEN_NET_AT(data.ptr, done), piece);
             c->out_len += 9 + piece;
             done += piece;
         }

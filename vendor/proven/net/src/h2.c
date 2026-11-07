@@ -1,4 +1,5 @@
 #include "proven/h2.h"
+#include "../platform/proven_sys_net_mem.h"
 
 /*
  * HTTP/2 (RFC 9113): frames, and the rules for a header list. No state lives here.
@@ -290,7 +291,7 @@ proven_err_t proven_h2_request_head(const proven_http_header_t *headers, proven_
         else if (h2_is(h->name, ":protocol")) { if (have_protocol) return PROVEN_ERR_INVALID_FORMAT; have_protocol = true; out->protocol = h->value; }
         else return PROVEN_ERR_INVALID_FORMAT;         /* :status, or one nobody defined */
     }
-    out->fields = headers + i;
+    out->fields = PROVEN_NET_AT(headers, i);
     out->field_count = count - i;
     for (; i < count; ++i) {
         /* An ordinary field - and so no pseudo-header field may follow. */

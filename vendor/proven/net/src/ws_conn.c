@@ -222,7 +222,7 @@ static proven_err_t wc_message_append(proven_ws_conn_t *c, proven_mem_view_t pie
         c->message = m.value.ptr;
         c->message_cap = cap;
     }
-    proven_net_mem_copy(c->message + c->message_len, piece.ptr, piece.size);
+    proven_net_mem_copy(PROVEN_NET_AT(c->message, c->message_len), piece.ptr, piece.size);
     c->message_len = need;
     return PROVEN_OK;
 }

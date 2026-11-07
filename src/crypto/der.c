@@ -1,4 +1,4 @@
-// src/crypto/der.c - DER reader and writer, BER normalizer (include/rubrapack/der.h).
+// src/crypto/der.c - DER reader and writer, BER to DER (include/rubrapack/der.h), on proven/der.h.
 
 #include "rubrapack/der.h"
 #include "rubrapack/mem.h"
@@ -60,116 +60,25 @@ bool rp_der_small(const rp_der_t *e, uint64_t *v) {
 
 // ---- BER to DER ----------------------------------------------------------------------------
 
-typedef struct {
-    proven_allocator_t alloc;
-    uint32_t           max_depth;
-    size_t             limit;
-} ber_t;
-
-// Reads one BER element at *p (n bytes available) into `out` as DER; *used gets its size.
-static bool ber_elem(const ber_t *c, const uint8_t *p, size_t n, rp_buf_t *out, size_t *used, uint32_t depth);
-
-// The children of a constructed element: until an end-of-contents (indefinite) or `len` bytes.
-static bool ber_children(const ber_t *c, const uint8_t *p, size_t n, bool indefinite, size_t len, rp_buf_t *out,
-                         size_t *used, uint32_t depth, bool join_strings) {
-    size_t off = 0;
-    size_t end = indefinite ? n : len;
-    while (true) {
-        if (indefinite) {
-            if (off + 2 <= n && p[off] == 0 && p[off + 1] == 0) {
-                *used = off + 2;
-                return true;
-            }
-            if (off >= n) return false;
-        } else if (off == end) {
-            *used = off;
-            return true;
-        }
-        size_t u;
-        if (join_strings) {
-            // A piece of a constructed OCTET STRING: its DER form, then only the contents kept.
-            rp_buf_t piece = rp_buf_new(c->alloc, c->limit);
-            if (!ber_elem(c, p + off, end - off, &piece, &u, depth + 1) || piece.err || piece.len < 2 || piece.data[0] != RP_DER_OCTET_STRING) {
-                rp_buf_free(&piece);
-                return false;
-            }
-            rp_der_span_t s = { piece.data, piece.len };
-            rp_der_t e;
-            bool ok = rp_der_read(&s, &e);
-            if (ok) rp_buf_put(out, e.val.p, e.val.n);
-            rp_buf_free(&piece);
-            if (!ok) return false;
-        } else if (!ber_elem(c, p + off, end - off, out, &u, depth + 1)) {
-            return false;
-        }
-        off += u;
-    }
-}
-
-static void put_len(rp_buf_t *b, size_t n) {
-    if (n < 0x80) {
-        rp_buf_byte(b, (uint8_t)n);
-        return;
-    }
-    uint8_t tmp[8];
-    int k = 0;
-    for (size_t v = n; v; v >>= 8) tmp[k++] = (uint8_t)v;
-    rp_buf_byte(b, (uint8_t)(0x80 | k));
-    while (k) rp_buf_byte(b, tmp[--k]);
-}
-
-static bool ber_elem(const ber_t *c, const uint8_t *p, size_t n, rp_buf_t *out, size_t *used, uint32_t depth) {
-    if (depth > c->max_depth || n < 2) return false;
-    uint8_t tag = p[0];
-    if ((tag & 0x1F) == 0x1F) return false;
-    bool constructed = tag & 0x20;
-    size_t head, len = 0;
-    bool indefinite = false;
-    if (p[1] < 0x80) {
-        len = p[1];
-        head = 2;
-    } else if (p[1] == 0x80) {
-        if (!constructed) return false;
-        indefinite = true;
-        head = 2;
-    } else {
-        size_t k = p[1] & 0x7F;
-        if (k > 4 || n < 2 + k) return false;
-        for (size_t i = 0; i < k; ++i) len = (len << 8) | p[2 + i];
-        head = 2 + k;
-    }
-    if (!indefinite && len > n - head) return false;
-    if (!constructed) {
-        rp_buf_byte(out, tag);
-        put_len(out, len);
-        rp_buf_put(out, p + head, len);
-        *used = head + len;
-        return out->err == PROVEN_OK;
-    }
-    bool join = tag == 0x24;            // constructed OCTET STRING -> primitive
-    rp_buf_t kids = rp_buf_new(c->alloc, c->limit);
-    size_t u;
-    bool ok = ber_children(c, p + head, n - head, indefinite, len, &kids, &u, depth, join) && kids.err == PROVEN_OK;
-    if (ok) {
-        rp_buf_byte(out, join ? RP_DER_OCTET_STRING : tag);
-        put_len(out, kids.len);
-        rp_buf_put(out, kids.data, kids.len);
-        *used = head + u;
-    }
-    rp_buf_free(&kids);
-    return ok && out->err == PROVEN_OK;
-}
-
-proven_err_t rp_ber_to_der(proven_allocator_t alloc, const uint8_t *in, size_t len, uint32_t max_depth, size_t limit,
-                           uint8_t **out, size_t *out_len) {
-    ber_t c = { alloc, max_depth, limit };
-    rp_buf_t b = rp_buf_new(alloc, limit);
-    size_t used;
-    if (!ber_elem(&c, in, len, &b, &used, 0) || used != len) {
-        rp_buf_free(&b);
+// proven_der_from_ber: definite lengths in their shortest form, constructed OCTET STRINGs joined,
+// nesting to PROVEN_DER_BER_MAX_DEPTH (rubrapack's own depth limit, 64). It is measured first,
+// so `limit` is checked before anything is allocated.
+proven_err_t rp_ber_to_der(proven_allocator_t alloc, const uint8_t *in, size_t len, size_t limit, uint8_t **out,
+                           size_t *out_len) {
+    proven_mem_view_t ber = { in, len };
+    size_t n = 0;
+    proven_err_t e = proven_der_from_ber(ber, (proven_mem_mut_t){ NULL, 0 }, &n);
+    if (e != PROVEN_OK && e != PROVEN_ERR_OUT_OF_BOUNDS) return PROVEN_ERR_INVALID_FORMAT;
+    if (n > limit) return PROVEN_ERR_OUT_OF_BOUNDS;
+    uint8_t *d = rp_mem_alloc(alloc, n ? n : 1, 1);
+    if (d == NULL) return PROVEN_ERR_NOMEM;
+    if (proven_der_from_ber(ber, (proven_mem_mut_t){ d, n }, &n) != PROVEN_OK) {
+        rp_mem_free(alloc, d);
         return PROVEN_ERR_INVALID_FORMAT;
     }
-    return rp_buf_take(&b, out, out_len);
+    *out = d;
+    *out_len = n;
+    return PROVEN_OK;
 }
 
 // ---- writing -----------------------------------------------------------------------------

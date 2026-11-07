@@ -329,9 +329,9 @@ static proven_u32 adler32(proven_u32 adler, const proven_byte_t *p, proven_size_
 
 /* Bring the checksum up to date with what this call has produced so far. */
 static void sum_output(proven_inflate_t *z, proven_io_t *io) {
-    const proven_byte_t *p = io->out + io->summed;
     const proven_size_t n = io->out_at - io->summed;
-    if (n == 0) return;
+    if (n == 0) return;   /* before the sum below: an empty output may be a NULL buffer */
+    const proven_byte_t *p = io->out + io->summed;
     if (z->format == PROVEN_DEFLATE_ZLIB) z->check = adler32(z->check, p, n);
     else if (z->format == PROVEN_DEFLATE_GZIP) z->check = proven_crc32_update(z->check, (proven_mem_view_t){ .ptr = p, .size = n });
     io->summed = io->out_at;
@@ -1280,8 +1280,9 @@ proven_err_t proven_deflate_all(const proven_deflate_options_t *options, proven_
     proven_size_t used = 0, made = 0, in_at = 0, out_at = 0;
     bool done = false;
     while (e == PROVEN_OK && !done) {
-        e = proven_deflate(z, (proven_mem_view_t){ .ptr = in.ptr + in_at, .size = in.size - in_at }, &used,
-                           (proven_mem_mut_t){ .ptr = out.ptr + out_at, .size = out.size - out_at }, &made, PROVEN_DEFLATE_FLUSH_FINISH, &done);
+        /* An empty input may be {NULL, 0}: no offset is applied to it (NULL + 0 is undefined). */
+        e = proven_deflate(z, (proven_mem_view_t){ .ptr = in_at ? in.ptr + in_at : in.ptr, .size = in.size - in_at }, &used,
+                           (proven_mem_mut_t){ .ptr = out_at ? out.ptr + out_at : out.ptr, .size = out.size - out_at }, &made, PROVEN_DEFLATE_FLUSH_FINISH, &done);
         in_at += used; out_at += made;
         if (e == PROVEN_OK && !done && used == 0 && made == 0) e = PROVEN_ERR_OUT_OF_BOUNDS;
     }

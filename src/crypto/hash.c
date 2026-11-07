@@ -18,7 +18,6 @@ void rp_hash_init(rp_hash_t *h, rp_hash_alg_t alg) {
 }
 
 void rp_hash_update(rp_hash_t *h, const void *data, size_t len) {
-    if (len == 0) return;                       // data may be NULL then (an empty stream's buffer)
     if (h->alg == RP_HASH_SHA256) proven_sha256_update(&h->u.s256, mv(data, len));
     else if (h->alg == RP_HASH_SHA384) proven_sha384_update(&h->u.s512, mv(data, len));
     else proven_sha512_update(&h->u.s512, mv(data, len));
@@ -80,7 +79,7 @@ void rp_pbkdf2(rp_hash_alg_t alg, const uint8_t *pass, size_t pass_len, const ui
 void rp_sha1_init(rp_sha1_t *s) { proven_sha1_init(s); }
 
 void rp_sha1_update(rp_sha1_t *s, const void *data, size_t len) {
-    if (len) proven_sha1_update(s, mv(data, len));
+    proven_sha1_update(s, mv(data, len));
 }
 
 void rp_sha1_final(rp_sha1_t *s, uint8_t out[20]) { proven_sha1_final(s, out); }

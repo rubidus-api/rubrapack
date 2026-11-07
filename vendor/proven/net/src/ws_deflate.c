@@ -1,4 +1,5 @@
 #include "proven_internal_ws.h"
+#include "../platform/proven_sys_net_mem.h"
 
 /*
  * permessage-deflate (RFC 7692) for the WebSocket drivers: one message in, one message out.
@@ -44,7 +45,7 @@ proven_err_t proven_ws_inflate_step_(proven_ws_inflate_t_ *m, proven_mem_view_t 
          * left off. */
         bool from_tail = *consumed == in.size && last && m->tail < 4;
         proven_mem_view_t src = from_tail ? (proven_mem_view_t){ .ptr = WS_TAIL + m->tail, .size = (proven_size_t)(4 - m->tail) }
-                                          : (proven_mem_view_t){ .ptr = in.ptr + *consumed, .size = in.size - *consumed };
+                                          : (proven_mem_view_t){ .ptr = PROVEN_NET_AT(in.ptr, *consumed), .size = in.size - *consumed };
         proven_size_t used = 0, made = 0;
         bool ended = false;
         proven_byte_t *at = out.ptr + *produced;
@@ -111,7 +112,7 @@ proven_err_t proven_ws_deflate_step_(proven_deflate_t *z, proven_mem_view_t in, 
     while (held + fresh < out.size - 4) {
         proven_size_t used = 0, made = 0;
         bool finished = false;
-        proven_err_t e = proven_deflate(z, (proven_mem_view_t){ .ptr = in.ptr + *consumed, .size = in.size - *consumed }, &used,
+        proven_err_t e = proven_deflate(z, (proven_mem_view_t){ .ptr = PROVEN_NET_AT(in.ptr, *consumed), .size = in.size - *consumed }, &used,
                                         (proven_mem_mut_t){ .ptr = out.ptr + held + fresh, .size = out.size - 4 - held - fresh }, &made,
                                         flush ? PROVEN_DEFLATE_FLUSH_SYNC : PROVEN_DEFLATE_FLUSH_NONE, &finished);
         if (e != PROVEN_OK) return e;

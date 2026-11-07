@@ -160,6 +160,7 @@ static const char *const proven_sources[] = {
     "src/proven/sign.c",
     "src/proven/time.c",
     "src/proven/u16str.c",
+    "src/proven/u16str_view.c",
     "src/proven/u8str.c",
     "src/proven/utf.c",
     "platform/proven_sys_aes.c",
@@ -349,6 +350,7 @@ static unsigned char *read_all(const char *path, size_t *len) {
 #define PART_PROVEN                                                                                                       \
     "-Ivendor/proven/include -Ivendor/proven/platform -ffunction-sections -fdata-sections -Wl,--gc-sections "             \
     "vendor/proven/src/proven/utf.c vendor/proven/src/proven/u8str.c vendor/proven/src/proven/u16str.c "                  \
+    "vendor/proven/src/proven/u16str_view.c "                                                                             \
     "vendor/proven/src/proven/buffer.c vendor/proven/src/proven/memory.c vendor/proven/platform/proven_sys_mem.c "
 
 // ./nob parts: the helper DLL for the three architectures, reproducibly (no timestamp, no paths,

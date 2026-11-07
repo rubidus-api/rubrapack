@@ -299,6 +299,93 @@ proven_err_t proven_utf16_to_utf8(const proven_u16 *src, proven_size_t n, proven
 }
 
 // -------------------------------------------------------------
+// Lossy (RFC-0044): what cannot be decoded becomes U+FFFD
+// -------------------------------------------------------------
+
+/* One pass of each: `out` NULL measures. The replacement rule is utf8_decode_span's maximal
+ * subpart for UTF-8 - one U+FFFD per malformed step, and one for a character cut off at the end -
+ * and one U+FFFD per unpaired surrogate unit for UTF-16. */
+static proven_err_t utf8_to_utf16_lossy_run(proven_u8str_view_t src, proven_u16 *out, proven_size_t *count) {
+    if (src.size > 0 && !src.ptr) return PROVEN_ERR_INVALID_ARG;
+    proven_size_t w = 0;
+    for (proven_size_t i = 0; i < src.size;) {
+        proven_u32 cp;
+        proven_size_t bad = 1;
+        int r = utf8_decode_span(src.ptr + i, src.size - i, &cp, &bad);
+        if (r > 0) i += (proven_size_t)r;
+        else { cp = 0xFFFDu; i += r == 0 ? src.size - i : bad; }
+        const proven_size_t units = cp >= 0x10000u ? 2 : 1;
+        if (out) {
+            if (units == 2) {
+                out[w] = (proven_u16)(0xD800u + ((cp - 0x10000u) >> 10));
+                out[w + 1] = (proven_u16)(0xDC00u + ((cp - 0x10000u) & 0x3FFu));
+            } else {
+                out[w] = (proven_u16)cp;
+            }
+        }
+        if (PROVEN_CKD_ADD(&w, w, units)) return PROVEN_ERR_OVERFLOW;
+    }
+    *count = w;
+    return PROVEN_OK;
+}
+
+static proven_err_t utf16_to_utf8_lossy_run(const proven_u16 *src, proven_size_t n, proven_byte_t *out, proven_size_t *count) {
+    if (n > 0 && !src) return PROVEN_ERR_INVALID_ARG;
+    proven_size_t w = 0;
+    for (proven_size_t i = 0; i < n;) {
+        proven_u32 cp;
+        int r = utf16_decode(src + i, n - i, &cp);
+        if (r > 0) i += (proven_size_t)r;
+        else { cp = 0xFFFDu; i += 1; }
+        const int width = utf8_width(cp);
+        if (out) utf8_put(out + w, cp, width);
+        if (PROVEN_CKD_ADD(&w, w, (proven_size_t)width)) return PROVEN_ERR_OVERFLOW;
+    }
+    *count = w;
+    return PROVEN_OK;
+}
+
+proven_result_size_t proven_utf8_to_utf16_lossy_size(proven_u8str_view_t src) {
+    proven_result_size_t res = { PROVEN_OK, 0 };
+    res.err = utf8_to_utf16_lossy_run(src, NULL, &res.value);
+    if (res.err != PROVEN_OK) res.value = 0;
+    return res;
+}
+
+proven_result_size_t proven_utf16_to_utf8_lossy_size(const proven_u16 *src, proven_size_t n) {
+    proven_result_size_t res = { PROVEN_OK, 0 };
+    res.err = utf16_to_utf8_lossy_run(src, n, NULL, &res.value);
+    if (res.err != PROVEN_OK) res.value = 0;
+    return res;
+}
+
+proven_err_t proven_utf8_to_utf16_lossy(proven_u8str_view_t src, proven_u16 *out, proven_size_t out_cap,
+                                        proven_size_t *written) {
+    if (written) *written = 0;
+    if (out_cap > 0 && !out) return PROVEN_ERR_INVALID_ARG;
+    proven_result_size_t need = proven_utf8_to_utf16_lossy_size(src);
+    if (!proven_is_ok(need.err)) return need.err;
+    if (need.value > out_cap) return PROVEN_ERR_OUT_OF_BOUNDS;
+    proven_size_t n = 0;
+    proven_err_t e = need.value ? utf8_to_utf16_lossy_run(src, out, &n) : PROVEN_OK;
+    if (e == PROVEN_OK && written) *written = n;
+    return e;
+}
+
+proven_err_t proven_utf16_to_utf8_lossy(const proven_u16 *src, proven_size_t n, proven_byte_t *out,
+                                        proven_size_t out_cap, proven_size_t *written) {
+    if (written) *written = 0;
+    if (out_cap > 0 && !out) return PROVEN_ERR_INVALID_ARG;
+    proven_result_size_t need = proven_utf16_to_utf8_lossy_size(src, n);
+    if (!proven_is_ok(need.err)) return need.err;
+    if (need.value > out_cap) return PROVEN_ERR_OUT_OF_BOUNDS;
+    proven_size_t k = 0;
+    proven_err_t e = need.value ? utf16_to_utf8_lossy_run(src, n, out, &k) : PROVEN_OK;
+    if (e == PROVEN_OK && written) *written = k;
+    return e;
+}
+
+// -------------------------------------------------------------
 // Growable, atomic
 // -------------------------------------------------------------
 

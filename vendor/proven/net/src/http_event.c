@@ -63,7 +63,7 @@ static bool buf_own(proven_http_event_server_t *s, proven_ev_buf_t *b, proven_si
     while (cap < have + more) { if (cap > (proven_size_t)-1 / 2) return false; cap *= 2; }
     proven_byte_t *p = ev_alloc(s->alloc, cap);
     if (!p) return false;
-    proven_net_mem_copy(p, b->ptr + b->off, have);
+    proven_net_mem_copy(p, PROVEN_NET_AT(b->ptr, b->off), have);
     if (b->ptr && !b->borrowed) s->alloc.free_fn(s->alloc.ctx, b->ptr);
     b->ptr = p; b->len = have; b->off = 0; b->cap = cap; b->borrowed = false;
     return true;
@@ -467,14 +467,14 @@ static void ev_process(proven_http_stream_t *c) {
     c->processing = true;
     ev_enter(c);
     while (!c->dead) {
-        proven_mem_view_t in = { .ptr = c->stash.ptr + c->stash.off, .size = buf_pending(&c->stash) };
+        proven_mem_view_t in = { .ptr = PROVEN_NET_AT(c->stash.ptr, c->stash.off), .size = buf_pending(&c->stash) };
         if (c->h.state == EV_LINGER) { c->stash.len = 0; c->stash.off = 0; break; }
         if (c->h.state == EV_RESPOND) break;        /* what follows belongs to the next request */
         if (c->h.state == EV_RAW) {
             if (c->paused || in.size == 0 || !c->raw) break;
             if (s->delivering && proven_http_event_h2_owns_(c->raw)) { ev_defer(c); break; }
             proven_size_t used = (*(const proven_http_event_raw_ops_t *const *)c->raw)->on_input(
-                c->raw, (proven_mem_mut_t){ .ptr = c->stash.ptr + c->stash.off, .size = in.size });
+                c->raw, (proven_mem_mut_t){ .ptr = PROVEN_NET_AT(c->stash.ptr, c->stash.off), .size = in.size });
             if (c->dead || c->h.state != EV_RAW) break;      /* closed from inside: the input is void */
             c->stash.off += used;
             if (used < in.size) break;
@@ -1315,7 +1315,7 @@ static bool ev_zip(proven_http_stream_t *c, const proven_byte_t *p, proven_size_
         proven_err_t e = proven_http_compressor_step_(c->zip, (proven_mem_view_t){ .ptr = p, .size = n }, &used,
                                                       (proven_mem_mut_t){ .ptr = s->zbuf, .size = PROVEN_HTTP_CODING_PIECE }, &made, flush, &done);
         if (e != PROVEN_OK) { ev_kill(c, e); return false; }
-        p += used;
+        if (used) p += used;
         n -= used;
         if (made > 0) {
             bool ok = true;

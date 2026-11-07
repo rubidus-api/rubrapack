@@ -188,6 +188,11 @@ typedef struct {
  */
 [[nodiscard]] int proven_u8str_view_eq_ascii_ci(proven_u8str_view_t a, proven_u8str_view_t b);
 [[nodiscard]] int proven_u8str_view_starts_with_ascii_ci(proven_u8str_view_t str, proven_u8str_view_t prefix);
+/** @brief proven_u8str_view_ends_with by the same rule. Since v0.112.0. */
+[[nodiscard]] int proven_u8str_view_ends_with_ascii_ci(proven_u8str_view_t str, proven_u8str_view_t suffix);
+/** @brief proven_u8str_view_cmp of the bytes made lower case by proven_ascii_lower: an order
+ *  that agrees with proven_u8str_view_eq_ascii_ci. Test the sign. Since v0.112.0. */
+[[nodiscard]] int proven_u8str_view_cmp_ascii_ci(proven_u8str_view_t a, proven_u8str_view_t b);
 /**
  * @brief One byte with an ASCII letter made lower case, by the rule above: 'A' to 'Z' become 'a'
  * to 'z' and every other byte - anything from 0x80 included - is returned as it is. No locale.

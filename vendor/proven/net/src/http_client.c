@@ -269,7 +269,7 @@ static void cl_proxy_creds(const proven_http_client_t *c, proven_byte_t *ub, pro
                            proven_u8str_view_t *user, proven_u8str_view_t *pass) {
     proven_u8str_view_t ui = c->proxy.userinfo;
     *user = ui;
-    *pass = (proven_u8str_view_t){ .ptr = ui.ptr + ui.size, .size = 0 };
+    *pass = (proven_u8str_view_t){ .ptr = PROVEN_NET_AT(ui.ptr, ui.size), .size = 0 };
     for (proven_size_t i = 0; i < ui.size; ++i) {
         if (ui.ptr[i] == ':') {
             *user = (proven_u8str_view_t){ .ptr = ui.ptr, .size = i };
@@ -1174,7 +1174,7 @@ static proven_result_size_t cl_read_decoded(proven_cl_call_t *call, proven_mem_m
         proven_size_t used = 0, made = 0;
         res.err = proven_http_decoder_step_(&call->dec, call->pending, &used, dest, &made);
         if (res.err != PROVEN_OK) break;
-        call->pending.ptr += used;
+        if (used) call->pending.ptr += used;
         call->pending.size -= used;
         if (made > 0) { res.value = made; return res; }
         if (call->pending.size > 0) {

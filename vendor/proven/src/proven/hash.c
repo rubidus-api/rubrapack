@@ -59,7 +59,8 @@ proven_u64 proven_hash_keyed(proven_mem_view_t data, const proven_byte_t key[16]
     proven_u64 v3 = 0x7465646279746573ull ^ k1;
 
     if (data.size > 0 && !data.ptr) { data.size = 0; }   /* consistent with the SHA path */
-    const proven_byte_t *in = data.ptr;
+    static const proven_byte_t none[1] = { 0 };
+    const proven_byte_t *in = data.ptr ? data.ptr : none;   /* no offset is ever applied to NULL */
     proven_size_t len = data.size;
     proven_size_t left = len & 7u;
     const proven_byte_t *end = in + (len - left);
@@ -479,7 +480,9 @@ void proven_sha256_init(proven_sha256_t *ctx) {
 }
 
 void proven_sha256_update(proven_sha256_t *ctx, proven_mem_view_t data) {
-    if (!ctx || (data.size > 0 && !data.ptr)) return;
+    /* An empty view - {NULL, 0} included - changes nothing; returning here also keeps `p` from
+     * being advanced from NULL below (pointer arithmetic on NULL, which UBSan reports). */
+    if (!ctx || data.size == 0 || !data.ptr) return;
     ctx->length += data.size;
     const proven_byte_t *p = data.ptr;
     proven_size_t n = data.size;

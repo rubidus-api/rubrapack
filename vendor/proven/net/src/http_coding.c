@@ -1,4 +1,5 @@
 #include "proven_internal_http_coding.h"
+#include "../platform/proven_sys_net_mem.h"
 
 /*
  * Content codings for the HTTP drivers: when a body is decoded, when a response is
@@ -130,7 +131,7 @@ proven_err_t proven_http_decoder_step_(proven_http_decoder_t_ *d, proven_mem_vie
         /* The two bytes that were held go in first. */
         bool from_hold = d->held_pos < d->held;
         proven_mem_view_t src = from_hold ? (proven_mem_view_t){ .ptr = d->hold + d->held_pos, .size = (proven_size_t)(d->held - d->held_pos) }
-                                          : (proven_mem_view_t){ .ptr = in.ptr + *consumed, .size = in.size - *consumed };
+                                          : (proven_mem_view_t){ .ptr = PROVEN_NET_AT(in.ptr, *consumed), .size = in.size - *consumed };
         if (d->ended) {
             if (src.size == 0) return PROVEN_OK;
             /* More bytes after the end of a stream: another gzip member, or nothing valid. */

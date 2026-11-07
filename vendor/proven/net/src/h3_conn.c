@@ -145,7 +145,7 @@ static bool buf_put(proven_h3_conn_t *h, proven_byte_t **p, proven_size_t *off, 
             q = (proven_byte_t *)h3_alloc(h, want, 1);
             if (!q) return false;
         }
-        proven_net_mem_move(q, *p + *off, live);
+        proven_net_mem_move(q, PROVEN_NET_AT(*p, *off), live);
         if (q != *p) { h3_free(h, *p, *cap); *cap = want; }
         *p = q; *off = 0; *n = live;
     }

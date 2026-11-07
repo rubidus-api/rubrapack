@@ -287,7 +287,7 @@ static proven_err_t sv_zip(proven_sv_conn_t *c, proven_mem_view_t data, proven_d
         bool done = false;
         proven_err_t e = proven_http_compressor_step_(c->zip, data, &used, (proven_mem_mut_t){ .ptr = c->out, .size = c->out_cap }, &made, flush, &done);
         if (e != PROVEN_OK) { c->close_after = true; return e; }
-        data.ptr += used;
+        if (used) data.ptr += used;
         data.size -= used;
         e = sv_send_piece(c, (proven_mem_view_t){ .ptr = c->out, .size = made });
         if (e != PROVEN_OK) return e;

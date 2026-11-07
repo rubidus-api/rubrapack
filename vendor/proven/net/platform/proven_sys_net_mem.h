@@ -12,6 +12,13 @@
  *        null pointer with a size, does nothing.
  */
 
+/**
+ * @brief `p + n` that never applies an offset to a null pointer: an empty buffer's NULL stays NULL.
+ *        `NULL + 0` is undefined in C (clang's UBSan reports it), and an empty, never-allocated
+ *        buffer's position is exactly that. `n` is evaluated twice: pass a plain expression.
+ */
+#define PROVEN_NET_AT(p, n) ((n) ? (p) + (n) : (p))
+
 #ifdef PROVEN_FREESTANDING
 
 static inline void proven_net_mem_copy(void *dst, const void *src, proven_size_t size) {

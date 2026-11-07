@@ -50,10 +50,10 @@ bool rp_der_oid_is(const rp_der_t *e, const uint8_t *oid, size_t len);
 // A non-negative INTEGER that fits in 64 bits.
 [[nodiscard]] bool rp_der_small(const rp_der_t *e, uint64_t *v);
 
-// BER to DER: definite lengths, shortest length forms, constructed OCTET STRINGs joined into one.
-// Nesting deeper than `max_depth` or output beyond `limit` bytes is refused.
-[[nodiscard]] proven_err_t rp_ber_to_der(proven_allocator_t alloc, const uint8_t *in, size_t len, uint32_t max_depth,
-                                         size_t limit, uint8_t **out, size_t *out_len);
+// BER to DER (proven_der_from_ber): definite lengths, shortest length forms, constructed OCTET
+// STRINGs joined into one. Nesting deeper than 64 or output beyond `limit` bytes is refused.
+[[nodiscard]] proven_err_t rp_ber_to_der(proven_allocator_t alloc, const uint8_t *in, size_t len, size_t limit,
+                                         uint8_t **out, size_t *out_len);
 
 // ---- writing ---------------------------------------------------------------------------------
 

@@ -13,7 +13,7 @@
 static void feed(proven_sha256_t *h, const void *p, size_t n) {
     uint8_t len[4] = { (uint8_t)n, (uint8_t)(n >> 8), (uint8_t)(n >> 16), (uint8_t)(n >> 24) };
     proven_sha256_update(h, (proven_mem_view_t){ len, 4 });
-    if (n) proven_sha256_update(h, (proven_mem_view_t){ p, n });
+    proven_sha256_update(h, (proven_mem_view_t){ p, n });
 }
 
 static void uuid_text(const uint8_t b[16], char out[39]) {

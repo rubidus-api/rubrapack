@@ -165,7 +165,7 @@ static proven_err_t ws_frame(proven_ws_stream_t *ws, proven_u8 opcode, bool fin,
     proven_size_t done = 0;
     do {
         const proven_size_t n = data.size - done < sizeof piece ? data.size - done : sizeof piece;
-        proven_net_mem_copy(piece, data.ptr + done, n);
+        proven_net_mem_copy(piece, PROVEN_NET_AT(data.ptr, done), n);
         proven_ws_mask((proven_mem_mut_t){ .ptr = piece, .size = n }, f.mask, done);
         if (!ws->conn || !ws->tr->send(ws->conn, (proven_mem_view_t){ .ptr = header, .size = done == 0 ? len : 0 }, (proven_mem_view_t){ .ptr = piece, .size = n })) return PROVEN_ERR_RESET;
         done += n;
@@ -220,7 +220,7 @@ static bool ws_rx_run(proven_ws_stream_t *ws, const proven_byte_t *p, proven_siz
         if (ws->paused) { finished = false; break; }
         proven_size_t used = 0, made = 0;
         bool done = false;
-        proven_err_t e = proven_ws_inflate_step_(&rx->m, (proven_mem_view_t){ .ptr = p + *consumed, .size = n - *consumed }, &used, last,
+        proven_err_t e = proven_ws_inflate_step_(&rx->m, (proven_mem_view_t){ .ptr = PROVEN_NET_AT(p, *consumed), .size = n - *consumed }, &used, last,
                                                  (proven_mem_mut_t){ .ptr = rx->piece, .size = sizeof rx->piece }, &made, ws->max_message, &done);
         *consumed += used;
         /* Bytes that are not DEFLATE are answered as text that is not text is: the payload is
@@ -687,7 +687,7 @@ void proven_ws_stream_resume(proven_ws_stream_t *ws) {
     if (ws_rx(ws) && ws_rx(ws)->have_held) {
         proven_ws_rx_t *rx = ws_rx(ws);
         proven_size_t took = 0;
-        bool finished = ws_rx_run(ws, rx->held + rx->held_at, rx->held_len - rx->held_at, rx->held_last, &took);
+        bool finished = ws_rx_run(ws, PROVEN_NET_AT(rx->held, rx->held_at), rx->held_len - rx->held_at, rx->held_last, &took);
         if (ws_rx(ws) == rx) {
             rx->held_at += took;
             if (finished) {

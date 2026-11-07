@@ -1237,7 +1237,7 @@ static bool s_zip(proven_h3s_t *s, const proven_byte_t *p, proven_size_t n, prov
         proven_err_t e = proven_http_compressor_step_(s->zip, (proven_mem_view_t){ .ptr = p, .size = n }, &used,
                                                       (proven_mem_mut_t){ .ptr = sv->zbuf, .size = PROVEN_HTTP_CODING_PIECE }, &made, flush, &done);
         if (e != PROVEN_OK) return false;
-        p += used;
+        if (used) p += used;
         n -= used;
         if (s->out_off > 0 && s->out_off == s->out_len) s->out_off = s->out_len = 0;
         if (!h3_append(sv->alloc, &s->out, &s->out_len, &s->out_cap, sv->zbuf, made)) return false;

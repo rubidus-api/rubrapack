@@ -1448,7 +1448,7 @@ ZSTD_HOT proven_size_t match_lazy_mls(proven_zstd_encoder_t *z, const proven_byt
                 if (g2 > g1) { ml = m2; off = o2; rep = false; st = ip; d = 0; continue; }   /* a better match: look on from it */
             }
         }
-        if (!rep) while (st > anchor && (proven_size_t)(st - lowp) > off && st[-1] == st[-1 - (proven_size_t)off]) { st--; ml++; }
+        if (!rep) while (st > anchor && (proven_size_t)(st - lowp) > off && st[-1] == *(st - 1 - (proven_size_t)off)) { st--; ml++; }
     store_it:
         store(&k, anchor, iend, (proven_size_t)(st - anchor), off, ml);
         ip = anchor = st + ml;

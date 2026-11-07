@@ -140,4 +140,36 @@ void proven_der_put_raw(proven_der_writer_t *w, proven_mem_view_t der);
 [[nodiscard]]
 proven_err_t proven_der_writer_finish(const proven_der_writer_t *w, proven_size_t *len);
 
+/** @brief How deep proven_der_from_ber reads: the outermost element is depth 0, and an element
+ *         below depth PROVEN_DER_BER_MAX_DEPTH is refused. */
+#define PROVEN_DER_BER_MAX_DEPTH 64
+
+/**
+ * @brief Rewrite one BER element - a PKCS#12 file as Windows and some other tools export it - into
+ *        the DER that proven_der_read reads. Since v0.112.0.
+ *
+ * What it rewrites, and only this: an indefinite length becomes a definite one; every length is
+ * written in its shortest form; a constructed OCTET STRING (tag 0x24, at any depth, its pieces
+ * OCTET STRINGs themselves primitive or constructed) becomes one primitive OCTET STRING of its
+ * pieces' content joined. Everything else is copied as it is: the order of a SET's elements,
+ * a BOOLEAN's value, the constructed forms of other string types. So the result is DER for what
+ * PKCS#12, PKCS#8 and CMS files contain, not a canonical form of any BER. The rewrite and the
+ * inputs refused are those of the converter rubrapack used before this function, so its outputs
+ * did not change.
+ *
+ * Refused (PROVEN_ERR_INVALID_FORMAT): anything after the one element; a high-tag-number tag; an
+ * indefinite length on a primitive element; a long-form length of more than 4 bytes; a length
+ * past its input; a missing end-of-contents; a piece of a constructed OCTET STRING that is not
+ * one; nesting deeper than PROVEN_DER_BER_MAX_DEPTH. A length in long form that is not the
+ * shortest is accepted and rewritten - that is the point.
+ *
+ * Writes into `out`; nothing is allocated. `*len` gets the DER size, on PROVEN_OK and on
+ * PROVEN_ERR_OUT_OF_BOUNDS (`out` too small, nothing usable written), so a call with an empty
+ * `out` measures. The DER can be a few bytes longer than the BER: an indefinite length over
+ * 65535 bytes of content takes 5 bytes where the BER took 4. `out` must not overlap `ber`.
+ * PROVEN_ERR_INVALID_ARG for a NULL `len` or an ill-formed view.
+ */
+[[nodiscard]]
+proven_err_t proven_der_from_ber(proven_mem_view_t ber, proven_mem_mut_t out, proven_size_t *len);
+
 #endif /* PROVEN_DER_H */

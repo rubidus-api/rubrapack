@@ -256,3 +256,133 @@ proven_err_t proven_der_writer_finish(const proven_der_writer_t *w, proven_size_
     if (len) *len = w->len;
     return PROVEN_OK;
 }
+
+/*
+ * BER to DER (RFC-0044): the rewrite rubrapack's rp_ber_to_der does, rule for rule, so a file it
+ * read before reads the same now - the same bytes out and the same inputs refused. Each element is
+ * read twice when it is written: once to measure its DER content, once to write it. Recursion is
+ * bounded by PROVEN_DER_BER_MAX_DEPTH.
+ */
+typedef struct {
+    proven_byte_t *buf;   /* NULL: measure only */
+    proven_size_t len;
+} ber_out_t;
+
+typedef struct {
+    proven_u8 tag;
+    bool constructed, indefinite;
+    proven_size_t head, len;
+} ber_head_t;
+
+static bool ber_head(const proven_byte_t *p, proven_size_t n, ber_head_t *h) {
+    if (n < 2) return false;
+    h->tag = p[0];
+    if ((h->tag & 0x1fu) == 0x1fu) return false;
+    h->constructed = (h->tag & 0x20u) != 0;
+    h->indefinite = false;
+    h->len = 0;
+    if (p[1] < 0x80u) {
+        h->len = p[1];
+        h->head = 2;
+    } else if (p[1] == 0x80u) {
+        if (!h->constructed) return false;
+        h->indefinite = true;
+        h->head = 2;
+    } else {
+        const proven_size_t k = p[1] & 0x7fu;
+        if (k > 4 || n < 2 + k) return false;
+        for (proven_size_t i = 0; i < k; ++i) h->len = (h->len << 8) | p[2 + i];
+        h->head = 2 + k;
+    }
+    return h->indefinite || h->len <= n - h->head;
+}
+
+static void ber_put(ber_out_t *o, const proven_byte_t *p, proven_size_t n) {
+    if (o->buf && n) proven_sys_mem_copy(o->buf + o->len, p, n);
+    o->len += n;
+}
+
+static void ber_put_head(ber_out_t *o, proven_u8 tag, proven_size_t len) {
+    const proven_size_t ls = dw_len_size(len);
+    if (o->buf) {
+        o->buf[o->len] = tag;
+        dw_len_write(o->buf + o->len + 1, len);
+    }
+    o->len += 1 + ls;
+}
+
+static bool ber_elem(const proven_byte_t *p, proven_size_t n, unsigned depth, bool content_only, ber_out_t *o,
+                     proven_size_t *used, proven_u8 *der_tag, proven_size_t *content);
+
+/*
+ * The children of a constructed element - to the end-of-contents of an indefinite one, or `len`
+ * bytes - written to `o` (NULL buf: measured). `join`: each child must become an OCTET STRING and
+ * only its content is kept. `*used` is the bytes read, end-of-contents included; `*size` the
+ * bytes written.
+ */
+static bool ber_children(const proven_byte_t *p, proven_size_t n, const ber_head_t *h, unsigned depth, bool join,
+                         ber_out_t *o, proven_size_t *used, proven_size_t *size) {
+    const proven_size_t end = h->indefinite ? n : h->len;
+    const proven_size_t start = o->len;
+    proven_size_t off = 0;
+    for (;;) {
+        if (h->indefinite) {
+            if (off + 2 <= n && p[off] == 0 && p[off + 1] == 0) { *used = off + 2; break; }
+            if (off >= n) return false;
+        } else if (off == end) {
+            *used = off;
+            break;
+        }
+        proven_size_t u, c;
+        proven_u8 t;
+        if (!ber_elem(p + off, end - off, depth + 1, join, o, &u, &t, &c)) return false;
+        if (join && t != PROVEN_DER_OCTET_STRING) return false;
+        off += u;
+    }
+    *size = o->len - start;
+    return true;
+}
+
+/*
+ * One element at `p` (`n` bytes available) as DER. `*used`: the BER bytes it took; `*der_tag`: its
+ * DER tag; `*content`: its DER content size. Written to `o` whole, or its content only when
+ * `content_only` (a piece of a constructed OCTET STRING).
+ */
+static bool ber_elem(const proven_byte_t *p, proven_size_t n, unsigned depth, bool content_only, ber_out_t *o,
+                     proven_size_t *used, proven_u8 *der_tag, proven_size_t *content) {
+    ber_head_t h;
+    if (depth > PROVEN_DER_BER_MAX_DEPTH || !ber_head(p, n, &h)) return false;
+    if (!h.constructed) {
+        if (!content_only) ber_put_head(o, h.tag, h.len);
+        ber_put(o, p + h.head, h.len);
+        *used = h.head + h.len;
+        *der_tag = h.tag;
+        *content = h.len;
+        return true;
+    }
+    const bool join = h.tag == 0x24u;   /* a constructed OCTET STRING becomes a primitive one */
+    *der_tag = join ? PROVEN_DER_OCTET_STRING : h.tag;
+    proven_size_t u, c;
+    ber_out_t measure = { (proven_byte_t *)0, 0 };
+    if (!ber_children(p + h.head, n - h.head, &h, depth, join, &measure, &u, &c)) return false;
+    if (!content_only) ber_put_head(o, *der_tag, c);
+    if (o->buf && !ber_children(p + h.head, n - h.head, &h, depth, join, o, &u, &c)) return false;
+    if (!o->buf) o->len += c;
+    *used = h.head + u;
+    *content = c;
+    return true;
+}
+
+proven_err_t proven_der_from_ber(proven_mem_view_t ber, proven_mem_mut_t out, proven_size_t *len) {
+    if (!len || (ber.size > 0 && !ber.ptr) || (out.size > 0 && !out.ptr)) return PROVEN_ERR_INVALID_ARG;
+    *len = 0;
+    ber_out_t m = { (proven_byte_t *)0, 0 };
+    proven_size_t used, c;
+    proven_u8 t;
+    if (!ber_elem(ber.ptr, ber.size, 0, false, &m, &used, &t, &c) || used != ber.size) return PROVEN_ERR_INVALID_FORMAT;
+    *len = m.len;
+    if (m.len > out.size) return PROVEN_ERR_OUT_OF_BOUNDS;
+    ber_out_t w = { out.ptr, 0 };
+    if (!ber_elem(ber.ptr, ber.size, 0, false, &w, &used, &t, &c)) return PROVEN_ERR_INVALID_FORMAT;
+    return PROVEN_OK;
+}

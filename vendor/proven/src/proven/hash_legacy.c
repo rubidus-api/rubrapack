@@ -24,6 +24,7 @@ typedef void (*legacy_compress_fn)(proven_u32 *state, const proven_byte_t block[
 static void legacy_update(proven_u32 *state, proven_u64 *length, proven_byte_t block[64],
                           proven_size_t *block_len, legacy_compress_fn compress,
                           proven_mem_view_t data) {
+    if (data.size == 0) return;   /* {NULL, 0}: nothing to add, and no arithmetic on NULL below */
     *length += data.size;
     const proven_byte_t *p = data.ptr;
     proven_size_t n = data.size;
