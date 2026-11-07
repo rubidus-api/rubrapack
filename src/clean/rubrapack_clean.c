@@ -41,6 +41,7 @@
 #include <msiquery.h>
 #include <shellapi.h>
 
+#include "../ca/rp_wstr.h"
 #include "pfro.h"
 
 enum { MAX_ITEMS = 256, PATH_CAP = 32768 };
@@ -71,7 +72,7 @@ static int wfmt(wchar_t *out, size_t cap, const wchar_t *fmt, ...) {
 
 // "{8-4-4-4-12}" in hex digits: a code goes into a registry path and msiexec's command line.
 static bool is_guid(const wchar_t *s) {
-    if (wcslen(s) != 38 || s[0] != L'{' || s[37] != L'}') return false;
+    if (rp_wlen(s) != 38 || s[0] != L'{' || s[37] != L'}') return false;
     for (int i = 1; i < 37; ++i) {
         bool dash = i == 9 || i == 14 || i == 19 || i == 24;
         wchar_t c = s[i];
@@ -103,7 +104,7 @@ static void say(const wchar_t *fmt, ...) {
 }
 
 static wchar_t *text_dup(const wchar_t *s) {
-    size_t n = wcslen(s) + 1;
+    size_t n = rp_wlen(s) + 1;
     wchar_t *d = HeapAlloc(GetProcessHeap(), 0, n * sizeof *d);
     if (d) memcpy(d, s, n * sizeof *d);
     return d;
@@ -124,23 +125,23 @@ static bool read_list(const wchar_t *path) {
     text[size / 2] = 0;
     wchar_t *p = text;
     if (*p == 0xFEFF) ++p;
-    if (wcsncmp(p, L"RPC1", 4) != 0) return false;
-    wchar_t *ctx = NULL;
-    for (wchar_t *line = wcstok(p, L"\r\n", &ctx); line; line = wcstok(NULL, L"\r\n", &ctx)) {
-        wchar_t *tab = wcschr(line, L'\t');
+    if (!rp_wstarts(p, L"RPC1")) return false;
+    rp_wtok_t lines = rp_wtok(p, L"\r\n");
+    for (wchar_t *line = rp_wtok_next(&lines); line; line = rp_wtok_next(&lines)) {
+        wchar_t *tab = rp_wchr(line, L'\t');
         if (tab == NULL) continue;
         *tab = 0;
         const wchar_t *v = tab + 1;
-        if (wcscmp(line, L"task") == 0) wcsncpy(task, v, 511);
-        else if (wcscmp(line, L"product") == 0) wcsncpy(product, v, 63);
-        else if (wcscmp(line, L"scope") == 0) wcsncpy(scope, v, 15);
-        else if (wcscmp(line, L"until") == 0) wcsncpy(until, v, 15);
-        else if (wcscmp(line, L"before") == 0 && nbefores < 1024) befores[nbefores++] = text_dup(v);
-        else if (wcscmp(line, L"kind") == 0) wcsncpy(kind, v, 15);
-        else if (wcscmp(line, L"root") == 0 && nroots < MAX_ITEMS) roots[nroots++] = text_dup(v);
-        else if (wcscmp(line, L"file") == 0 && nfiles < MAX_ITEMS) files[nfiles++] = text_dup(v);
-        else if (wcscmp(line, L"parent") == 0) wcsncpy(parent, v, 63);
-        else if (wcscmp(line, L"addon") == 0 && naddons < 64 && is_guid(v)) wcscpy(addons[naddons++], v);
+        if (rp_weq(line, L"task")) rp_wcpy_cut(task, 512, v);
+        else if (rp_weq(line, L"product")) rp_wcpy_cut(product, 64, v);
+        else if (rp_weq(line, L"scope")) rp_wcpy_cut(scope, 16, v);
+        else if (rp_weq(line, L"until")) rp_wcpy_cut(until, 16, v);
+        else if (rp_weq(line, L"before") && nbefores < 1024) befores[nbefores++] = text_dup(v);
+        else if (rp_weq(line, L"kind")) rp_wcpy_cut(kind, 16, v);
+        else if (rp_weq(line, L"root") && nroots < MAX_ITEMS) roots[nroots++] = text_dup(v);
+        else if (rp_weq(line, L"file") && nfiles < MAX_ITEMS) files[nfiles++] = text_dup(v);
+        else if (rp_weq(line, L"parent")) rp_wcpy_cut(parent, 64, v);
+        else if (rp_weq(line, L"addon") && naddons < 64 && is_guid(v)) (void)RP_WCPY(addons[naddons++], v);
     }
     if (product[0] && !is_guid(product)) return false;
     if (parent[0] && !is_guid(parent)) return false;
@@ -149,7 +150,7 @@ static bool read_list(const wchar_t *path) {
 
 // Whether `path` is inside folder `root` (not the root itself), ignoring case.
 static bool under(const wchar_t *path, const wchar_t *root) {
-    size_t n = wcslen(root);
+    size_t n = rp_wlen(root);
     while (n && root[n - 1] == L'\\') --n;
     return n && CompareStringOrdinal(path, (int)n, root, (int)n, TRUE) == CSTR_EQUAL && path[n] == L'\\' && path[n + 1];
 }
@@ -160,14 +161,14 @@ static bool installer_backup(const wchar_t *path) {
     if (!(path[0] && path[1] == L':')) return false;
     if (CompareStringOrdinal(dir, 12, L"\\Config.Msi\\", 12, TRUE) != CSTR_EQUAL) return false;
     const wchar_t *name = dir + 12;
-    size_t n = wcslen(name);
-    return n > 4 && !wcschr(name, L'\\') && CompareStringOrdinal(name + n - 4, 4, L".rbf", 4, TRUE) == CSTR_EQUAL;
+    size_t n = rp_wlen(name);
+    return n > 4 && !rp_wchr(name, L'\\') && CompareStringOrdinal(name + n - 4, 4, L".rbf", 4, TRUE) == CSTR_EQUAL;
 }
 
 // No part of `path` below `root` (or below the volume, without a root) is a link.
 static bool no_links(const wchar_t *path, const wchar_t *root) {
     static wchar_t part[PATH_CAP];
-    size_t start = root ? wcslen(root) : 3, n = wcslen(path);
+    size_t start = root ? rp_wlen(root) : 3, n = rp_wlen(path);
     if (n >= PATH_CAP) return false;
     for (size_t i = start; i <= n; ++i) {
         if (i < n && path[i] != L'\\') continue;
@@ -247,7 +248,7 @@ static void scan(bool machine) {
             // Pairs of source and target; an empty target is a deletion.
             unsigned long index = 0;
             for (wchar_t *src = buf; *src; ++index) {
-                wchar_t *dst = src + wcslen(src) + 1;
+                wchar_t *dst = src + rp_wlen(src) + 1;
                 if (*dst == 0) {
                     // One that was queued before the installation's script is not this installation's
                     // (matched path for path: the same path may be queued more than once).
@@ -260,7 +261,7 @@ static void scan(bool machine) {
                     say(L"queued #%lu %ls%ls", index, path, earlier ? L" (before)" : L"");
                     if (!earlier) take(path, machine, false);
                 }
-                src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
+                src = *dst ? dst + rp_wlen(dst) + 1 : dst + 1;
             }
         }
         if (buf) HeapFree(GetProcessHeap(), 0, buf);
@@ -284,7 +285,7 @@ static void own_path(const wchar_t *dir, const wchar_t *name) {
         owned = n;
         capowned = cap;
     }
-    size_t a = wcslen(dir), b = wcslen(name);
+    size_t a = rp_wlen(dir), b = rp_wlen(name);
     wchar_t *p = HeapAlloc(GetProcessHeap(), 0, (a + b + 1) * sizeof *p);
     if (p == NULL) return;
     memcpy(p, dir, a * sizeof *p);
@@ -306,19 +307,19 @@ static void scan_product(const wchar_t *code) {
         while (MsiViewFetch(view, &rec) == ERROR_SUCCESS) {
             DWORD cn = 80, fn = 1024;
             if (MsiRecordGetStringW(rec, 1, cid, &cn) == ERROR_SUCCESS && MsiRecordGetStringW(rec, 2, fname, &fn) == ERROR_SUCCESS) {
-                if (wcscmp(cid, comp) != 0) {        // a new component: where its key path is
-                    wcscpy(comp, cid);
+                if (!rp_weq(cid, comp)) {            // a new component: where its key path is
+                    (void)RP_WCPY(comp, cid);
                     DWORD kn = PATH_CAP;
                     have_dir = MsiGetComponentPathW(code, cid, keypath, &kn) == INSTALLSTATE_LOCAL && keypath[0] && keypath[1] == L':';
                     if (have_dir) {
-                        wcscpy(dir, keypath);
-                        wchar_t *slash = wcsrchr(dir, L'\\');
+                        (void)RP_WCPY(dir, keypath);
+                        wchar_t *slash = rp_wrchr(dir, L'\\');
                         if (slash) slash[1] = 0;
                         else have_dir = false;
                     }
                 }
                 if (have_dir) {
-                    wchar_t *bar = wcschr(fname, L'|');      // "SHORT|Long name"
+                    wchar_t *bar = rp_wchr(fname, L'|');      // "SHORT|Long name"
                     own_path(dir, bar ? bar + 1 : fname);
                 }
             }
@@ -349,7 +350,7 @@ static int pending(bool machine) {
         scanned = true;
     }
     // A removal whose product is installed again: what it left now belongs to that installation.
-    bool back = wcscmp(kind, L"remove") == 0 && product[0] && MsiQueryProductStateW(product) == INSTALLSTATE_DEFAULT;
+    bool back = rp_weq(kind, L"remove") && product[0] && MsiQueryProductStateW(product) == INSTALLSTATE_DEFAULT;
     int left = 0;
     for (size_t i = 0; i < nown; ++i) {
         own_t *o = &own[i];
@@ -357,7 +358,7 @@ static int pending(bool machine) {
         if (!o->active) continue;
         wchar_t id[40];
         file_id(o->path, id);
-        if (id[0] == 0 || wcscmp(id, o->id) != 0) {      // gone, or another file now
+        if (id[0] == 0 || !rp_weq(id, o->id)) {         // gone, or another file now
             say(L"%ls: gone or another file ('%ls')", o->path, id);
             o->active = false;
             continue;
@@ -378,7 +379,7 @@ static int pending(bool machine) {
         }
         const wchar_t *root = NULL;
         for (size_t r = 0; r < nroots; ++r) {
-            if (under(o->path, roots[r]) && (root == NULL || wcslen(roots[r]) > wcslen(root))) root = roots[r];
+            if (under(o->path, roots[r]) && (root == NULL || rp_wlen(roots[r]) > rp_wlen(root))) root = roots[r];
         }
         bool deleted = no_links(o->path, root) && gone(o->path);
         say(L"%ls: %ls (error %lu)", o->path, deleted ? L"deleted" : L"still there", (unsigned long)GetLastError());
@@ -465,13 +466,13 @@ static void load_seen(const wchar_t *path) {
     DWORD size = GetFileSize(h, NULL), got = 0;
     wchar_t *t = size != INVALID_FILE_SIZE && size < (1u << 20) && size % 2 == 0 ? HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size + 2) : NULL;
     if (t && ReadFile(h, t, size, &got, NULL) && got == size) {
-        wchar_t *ctx = NULL;
-        for (wchar_t *line = wcstok(t, L"\r\n", &ctx); line; line = wcstok(NULL, L"\r\n", &ctx)) {
-            if (wcscmp(line, L"scanned") == 0) scanned = true;
-            bool noted = wcsncmp(line, L"note\t", 5) == 0;
-            if ((noted || wcsncmp(line, L"own\t", 4) == 0) && nown < MAX_ITEMS) {
+        rp_wtok_t lines = rp_wtok(t, L"\r\n");
+        for (wchar_t *line = rp_wtok_next(&lines); line; line = rp_wtok_next(&lines)) {
+            if (rp_weq(line, L"scanned")) scanned = true;
+            bool noted = rp_wstarts(line, L"note\t");
+            if ((noted || rp_wstarts(line, L"own\t")) && nown < MAX_ITEMS) {
                 const wchar_t *v = line + (noted ? 5 : 4);
-                wchar_t *tab = wcschr(v, L'\t');
+                wchar_t *tab = rp_wchr(v, L'\t');
                 if (tab == NULL || tab - v >= 40) continue;
                 own_t *o = &own[nown];
                 memcpy(o->id, v, (size_t)(tab - v) * sizeof(wchar_t));
@@ -481,7 +482,7 @@ static void load_seen(const wchar_t *path) {
                 o->active = o->path != NULL;
                 nown += o->active;
             }
-            if (wcsncmp(line, L"root\t", 5) != 0) continue;
+            if (!rp_wstarts(line, L"root\t")) continue;
             for (size_t i = 0; i < nroots; ++i) {
                 if (CompareStringOrdinal(line + 5, -1, roots[i], -1, TRUE) == CSTR_EQUAL) seen[i] = true;
             }
@@ -492,11 +493,11 @@ static void load_seen(const wchar_t *path) {
 
 static void put_line(HANDLE h, const wchar_t *a, const wchar_t *b, const wchar_t *c) {
     DWORD put = 0;
-    WriteFile(h, a, (DWORD)(wcslen(a) * sizeof(wchar_t)), &put, NULL);
-    if (b) WriteFile(h, b, (DWORD)(wcslen(b) * sizeof(wchar_t)), &put, NULL);
+    WriteFile(h, a, (DWORD)(rp_wlen(a) * sizeof(wchar_t)), &put, NULL);
+    if (b) WriteFile(h, b, (DWORD)(rp_wlen(b) * sizeof(wchar_t)), &put, NULL);
     if (c) {
         WriteFile(h, L"\t", sizeof(wchar_t), &put, NULL);
-        WriteFile(h, c, (DWORD)(wcslen(c) * sizeof(wchar_t)), &put, NULL);
+        WriteFile(h, c, (DWORD)(rp_wlen(c) * sizeof(wchar_t)), &put, NULL);
     }
     WriteFile(h, L"\r\n", 2 * sizeof(wchar_t), &put, NULL);
 }
@@ -522,7 +523,7 @@ static bool empty_dir(const wchar_t *dir) {
     if (h == INVALID_HANDLE_VALUE) return false;
     bool empty = true;
     do {
-        if (wcscmp(fd.cFileName, L".") != 0 && wcscmp(fd.cFileName, L"..") != 0) empty = false;
+        if (!rp_weq(fd.cFileName, L".") && !rp_weq(fd.cFileName, L"..")) empty = false;
     } while (empty && FindNextFileW(h, &fd));
     FindClose(h);
     return empty;
@@ -559,7 +560,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
     if (argv == NULL || argc != 2) return 2;
     static wchar_t folder[PATH_CAP], list[PATH_CAP];
     if (GetFullPathNameW(argv[1], PATH_CAP, folder, NULL) == 0) return 2;
-    size_t fl = wcslen(folder);
+    size_t fl = rp_wlen(folder);
     while (fl > 3 && folder[fl - 1] == L'\\') folder[--fl] = 0;
     wfmt(list, PATH_CAP, L"%ls\\list.txt", folder);
     if (!read_list(list)) return 3;
@@ -572,10 +573,10 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
         if (naddons == 0 || waited >= 300) return 0;
         Sleep(2000);
     }
-    bool machine = wcscmp(scope, L"machine") == 0;
+    bool machine = rp_weq(scope, L"machine");
     // The deepest root first, so a folder emptied by its sub folder's removal goes in the same run.
     for (size_t i = 1; i < nroots; ++i) {
-        for (size_t j = i; j > 0 && wcslen(roots[j]) > wcslen(roots[j - 1]); --j) {
+        for (size_t j = i; j > 0 && rp_wlen(roots[j]) > rp_wlen(roots[j - 1]); --j) {
             wchar_t *t = roots[j];
             roots[j] = roots[j - 1];
             roots[j - 1] = t;
@@ -607,6 +608,6 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
     GetLocalTime(&now);
     wchar_t today[16];
     wfmt(today, 16, L"%04u%02u%02u", now.wYear, now.wMonth, now.wDay);
-    if (left == 0 || (until[0] && wcscmp(today, until) > 0)) finish(folder);
+    if (left == 0 || (until[0] && rp_wcmp(today, until) > 0)) finish(folder);
     return 0;
 }

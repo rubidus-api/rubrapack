@@ -41,6 +41,8 @@
 
 #include "proven/utf.h"
 
+#include "../ca/rp_wstr.h"
+
 enum { TEXT_CAP = 1024, PATH_CAP = 32768, MAX_ITEMS = 64, MAX_RUNS = 64, MAX_PATHS = 65536 };
 
 static LONG live;                   // objects and locks: DllCanUnloadNow
@@ -64,9 +66,9 @@ static void say(const wchar_t *what, const wchar_t *text, DWORD code) {
     wchar_t num[32];
     DWORD put = 0;
     wsprintfW(num, L" (%lu)\r\n", (unsigned long)code);
-    WriteFile(f, what, (DWORD)(wcslen(what) * sizeof(wchar_t)), &put, NULL);
-    WriteFile(f, text, (DWORD)(wcslen(text) * sizeof(wchar_t)), &put, NULL);
-    WriteFile(f, num, (DWORD)(wcslen(num) * sizeof(wchar_t)), &put, NULL);
+    WriteFile(f, what, (DWORD)(rp_wlen(what) * sizeof(wchar_t)), &put, NULL);
+    WriteFile(f, text, (DWORD)(rp_wlen(text) * sizeof(wchar_t)), &put, NULL);
+    WriteFile(f, num, (DWORD)(rp_wlen(num) * sizeof(wchar_t)), &put, NULL);
     CloseHandle(f);
 }
 
@@ -76,9 +78,7 @@ static void say(const wchar_t *what, const wchar_t *text, DWORD code) {
 // (a 32-bit package wrote there what its 32-bit DLL reads).
 static bool open_item(const wchar_t *path, HKEY *out) {
     wchar_t key[512];
-    if (wcslen(path) + wcslen(MENU_KEY) >= 512) return false;
-    wcscpy(key, MENU_KEY);
-    wcscat(key, path);
+    if (!RP_WCPY(key, MENU_KEY) || !RP_WCAT(key, path)) return false;
     if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, key, 0, KEY_QUERY_VALUE, out) == ERROR_SUCCESS) return true;
     return RegOpenKeyExW(HKEY_CURRENT_USER, key, 0, KEY_QUERY_VALUE, out) == ERROR_SUCCESS;
 }
@@ -97,7 +97,7 @@ static void ui_language(wchar_t out[LOCALE_NAME_MAX_LENGTH]) {
     ULONG n = 0, cap = 0;
     if (GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &n, NULL, &cap) && cap > 1) {
         wchar_t *list = HeapAlloc(GetProcessHeap(), 0, cap * sizeof *list);
-        if (list && GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &n, list, &cap) && wcslen(list) < LOCALE_NAME_MAX_LENGTH) wcscpy(out, list);
+        if (list && GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &n, list, &cap) ) (void)rp_wcpy(out, LOCALE_NAME_MAX_LENGTH, list);
         if (list) HeapFree(GetProcessHeap(), 0, list);
     }
     CharLowerW(out);
@@ -108,10 +108,9 @@ static bool item_text(HKEY k, wchar_t *out, DWORD cap) {
     wchar_t lang[LOCALE_NAME_MAX_LENGTH], name[LOCALE_NAME_MAX_LENGTH + 8];
     ui_language(lang);
     for (int pass = 0; pass < 2 && lang[0]; ++pass) {
-        wcscpy(name, L"Text.");
-        wcscat(name, lang);
+        (void)(RP_WCPY(name, L"Text.") && RP_WCAT(name, lang));
         if (value(k, name, out, cap)) return true;
-        wchar_t *dash = wcschr(lang, L'-');
+        wchar_t *dash = rp_wchr(lang, L'-');
         if (dash == NULL) break;
         *dash = 0;
     }
@@ -121,23 +120,19 @@ static bool item_text(HKEY k, wchar_t *out, DWORD cap) {
 // "%PKG%" at the start of a path is the package's folder in an MSIX: the nearest folder above
 // this DLL that holds AppxManifest.xml.
 static bool resolve(const wchar_t *in, wchar_t *out, size_t cap) {
-    if (wcsncmp(in, L"%PKG%", 5) != 0) {
-        if (wcslen(in) >= cap) return false;
-        wcscpy(out, in);
-        return true;
+    if (!rp_wstarts(in, L"%PKG%")) {
+        return rp_wcpy(out, cap, in);
     }
     DWORD n = GetModuleFileNameW(self, out, (DWORD)cap);
     if (n == 0 || n >= cap) return false;
     for (int up = 0; up < 16; ++up) {
-        wchar_t *slash = wcsrchr(out, L'\\');
+        wchar_t *slash = rp_wrchr(out, L'\\');
         if (slash == NULL || slash - out + 20 >= (ptrdiff_t)cap) return false;
-        wcscpy(slash, L"\\AppxManifest.xml");
+        (void)rp_wcpy(slash, cap - (size_t)(slash - out), L"\\AppxManifest.xml");
         DWORD a = GetFileAttributesW(out);
         *slash = 0;
         if (a == INVALID_FILE_ATTRIBUTES || (a & FILE_ATTRIBUTE_DIRECTORY)) continue;
-        if (wcslen(out) + wcslen(in + 5) >= cap) return false;
-        wcscat(out, in + 5);
-        return true;
+        return rp_wcat(out, cap, in + 5);
     }
     return false;
 }
@@ -232,8 +227,8 @@ static HRESULT STDMETHODCALLTYPE cmd_state(IExplorerCommand *p, IShellItemArray 
     // HideWhen: hidden while the value it names exists.
     wchar_t *hide = HeapAlloc(GetProcessHeap(), 0, TEXT_CAP * sizeof *hide);
     if (hide && value(k, L"HideWhen", hide, TEXT_CAP)) {
-        HKEY root = wcsncmp(hide, L"HKCU\\", 5) == 0 ? HKEY_CURRENT_USER : wcsncmp(hide, L"HKLM\\", 5) == 0 ? HKEY_LOCAL_MACHINE : NULL;
-        wchar_t *last = wcsrchr(hide, L'\\'), *key = hide + 5;
+        HKEY root = rp_wstarts(hide, L"HKCU\\") ? HKEY_CURRENT_USER : rp_wstarts(hide, L"HKLM\\") ? HKEY_LOCAL_MACHINE : NULL;
+        wchar_t *last = rp_wrchr(hide, L'\\'), *key = hide + 5;
         HKEY h;
         if (root && last && last > key) {
             *last = 0;
@@ -246,7 +241,7 @@ static HRESULT STDMETHODCALLTYPE cmd_state(IExplorerCommand *p, IShellItemArray 
     if (hide) HeapFree(GetProcessHeap(), 0, hide);
     wchar_t multi[16];
     DWORD count = 0;
-    if (value(k, L"Multi", multi, 16) && wcscmp(multi, L"single") == 0 && items && SUCCEEDED(IShellItemArray_GetCount(items, &count)) && count > 1)
+    if (value(k, L"Multi", multi, 16) && rp_weq(multi, L"single") && items && SUCCEEDED(IShellItemArray_GetCount(items, &count)) && count > 1)
         *out = ECS_HIDDEN;
     RegCloseKey(k);
     return S_OK;
@@ -263,8 +258,8 @@ static bool put(wchar_t *line, size_t *len, const wchar_t *s, size_t n) {
 
 // A path as one argument for CommandLineToArgvW's rules: quoted, a trailing backslash doubled.
 static bool put_quoted(wchar_t *line, size_t *len, const wchar_t *path) {
-    size_t n = wcslen(path);
-    if (wcschr(path, L'"')) return false;               // not a file system path
+    size_t n = rp_wlen(path);
+    if (rp_wchr(path, L'"')) return false;               // not a file system path
     return put(line, len, L"\"", 1) && put(line, len, path, n) && (n == 0 || path[n - 1] != L'\\' || put(line, len, L"\\", 1)) &&
            put(line, len, L"\"", 1);
 }
@@ -280,8 +275,8 @@ static bool build(wchar_t *line, size_t *len, const wchar_t *program, const wcha
         if (a[0] == L'%' && (a[1] == L'1' || a[1] == L'V' || a[1] == L'v')) {
             // As written; before a closing quote a path's last backslash is doubled ("C:\" would
             // otherwise take the quote with it).
-            size_t pl = count ? wcslen(paths[0]) : 0;
-            ok = count == 0 || (!wcschr(paths[0], L'"') && put(line, len, paths[0], pl) &&
+            size_t pl = count ? rp_wlen(paths[0]) : 0;
+            ok = count == 0 || (!rp_wchr(paths[0], L'"') && put(line, len, paths[0], pl) &&
                                 (pl == 0 || paths[0][pl - 1] != L'\\' || a[2] != L'"' || put(line, len, L"\\", 1)));
             used = true;
             ++a;
@@ -322,7 +317,7 @@ static bool write_list(wchar_t **paths, DWORD count, wchar_t *file) {
         // proven's conversion: a path with an unpaired surrogate is refused, not written changed.
         size_t m = 0;
         DWORD put = 0;
-        ok = proven_utf16_to_utf8((const proven_u16 *)paths[i], wcslen(paths[i]), (proven_byte_t *)utf8, 3 * PATH_CAP, &m) == PROVEN_OK;
+        ok = proven_utf16_to_utf8((const proven_u16 *)paths[i], rp_wlen(paths[i]), (proven_byte_t *)utf8, 3 * PATH_CAP, &m) == PROVEN_OK;
         if (ok) {
             utf8[m++] = '\n';
             ok = WriteFile(f, utf8, (DWORD)m, &put, NULL) && put == (DWORD)m;
@@ -351,11 +346,10 @@ static void run(const wchar_t *program, const wchar_t *args, const wchar_t *list
         // In the selected item's folder, or the folder itself.
         wchar_t *dir = NULL;
         if (count && (dir = HeapAlloc(GetProcessHeap(), 0, PATH_CAP * sizeof *dir)) != NULL) {
-            wcsncpy(dir, paths[0], PATH_CAP - 1);
-            dir[PATH_CAP - 1] = 0;
+            rp_wcpy_cut(dir, PATH_CAP, paths[0]);
             DWORD a = GetFileAttributesW(dir);
             if (a == INVALID_FILE_ATTRIBUTES || !(a & FILE_ATTRIBUTE_DIRECTORY)) {
-                wchar_t *slash = wcsrchr(dir, L'\\');
+                wchar_t *slash = rp_wrchr(dir, L'\\');
                 if (slash && slash > dir + 2) *slash = 0;
                 else if (slash) slash[1] = 0;
             }
@@ -396,7 +390,7 @@ static HRESULT STDMETHODCALLTYPE cmd_invoke(IExplorerCommand *p, IShellItemArray
         // starts at most MAX_RUNS programs.
         DWORD count = 0, n = 0;
         if (items) (void)IShellItemArray_GetCount(items, &count);
-        DWORD most = wcscmp(multi, L"each") == 0 ? MAX_RUNS : MAX_PATHS;
+        DWORD most = rp_weq(multi, L"each") ? MAX_RUNS : MAX_PATHS;
         wchar_t **paths = HeapAlloc(GetProcessHeap(), 0, (count < most ? count + 1 : most) * sizeof *paths);
         for (DWORD i = 0; paths && i < count && n < most; ++i) {
             IShellItem *si = NULL;
@@ -405,7 +399,7 @@ static HRESULT STDMETHODCALLTYPE cmd_invoke(IExplorerCommand *p, IShellItemArray
             if (SUCCEEDED(IShellItem_GetDisplayName(si, SIGDN_FILESYSPATH, &path)) && path) paths[n++] = path;
             IShellItem_Release(si);
         }
-        if (wcscmp(multi, L"each") == 0 && n > 1) {
+        if (rp_weq(multi, L"each") && n > 1) {
             for (DWORD i = 0; i < n; ++i) run(program, args, NULL, &paths[i], 1);
         } else if (paths) {
             run(program, args, list, paths, n);
@@ -452,10 +446,7 @@ static HRESULT STDMETHODCALLTYPE en_next(IEnumExplorerCommand *p, ULONG want, IE
     while (n < want && it->at < it->nsubs) {
         wchar_t path[400];
         const wchar_t *sub = it->subs[it->at++];
-        if (wcslen(it->path) + wcslen(sub) + 2 > 400) continue;
-        wcscpy(path, it->path);
-        wcscat(path, L"\\");
-        wcscat(path, sub);
+        if (!RP_WCPY(path, it->path) || !RP_WCAT(path, L"\\") || !RP_WCAT(path, sub)) continue;
         item_t *child = item_new(path);
         if (child == NULL) continue;
         out[n++] = &child->cmd;
@@ -488,21 +479,21 @@ static const IEnumExplorerCommandVtbl en_vtbl = { en_query, en_addref, en_releas
 // The item at `path` (one reference), or NULL when the registry has none.
 static item_t *item_new(const wchar_t *path) {
     HKEY k;
-    if (wcslen(path) >= 400 || !open_item(path, &k)) return NULL;
+    if (rp_wlen(path) >= 400 || !open_item(path, &k)) return NULL;
     item_t *it = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof *it);
     if (it) {
         it->cmd.lpVtbl = (IExplorerCommandVtbl *)&cmd_vtbl;
         it->en.lpVtbl = (IEnumExplorerCommandVtbl *)&en_vtbl;
         it->refs = 1;
-        wcscpy(it->path, path);
+        (void)RP_WCPY(it->path, path);
         // Items: the names of the sub keys, in order.
         DWORD type = 0, size = 0;
         if (RegQueryValueExW(k, L"Items", NULL, &type, NULL, &size) == ERROR_SUCCESS && type == REG_MULTI_SZ && size >= 2 * sizeof(wchar_t) &&
             size <= MAX_ITEMS * 64 * sizeof(wchar_t)) {
             wchar_t *list = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size + 2 * sizeof(wchar_t));
             if (list && RegQueryValueExW(k, L"Items", NULL, &type, (BYTE *)list, &size) == ERROR_SUCCESS) {
-                for (const wchar_t *s = list; *s && it->nsubs < MAX_ITEMS; s += wcslen(s) + 1) {
-                    if (wcslen(s) < 64 && !wcschr(s, L'\\')) wcscpy(it->subs[it->nsubs++], s);
+                for (const wchar_t *s = list; *s && it->nsubs < MAX_ITEMS; s += rp_wlen(s) + 1) {
+                    if (rp_wlen(s) < 64 && !rp_wchr(s, L'\\')) (void)RP_WCPY(it->subs[it->nsubs++], s);
                 }
             }
             if (list) HeapFree(GetProcessHeap(), 0, list);
@@ -573,7 +564,7 @@ STDAPI DllGetClassObject(REFCLSID clsid, REFIID riid, void **out) {
     if (f == NULL) return E_OUTOFMEMORY;
     f->f.lpVtbl = (IClassFactoryVtbl *)&f_vtbl;
     f->refs = 1;
-    wcscpy(f->clsid, text);
+    (void)RP_WCPY(f->clsid, text);
     InterlockedIncrement(&live);
     HRESULT hr = f_query(&f->f, riid, out);
     f_release(&f->f);

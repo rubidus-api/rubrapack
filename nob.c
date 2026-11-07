@@ -345,8 +345,8 @@ static unsigned char *read_all(const char *path, size_t *len) {
     return buf;
 }
 
-// The proven_c_lib files the Windows parts link (UTF-8/UTF-16 and SHA-256), with its include
-// paths; unused functions are dropped at link time.
+// The proven_c_lib files the Windows parts link (UTF-8/UTF-16, the u16 string views and, for the
+// setup program, SHA-256), with its include paths; unused functions are dropped at link time.
 #define PART_PROVEN                                                                                                       \
     "-Ivendor/proven/include -Ivendor/proven/platform -ffunction-sections -fdata-sections -Wl,--gc-sections "             \
     "vendor/proven/src/proven/utf.c vendor/proven/src/proven/u8str.c vendor/proven/src/proven/u16str.c "                  \
@@ -377,7 +377,7 @@ static int parts(void) {
         snprintf(out, sizeof out, "%s/rubrapack_clean.exe", pdir);
         int n = snprintf(cmd, sizeof cmd,
                          "%s/bin/%s-w64-mingw32-clang -std=c23 -O2 -Wall -Wextra -Werror -municode -mwindows -s "
-                         "-ffile-prefix-map=$PWD=. -Wl,--no-insert-timestamp -Wl,--build-id=none src/clean/rubrapack_clean.c "
+                         "-ffile-prefix-map=$PWD=. -Wl,--no-insert-timestamp -Wl,--build-id=none src/clean/rubrapack_clean.c " PART_PROVEN
                          "-lmsi -ladvapi32 -lshell32 -o %s",
                          root, part_archs[i][1], out);
         size_t len = 0;
@@ -405,7 +405,7 @@ static int parts(void) {
         snprintf(out, sizeof out, "resources/bin/rubrapack_ca-%s.dll", part_archs[i][0]);
         n = snprintf(cmd, sizeof cmd,
                      "%s/bin/%s-w64-mingw32-clang -std=c23 -O2 -Wall -Wextra -Werror -shared -s -ffile-prefix-map=$PWD=. "
-                     "-Wl,--no-insert-timestamp -Wl,--build-id=none -I%s src/ca/rubrapack_ca.c src/ca/rubrapack_ca.def "
+                     "-Wl,--no-insert-timestamp -Wl,--build-id=none -I%s src/ca/rubrapack_ca.c src/ca/rubrapack_ca.def " PART_PROVEN
                      "-lmsi -ladvapi32 -lcomdlg32 -luser32 -lrstrtmgr -lshell32 -lruntimeobject -lole32 -lntdll -o %s",
                      root, part_archs[i][1], pdir, out);
         if (n < 0 || (size_t)n >= sizeof cmd || run(cmd) != 0) {

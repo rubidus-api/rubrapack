@@ -81,9 +81,12 @@
 #include <commdlg.h>
 #include <richedit.h>
 
+#include "proven/utf.h"
+
 #include "../clean/pfro.h"
 #include "rp_appx.h"
 #include "rp_ask.h"
+#include "rp_wstr.h"
 
 // rubrapack_clean.exe for this architecture, as a byte array (written by `nob parts`).
 #if __has_include("rp_clean_part.h")
@@ -127,7 +130,7 @@ static void w_raw(writer_t *w, const wchar_t *s, size_t n) {
 
 static void w_field(writer_t *w, const wchar_t *s) {
     wchar_t head[24];
-    size_t n = wcslen(s);
+    size_t n = rp_wlen(s);
     int h = swprintf(head, 24, L"%zu:", n);
     w_raw(w, head, (size_t)h);
     w_raw(w, s, n);
@@ -184,7 +187,7 @@ static int wfmt(wchar_t *out, size_t cap, const wchar_t *fmt, ...) {
 // "{8-4-4-4-12}" in hex digits: what a ProductCode or UpgradeCode looks like. A code goes into
 // paths, a task's name and a command line, so anything else is refused.
 static bool is_guid(const wchar_t *s) {
-    if (s == NULL || wcslen(s) != 38 || s[0] != L'{' || s[37] != L'}') return false;
+    if (s == NULL || rp_wlen(s) != 38 || s[0] != L'{' || s[37] != L'}') return false;
     for (int i = 1; i < 37; ++i) {
         bool dash = i == 9 || i == 14 || i == 19 || i == 24;
         wchar_t c = s[i];
@@ -210,12 +213,12 @@ static void log_line(MSIHANDLE h, const wchar_t *fmt, ...) {
 
 // root: "HKLM", "HKCU", "HKCR", or "HKMU" (resolved by the caller); view: "32" or "64".
 static HKEY root_key(const wchar_t *root) {
-    if (wcscmp(root, L"HKCU") == 0) return HKEY_CURRENT_USER;
-    if (wcscmp(root, L"HKCR") == 0) return HKEY_CLASSES_ROOT;
+    if (rp_weq(root, L"HKCU")) return HKEY_CURRENT_USER;
+    if (rp_weq(root, L"HKCR")) return HKEY_CLASSES_ROOT;
     return HKEY_LOCAL_MACHINE;
 }
 
-static REGSAM view_flag(const wchar_t *view) { return wcscmp(view, L"32") == 0 ? KEY_WOW64_32KEY : KEY_WOW64_64KEY; }
+static REGSAM view_flag(const wchar_t *view) { return rp_weq(view, L"32") ? KEY_WOW64_32KEY : KEY_WOW64_64KEY; }
 
 // A deferred action's data; also for its "<action>NR" twin, which runs instead of a commit action when
 // rollback is disabled (RFC-0031 L2; harmless for an action that has no twin).
@@ -223,9 +226,7 @@ static UINT set_data(MSIHANDLE h, const wchar_t *action, writer_t *w) {
     const wchar_t *v = w->bad ? L"" : (w->buf ? w->buf : L"RPQ1");
     UINT rc = MsiSetPropertyW(h, action, v);
     wchar_t twin[96];
-    if (wcslen(action) < 90) {
-        wcscpy(twin, action);
-        wcscat(twin, L"NR");
+    if (RP_WCPY(twin, action) && RP_WCAT(twin, L"NR")) {
         (void)MsiSetPropertyW(h, twin, v);
     }
     return w->bad ? ERROR_OUTOFMEMORY : rc;
@@ -240,12 +241,12 @@ __declspec(dllexport) UINT __stdcall RpQwordPrepare(MSIHANDLE h) {
         return ERROR_INSTALL_FAILURE;
     }
     bool machine = allusers[0] == L'1';
-    reader_t r = { plan, plan + wcslen(plan) };
+    reader_t r = { plan, plan + rp_wlen(plan) };
     writer_t apply = { 0 }, rollback = { 0 };
     w_raw(&apply, L"RPQ1", 4);
     w_raw(&rollback, L"RPQ1", 4);
     UINT rc = ERROR_SUCCESS;
-    if (wcsncmp(plan, L"RPQ1", 4) != 0) rc = ERROR_INSTALL_FAILURE;
+    if (!rp_wstarts(plan, L"RPQ1")) rc = ERROR_INSTALL_FAILURE;
     r.p += 4;
     static wchar_t f[7][MAX_TEXT / 8];
     while (rc == ERROR_SUCCESS && r.p < r.end) {
@@ -253,7 +254,7 @@ __declspec(dllexport) UINT __stdcall RpQwordPrepare(MSIHANDLE h) {
             if (!r_field(&r, f[i], MAX_TEXT / 8)) rc = ERROR_INSTALL_FAILURE;
         }
         if (rc != ERROR_SUCCESS) break;
-        const wchar_t *root = wcscmp(f[0], L"HKMU") == 0 ? (machine ? L"HKLM" : L"HKCU") : f[0];
+        const wchar_t *root = rp_weq(f[0], L"HKMU") ? (machine ? L"HKLM" : L"HKCU") : f[0];
         INSTALLSTATE installed = INSTALLSTATE_UNKNOWN, action = INSTALLSTATE_UNKNOWN;
         MsiGetComponentStateW(h, f[5], &installed, &action);
         bool keep = f[6][0] == L'1';
@@ -292,9 +293,9 @@ __declspec(dllexport) UINT __stdcall RpQwordPrepare(MSIHANDLE h) {
 static UINT run_list(MSIHANDLE h, bool rollback) {
     wchar_t *data = get_property(h, L"CustomActionData");
     if (data == NULL) return rollback ? ERROR_SUCCESS : ERROR_INSTALL_FAILURE;
-    reader_t r = { data, data + wcslen(data) };
+    reader_t r = { data, data + rp_wlen(data) };
     UINT rc = ERROR_SUCCESS;
-    if (wcsncmp(data, L"RPQ1", 4) != 0) rc = ERROR_INSTALL_FAILURE;
+    if (!rp_wstarts(data, L"RPQ1")) rc = ERROR_INSTALL_FAILURE;
     r.p += 4;
     static wchar_t f[6][MAX_TEXT / 8];
     while (rc == ERROR_SUCCESS && r.p < r.end) {
@@ -305,7 +306,7 @@ static UINT run_list(MSIHANDLE h, bool rollback) {
         HKEY k;
         LSTATUS ls;
         if (f[0][0] == L'w') {
-            uint64_t v = wcstoull(f[5], NULL, 16);
+            uint64_t v = rp_wtou(f[5], 16, NULL);
             ls = RegCreateKeyExW(root_key(f[1]), f[3], 0, NULL, 0, KEY_SET_VALUE | view_flag(f[2]), NULL, &k, NULL);
             if (ls == ERROR_SUCCESS) {
                 ls = RegSetValueExW(k, f[4][0] ? f[4] : NULL, 0, REG_QWORD, (const BYTE *)&v, sizeof v);
@@ -350,7 +351,7 @@ static bool trusted_owner(PSID owner) {
 // folder that does exist above it must be owned by one: a folder made inside a user's folder gets
 // that folder's access list, and its owner can put another folder in its place), 1: refused.
 static int check_dir(MSIHANDLE h, const wchar_t *path, bool above) {
-    size_t n = wcslen(path);
+    size_t n = rp_wlen(path);
     wchar_t *part = HeapAlloc(GetProcessHeap(), 0, (n + 1) * sizeof *part);
     if (part == NULL) return 1;
     // Every existing part of the path, from the one under the root down, is a real folder.
@@ -443,8 +444,8 @@ __declspec(dllexport) UINT __stdcall RpGuardDirs(MSIHANDLE h) {
     bool machine = allusers && allusers[0] == L'1';
     if (allusers) HeapFree(GetProcessHeap(), 0, allusers);
     UINT rc = ERROR_SUCCESS;
-    wchar_t *ctx = NULL;
-    for (wchar_t *dir = wcstok(list, L";", &ctx); dir && rc == ERROR_SUCCESS; dir = wcstok(NULL, L";", &ctx)) {
+    rp_wtok_t toks = rp_wtok(list, L";");
+    for (wchar_t *dir = rp_wtok_next(&toks); dir && rc == ERROR_SUCCESS; dir = rp_wtok_next(&toks)) {
         wchar_t path[MAX_PATH * 4];
         DWORD n = sizeof path / sizeof path[0];
         if (MsiGetTargetPathW(h, dir, path, &n) != ERROR_SUCCESS) {
@@ -452,7 +453,7 @@ __declspec(dllexport) UINT __stdcall RpGuardDirs(MSIHANDLE h) {
             rc = ERROR_INSTALL_FAILURE;
             break;
         }
-        size_t len = wcslen(path);
+        size_t len = rp_wlen(path);
         if (len > 3 && path[len - 1] == L'\\') path[len - 1] = 0;
         if (check_dir(h, path, machine) == 0) continue;
         // The message in the chosen language, with [1] = the folder.
@@ -518,7 +519,7 @@ __declspec(dllexport) UINT __stdcall RpSaveLog(MSIHANDLE h) {
     wfmt(file, MAX_PATH, L"%ls.log", product && product[0] ? product : L"setup");
     if (product) HeapFree(GetProcessHeap(), 0, product);
     for (wchar_t *p = file; *p; ++p) {
-        if (*p < 32 || wcschr(L"\\/:*?\"<>|", *p)) *p = L'_';
+        if (*p < 32 || rp_wchr(L"\\/:*?\"<>|", *p)) *p = L'_';
     }
     OPENFILENAMEW ofn;
     memset(&ofn, 0, sizeof ofn);
@@ -598,7 +599,7 @@ static bool cleanup_folder(const wchar_t *pc, bool machine, wchar_t out[MAX_PATH
         DWORD n = GetEnvironmentVariableW(L"LOCALAPPDATA", base, MAX_PATH * 2);
         if (n == 0 || n >= MAX_PATH * 2) return false;
     }
-    size_t bl = wcslen(base);
+    size_t bl = rp_wlen(base);
     if (bl < 3 || base[1] != L':') return false;
     if (base[bl - 1] == L'\\') base[bl - 1] = 0;
     return wfmt(out, MAX_PATH * 4, L"%ls\\rubrapack\\cleanup\\%ls", base, pc) > 0;
@@ -606,7 +607,7 @@ static bool cleanup_folder(const wchar_t *pc, bool machine, wchar_t out[MAX_PATH
 
 static void make_dirs(const wchar_t *path) {
     wchar_t part[MAX_PATH * 4];
-    size_t n = wcslen(path);
+    size_t n = rp_wlen(path);
     for (size_t i = 3; i <= n && i < MAX_PATH * 4; ++i) {
         if (i < n && path[i] != L'\\') continue;
         memcpy(part, path, i * sizeof *part);
@@ -638,7 +639,7 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
     w_raw(&rollback, L"RPR1", 4);
     w_raw(&commit, L"RPR1", 4);
     UINT rc = ERROR_SUCCESS;
-    if (plan == NULL || root == NULL || upgrading == NULL || wcsncmp(plan, L"RPR1", 4) != 0) rc = ERROR_INSTALL_FAILURE;
+    if (plan == NULL || root == NULL || upgrading == NULL || !rp_wstarts(plan, L"RPR1")) rc = ERROR_INSTALL_FAILURE;
     if (rc == ERROR_SUCCESS && upgrading[0]) {
         log_line(h, L"rubrapack: remove: an upgrade (%ls) removes this version: upgrade = false keeps the files", upgrading);
     } else if (rc == ERROR_SUCCESS) {
@@ -649,9 +650,9 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
         // Per user only: a per-machine removal runs as SYSTEM, which can always queue.
         static wchar_t cfolder[MAX_PATH * 4];
         wchar_t *pc = get_property(h, L"ProductCode");
-        if (wcscmp(root, L"volume") != 0 && pc && cleanup_folder(pc, false, cfolder)) w_rec(&apply, L"c", cfolder, L"");
+        if (!rp_weq(root, L"volume") && pc && cleanup_folder(pc, false, cfolder)) w_rec(&apply, L"c", cfolder, L"");
         if (pc) HeapFree(GetProcessHeap(), 0, pc);
-        reader_t r = { plan + 4, plan + wcslen(plan) };
+        reader_t r = { plan + 4, plan + rp_wlen(plan) };
         static wchar_t f[3][MAX_TEXT / 8];
         static wchar_t dir[MAX_PATH * 4], src[MAX_PATH * 4], dst[MAX_PATH * 4], vol[MAX_PATH * 4], bdir[MAX_PATH * 4];
         static wchar_t dirs[8][MAX_PATH * 4];
@@ -666,7 +667,7 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
             if (action != INSTALLSTATE_ABSENT) continue;
             DWORD dn = MAX_PATH * 4;
             if (MsiGetTargetPathW(h, f[0], dir, &dn) != ERROR_SUCCESS) continue;
-            size_t dl = wcslen(dir);
+            size_t dl = rp_wlen(dir);
             if (f[1][0] == 0) {                 // the folder itself, once the engine has emptied it
                 if (dl > 3 && dir[dl - 1] == L'\\') dir[dl - 1] = 0;
                 w_rec(&commit, L"r", dir, L"");
@@ -680,7 +681,7 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
                 if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
                 if (!wild(f[1], fd.cFileName)) continue;
                 wfmt(src, MAX_PATH * 4, L"%ls%ls", dir, fd.cFileName);
-                if (wcscmp(root, L"volume") == 0 && GetVolumePathNameW(src, vol, MAX_PATH * 4)) {
+                if (rp_weq(root, L"volume") && GetVolumePathNameW(src, vol, MAX_PATH * 4)) {
                     wfmt(bdir, MAX_PATH * 4, L"%lsConfig.Msi\\%ls", vol, tag);
                 } else {
                     DWORD tn = GetTempPathW(MAX_PATH * 4, vol);
@@ -692,8 +693,8 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
                 w_rec(&rollback, L"m", dst, src);
                 w_rec(&commit, L"f", dst, L"");
                 bool seen = false;
-                for (size_t i = 0; i < ndirs; ++i) seen = seen || wcscmp(dirs[i], bdir) == 0;
-                if (!seen && ndirs < 8) wcscpy(dirs[ndirs++], bdir);
+                for (size_t i = 0; i < ndirs; ++i) seen = seen || rp_weq(dirs[i], bdir);
+                if (!seen && ndirs < 8) (void)RP_WCPY(dirs[ndirs++], bdir);
                 log_line(h, L"rubrapack: remove: %ls", src);
             } while (FindNextFileW(fh, &fd));
             FindClose(fh);
@@ -720,14 +721,14 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
 // The folder above `path` when that folder is named Config.Msi (a per-machine backup folder is
 // <volume>\Config.Msi\rp-<tag>; a per-user one is in the user's temporary folder), else false.
 static bool config_msi_above(const wchar_t *path, wchar_t parent[MAX_PATH * 4]) {
-    size_t n = wcslen(path);
+    size_t n = rp_wlen(path);
     if (n >= MAX_PATH * 4) return false;
     memcpy(parent, path, (n + 1) * sizeof *parent);
-    wchar_t *slash = wcsrchr(parent, L'\\');
+    wchar_t *slash = rp_wrchr(parent, L'\\');
     if (slash == NULL) return false;
     *slash = 0;
-    slash = wcsrchr(parent, L'\\');
-    return slash && _wcsicmp(slash + 1, L"Config.Msi") == 0;
+    slash = rp_wrchr(parent, L'\\');
+    return slash && rp_wieq(slash + 1, L"Config.Msi");
 }
 
 // Whether the backup folder `dir` may be used. Per machine the moves run as SYSTEM, and users may
@@ -743,10 +744,10 @@ static bool backup_ok(const wchar_t *dir) {
 // The same for a file in a backup folder.
 static bool backup_file_ok(const wchar_t *file) {
     static wchar_t dir[MAX_PATH * 4];
-    size_t n = wcslen(file);
+    size_t n = rp_wlen(file);
     if (n >= MAX_PATH * 4) return false;
     memcpy(dir, file, (n + 1) * sizeof *dir);
-    wchar_t *slash = wcsrchr(dir, L'\\');
+    wchar_t *slash = rp_wrchr(dir, L'\\');
     if (slash == NULL) return false;
     *slash = 0;
     return backup_ok(dir);
@@ -783,8 +784,8 @@ static void remove_list(MSIHANDLE h, bool to_backup) {
     if (data == NULL) return;
     static wchar_t note[MAX_PATH * 4];
     note[0] = 0;
-    if (wcsncmp(data, L"RPR1", 4) == 0) {
-        reader_t r = { data + 4, data + wcslen(data) };
+    if (rp_wstarts(data, L"RPR1")) {
+        reader_t r = { data + 4, data + rp_wlen(data) };
         static wchar_t f[3][MAX_PATH * 4];
         bool made = false;
         while (r.p < r.end && r_field(&r, f[0], 8) && r_field(&r, f[1], MAX_PATH * 4) && r_field(&r, f[2], MAX_PATH * 4)) {
@@ -793,13 +794,13 @@ static void remove_list(MSIHANDLE h, bool to_backup) {
                 continue;
             }
             if (op == L'c') {
-                wcscpy(note, f[1]);
+                (void)RP_WCPY(note, f[1]);
                 continue;
             }
             if (op == L'm') {
                 if (to_backup && !made) {
                     // Every backup folder named in this list, before the first move.
-                    reader_t s = { data + 4, data + wcslen(data) };
+                    reader_t s = { data + 4, data + rp_wlen(data) };
                     static wchar_t g[3][MAX_PATH * 4];
                     while (s.p < s.end && r_field(&s, g[0], 8) && r_field(&s, g[1], MAX_PATH * 4) && r_field(&s, g[2], MAX_PATH * 4)) {
                         if (g[0][0] == L'd') make_private_dir(h, g[1]);
@@ -871,8 +872,8 @@ __declspec(dllexport) UINT __stdcall RpRescuePrepare(MSIHANDLE h) {
         RegCloseKey(k);
     }
     for (wchar_t *src = pend; src && *src; ++count) {
-        wchar_t *dst = src + wcslen(src) + 1;
-        src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
+        wchar_t *dst = src + rp_wlen(src) + 1;
+        src = *dst ? dst + rp_wlen(dst) + 1 : dst + 1;
     }
     wchar_t num[24];
     wfmt(num, 24, L"%lu", count);
@@ -889,14 +890,13 @@ __declspec(dllexport) UINT __stdcall RpRescuePrepare(MSIHANDLE h) {
             if (MsiRecordGetStringW(rec, 1, fname, &fn) == ERROR_SUCCESS && MsiRecordGetStringW(rec, 2, dir, &dn) == ERROR_SUCCESS &&
                 MsiRecordGetStringW(rec, 3, comp, &cn) == ERROR_SUCCESS && MsiGetComponentStateW(h, comp, &installed, &action) == ERROR_SUCCESS &&
                 action == INSTALLSTATE_LOCAL && MsiGetTargetPathW(h, dir, path, &pn) == ERROR_SUCCESS) {
-                wchar_t *bar = wcschr(fname, L'|');
-                size_t len = wcslen(path);
-                if (len + wcslen(bar ? bar + 1 : fname) < MAX_PATH * 4) wcscpy(path + len, bar ? bar + 1 : fname);
+                wchar_t *bar = rp_wchr(fname, L'|');
+                (void)RP_WCAT(path, bar ? bar + 1 : fname);
                 bool queued = false;
                 for (wchar_t *src = pend; *src && !queued;) {
-                    wchar_t *dst = src + wcslen(src) + 1;
+                    wchar_t *dst = src + rp_wlen(src) + 1;
                     queued = *dst == 0 && CompareStringOrdinal(pfro_path(src), -1, path, -1, TRUE) == CSTR_EQUAL;
-                    src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
+                    src = *dst ? dst + rp_wlen(dst) + 1 : dst + 1;
                 }
                 if (queued) {
                     w_field(&w, path);
@@ -924,12 +924,12 @@ __declspec(dllexport) UINT __stdcall RpRescuePrepare(MSIHANDLE h) {
 static void rescue_list(MSIHANDLE h, bool undo) {
     wchar_t *data = get_property(h, L"CustomActionData");
     if (data == NULL) return;
-    reader_t r = { data, data + wcslen(data) };
+    reader_t r = { data, data + rp_wlen(data) };
     static wchar_t num[24], path[MAX_PATH * 4];
-    if (wcsncmp(data, L"RPS1", 4) == 0) {
+    if (rp_wstarts(data, L"RPS1")) {
         r.p += 4;
         if (r_field(&r, num, 24)) {
-            unsigned long before = wcstoul(num, NULL, 10);
+            unsigned long before = (unsigned long)rp_wtou(num, 10, NULL);
             while (r_field(&r, path, MAX_PATH * 4)) {
                 if (undo) {
                     BOOL ok = MoveFileExW(path, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
@@ -956,15 +956,15 @@ __declspec(dllexport) UINT __stdcall RpRescueRollback(MSIHANDLE h) {
 
 // `path` is inside folder `dir`, ignoring case.
 static bool inside(const wchar_t *path, const wchar_t *dir) {
-    size_t n = wcslen(dir);
+    size_t n = rp_wlen(dir);
     return n && CompareStringOrdinal(path, (int)n, dir, (int)n, TRUE) == CSTR_EQUAL && path[n] == L'\\' && path[n + 1];
 }
 
 // <volume>\Config.Msi\<name>.rbf, one level down: one of the installer's backups.
 static bool is_backup(const wchar_t *path) {
-    size_t n = wcslen(path);
+    size_t n = rp_wlen(path);
     return n > 17 && path[1] == L':' && CompareStringOrdinal(path + 2, 12, L"\\Config.Msi\\", 12, TRUE) == CSTR_EQUAL &&
-           !wcschr(path + 14, L'\\') && CompareStringOrdinal(path + n - 4, 4, L".rbf", 4, TRUE) == CSTR_EQUAL;
+           !rp_wchr(path + 14, L'\\') && CompareStringOrdinal(path + n - 4, 4, L".rbf", 4, TRUE) == CSTR_EQUAL;
 }
 
 // x46: the add-ons of the main product `uc` still installed, from one registry root and view.
@@ -980,9 +980,9 @@ static void addons_from(MSIHANDLE h, HKEY root, REGSAM view, const wchar_t *uc, 
         if (e == ERROR_NO_MORE_ITEMS) break;
         if (e != ERROR_SUCCESS || nl != 38 || !is_guid(name)) continue;
         bool dup = false;
-        for (size_t j = 0; j < *n; ++j) dup = dup || _wcsicmp(codes[j], name) == 0;
+        for (size_t j = 0; j < *n; ++j) dup = dup || rp_wieq(codes[j], name);
         if (dup || MsiQueryProductStateW(name) != INSTALLSTATE_DEFAULT) continue;
-        wcscpy(codes[(*n)++], name);
+        (void)rp_wcpy(codes[(*n)++], 40, name);
         log_line(h, L"rubrapack: cleanup: add-on %ls will be removed after this removal", name);
     }
     RegCloseKey(k);
@@ -995,7 +995,7 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
     writer_t w = { 0 };
     w_raw(&w, L"RPC1", 4);
     static wchar_t folder[MAX_PATH * 4];
-    bool machine = scope && wcscmp(scope, L"machine") == 0;
+    bool machine = scope && rp_weq(scope, L"machine");
     // Why this run may leave something. Windows Installer queues the installer's backups for the
     // next restart only after the commit actions (x40), so the commit cannot know - it registers the
     // task for every run that removes or replaces files, and the task's first run, two minutes
@@ -1013,7 +1013,7 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
         size_t nadd = 0;
         wchar_t *want = get_property(h, L"RP_REMOVE_ADDONS"), *upg = get_property(h, L"UPGRADINGPRODUCTCODE");
         wchar_t *uc = get_property(h, L"UpgradeCode");
-        bool addons = want && wcscmp(want, L"1") == 0 && remove && wcscmp(remove, L"ALL") == 0 && !(upg && upg[0]) && is_guid(uc);
+        bool addons = want && rp_weq(want, L"1") && remove && rp_weq(remove, L"ALL") && !(upg && upg[0]) && is_guid(uc);
         if (addons) {
             HKEY root = machine ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER;
             addons_from(h, root, KEY_WOW64_64KEY, uc, codes, &nadd, 64);
@@ -1029,11 +1029,11 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
         if (uc) HeapFree(GetProcessHeap(), 0, uc);
         static wchar_t paths[64][MAX_PATH * 4];
         size_t np = 0;
-        wchar_t *ctx = NULL;
-        for (wchar_t *d = wcstok(dirs, L";", &ctx); d && np < 64; d = wcstok(NULL, L";", &ctx)) {
+        rp_wtok_t toks = rp_wtok(dirs, L";");
+        for (wchar_t *d = rp_wtok_next(&toks); d && np < 64; d = rp_wtok_next(&toks)) {
             DWORD n = MAX_PATH * 4;
             if (MsiGetTargetPathW(h, d, paths[np], &n) != ERROR_SUCCESS) continue;
-            size_t len = wcslen(paths[np]);
+            size_t len = rp_wlen(paths[np]);
             if (len > 3 && paths[np][len - 1] == L'\\') paths[np][len - 1] = 0;
             ++np;
         }
@@ -1048,7 +1048,7 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
         writer_t gone = { 0 };
         size_t ngone = 0;
         wchar_t *upg2 = get_property(h, L"UPGRADINGPRODUCTCODE");
-        if (!machine && remove && _wcsicmp(remove, L"ALL") == 0 && !(upg2 && upg2[0])) {
+        if (!machine && remove && rp_wieq(remove, L"ALL") && !(upg2 && upg2[0])) {
             MSIHANDLE db = MsiGetActiveDatabase(h), view = 0, rec = 0;
             if (db && MsiDatabaseOpenViewW(db, L"SELECT `File`, `Component_` FROM `File`", &view) == ERROR_SUCCESS && MsiViewExecute(view, 0) == ERROR_SUCCESS) {
                 while (ngone < 4096 && gone.len < 20000 && MsiViewFetch(view, &rec) == ERROR_SUCCESS) {        // the data has a size (MAX_TEXT)
@@ -1086,12 +1086,12 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
             wchar_t *buf = pfro_read(k, &size);
             RegCloseKey(k);
             for (wchar_t *src = buf; src && *src;) {
-                wchar_t *dst = src + wcslen(src) + 1;
+                wchar_t *dst = src + rp_wlen(src) + 1;
                 const wchar_t *p = pfro_path(src);
                 bool hit = *dst == 0 && machine && is_backup(p);
                 for (size_t i = 0; *dst == 0 && !hit && i < np; ++i) hit = inside(p, paths[i]);
                 if (hit) w_field(&w, p);
-                src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
+                src = *dst ? dst + rp_wlen(dst) + 1 : dst + 1;
             }
             if (buf) HeapFree(GetProcessHeap(), 0, buf);
         }
@@ -1108,7 +1108,7 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
 }
 
 // Appends text to a growing buffer (writer_t without the field lengths).
-static void w_text(writer_t *w, const wchar_t *s) { w_raw(w, s, wcslen(s)); }
+static void w_text(writer_t *w, const wchar_t *s) { w_raw(w, s, rp_wlen(s)); }
 
 static void w_xml(writer_t *w, const wchar_t *s) {
     for (; *s; ++s) {
@@ -1164,27 +1164,27 @@ static void when(int days, wchar_t iso[24], wchar_t ymd[12]) { when_minutes((lon
 __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     wchar_t *data = get_property(h, L"CustomActionData");
     if (data == NULL) return ERROR_SUCCESS;
-    reader_t r = { data, data + wcslen(data) };
+    reader_t r = { data, data + rp_wlen(data) };
     static wchar_t pc[64], scope[16], folder[MAX_PATH * 4], why[16], dirs[64][MAX_PATH * 4], parent[64], addons[64][40];
     size_t ndirs = 0, naddons = 0;
-    if (wcsncmp(data, L"RPC1", 4) != 0) goto done;
+    if (!rp_wstarts(data, L"RPC1")) goto done;
     r.p += 4;
     static wchar_t num[24], before[MAX_PATH * 4];
     if (!r_field(&r, pc, 64) || !r_field(&r, scope, 16) || !r_field(&r, folder, MAX_PATH * 4) || !r_field(&r, why, 16) ||
         !r_field(&r, parent, 64) || !r_field(&r, num, 24))
         goto done;
-    for (unsigned long want = wcstoul(num, NULL, 10); naddons < want && naddons < 64 && r_field(&r, addons[naddons], 40);) ++naddons;
+    for (uint64_t want = rp_wtou(num, 10, NULL); naddons < want && naddons < 64 && r_field(&r, addons[naddons], 40);) ++naddons;
     if (!r_field(&r, num, 24)) goto done;
-    for (unsigned long want = wcstoul(num, NULL, 10); ndirs < want && ndirs < 64 && r_field(&r, dirs[ndirs], MAX_PATH * 4);) ++ndirs;
+    for (uint64_t want = rp_wtou(num, 10, NULL); ndirs < want && ndirs < 64 && r_field(&r, dirs[ndirs], MAX_PATH * 4);) ++ndirs;
     // The files a per-user removal took away (a count, then the paths): looked at below.
     if (!r_field(&r, num, 24)) goto done;
-    unsigned long ngone = wcstoul(num, NULL, 10);
+    uint64_t ngone = rp_wtou(num, 10, NULL);
     const wchar_t *gone_at = r.p;
     for (unsigned long i = 0; i < ngone; ++i) {
         if (!r_field(&r, before, MAX_PATH * 4)) goto done;
     }
     const wchar_t *befores = r.p;         // the rest: the deletions queued before the script
-    bool machine = wcscmp(scope, L"machine") == 0;
+    bool machine = rp_weq(scope, L"machine");
     // The codes go into paths, the task's name and command lines; per machine the folder is not
     // taken from the data (which an action running as the user wrote) but asked from Windows.
     if (!is_guid(pc) || (naddons && !is_guid(parent))) goto done;
@@ -1207,9 +1207,9 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
         if (size != INVALID_FILE_SIZE && size < (1u << 20) && size % 2 == 0) {
             wchar_t *t = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size + sizeof(wchar_t));
             if (t && ReadFile(pf, t, size, &got, NULL) && got == size) {
-                wchar_t *ctx = NULL;
-                for (wchar_t *line = wcstok(t, L"\r\n", &ctx); line; line = wcstok(NULL, L"\r\n", &ctx)) {
-                    if (wcsncmp(line, L"file\t", 5) != 0) continue;
+                rp_wtok_t toks = rp_wtok(t, L"\r\n");
+                for (wchar_t *line = rp_wtok_next(&toks); line; line = rp_wtok_next(&toks)) {
+                    if (!rp_wstarts(line, L"file\t")) continue;
                     w_text(&files, line);
                     w_text(&files, L"\r\n");
                     ++found;
@@ -1282,11 +1282,11 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     SECURITY_ATTRIBUTES sa = { sizeof sa, NULL, FALSE };
     if (machine) {
         static wchar_t base[MAX_PATH * 4], mid[MAX_PATH * 4];
-        wcscpy(mid, folder);
-        wchar_t *slash = wcsrchr(mid, L'\\');
+        (void)RP_WCPY(mid, folder);
+        wchar_t *slash = rp_wrchr(mid, L'\\');
         if (slash) *slash = 0;
-        wcscpy(base, mid);
-        slash = wcsrchr(base, L'\\');
+        (void)RP_WCPY(base, mid);
+        slash = rp_wrchr(base, L'\\');
         if (slash) *slash = 0;
         bool safe = ConvertStringSecurityDescriptorToSecurityDescriptorW(L"D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;GRGX;;;BU)", SDDL_REVISION_1,
                                                                          &sa.lpSecurityDescriptor, NULL) != 0;
@@ -1375,7 +1375,7 @@ done:
 // the installation: without the package the classic menu still has the items.
 
 static bool package_name_ok(const wchar_t *s) {
-    if (s[0] == 0 || wcslen(s) > 200) return false;
+    if (s[0] == 0 || rp_wlen(s) > 200) return false;
     for (; *s; ++s) {
         if (!((*s >= L'A' && *s <= L'Z') || (*s >= L'a' && *s <= L'z') || (*s >= L'0' && *s <= L'9') || *s == L'.' || *s == L'-' || *s == L'_')) return false;
     }
@@ -1397,7 +1397,7 @@ static bool key_empty(HKEY root, const wchar_t *path) {
 // its own values (this action runs after that), with the "shell" key above when it is left empty.
 static void legacy_verb(MSIHANDLE h, bool machine, const wchar_t *key, bool off) {
     static wchar_t path[MAX_PATH * 2];
-    if (wfmt(path, MAX_PATH * 2, L"Software\\Classes\\%ls", key) < 0 || wcsstr(key, L"\\shell\\") == NULL) return;
+    if (wfmt(path, MAX_PATH * 2, L"Software\\Classes\\%ls", key) < 0 || rp_wstr(key, L"\\shell\\") == NULL) return;
     HKEY root = machine ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER, k;
     if (off) {
         if (RegOpenKeyExW(root, path, 0, KEY_SET_VALUE, &k) != ERROR_SUCCESS) return;       // only a verb that is there
@@ -1410,10 +1410,10 @@ static void legacy_verb(MSIHANDLE h, bool machine, const wchar_t *key, bool off)
     RegCloseKey(k);
     for (int up = 0; up < 2 && key_empty(root, path); ++up) {
         if (RegDeleteKeyW(root, path) != ERROR_SUCCESS) break;
-        wchar_t *slash = wcsrchr(path, L'\\');
+        wchar_t *slash = rp_wrchr(path, L'\\');
         if (slash == NULL) break;
         *slash = 0;
-        if (up == 0 && _wcsicmp(slash - 6 > path ? slash - 6 : path, L"\\shell") != 0) break;   // only the "shell" key above
+        if (up == 0 && !rp_wieq(slash - 6 > path ? slash - 6 : path, L"\\shell")) break;   // only the "shell" key above
     }
     (void)h;
 }
@@ -1426,16 +1426,16 @@ static void menu_job(MSIHANDLE h, bool remove) {
     size_t n = 0;
     for (wchar_t *p = data; n < 6 + MAX_VERBS;) {
         f[n++] = p;
-        wchar_t *bar = wcschr(p, L'|');
+        wchar_t *bar = rp_wchr(p, L'|');
         if (bar == NULL) break;
         *bar = 0;
         p = bar + 1;
     }
     static wchar_t dir[MAX_PATH * 4];
-    bool ok = n >= 6 && wcscmp(f[1], L"RPM1") == 0 && package_name_ok(f[4]) && package_name_ok(f[5]) && wcslen(f[0]) < MAX_PATH * 4;
+    bool ok = n >= 6 && rp_weq(f[1], L"RPM1") && package_name_ok(f[4]) && package_name_ok(f[5]) && rp_wlen(f[0]) < MAX_PATH * 4;
     if (ok) {
-        wcscpy(dir, f[0]);
-        wchar_t *slash = wcsrchr(dir, L'\\');
+        (void)RP_WCPY(dir, f[0]);
+        wchar_t *slash = rp_wrchr(dir, L'\\');
         ok = slash != NULL && slash > dir + 2;
         if (ok) *slash = 0;
     }
@@ -1508,11 +1508,11 @@ static wchar_t *pre_text(MSIHANDLE h, const wchar_t *id) {
     } else {
         // No dialog chose a language: the user's, when the package has it (RP_LANGS: "1042=ko;...").
         wchar_t *ul = get_property(h, L"UserLanguageID"), *map = get_property(h, L"RP_LANGS");
-        size_t un = ul ? wcslen(ul) : 0;
-        for (const wchar_t *p = map; un && p && *p; p = wcschr(p, L';') ? wcschr(p, L';') + 1 : NULL) {
-            if (wcsncmp(p, ul, un) != 0 || p[un] != L'=') continue;
-            const wchar_t *code = p + un + 1, *end = wcschr(code, L';');
-            size_t cn = end ? (size_t)(end - code) : wcslen(code);
+        size_t un = ul ? rp_wlen(ul) : 0;
+        for (const wchar_t *p = map; un && p && *p; p = rp_wchr(p, L';') ? rp_wchr(p, L';') + 1 : NULL) {
+            if (!rp_weq_n(p, ul, un) || p[un] != L'=') continue;
+            const wchar_t *code = p + un + 1, *end = rp_wchr(code, L';');
+            size_t cn = end ? (size_t)(end - code) : rp_wlen(code);
             if (cn == 0 || cn > 15) break;
             wchar_t c[16];
             memcpy(c, code, cn * sizeof *c);
@@ -1546,9 +1546,9 @@ static bool pre_rtl(MSIHANDLE h) {
         rtl = rp_lcid_rtl(LocaleNameToLCID(name, 0));
     } else {
         wchar_t *ul = get_property(h, L"UserLanguageID"), *map = get_property(h, L"RP_LANGS");
-        size_t un = ul ? wcslen(ul) : 0;
-        for (const wchar_t *p = map; un && p && *p; p = wcschr(p, L';') ? wcschr(p, L';') + 1 : NULL) {
-            if (wcsncmp(p, ul, un) == 0 && p[un] == L'=') rtl = rp_lcid_rtl((LCID)wcstoul(ul, NULL, 10));
+        size_t un = ul ? rp_wlen(ul) : 0;
+        for (const wchar_t *p = map; un && p && *p; p = rp_wchr(p, L';') ? rp_wchr(p, L';') + 1 : NULL) {
+            if (rp_weq_n(p, ul, un) && p[un] == L'=') rtl = rp_lcid_rtl((LCID)rp_wtou(ul, 10, NULL));
         }
         if (ul) HeapFree(GetProcessHeap(), 0, ul);
         if (map) HeapFree(GetProcessHeap(), 0, map);
@@ -1588,9 +1588,8 @@ static void image_name(DWORD pid, wchar_t out[MAX_PATH]) {
     wchar_t path[MAX_PATH * 2];
     DWORD n = MAX_PATH * 2;
     if (QueryFullProcessImageNameW(p, 0, path, &n)) {
-        const wchar_t *slash = wcsrchr(path, L'\\');
-        wcsncpy(out, slash ? slash + 1 : path, MAX_PATH - 1);
-        out[MAX_PATH - 1] = 0;
+        const wchar_t *slash = rp_wrchr(path, L'\\');
+        rp_wcpy_cut(out, MAX_PATH, slash ? slash + 1 : path);
     }
     CloseHandle(p);
 }
@@ -1655,8 +1654,8 @@ static bool system_may_delete(const wchar_t *dir) {
 NTSYSAPI LONG NTAPI NtDeleteKey(HANDLE key);
 
 static bool starts_with_i(const wchar_t *s, const wchar_t *prefix) {
-    size_t n = wcslen(prefix);
-    return wcslen(s) >= n && CompareStringOrdinal(s, (int)n, prefix, (int)n, TRUE) == CSTR_EQUAL;
+    size_t n = rp_wlen(prefix);
+    return rp_wlen(s) >= n && CompareStringOrdinal(s, (int)n, prefix, (int)n, TRUE) == CSTR_EQUAL;
 }
 
 // Why folder `dir` (ending in '\') is not wiped, or NULL: it is not a folder on a drive, it is one
@@ -1668,7 +1667,7 @@ static const wchar_t *purge_refused(MSIHANDLE h, const wchar_t *dir) {
         L"FavoritesFolder", L"SendToFolder", L"TemplateFolder", L"FontsFolder", L"SystemFolder", L"System64Folder", L"TempFolder",
         L"MyPicturesFolder", L"AdminToolsFolder", L"%USERPROFILE", L"%PUBLIC", L"%ProgramData", L"%SystemRoot", L"%ProgramFiles", L"%ProgramW6432",
     };
-    size_t n = wcslen(dir);
+    size_t n = rp_wlen(dir);
     if (n <= 3 || dir[1] != L':' || dir[2] != L'\\' || dir[n - 1] != L'\\') return L"it is not a folder below a drive's root";
     const wchar_t *why = NULL;
     for (size_t i = 0; i < sizeof known / sizeof known[0] && why == NULL; ++i) {
@@ -1677,10 +1676,10 @@ static const wchar_t *purge_refused(MSIHANDLE h, const wchar_t *dir) {
         if (known[i][0] == L'%') {
             DWORD got = GetEnvironmentVariableW(known[i] + 1, path, MAX_PATH * 4 - 2);
             if (got == 0 || got >= MAX_PATH * 4 - 2) continue;
-            if (path[got - 1] != L'\\') wcscat(path, L"\\");
+            if (path[got - 1] != L'\\') (void)RP_WCAT(path, L"\\");
         } else {
             wchar_t *v = get_property(h, known[i]);
-            if (v && wcslen(v) < MAX_PATH * 4) wcscpy(path, v);
+            if (v) (void)RP_WCPY(path, v);
             if (v) HeapFree(GetProcessHeap(), 0, v);
         }
         if (path[0] == 0) continue;
@@ -1700,7 +1699,7 @@ static bool other_product_in(const wchar_t *dir, const wchar_t *self, wchar_t fo
             DWORD n = MAX_PATH * 4;
             INSTALLSTATE st = MsiGetComponentPathW(prod, cid, path, &n);
             if ((st == INSTALLSTATE_LOCAL || st == INSTALLSTATE_SOURCE) && path[0] && path[1] == L':' && starts_with_i(path, dir)) {
-                wcscpy(found, prod);
+                (void)rp_wcpy(found, 39, prod);
                 return true;
             }
         }
@@ -1714,7 +1713,7 @@ static bool purge_users_all(MSIHANDLE h) {
     wchar_t *asked = get_property(h, L"RP_PURGE_USERS");
     wchar_t *given = asked && asked[0] ? NULL : get_property(h, L"RPPURGEUSERS");
     const wchar_t *v = asked && asked[0] ? asked : given;
-    bool all = v && _wcsicmp(v, L"all") == 0;
+    bool all = v && rp_wieq(v, L"all");
     if (asked) HeapFree(GetProcessHeap(), 0, asked);
     if (given) HeapFree(GetProcessHeap(), 0, given);
     return all;
@@ -1729,8 +1728,7 @@ static bool my_sid(wchar_t *out, size_t cap) {
     bool ok = false;
     wchar_t *s = NULL;
     if (GetTokenInformation(t, TokenUser, buf, sizeof buf, &n) && ConvertSidToStringSidW(((TOKEN_USER *)buf)->User.Sid, &s)) {
-        ok = wcslen(s) < cap;
-        if (ok) wcscpy(out, s);
+        ok = rp_wcpy(out, cap, s);
         LocalFree(s);
     }
     CloseHandle(t);
@@ -1746,15 +1744,15 @@ static bool purge_rel(MSIHANDLE h, const wchar_t *dir, wchar_t usf[16], wchar_t 
     bool ok = false;
     for (int i = 0; i < 2 && !ok; ++i) {
         wchar_t *base = get_property(h, props[i]);
-        size_t bn = base ? wcslen(base) : 0;
-        if (bn > 3 && base[bn - 1] == L'\\' && wcslen(dir) > bn + 1 && starts_with_i(dir, base)) {
+        size_t bn = base ? rp_wlen(base) : 0;
+        if (bn > 3 && base[bn - 1] == L'\\' && rp_wlen(dir) > bn + 1 && starts_with_i(dir, base)) {
             const wchar_t *r = dir + bn;
-            size_t rn = wcslen(r) - 1;          // without its last '\'
-            ok = rn > 0 && rn < MAX_PATH * 2 && r[0] != L'\\' && wcschr(r, L':') == NULL && wcsstr(r, L"..") == NULL;
+            size_t rn = rp_wlen(r) - 1;          // without its last '\'
+            ok = rn > 0 && rn < MAX_PATH * 2 && r[0] != L'\\' && rp_wchr(r, L':') == NULL && rp_wstr(r, L"..") == NULL;
             if (ok) {
                 memcpy(rel, r, rn * sizeof *rel);
                 rel[rn] = 0;
-                wcscpy(usf, names[i]);
+                (void)rp_wcpy(usf, 16, names[i]);
             }
         }
         if (base) HeapFree(GetProcessHeap(), 0, base);
@@ -1784,12 +1782,12 @@ __declspec(dllexport) UINT __stdcall RpPurgePrepare(MSIHANDLE h) {
     }
     if (plan && upgrading && upgrading[0]) {
         log_line(h, L"rubrapack: purge: an upgrade (%ls) removes this version: nothing is wiped", upgrading);
-    } else if (plan && wcsncmp(plan, L"RPP1", 4) == 0) {
+    } else if (plan && rp_wstarts(plan, L"RPP1")) {
         static wchar_t profile[MAX_PATH * 4], dir[MAX_PATH * 4];
         DWORD pn = GetEnvironmentVariableW(L"USERPROFILE", profile, MAX_PATH * 4 - 2);
         if (pn == 0 || pn >= MAX_PATH * 4 - 2) profile[0] = 0;
-        else if (profile[pn - 1] != L'\\') wcscat(profile, L"\\");
-        reader_t r = { plan + 4, plan + wcslen(plan) };
+        else if (profile[pn - 1] != L'\\') (void)RP_WCAT(profile, L"\\");
+        reader_t r = { plan + 4, plan + rp_wlen(plan) };
         static wchar_t f[5][MAX_TEXT / 8];
         while (r.p < r.end) {
             bool ok = true;
@@ -1799,7 +1797,7 @@ __declspec(dllexport) UINT __stdcall RpPurgePrepare(MSIHANDLE h) {
             // "D", "K": as "d", "k", and the other users' too (RFC-0030).
             INSTALLSTATE installed = INSTALLSTATE_UNKNOWN, action = INSTALLSTATE_UNKNOWN;
             bool all = f[0][0] == L'D' || f[0][0] == L'K';
-            if (all) f[0][0] = (wchar_t)towlower(f[0][0]);
+            if (all) f[0][0] = (wchar_t)rp_wlower(f[0][0]);
             if (f[0][0] != L'x') {
                 MsiGetComponentStateW(h, f[4], &installed, &action);
                 if (action != INSTALLSTATE_ABSENT) continue;
@@ -1826,16 +1824,16 @@ __declspec(dllexport) UINT __stdcall RpPurgePrepare(MSIHANDLE h) {
                     log_line(h, L"rubrapack: purge: %ls is not below AppData or LocalAppData: the other users' are kept", dir);
                 }
                 writer_t *w = two && !(profile[0] && starts_with_i(dir, profile)) ? &sys : &user;
-                dir[wcslen(dir) - 1] = 0;
+                dir[rp_wlen(dir) - 1] = 0;
                 w_field(w, L"t"); w_field(w, dir); w_field(w, L""); w_field(w, L"");
                 log_line(h, L"rubrapack: purge: folder %ls (%ls)", dir, w == &sys ? L"as SYSTEM" : L"as the user");
             } else if (f[0][0] == L'k') {
-                const wchar_t *root = wcscmp(f[1], L"HKMU") == 0 ? (machine ? L"HKLM" : L"HKCU") : f[1];
-                if (wcscmp(root, L"HKLM") != 0 && wcscmp(root, L"HKCU") != 0) continue;
-                writer_t *w = two && wcscmp(root, L"HKLM") == 0 ? &sys : &user;
+                const wchar_t *root = rp_weq(f[1], L"HKMU") ? (machine ? L"HKLM" : L"HKCU") : f[1];
+                if (!rp_weq(root, L"HKLM") && !rp_weq(root, L"HKCU")) continue;
+                writer_t *w = two && rp_weq(root, L"HKLM") ? &sys : &user;
                 w_field(w, L"k"); w_field(w, root); w_field(w, f[2]); w_field(w, f[3]);
                 log_line(h, L"rubrapack: purge: key %ls\\%ls (%ls)", root, f[3], w == &sys ? L"as SYSTEM" : L"as the user");
-                if (all && others && wcscmp(root, L"HKCU") == 0) {
+                if (all && others && rp_weq(root, L"HKCU")) {
                     w_field(&oth, L"h"); w_field(&oth, f[2]); w_field(&oth, f[3]);
                     log_line(h, L"rubrapack: purge: every other user's key HKCU\\%ls (as SYSTEM)", f[3]);
                     ++nothers;
@@ -1947,10 +1945,9 @@ static void purge_inside(purge_t *p, HANDLE d, size_t len, int depth) {
 
 static void purge_tree(MSIHANDLE h, const wchar_t *dir) {
     purge_t p = { h, HeapAlloc(GetProcessHeap(), 0, PURGE_PATH * sizeof(wchar_t)), HeapAlloc(GetProcessHeap(), 0, PURGE_PATH * sizeof(wchar_t)), 0, 0 };
-    size_t len = wcslen(dir);
+    size_t len = rp_wlen(dir);
     if (p.path && p.real && len + 8 < PURGE_PATH && len > 3 && dir[1] == L':') {
-        wcscpy(p.path, L"\\\\?\\");
-        wcscat(p.path, dir);
+        (void)(rp_wcpy(p.path, PURGE_PATH, L"\\\\?\\") && rp_wcat(p.path, PURGE_PATH, dir));
         DWORD attr = 0;
         HANDLE d = purge_open(&p, &attr);
         if (d == INVALID_HANDLE_VALUE) {
@@ -1995,7 +1992,7 @@ static LSTATUS purge_subkey(HKEY parent, const wchar_t *name, REGSAM view, int d
 
 static void purge_key(MSIHANDLE h, const wchar_t *root, const wchar_t *view, const wchar_t *key) {
     HKEY base = HKEY_LOCAL_MACHINE;
-    bool user = wcscmp(root, L"HKCU") == 0;
+    bool user = rp_weq(root, L"HKCU");
     // The hive of the user this action runs as, not the process's.
     if (user && RegOpenCurrentUser(KEY_READ, &base) != ERROR_SUCCESS) {
         log_line(h, L"rubrapack: purge: key %ls\\%ls: the user's registry cannot be opened", root, key);
@@ -2010,8 +2007,8 @@ static void purge_key(MSIHANDLE h, const wchar_t *root, const wchar_t *view, con
 __declspec(dllexport) UINT __stdcall RpPurge(MSIHANDLE h) {
     wchar_t *data = get_property(h, L"CustomActionData");
     if (data == NULL) return ERROR_SUCCESS;
-    if (wcsncmp(data, L"RPP1", 4) == 0) {
-        reader_t r = { data + 4, data + wcslen(data) };
+    if (rp_wstarts(data, L"RPP1")) {
+        reader_t r = { data + 4, data + rp_wlen(data) };
         static wchar_t f[4][MAX_PATH * 4];
         while (r.p < r.end && r_field(&r, f[0], 8) && r_field(&r, f[1], MAX_PATH * 4) && r_field(&r, f[2], 8) && r_field(&r, f[3], MAX_PATH * 4)) {
             if (f[0][0] == L't') purge_tree(h, f[1]);
@@ -2040,14 +2037,14 @@ static bool next_user(DWORD *at, const wchar_t *self, other_user_t *u) {
         DWORD n = 200;
         if (RegEnumKeyExW(list, (*at)++, u->sid, &n, NULL, NULL, NULL, NULL) != ERROR_SUCCESS) break;
         if (!starts_with_i(u->sid, L"S-1-5-21-") && !starts_with_i(u->sid, L"S-1-12-1-")) continue;
-        if (wcsspn(u->sid + 2, L"0123456789-") != wcslen(u->sid + 2)) continue;     // "...-1001.bak" and the like
-        if (self && _wcsicmp(u->sid, self) == 0) continue;
+        if (!rp_wall_in(u->sid + 2, L"0123456789-")) continue;     // "...-1001.bak" and the like
+        if (self && rp_wieq(u->sid, self)) continue;
         wchar_t raw[MAX_PATH];
         DWORD rn = sizeof raw;
         if (RegGetValueW(list, u->sid, L"ProfileImagePath", RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ | RRF_NOEXPAND, NULL, raw, &rn) != ERROR_SUCCESS) continue;
         DWORD en = ExpandEnvironmentStringsW(raw, u->profile, MAX_PATH);
         if (en == 0 || en > MAX_PATH) continue;
-        size_t pn = wcslen(u->profile);
+        size_t pn = rp_wlen(u->profile);
         while (pn > 3 && u->profile[pn - 1] == L'\\') u->profile[--pn] = 0;
         if (pn < 4 || u->profile[1] != L':' || u->profile[2] != L'\\') continue;
         DWORD a = GetFileAttributesW(u->profile);
@@ -2066,7 +2063,7 @@ static bool user_data_dir(HKEY hive, const other_user_t *u, const wchar_t *usf, 
     DWORD n = sizeof raw;
     if (hive == NULL || RegGetValueW(hive, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders", usf,
                                      RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ | RRF_NOEXPAND, NULL, raw, &n) != ERROR_SUCCESS || raw[0] == 0) {
-        wcscpy(raw, wcscmp(usf, L"AppData") == 0 ? L"%USERPROFILE%\\AppData\\Roaming" : L"%USERPROFILE%\\AppData\\Local");
+        (void)RP_WCPY(raw, rp_weq(usf, L"AppData") ? L"%USERPROFILE%\\AppData\\Roaming" : L"%USERPROFILE%\\AppData\\Local");
     }
     // %USERPROFILE% is the user's own; any other variable is not this process's to expand.
     if (starts_with_i(raw, L"%USERPROFILE%")) {
@@ -2074,9 +2071,9 @@ static bool user_data_dir(HKEY hive, const other_user_t *u, const wchar_t *usf, 
     } else if (wfmt(out, cap, L"%ls", raw) < 0) {
         return false;
     }
-    size_t on = wcslen(out), pn = wcslen(u->profile);
+    size_t on = rp_wlen(out), pn = rp_wlen(u->profile);
     while (on > 3 && out[on - 1] == L'\\') out[--on] = 0;
-    return wcschr(out, L'%') == NULL && wcschr(out, L'/') == NULL && wcsstr(out, L"..") == NULL && on > pn + 1 && out[pn] == L'\\' &&
+    return rp_wchr(out, L'%') == NULL && rp_wchr(out, L'/') == NULL && rp_wstr(out, L"..") == NULL && on > pn + 1 && out[pn] == L'\\' &&
            starts_with_i(out, u->profile);
 }
 
@@ -2110,15 +2107,15 @@ __declspec(dllexport) UINT __stdcall RpPurgeOthers(MSIHANDLE h) {
     static wchar_t k[4], x[CAP], y[CAP], self[200], product[40], base[CAP], full[CAP];
     self[0] = product[0] = 0;
     size_t n = 0;
-    if (wcsncmp(data, L"RPO1", 4) == 0) {
-        reader_t r = { data + 4, data + wcslen(data) };
+    if (rp_wstarts(data, L"RPO1")) {
+        reader_t r = { data + 4, data + rp_wlen(data) };
         while (r_field(&r, k, 4) && r_field(&r, x, CAP) && r_field(&r, y, CAP)) {
-            if (k[0] == L's' && wcslen(x) < 200) wcscpy(self, x);
-            else if (k[0] == L'p' && is_guid(x)) wcscpy(product, x);
+            if (k[0] == L's' && rp_wlen(x) < 200) (void)RP_WCPY(self, x);
+            else if (k[0] == L'p' && is_guid(x)) (void)RP_WCPY(product, x);
             else if ((k[0] == L'a' || k[0] == L'h') && n < MAX_ITEMS) {
                 kind[n] = k[0];
-                wcscpy(one[n], x);
-                wcscpy(two[n], y);
+                (void)RP_WCPY(one[n], x);
+                (void)RP_WCPY(two[n], y);
                 ++n;
             }
         }
@@ -2165,7 +2162,7 @@ __declspec(dllexport) UINT __stdcall RpPurgeOthers(MSIHANDLE h) {
                 }
                 if (wfmt(full, CAP, L"%ls\\%ls\\", base, two[i]) < 0) continue;
                 const wchar_t *why = purge_refused(h, full);
-                full[wcslen(full) - 1] = 0;
+                full[rp_wlen(full) - 1] = 0;
                 if (why) log_line(h, L"rubrapack: purge: %ls is kept: %ls", full, why);
                 else purge_tree(h, full);
             } else {
@@ -2271,7 +2268,7 @@ static bool ex_match(const wchar_t *pat, const wchar_t *s) {     // * and ?, cas
     if (*pat == 0) return *s == 0;
     if (*pat == L'*') return ex_match(pat + 1, s) || (*s && ex_match(pat, s + 1));
     if (*s == 0) return false;
-    if (*pat != L'?' && towlower(*pat) != towlower(*s)) return false;
+    if (*pat != L'?' && rp_wlower(*pat) != rp_wlower(*s)) return false;
     return ex_match(pat + 1, s + 1);
 }
 
@@ -2284,15 +2281,13 @@ static void ex_query(MSIHANDLE db, const wchar_t *sql, ex_known_t *k, size_t *n,
             wchar_t dir[80], name[260];
             DWORD dn = 80, nn = 260;
             if (MsiRecordGetStringW(rec, 1, dir, &dn) == ERROR_SUCCESS && MsiRecordGetStringW(rec, 2, name, &nn) == ERROR_SUCCESS && name[0]) {
-                wchar_t *bar = wcschr(name, L'|');
+                wchar_t *bar = rp_wchr(name, L'|');
                 const wchar_t *parts[2] = { name, bar ? bar + 1 : NULL };
                 if (bar) *bar = 0;
                 for (int i = 0; i < 2; ++i) {
-                    if (parts[i] == NULL || wcslen(parts[i]) + wcslen(suffix) >= 260) continue;
+                    if (parts[i] == NULL || rp_wlen(parts[i]) + rp_wlen(suffix) >= 260) continue;
                     ex_known_t *e = &k[(*n)++];
-                    wcscpy(e->dir, dir);
-                    wcscpy(e->name, parts[i]);
-                    wcscat(e->name, suffix);
+                    (void)(RP_WCPY(e->dir, dir) && RP_WCPY(e->name, parts[i]) && RP_WCAT(e->name, suffix));
                     e->pattern = pattern;
                 }
             }
@@ -2317,18 +2312,18 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
         ex_query(db, L"SELECT `DirProperty`, `FileName` FROM `RemoveFile`", known, &nknown, MAX_KNOWN, L"", true);
         MsiCloseHandle(db);
     }
-    wchar_t *ctx = NULL;
-    for (wchar_t *d = wcstok(dirs, L";", &ctx); d && ndirs < MAX_DIRS; d = wcstok(NULL, L";", &ctx)) {
+    rp_wtok_t toks = rp_wtok(dirs, L";");
+    for (wchar_t *d = rp_wtok_next(&toks); d && ndirs < MAX_DIRS; d = rp_wtok_next(&toks)) {
         DWORD n = MAX_PATH * 2;
-        if (wcslen(d) >= 80 || MsiGetTargetPathW(h, d, paths[ndirs], &n) != ERROR_SUCCESS || paths[ndirs][0] == 0) continue;
-        wcscpy(keys[ndirs], d);
+        if (rp_wlen(d) >= 80 || MsiGetTargetPathW(h, d, paths[ndirs], &n) != ERROR_SUCCESS || paths[ndirs][0] == 0) continue;
+        (void)RP_WCPY(keys[ndirs], d);
         has_extra[ndirs] = false;
         ++ndirs;
     }
     // The folders the package wipes anyway.
     wchar_t *plan = get_property(h, L"RP_PURGE");
-    if (plan && wcsncmp(plan, L"RPP1", 4) == 0) {
-        reader_t r = { plan + 4, plan + wcslen(plan) };
+    if (plan && rp_wstarts(plan, L"RPP1")) {
+        reader_t r = { plan + 4, plan + rp_wlen(plan) };
         static wchar_t f[5][MAX_TEXT / 8];
         while (r.p < r.end && nwiped < MAX_DIRS) {
             bool ok = true;
@@ -2345,20 +2340,19 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
         bool skip = false;
         for (size_t w = 0; w < nwiped && !skip; ++w) skip = starts_with_i(paths[i], wiped[w]);
         if (skip) continue;
-        size_t len = wcslen(paths[i]);
+        size_t len = rp_wlen(paths[i]);
         if (len + 2 >= MAX_PATH * 4) continue;
-        wcscpy(full, paths[i]);
-        wcscat(full, L"*");
+        (void)(RP_WCPY(full, paths[i]) && RP_WCAT(full, L"*"));
         WIN32_FIND_DATAW fd;
         HANDLE fh = FindFirstFileExW(full, FindExInfoBasic, &fd, FindExSearchNameMatch, NULL, 0);
         if (fh == INVALID_HANDLE_VALUE) continue;
         do {
-            if (wcscmp(fd.cFileName, L".") == 0 || wcscmp(fd.cFileName, L"..") == 0) continue;
+            if (rp_weq(fd.cFileName, L".") || rp_weq(fd.cFileName, L"..")) continue;
             bool mine = false;
             if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-                if (len + wcslen(fd.cFileName) + 2 < MAX_PATH * 4) {
-                    wcscpy(full + len, fd.cFileName);
-                    wcscat(full, L"\\");
+                if (len + rp_wlen(fd.cFileName) + 2 < MAX_PATH * 4) {
+                    full[len] = 0;
+                    (void)(RP_WCAT(full, fd.cFileName) && RP_WCAT(full, L"\\"));
                     for (size_t j = 0; j < ndirs && !mine; ++j) mine = lstrcmpiW(paths[j], full) == 0;
                 }
             } else {
@@ -2375,7 +2369,7 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
             if (count <= 15) {
                 wchar_t line[MAX_PATH * 2 + 16];
                 wfmt(line, MAX_PATH * 2 + 16, L"  - %ls%ls%ls\r\n", paths[i], fd.cFileName, (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? L"\\" : L"");
-                w_raw(&list, line, wcslen(line));
+                w_raw(&list, line, rp_wlen(line));
             }
         } while (FindNextFileW(fh, &fd));
         FindClose(fh);
@@ -2383,16 +2377,16 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
     if (count > 15) {
         wchar_t more[64];
         wfmt(more, 64, L"  ... +%u\r\n", count - 15);
-        w_raw(&list, more, wcslen(more));
+        w_raw(&list, more, rp_wlen(more));
     }
     UINT rc = ERROR_SUCCESS;
     if (count) {
         wchar_t num[16];
         wfmt(num, 16, L"%u", count);
         int choice = 0;     // IDYES delete, IDNO keep
-        if (answer && _wcsicmp(answer, L"delete") == 0) choice = IDYES;
-        else if (answer && _wcsicmp(answer, L"keep") == 0) choice = IDNO;
-        else if (mode && wcscmp(mode, L"delete") == 0) choice = IDYES;
+        if (answer && rp_wieq(answer, L"delete")) choice = IDYES;
+        else if (answer && rp_wieq(answer, L"keep")) choice = IDNO;
+        else if (mode && rp_weq(mode, L"delete")) choice = IDYES;
         else if (silent) {
             log_line(h, L"rubrapack: preflight: stopped: %u item(s) in the product's folders were not installed with it and there is no window to ask in (RPEXTRA=delete or keep)", count);
             pre_message(h, L"ExtraSilent", INSTALLMESSAGE_ERROR | MB_OK | MB_ICONWARNING, num, list.buf ? list.buf : L"", product);
@@ -2403,7 +2397,7 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
         }
         if (rc == ERROR_SUCCESS && choice == IDYES) {
             writer_t w = { 0 };
-            w_raw(&w, plan && wcsncmp(plan, L"RPP1", 4) == 0 ? plan : L"RPP1", plan && wcsncmp(plan, L"RPP1", 4) == 0 ? wcslen(plan) : 4);
+            w_raw(&w, plan && rp_wstarts(plan, L"RPP1") ? plan : L"RPP1", plan && rp_wstarts(plan, L"RPP1") ? rp_wlen(plan) : 4);
             for (size_t i = 0; i < ndirs; ++i) {
                 if (!has_extra[i]) continue;
                 w_field(&w, L"x"); w_field(&w, keys[i]); w_field(&w, L""); w_field(&w, L""); w_field(&w, L"");
@@ -2430,13 +2424,13 @@ static UINT pre_users(MSIHANDLE h, bool silent, const wchar_t *product) {
     wchar_t *plan = get_property(h, L"RP_PURGE"), *given = get_property(h, L"RPPURGEUSERS");
     size_t ndirs = 0;
     bool keys = false;
-    if (plan && wcsncmp(plan, L"RPP1", 4) == 0) {
-        reader_t r = { plan + 4, plan + wcslen(plan) };
+    if (plan && rp_wstarts(plan, L"RPP1")) {
+        reader_t r = { plan + 4, plan + rp_wlen(plan) };
         for (;;) {
             bool ok = true;
             for (int i = 0; i < 5; ++i) ok = ok && r_field(&r, f[i], MAX_TEXT / 8);
             if (!ok) break;
-            if (f[0][0] == L'K' && wcscmp(f[1], L"HKCU") == 0 && wcslen(f[3]) < CAP) keys = true;
+            if (f[0][0] == L'K' && rp_weq(f[1], L"HKCU") && rp_wlen(f[3]) < CAP) keys = true;
             if (f[0][0] != L'D' || ndirs == MAX_ITEMS) continue;
             DWORD dn = MAX_PATH * 4;
             if (MsiGetTargetPathW(h, f[1], dir, &dn) == ERROR_SUCCESS && purge_rel(h, dir, usf[ndirs], rel[ndirs])) ++ndirs;
@@ -2447,7 +2441,7 @@ static UINT pre_users(MSIHANDLE h, bool silent, const wchar_t *product) {
     if (ndirs == 0 && !keys) {
         answer = NULL;
     } else if (given && given[0]) {
-        answer = _wcsicmp(given, L"all") == 0 ? L"all" : L"mine";
+        answer = rp_wieq(given, L"all") ? L"all" : L"mine";
         log_line(h, L"rubrapack: preflight: RPPURGEUSERS=%ls: the other users' settings and data are %ls", given, answer[0] == L'a' ? L"deleted too" : L"kept");
     } else if (silent) {
         answer = L"mine";
@@ -2470,12 +2464,12 @@ static UINT pre_users(MSIHANDLE h, bool silent, const wchar_t *product) {
                 has = GetFileAttributesW(full) != INVALID_FILE_ATTRIBUTES || GetLastError() == ERROR_ACCESS_DENIED;
             }
             if (!has && keys && hive && plan) {
-                reader_t r = { plan + 4, plan + wcslen(plan) };
+                reader_t r = { plan + 4, plan + rp_wlen(plan) };
                 for (;;) {
                     bool ok = true;
                     for (int i = 0; i < 5; ++i) ok = ok && r_field(&r, f[i], MAX_TEXT / 8);
                     if (!ok || has) break;
-                    if (f[0][0] != L'K' || wcscmp(f[1], L"HKCU") != 0) continue;
+                    if (f[0][0] != L'K' || !rp_weq(f[1], L"HKCU")) continue;
                     HKEY key;
                     LSTATUS ls = RegOpenKeyExW(hive, f[3], 0, KEY_READ | view_flag(f[2]), &key);
                     if (ls == ERROR_SUCCESS) RegCloseKey(key);
@@ -2491,7 +2485,7 @@ static UINT pre_users(MSIHANDLE h, bool silent, const wchar_t *product) {
             SID_NAME_USE use;
             PSID sid = NULL;
             if (!ConvertStringSidToSidW(u.sid, &sid) || !LookupAccountSidW(NULL, sid, name, &nn, domain, &dn, &use)) {
-                const wchar_t *slash = wcsrchr(u.profile, L'\\');
+                const wchar_t *slash = rp_wrchr(u.profile, L'\\');
                 wfmt(name, 256, L"%ls", slash ? slash + 1 : u.profile);
             }
             if (sid) LocalFree(sid);
@@ -2499,13 +2493,13 @@ static UINT pre_users(MSIHANDLE h, bool silent, const wchar_t *product) {
             if (count <= 15) {
                 wchar_t line[300];
                 wfmt(line, 300, L"  - %ls\r\n", name);
-                w_raw(&list, line, wcslen(line));
+                w_raw(&list, line, rp_wlen(line));
             }
         }
         if (count > 15) {
             wchar_t more[64];
             wfmt(more, 64, L"  ... +%u\r\n", count - 15);
-            w_raw(&list, more, wcslen(more));
+            w_raw(&list, more, rp_wlen(more));
         }
         if (count == 0) {
             answer = L"mine";
@@ -2538,12 +2532,12 @@ typedef LONG(WINAPI *packages_fn)(PCWSTR, UINT32 *, PWSTR *, UINT32 *, WCHAR *);
 static UINT pre_other(MSIHANDLE h, bool silent, const wchar_t *product) {
     wchar_t *spec = get_property(h, L"RP_OTHER");
     UINT rc = ERROR_SUCCESS;
-    wchar_t *ctx = NULL;
-    for (wchar_t *e = spec && spec[0] ? wcstok(spec, L";", &ctx) : NULL; e && rc == ERROR_SUCCESS; e = wcstok(NULL, L";", &ctx)) {
+    rp_wtok_t toks = rp_wtok(spec, L";");
+    for (wchar_t *e = rp_wtok_next(&toks); e && rc == ERROR_SUCCESS; e = rp_wtok_next(&toks)) {
         // kind|action|ID|what
         wchar_t *f[4] = { e, NULL, NULL, NULL };
         for (int i = 1; i < 4; ++i) {
-            wchar_t *bar = f[i - 1] ? wcschr(f[i - 1], L'|') : NULL;
+            wchar_t *bar = f[i - 1] ? rp_wchr(f[i - 1], L'|') : NULL;
             if (bar) *bar = 0;
             f[i] = bar ? bar + 1 : NULL;
         }
@@ -2557,18 +2551,17 @@ static UINT pre_other(MSIHANDLE h, bool silent, const wchar_t *product) {
             if (fn && fn(f[3], &count, NULL, &len, NULL) == ERROR_INSUFFICIENT_BUFFER && count > 0 && len > 0) {
                 PWSTR *names = HeapAlloc(GetProcessHeap(), 0, count * sizeof *names);
                 WCHAR *buf = HeapAlloc(GetProcessHeap(), 0, len * sizeof *buf);
-                if (names && buf && fn(f[3], &count, names, &len, buf) == ERROR_SUCCESS && count > 0) wcsncpy(found, names[0], 511);
-                else wcsncpy(found, f[3], 511);
-                found[511] = 0;
+                if (names && buf && fn(f[3], &count, names, &len, buf) == ERROR_SUCCESS && count > 0) RP_WCPY_CUT(found, names[0]);
+                else RP_WCPY_CUT(found, f[3]);
                 if (names) HeapFree(GetProcessHeap(), 0, names);
                 if (buf) HeapFree(GetProcessHeap(), 0, buf);
             }
         } else {
             wchar_t pc[39], *mine = get_property(h, L"ProductCode");
             for (DWORD i = 0; found[0] == 0 && MsiEnumRelatedProductsW(f[3], 0, i, pc) == ERROR_SUCCESS; ++i) {
-                if (mine && _wcsicmp(pc, mine) == 0) continue;
+                if (mine && rp_wieq(pc, mine)) continue;
                 DWORD n = 511;
-                if (MsiGetProductInfoW(pc, L"ProductName", found, &n) != ERROR_SUCCESS || found[0] == 0) wcscpy(found, pc);
+                if (MsiGetProductInfoW(pc, L"ProductName", found, &n) != ERROR_SUCCESS || found[0] == 0) (void)RP_WCPY(found, pc);
             }
             if (mine) HeapFree(GetProcessHeap(), 0, mine);
         }
@@ -2603,8 +2596,8 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     wchar_t *remove = get_property(h, L"REMOVE"), *older = get_property(h, L"RP_OLDER_FOUND");
     wchar_t *dirs = get_property(h, L"RP_PREFLIGHT_DIRS"), *code = get_property(h, L"ProductCode");
     UINT rc = ERROR_SUCCESS;
-    bool silent = uilevel == NULL || wcstol(uilevel, NULL, 10) <= 2;
-    bool removal = remove && _wcsicmp(remove, L"ALL") == 0;
+    bool silent = uilevel == NULL || rp_wtoi(uilevel, 10, NULL) <= 2;
+    bool removal = remove && rp_wieq(remove, L"ALL");
     // The old version's removal inside an upgrade: the upgrading package has asked already (x51).
     wchar_t *upgrading = get_property(h, L"UPGRADINGPRODUCTCODE");
     bool nested = upgrading && upgrading[0];
@@ -2645,14 +2638,14 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
             DWORD fn = 1024, dn = 80, pn = MAX_PATH * 4;
             if (MsiRecordGetStringW(rec, 1, fname, &fn) == ERROR_SUCCESS && MsiRecordGetStringW(rec, 2, dir, &dn) == ERROR_SUCCESS &&
                 MsiGetTargetPathW(h, dir, path, &pn) == ERROR_SUCCESS) {
-                wchar_t *bar = wcschr(fname, L'|');
+                wchar_t *bar = rp_wchr(fname, L'|');
                 const wchar_t *name = bar ? bar + 1 : fname;
-                size_t len = wcslen(path);
-                if (len + wcslen(name) < MAX_PATH * 4) {
-                    wcscpy(path + len, name);
-                    if (_wcsicmp(name, L"rubrapack_menu.dll") == 0 && wcslen(path) < MAX_PATH * 4) wcscpy(menu_dll, path);
+                size_t len = rp_wlen(path);
+                if (len + rp_wlen(name) < MAX_PATH * 4) {
+                    (void)RP_WCAT(path, name);
+                    if (rp_wieq(name, L"rubrapack_menu.dll")) (void)RP_WCPY(menu_dll, path);
                     if (GetFileAttributesW(path) != INVALID_FILE_ATTRIBUTES) {
-                        size_t n = wcslen(path) + 1;
+                        size_t n = rp_wlen(path) + 1;
                         wchar_t *copy = HeapAlloc(GetProcessHeap(), 0, n * sizeof *copy);
                         if (copy) {
                             memcpy(copy, path, n * sizeof *copy);
@@ -2686,7 +2679,7 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
                 for (UINT i = 0; (e == ERROR_SUCCESS || e == ERROR_MORE_DATA) && i < have; ++i) {
                     wchar_t image[MAX_PATH];
                     image_name(procs[i].Process.dwProcessId, image);
-                    if (_wcsicmp(image, L"dllhost.exe") != 0) continue;
+                    if (!rp_wieq(image, L"dllhost.exe")) continue;
                     HANDLE p = OpenProcess(PROCESS_TERMINATE | SYNCHRONIZE, FALSE, procs[i].Process.dwProcessId);
                     BOOL ended = p && TerminateProcess(p, 0);
                     if (ended) WaitForSingleObject(p, 3000);
@@ -2717,12 +2710,12 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
         wchar_t image[MAX_PATH];
         image_name(pid, image);
         // Not the installer itself, and nothing Windows cannot do without.
-        if (pid == GetCurrentProcessId() || _wcsicmp(image, L"msiexec.exe") == 0 || procs[i].ApplicationType == RmCritical) continue;
+        if (pid == GetCurrentProcessId() || rp_wieq(image, L"msiexec.exe") || procs[i].ApplicationType == RmCritical) continue;
         log_line(h, L"rubrapack: preflight: in use by %ls (%ls, process %lu, kind %d)", procs[i].strAppName, image, (unsigned long)pid, (int)procs[i].ApplicationType);
         if (nlisted < 15) {
             wchar_t line[400];
             wfmt(line, 400, L"  - %ls (%ls)\r\n", procs[i].strAppName[0] ? procs[i].strAppName : image, image[0] ? image : L"?");
-            w_raw(&names, line, wcslen(line));
+            w_raw(&names, line, rp_wlen(line));
         }
         pids[nlisted++] = pid;
         if (nlisted == MAX_PROCS) break;
@@ -2730,17 +2723,17 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     if (nlisted > 15) {
         wchar_t more[64];
         wfmt(more, 64, L"  ... +%u\r\n", nlisted - 15);
-        w_raw(&names, more, wcslen(more));
+        w_raw(&names, more, rp_wlen(more));
     }
     if (nlisted) {
         wchar_t count[16];
         wfmt(count, 16, L"%u", nlisted);
         // yes / no from RPCLOSE, else the package's default, else the question.
         int choice = 0;         // IDYES, IDNO, IDCANCEL
-        if (answer && (_wcsicmp(answer, L"yes") == 0 || wcscmp(answer, L"1") == 0)) choice = IDYES;
-        else if (answer && (_wcsicmp(answer, L"no") == 0 || wcscmp(answer, L"0") == 0)) choice = IDNO;
-        else if (dflt && wcscmp(dflt, L"always") == 0) choice = IDYES;
-        else if (dflt && wcscmp(dflt, L"never") == 0) choice = IDNO;
+        if (answer && (rp_wieq(answer, L"yes") || rp_weq(answer, L"1"))) choice = IDYES;
+        else if (answer && (rp_wieq(answer, L"no") || rp_weq(answer, L"0"))) choice = IDNO;
+        else if (dflt && rp_weq(dflt, L"always")) choice = IDYES;
+        else if (dflt && rp_weq(dflt, L"never")) choice = IDNO;
         else if (silent) {
             log_line(h, L"rubrapack: preflight: stopped: %u program(s) use the product's files and there is no window to ask in (RPCLOSE=yes or no)", nlisted);
             pre_message(h, L"Silent", INSTALLMESSAGE_ERROR | MB_OK | MB_ICONWARNING, count, names.buf ? names.buf : L"", product);
@@ -2794,11 +2787,11 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
         wchar_t path[MAX_PATH * 4], cmd[160];
         // The first older version's code (the list is "{..};{..}").
         wfmt(cmd, 160, L"msiexec /x %.38ls", older && older[0] ? older : code ? code : L"");
-        wchar_t *ctx = NULL;
-        for (wchar_t *d = dirs ? wcstok(dirs, L";", &ctx) : NULL; d && rc == ERROR_SUCCESS; d = wcstok(NULL, L";", &ctx)) {
+        rp_wtok_t ds = rp_wtok(dirs, L";");
+        for (wchar_t *d = rp_wtok_next(&ds); d && rc == ERROR_SUCCESS; d = rp_wtok_next(&ds)) {
             DWORD n = MAX_PATH * 4;
             if (MsiGetTargetPathW(h, d, path, &n) != ERROR_SUCCESS) continue;
-            size_t len = wcslen(path);
+            size_t len = rp_wlen(path);
             if (len > 3 && path[len - 1] == L'\\') path[len - 1] = 0;
             DWORD a = GetFileAttributesW(path);
             if (a == INVALID_FILE_ATTRIBUTES) continue;
@@ -2808,8 +2801,8 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
                 rc = ERROR_INSTALL_FAILURE;
             }
         }
-        ctx = NULL;
-        for (wchar_t *pc = older ? wcstok(older, L";", &ctx) : NULL; pc && rc == ERROR_SUCCESS; pc = wcstok(NULL, L";", &ctx)) {
+        rp_wtok_t toks = rp_wtok(older, L";");
+        for (wchar_t *pc = rp_wtok_next(&toks); pc && rc == ERROR_SUCCESS; pc = rp_wtok_next(&toks)) {
             wchar_t pkg[MAX_PATH * 2];
             DWORD n = MAX_PATH * 2;
             if (MsiGetProductInfoW(pc, L"LocalPackage", pkg, &n) != ERROR_SUCCESS) continue;
@@ -2855,18 +2848,18 @@ static BOOL CALLBACK det_child(HWND w, LPARAM lp) {
     wchar_t cls[32];
     if (GetClassNameW(w, cls, 32) == 0) return TRUE;
     LONG style = GetWindowLongW(w, GWL_STYLE);
-    if (_wcsnicmp(cls, L"RichEdit", 8) == 0 && d->edit == NULL) d->edit = w;
-    else if (_wcsicmp(cls, L"Button") == 0 && ((style & 0xF) == BS_AUTOCHECKBOX || (style & 0xF) == BS_CHECKBOX)) d->check = w;
+    if (rp_wistarts(cls, L"RichEdit") && d->edit == NULL) d->edit = w;
+    else if (rp_wieq(cls, L"Button") && ((style & 0xF) == BS_AUTOCHECKBOX || (style & 0xF) == BS_CHECKBOX)) d->check = w;
     return TRUE;
 }
 
 static BOOL CALLBACK det_top(HWND w, LPARAM lp) {
     det_win_t *d = (det_win_t *)lp;
     wchar_t cls[40], title[300];
-    if (!IsWindowVisible(w) || GetClassNameW(w, cls, 40) == 0 || _wcsnicmp(cls, L"MsiDialog", 9) != 0) return TRUE;
+    if (!IsWindowVisible(w) || GetClassNameW(w, cls, 40) == 0 || !rp_wistarts(cls, L"MsiDialog")) return TRUE;
     title[0] = 0;
     GetWindowTextW(w, title, 300);
-    if (d->title && d->title[0] && wcscmp(title, d->title) != 0) return TRUE;
+    if (d->title && d->title[0] && !rp_weq(title, d->title)) return TRUE;
     d->edit = d->check = NULL;
     EnumChildWindows(w, det_child, lp);
     if (d->edit == NULL) return TRUE;
@@ -2967,7 +2960,7 @@ static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lc
                  cf.bCharSet != CHINESEBIG5_CHARSET;
     fm->runs = fm->noauto;
     cf.bPitchAndFamily = VARIABLE_PITCH | FF_SWISS;
-    size_t fl = face && face[0] ? wcslen(face) : 0;
+    size_t fl = face && face[0] ? rp_wlen(face) : 0;
     if (fl == 0 || fl >= LF_FACESIZE) face = L"Segoe UI", fl = 8, cf.bCharSet = DEFAULT_CHARSET;
     memcpy(cf.szFaceName, face, (fl + 1) * sizeof *face);
     // The box's format, then each script run's (face and character set only), then a CHARRANGE.
@@ -2979,7 +2972,7 @@ static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lc
         all[i].cbSize = sizeof all[i];
         all[i].dwMask = CFM_FACE | CFM_CHARSET;
         det_run_face(i, &name, &all[i].bCharSet);
-        wcscpy(all[i].szFaceName, name);
+        (void)RP_WCPY(all[i].szFaceName, name);
     }
     size_t size = sizeof all + sizeof(CHARRANGE);
     if (mine == theirs) {
@@ -3044,9 +3037,9 @@ static void det_font_close(det_fmt_t *fm) {
 
 // The value of `key` in an operation's arguments ("A=1,B=two,C=3"): up to the next ",Name=" or the end.
 static bool det_arg(const wchar_t *args, const wchar_t *key, wchar_t *out, size_t cap) {
-    size_t kn = wcslen(key);
-    for (const wchar_t *p = args; p && *p; p = wcschr(p, L',') ? wcschr(p, L',') + 1 : NULL) {
-        if (wcsncmp(p, key, kn) != 0 || p[kn] != L'=') continue;
+    size_t kn = rp_wlen(key);
+    for (const wchar_t *p = args; p && *p; p = rp_wchr(p, L',') ? rp_wchr(p, L',') + 1 : NULL) {
+        if (!rp_weq_n(p, key, kn) || p[kn] != L'=') continue;
         const wchar_t *v = p + kn + 1, *e = v;
         for (;; ++e) {
             if (*e == 0) break;
@@ -3103,32 +3096,32 @@ static const det_op_t det_ops[DET_OPS] = {
 static void det_readable(det_state_t *st, const wchar_t *line, wchar_t *out, size_t cap) {
     const det_op_t *ops = det_ops;
     out[0] = 0;
-    const wchar_t *own = wcsstr(line, L"rubrapack: ");
+    const wchar_t *own = rp_wstr(line, L"rubrapack: ");
     if (own) {                              // the helper's own lines (what was closed, kept, wiped), not its housekeeping
-        if (wcsncmp(own + 11, L"cleanup:", 8) != 0 && wcsncmp(own + 11, L"details:", 8) != 0) wfmt(out, cap, L"  %.900ls", own + 11);
+        if (!rp_wstarts(own + 11, L"cleanup:") && !rp_wstarts(own + 11, L"details:")) wfmt(out, cap, L"  %.900ls", own + 11);
         return;
     }
-    const wchar_t *op = wcsstr(line, L"Executing op: ");
+    const wchar_t *op = rp_wstr(line, L"Executing op: ");
     if (op == NULL) return;
     op += 14;
-    const wchar_t *paren = wcschr(op, L'(');
+    const wchar_t *paren = rp_wchr(op, L'(');
     if (paren == NULL) return;
     size_t on = (size_t)(paren - op);
     static wchar_t args[4096], v[1024];
-    size_t an = wcslen(paren + 1);
+    size_t an = rp_wlen(paren + 1);
     if (an >= 4096) an = 4095;
     memcpy(args, paren + 1, an * sizeof *args);
     args[an] = 0;
     if (an && args[an - 1] == L')') args[an - 1] = 0;
-    if (on == 11 && wcsncmp(op, L"ActionStart", 11) == 0) {
+    if (on == 11 && rp_wstarts(op, L"ActionStart")) {
         if (det_arg(args, L"Description", v, 1024)) wfmt(out, cap, L"%.900ls", v);
         return;
     }
-    if (on == 15 && wcsncmp(op, L"SetTargetFolder", 15) == 0) {
+    if (on == 15 && rp_wstarts(op, L"SetTargetFolder")) {
         if (!det_arg(args, L"Folder", st->folder, 520)) st->folder[0] = 0;
         // A shell folder is given by its number ("23\"): its path, when the system has one.
-        wchar_t *end = NULL;
-        long csidl = wcstol(st->folder, &end, 10);
+        const wchar_t *end = NULL;
+        int64_t csidl = rp_wtoi(st->folder, 10, &end);
         static wchar_t shell[MAX_PATH], rest[520];
         if (end != st->folder && (*end == L'\\' || *end == 0) && csidl >= 0 && csidl < 256 && SHGetFolderPathW(NULL, (int)csidl, NULL, 0, shell) == S_OK) {
             wfmt(rest, 520, L"%ls", end);
@@ -3136,30 +3129,30 @@ static void det_readable(det_state_t *st, const wchar_t *line, wchar_t *out, siz
         }
         return;
     }
-    if (on == 10 && wcsncmp(op, L"RegOpenKey", 10) == 0) {
+    if (on == 10 && rp_wstarts(op, L"RegOpenKey")) {
         static wchar_t root[40], key[480];
         if (!det_arg(args, L"Key", key, 480)) key[0] = 0;
         if (!det_arg(args, L"Root", root, 40)) root[0] = 0;
-        long r = wcstol(root, NULL, 10);
-        const wchar_t *hive = r == (long)0x80000000 ? L"HKCR\\" : r == (long)0x80000001 ? L"HKCU\\" : r == (long)0x80000002 ? L"HKLM\\" : r == (long)0x80000003 ? L"HKU\\" : L"";
+        int64_t r = rp_wtoi(root, 10, NULL);       // the hive's HKEY, a negative 32-bit number
+        const wchar_t *hive = r == (int32_t)0x80000000 ? L"HKCR\\" : r == (int32_t)0x80000001 ? L"HKCU\\" : r == (int32_t)0x80000002 ? L"HKLM\\" : r == (int32_t)0x80000003 ? L"HKU\\" : L"";
         wfmt(st->key, 520, L"%ls%ls", hive, key);
         return;
     }
-    if (on == 11 && wcsncmp(op, L"IniFilePath", 11) == 0) { if (!det_arg(args, L"File", st->ini, 520)) st->ini[0] = 0; return; }
+    if (on == 11 && rp_wstarts(op, L"IniFilePath")) { if (!det_arg(args, L"File", st->ini, 520)) st->ini[0] = 0; return; }
     for (size_t i = 0; i < DET_OPS; ++i) {
-        if (wcslen(ops[i].op) != on || wcsncmp(op, ops[i].op, on) != 0) continue;
+        if (rp_wlen(ops[i].op) != on || !rp_weq_n(op, ops[i].op, on)) continue;
         v[0] = 0;
         if (ops[i].arg) det_arg(args, ops[i].arg, v, 1024);
         const wchar_t *shown_name = v;
-        wchar_t *bar = wcschr(v, L'|');                     // "short|long": the long name
+        wchar_t *bar = rp_wchr(v, L'|');                     // "short|long": the long name
         if (bar && ops[i].where == 1) shown_name = bar + 1;
-        if (wcscmp(ops[i].op, L"CustomActionSchedule") == 0) {
+        if (rp_weq(ops[i].op, L"CustomActionSchedule")) {
             // The source's own actions are RP_<ID>_Do / RP_<ID>_Undo; the rest of rubrapack's (and
             // every rollback twin) is housekeeping.
-            size_t vn = wcslen(v);
-            if (vn > 8 && wcscmp(v + vn - 8, L"Rollback") == 0) return;
-            if (wcsncmp(v, L"RP_", 3) == 0) {
-                bool is_do = vn > 6 && wcscmp(v + vn - 3, L"_Do") == 0, is_undo = vn > 8 && wcscmp(v + vn - 5, L"_Undo") == 0;
+            size_t vn = rp_wlen(v);
+            if (vn > 8 && rp_weq(v + vn - 8, L"Rollback")) return;
+            if (rp_wstarts(v, L"RP_")) {
+                bool is_do = vn > 6 && rp_weq(v + vn - 3, L"_Do"), is_undo = vn > 8 && rp_weq(v + vn - 5, L"_Undo");
                 if (!is_do && !is_undo) return;
                 v[vn - (is_do ? 3 : 5)] = 0;
                 shown_name = v + 3;
@@ -3167,7 +3160,7 @@ static void det_readable(det_state_t *st, const wchar_t *line, wchar_t *out, siz
         }
         const wchar_t *base = ops[i].where == 1 ? st->folder : ops[i].where == 2 ? st->key : ops[i].where == 3 ? st->ini : L"";
         if (ops[i].where == 1 && ((shown_name[0] && shown_name[1] == L':') || (shown_name[0] == L'\\' && shown_name[1] == L'\\'))) base = L"";    // a whole path already (a rollback)
-        size_t bn = wcslen(base);
+        size_t bn = rp_wlen(base);
         const wchar_t *sep = bn && shown_name[0] && base[bn - 1] != L'\\' ? (ops[i].where == 3 ? L": " : L"\\") : L"";
         wfmt(out, cap, L"  %.80ls: %.500ls%ls%.380ls", st->label[i] && st->label[i][0] ? st->label[i] : ops[i].en, base, sep, shown_name);
         return;
@@ -3240,7 +3233,7 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
         wchar_t *face = NULL, *lcid = NULL;
         if (wfmt(name, 48, L"RpDetFont_%.15ls", lang && lang[0] ? lang : L"en") > 0) face = get_property(h, name);
         if (wfmt(name, 48, L"RpDetLcid_%.15ls", lang && lang[0] ? lang : L"en") > 0) lcid = get_property(h, name);
-        det_font_open(&fmt, win.edit, face, lcid ? (LCID)wcstoul(lcid, NULL, 10) : 0);
+        det_font_open(&fmt, win.edit, face, lcid ? (LCID)rp_wtou(lcid, 10, NULL) : 0);
         if (face) HeapFree(GetProcessHeap(), 0, face);
         if (lcid) HeapFree(GetProcessHeap(), 0, lcid);
     }
@@ -3306,15 +3299,15 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
                 // The end of the run: the line that says ExecuteAction has ended - after the
                 // service's lines, its name with something behind it ("Return value 1."), whatever
                 // language Windows writes the rest in.
-                if (wcsstr(line, L"MSI (s)")) started = true;
-                const wchar_t *ea = started ? wcsstr(line, L": ExecuteAction. ") : NULL;
+                if (rp_wstr(line, L"MSI (s)")) started = true;
+                const wchar_t *ea = started ? rp_wstr(line, L": ExecuteAction. ") : NULL;
                 if (ea && ea[17] > L' ') ended = true;
                 const wchar_t *text = line;
                 if (!full) {
                     det_readable(&st, line, nice, 1024);
                     text = nice;
                 }
-                size_t tn = wcslen(text);
+                size_t tn = rp_wlen(text);
                 if (tn == 0 || o + tn + 3 > ocap) continue;
                 memcpy(add + o, text, tn * sizeof *add);
                 o += tn;
@@ -3374,12 +3367,12 @@ __declspec(dllexport) UINT __stdcall RpDirCheck(MSIHANDLE h) {
     wchar_t *dir = prop && prop[0] ? get_property(h, prop) : NULL;
     bool holds = false;
     static wchar_t pattern[MAX_PATH * 4];
-    if (dir && dir[0] && wfmt(pattern, MAX_PATH * 4, L"%ls%ls*", dir, dir[wcslen(dir) - 1] == L'\\' ? L"" : L"\\") > 0) {
+    if (dir && dir[0] && wfmt(pattern, MAX_PATH * 4, L"%ls%ls*", dir, dir[rp_wlen(dir) - 1] == L'\\' ? L"" : L"\\") > 0) {
         WIN32_FIND_DATAW fd;
         HANDLE f = FindFirstFileW(pattern, &fd);
         if (f != INVALID_HANDLE_VALUE) {
             do {
-                holds = wcscmp(fd.cFileName, L".") != 0 && wcscmp(fd.cFileName, L"..") != 0;
+                holds = !rp_weq(fd.cFileName, L".") && !rp_weq(fd.cFileName, L"..");
             } while (!holds && FindNextFileW(f, &fd));
             FindClose(f);
         }
@@ -3401,13 +3394,13 @@ __declspec(dllexport) UINT __stdcall RpDirCheck(MSIHANDLE h) {
 
 // The code RP_UILANGS gives the LANGID in `id`, copied to out (16 units), or false.
 static bool uilang_for(const wchar_t *map, const wchar_t *id, wchar_t out[16]) {
-    size_t n = id ? wcslen(id) : 0;
-    for (const wchar_t *p = map; n && p && *p; p = wcschr(p, L';') ? wcschr(p, L';') + 1 : NULL) {
-        if (wcsncmp(p, id, n) != 0 || p[n] != L'=') continue;
-        const wchar_t *code = p + n + 1, *end = wcschr(code, L';');
-        size_t len = end ? (size_t)(end - code) : wcslen(code);
+    size_t n = id ? rp_wlen(id) : 0;
+    for (const wchar_t *p = map; n && p && *p; p = rp_wchr(p, L';') ? rp_wchr(p, L';') + 1 : NULL) {
+        if (!rp_weq_n(p, id, n) || p[n] != L'=') continue;
+        const wchar_t *code = p + n + 1, *end = rp_wchr(code, L';');
+        size_t len = end ? (size_t)(end - code) : rp_wlen(code);
         if (len == 0 || len >= 16) return false;
-        wmemcpy(out, code, len);
+        memcpy(out, code, len * sizeof *out);
         out[len] = 0;
         return true;
     }
@@ -3468,11 +3461,11 @@ static size_t lang_rows(MSIHANDLE h, MSIHANDLE db, const wchar_t *code) {
 __declspec(dllexport) UINT __stdcall RpLangApply(MSIHANDLE h) {
     wchar_t *lang = get_property(h, L"RPLANGUAGE");
     wchar_t code[16] = L"en";
-    if (lang && lang[0] && wcslen(lang) < 16) {
-        wcscpy(code, lang);
+    if (lang && lang[0] && rp_wlen(lang) < 16) {
+        (void)RP_WCPY(code, lang);
     } else {
         wchar_t *map = get_property(h, L"RP_UILANGS"), *ul = get_property(h, L"UserLanguageID"), *sl = get_property(h, L"SystemLanguageID");
-        if (!uilang_for(map, ul, code) && !uilang_for(map, sl, code)) wcscpy(code, L"en");
+        if (!uilang_for(map, ul, code) && !uilang_for(map, sl, code)) (void)RP_WCPY(code, L"en");
         MsiSetPropertyW(h, L"RPLANGUAGE", code);
         if (map) HeapFree(GetProcessHeap(), 0, map);
         if (ul) HeapFree(GetProcessHeap(), 0, ul);
@@ -3481,7 +3474,7 @@ __declspec(dllexport) UINT __stdcall RpLangApply(MSIHANDLE h) {
     MSIHANDLE db = MsiGetActiveDatabase(h);
     if (db) {
         size_t n = lang_rows(h, db, code);
-        if (n == 0 && wcscmp(code, L"en") != 0) n = lang_rows(h, db, L"en");
+        if (n == 0 && !rp_weq(code, L"en")) n = lang_rows(h, db, L"en");
         log_line(h, L"rubrapack: language %ls: %lu texts", code, (unsigned long)n);
         MsiCloseHandle(db);
     }
@@ -3526,7 +3519,7 @@ __declspec(dllexport) UINT __stdcall RpReportPrepare(MSIHANDLE h) {
     wchar_t *name = get_property(h, L"ProductName"), *log = get_property(h, L"MsiLogFileLocation");
     wchar_t *installed = get_property(h, L"Installed"), *remove = get_property(h, L"REMOVE");
     wchar_t *older = get_property(h, L"RP_OLDER_FOUND"), *checks = get_property(h, L"RP_REPORT");
-    bool before = installed && installed[0], removal = remove && _wcsicmp(remove, L"ALL") == 0, upgrade = older && older[0];
+    bool before = installed && installed[0], removal = remove && rp_wieq(remove, L"ALL"), upgrade = older && older[0];
     wchar_t *text = pre_text(h, removal ? L"ReportRemove" : before ? L"ReportRepair" : upgrade ? L"ReportUpgrade" : L"ReportInstall");
     writer_t w = { 0 };
     w_raw(&w, L"RPR1", 4);
@@ -3536,9 +3529,9 @@ __declspec(dllexport) UINT __stdcall RpReportPrepare(MSIHANDLE h) {
     w_field(&w, before || upgrade ? L"1" : L"0");
     w_field(&w, older ? older : L"");
     for (wchar_t *line = checks, *next; line && *line; line = next) {
-        next = wcschr(line, L'\n');
+        next = rp_wchr(line, L'\n');
         if (next) *next++ = 0;
-        wchar_t *tab = wcschr(line, L'\t');
+        wchar_t *tab = rp_wchr(line, L'\t');
         if (tab == NULL) continue;
         *tab = 0;
         wchar_t key[300];
@@ -3562,7 +3555,7 @@ __declspec(dllexport) UINT __stdcall RpReportPrepare(MSIHANDLE h) {
 
 // Runs exe with args and waits up to a minute; its exit code, or -1 when it could not run.
 static long report_run(const wchar_t *exe, const wchar_t *args) {
-    size_t n = wcslen(exe) + wcslen(args) + 8;
+    size_t n = rp_wlen(exe) + rp_wlen(args) + 8;
     wchar_t *line = HeapAlloc(GetProcessHeap(), 0, n * sizeof *line);
     if (line == NULL) return -1;
     wfmt(line, n, L"\"%ls\" %ls", exe, args);
@@ -3586,7 +3579,7 @@ static void report_fill(writer_t *w, const wchar_t *tmpl, const wchar_t *f1, con
     for (const wchar_t *p = tmpl; *p; ++p) {
         if (p[0] == L'[' && (p[1] == L'1' || p[1] == L'2') && p[2] == L']') {
             const wchar_t *v = p[1] == L'1' ? f1 : f2;
-            w_raw(w, v, wcslen(v));
+            w_raw(w, v, rp_wlen(v));
             p += 2;
         } else {
             w_raw(w, p, 1);
@@ -3596,11 +3589,11 @@ static void report_fill(writer_t *w, const wchar_t *tmpl, const wchar_t *f1, con
 
 __declspec(dllexport) UINT __stdcall RpReport(MSIHANDLE h) {
     wchar_t *data = get_property(h, L"CustomActionData");
-    if (data == NULL || wcsncmp(data, L"RPR1", 4) != 0) {
+    if (data == NULL || !rp_wstarts(data, L"RPR1")) {
         if (data) HeapFree(GetProcessHeap(), 0, data);
         return ERROR_SUCCESS;
     }
-    reader_t r = { data + 4, data + wcslen(data) };
+    reader_t r = { data + 4, data + rp_wlen(data) };
     static wchar_t name[512], log[MAX_PATH * 2], text[4096], before[4], older[4096], exe[MAX_PATH * 2], args[2048];
     if (!r_field(&r, name, 512) || !r_field(&r, log, MAX_PATH * 2) || !r_field(&r, text, 4096) ||
         !r_field(&r, before, 4) || !r_field(&r, older, 4096)) {
@@ -3612,10 +3605,11 @@ __declspec(dllexport) UINT __stdcall RpReport(MSIHANDLE h) {
     unsigned found = 0;
     wchar_t line[MAX_PATH * 4];
     // The older versions an upgrade found.
-    for (wchar_t *ctx = NULL, *pc = wcstok(older, L";", &ctx); pc; pc = wcstok(NULL, L";", &ctx)) {
+    rp_wtok_t toks = rp_wtok(older, L";");
+    for (wchar_t *pc = rp_wtok_next(&toks); pc; pc = rp_wtok_next(&toks)) {
         if (MsiQueryProductStateW(pc) != INSTALLSTATE_DEFAULT) {
             wfmt(line, MAX_PATH * 4, L"- %ls: not installed (it was before)\r\n", pc);
-            w_raw(&diff, line, wcslen(line));
+            w_raw(&diff, line, rp_wlen(line));
             ++found;
         }
     }
@@ -3628,7 +3622,7 @@ __declspec(dllexport) UINT __stdcall RpReport(MSIHANDLE h) {
             if (!exists) wfmt(line, MAX_PATH * 4, L"- %ls: the program is not there (what it registers was there before)\r\n", exe);
             else wfmt(line, MAX_PATH * 4, L"- \"%ls\" %ls: exit %ld (%ls)\r\n", exe, args, code,
                       there ? L"what it checks was there before" : L"what it checks was not there before");
-            w_raw(&diff, line, wcslen(line));
+            w_raw(&diff, line, rp_wlen(line));
             ++found;
         }
     }
@@ -3646,7 +3640,7 @@ __declspec(dllexport) UINT __stdcall RpReport(MSIHANDLE h) {
         wchar_t path[MAX_PATH * 2];
         wchar_t safe[128];
         size_t sn = 0;
-        for (const wchar_t *p = name; *p && sn < 100; ++p) safe[sn++] = wcschr(L"\\/:*?\"<>|", *p) ? L'_' : *p;
+        for (const wchar_t *p = name; *p && sn < 100; ++p) safe[sn++] = rp_wchr(L"\\/:*?\"<>|", *p) ? L'_' : *p;
         safe[sn] = 0;
         bool ok = false;
         if (folder) {
@@ -3656,11 +3650,12 @@ __declspec(dllexport) UINT __stdcall RpReport(MSIHANDLE h) {
             report_fill(&w, text, name, log[0] ? log : L"-");
             w_raw(&w, L"\r\n\r\n", 4);
             if (diff.buf) w_raw(&w, diff.buf, diff.len);
-            int n8 = w.buf ? WideCharToMultiByte(CP_UTF8, 0, w.buf, (int)w.len, NULL, 0, NULL, NULL) : 0;
-            char *u8 = n8 > 0 ? HeapAlloc(GetProcessHeap(), 0, (size_t)n8 + 3) : NULL;
-            if (u8) {
-                u8[0] = (char)0xEF; u8[1] = (char)0xBB; u8[2] = (char)0xBF;            // UTF-8 with a BOM: Notepad reads it at once
-                WideCharToMultiByte(CP_UTF8, 0, w.buf, (int)w.len, u8 + 3, n8, NULL, NULL);
+            // An unpaired surrogate (a file name may hold one) becomes U+FFFD, as WideCharToMultiByte writes it.
+            proven_result_size_t need = w.buf ? proven_utf16_to_utf8_lossy_size(w.buf, w.len) : (proven_result_size_t){ PROVEN_ERR_INVALID_ARG, 0 };
+            size_t n8 = need.err == PROVEN_OK && need.value > 0 && need.value < MAXDWORD - 3 ? need.value : 0;
+            unsigned char *u8 = n8 ? HeapAlloc(GetProcessHeap(), 0, n8 + 3) : NULL;
+            if (u8 && proven_utf16_to_utf8_lossy(w.buf, w.len, u8 + 3, n8, &n8) == PROVEN_OK) {
+                u8[0] = 0xEF; u8[1] = 0xBB; u8[2] = 0xBF;                              // UTF-8 with a BOM: Notepad reads it at once
                 HANDLE f = CreateFileW(path, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
                 DWORD put = 0;
                 ok = f != INVALID_HANDLE_VALUE && WriteFile(f, u8, (DWORD)n8 + 3, &put, NULL) && put == (DWORD)n8 + 3;

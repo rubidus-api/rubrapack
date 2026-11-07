@@ -21,6 +21,8 @@
 
 #include "proven/utf.h"
 
+#include "../ca/rp_wstr.h"
+
 enum { MAX_TEXT = 1 << 20, MAX_VALUE = 32767 };
 
 static void fail(const wchar_t *what) {
@@ -49,15 +51,13 @@ static size_t next_line(const char *t, size_t len, size_t *at, wchar_t *out, siz
     return n + 1;
 }
 
-static bool starts(const wchar_t *s, const wchar_t *p) { return wcsncmp(s, p, wcslen(p)) == 0; }
-
 // %PKG% becomes the package folder; the rest goes through ExpandEnvironmentStrings.
 static bool expand(const wchar_t *v, const wchar_t *pkg, wchar_t *out, size_t cap) {
     static wchar_t tmp[MAX_VALUE + 1];
     size_t w = 0;
     for (const wchar_t *p = v; *p;) {
-        if (starts(p, L"%PKG%")) {
-            size_t n = wcslen(pkg);
+        if (rp_wstarts(p, L"%PKG%")) {
+            size_t n = rp_wlen(pkg);
             if (w + n >= MAX_VALUE) return false;
             memcpy(tmp + w, pkg, n * sizeof *tmp);
             w += n;
@@ -76,21 +76,20 @@ static int run(void) {
     static wchar_t self[MAX_PATH * 4], dir[MAX_PATH * 4], pkg[MAX_PATH * 4], name[256], path[MAX_PATH * 4];
     DWORD n = GetModuleFileNameW(NULL, self, (DWORD)(sizeof self / sizeof *self));
     if (n == 0 || n >= sizeof self / sizeof *self) return fail(L"cannot find itself"), 1;
-    wcscpy(dir, self);
-    wchar_t *slash = wcsrchr(dir, L'\\');
+    (void)RP_WCPY(dir, self);
+    wchar_t *slash = rp_wrchr(dir, L'\\');
     if (slash == NULL) return fail(L"cannot find its folder"), 1;
-    wcscpy(name, slash + 1);
+    if (!RP_WCPY(name, slash + 1)) return fail(L"cannot find itself"), 1;
     *slash = 0;                                     // dir: ...\rubrapack
-    wcscpy(pkg, dir);
-    slash = wcsrchr(pkg, L'\\');
+    (void)RP_WCPY(pkg, dir);
+    slash = rp_wrchr(pkg, L'\\');
     if (slash == NULL) return fail(L"cannot find the package folder"), 1;
     *slash = 0;                                     // pkg: the package's folder
-    wchar_t *dot = wcsrchr(name, L'.');
+    wchar_t *dot = rp_wrchr(name, L'.');
     if (dot) *dot = 0;                              // name: the AppId
 
     // launch.txt
-    wcscpy(path, dir);
-    wcscat(path, L"\\launch.txt");
+    if (!RP_WCPY(path, dir) || !RP_WCAT(path, L"\\launch.txt")) return fail(L"cannot read rubrapack\\launch.txt"), 1;
     HANDLE f = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
     if (f == INVALID_HANDLE_VALUE) return fail(L"cannot read rubrapack\\launch.txt"), 1;
     static char text[MAX_TEXT];
@@ -103,23 +102,20 @@ static int run(void) {
     bool mine = false, have_target = false;
     size_t at = 0;
     while (next_line(text, got, &at, line, sizeof line / sizeof *line)) {
-        if (starts(line, L"app ")) {
+        if (rp_wstarts(line, L"app ")) {
             mine = lstrcmpiW(line + 4, name) == 0;
             continue;
         }
         if (!mine) continue;
-        if (starts(line, L"target ")) {
-            if (wcslen(pkg) + wcslen(line + 7) + 2 > sizeof target / sizeof *target) return fail(L"the target's path is too long"), 1;
-            wcscpy(target, pkg);
-            wcscat(target, L"\\");
-            wcscat(target, line + 7);
+        if (rp_wstarts(line, L"target ")) {
+            if (!RP_WCPY(target, pkg) || !RP_WCAT(target, L"\\") || !RP_WCAT(target, line + 7)) return fail(L"the target's path is too long"), 1;
             have_target = true;
             continue;
         }
-        int mode = starts(line, L"set ") ? 0 : starts(line, L"append ") ? 1 : starts(line, L"prepend ") ? 2 : -1;
+        int mode = rp_wstarts(line, L"set ") ? 0 : rp_wstarts(line, L"append ") ? 1 : rp_wstarts(line, L"prepend ") ? 2 : -1;
         if (mode < 0) continue;
         wchar_t *var = line + (mode == 0 ? 4 : mode == 1 ? 7 : 8);
-        wchar_t *eq = wcschr(var, L'=');
+        wchar_t *eq = rp_wchr(var, L'=');
         if (eq == NULL) continue;
         *eq = 0;
         if (!expand(eq + 1, pkg, value, sizeof value / sizeof *value)) return fail(L"a value is too long"), 1;
@@ -129,13 +125,9 @@ static int run(void) {
             SetEnvironmentVariableW(var, value);
         } else {
             if (mode == 1) {
-                wcscpy(joined, old);
-                wcscat(joined, L";");
-                wcscat(joined, value);
+                (void)(RP_WCPY(joined, old) && RP_WCAT(joined, L";") && RP_WCAT(joined, value));
             } else {
-                wcscpy(joined, value);
-                wcscat(joined, L";");
-                wcscat(joined, old);
+                (void)(RP_WCPY(joined, value) && RP_WCAT(joined, L";") && RP_WCAT(joined, old));
             }
             SetEnvironmentVariableW(var, joined);
         }
@@ -152,15 +144,13 @@ static int run(void) {
         while (*cl && *cl != L' ' && *cl != L'\t') ++cl;
     }
     static wchar_t cmd[32768];
-    size_t tl = wcslen(target), rl = wcslen(cl);
+    size_t tl = rp_wlen(target), rl = rp_wlen(cl);
     if (tl + rl + 3 >= sizeof cmd / sizeof *cmd) return fail(L"the command line is too long"), 1;
     cmd[0] = L'"';
-    wcscpy(cmd + 1, target);
-    wcscat(cmd, L"\"");
-    wcscat(cmd, cl);
+    (void)(rp_wcpy(cmd + 1, sizeof cmd / sizeof *cmd - 1, target) && RP_WCAT(cmd, L"\"") && RP_WCAT(cmd, cl));
     static wchar_t cwd[MAX_PATH * 4];
-    wcscpy(cwd, target);
-    slash = wcsrchr(cwd, L'\\');
+    (void)RP_WCPY(cwd, target);
+    slash = rp_wrchr(cwd, L'\\');
     if (slash) *slash = 0;
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;

@@ -15,8 +15,9 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include <wchar.h>
 #include <windows.h>
+
+#include "../ca/rp_wstr.h"
 
 #define PFRO_KEY L"SYSTEM\\CurrentControlSet\\Control\\Session Manager"
 #define PFRO_VALUE L"PendingFileRenameOperations"
@@ -27,7 +28,7 @@
         while (*src >= L'0' && *src <= L'9') ++src;
     }
     if (*src == L'!') ++src;
-    return wcsncmp(src, L"\\??\\", 4) == 0 ? src + 4 : src;
+    return rp_wstarts(src, L"\\??\\") ? src + 4 : src;
 }
 
 // The value (heap, two extra NULs) and its size in bytes; NULL when there is none.
@@ -52,9 +53,9 @@
     RegCloseKey(k);
     bool found = false;
     for (wchar_t *src = buf; src && *src && !found;) {
-        wchar_t *dst = src + wcslen(src) + 1;
+        wchar_t *dst = src + rp_wlen(src) + 1;
         found = *dst == 0 && CompareStringOrdinal(pfro_path(src), -1, path, -1, TRUE) == CSTR_EQUAL;
-        src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
+        src = *dst ? dst + rp_wlen(dst) + 1 : dst + 1;
     }
     if (buf) HeapFree(GetProcessHeap(), 0, buf);
     return found;
@@ -73,8 +74,8 @@
         wchar_t *out = buf;          // compacts in place: the kept pairs move down
         unsigned long index = 0;
         for (wchar_t *src = buf; *src; ++index) {
-            wchar_t *dst = src + wcslen(src) + 1;
-            wchar_t *next = *dst ? dst + wcslen(dst) + 1 : dst + 1;
+            wchar_t *dst = src + rp_wlen(src) + 1;
+            wchar_t *next = *dst ? dst + rp_wlen(dst) + 1 : dst + 1;
             bool drop = *dst == 0 && index < before && CompareStringOrdinal(pfro_path(src), -1, path, -1, TRUE) == CSTR_EQUAL;
             if (drop) {
                 ++taken;
