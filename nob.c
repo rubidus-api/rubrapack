@@ -38,6 +38,8 @@
 #include <direct.h>
 #define make_dir(p) _mkdir(p)
 #else
+#include <dirent.h>
+#include <unistd.h>
 #define make_dir(p) mkdir((p), 0777)
 #endif
 
@@ -126,52 +128,56 @@ static const char *const win32_sources[] = {
 
 // The parts of proven_c_lib rubrapack links, relative to vendor/proven/.
 static const char *const proven_sources[] = {
-    "src/proven/aead.c",
-    "src/proven/aes.c",
     "src/proven/algorithm.c",
     "src/proven/array.c",
     "src/proven/buffer.c",
-    "src/proven/cert.c",
-    "src/proven/cert_issue.c",
-    "src/proven/crypto_25519.c",
-    "src/proven/crypto_aes.c",
-    "src/proven/crypto_chacha.c",
-    "src/proven/crypto_ec.c",
-    "src/proven/crypto_mp.c",
-    "src/proven/crypto_rsa.c",
-    "src/proven/der.c",
-    "src/proven/dh.c",
     "src/proven/encode.c",
     "src/proven/float_decimal.c",
     "src/proven/float_format.c",
     "src/proven/fmt.c",
     "src/proven/fs.c",
     "src/proven/hash.c",
-    "src/proven/hash_legacy.c",
     "src/proven/heap.c",
-    "src/proven/hmac.c",
-    "src/proven/kex.c",
     "src/proven/map.c",
     "src/proven/memory.c",
     "src/proven/mmap.c",
     "src/proven/panic.c",
     "src/proven/random.c",
     "src/proven/scan.c",
-    "src/proven/sign.c",
     "src/proven/time.c",
     "src/proven/u16str.c",
     "src/proven/u16str_view.c",
     "src/proven/u8str.c",
     "src/proven/utf.c",
-    "platform/proven_sys_aes.c",
-    "platform/proven_sys_chacha.c",
-    "platform/proven_sys_cpu.c",
     "platform/proven_sys_fs.c",
     "platform/proven_sys_io.c",
     "platform/proven_sys_mem.c",
     "platform/proven_sys_random.c",
     "platform/proven_sys_thread.c",
     "platform/proven_sys_time.c",
+    // proven_crypto (v0.113.0 keeps it in crypto/): SHA-2, HMAC, the legacy hashes, AES, AEAD, key
+    // exchange, signing, DER, X.509.
+    "crypto/src/aead.c",
+    "crypto/src/aes.c",
+    "crypto/src/cert.c",
+    "crypto/src/cert_issue.c",
+    "crypto/src/crypto_25519.c",
+    "crypto/src/crypto_aes.c",
+    "crypto/src/crypto_chacha.c",
+    "crypto/src/crypto_ec.c",
+    "crypto/src/crypto_mp.c",
+    "crypto/src/crypto_rsa.c",
+    "crypto/src/der.c",
+    "crypto/src/dh.c",
+    "crypto/src/hash_legacy.c",
+    "crypto/src/hmac.c",
+    "crypto/src/kex.c",
+    "crypto/src/sha2.c",
+    "crypto/src/sign.c",
+    "crypto/platform/proven_sys_aes.c",
+    "crypto/platform/proven_sys_chacha.c",
+    // proven_codec (codec/): only its CPU probe, which the vector AES and ChaCha20 ask.
+    "codec/platform/proven_sys_cpu.c",
     // proven_net (v0.111.0 keeps the network library in net/): the TLS engine.
     "net/src/quic_crypto.c",
     "net/src/tls12_keys.c",
@@ -425,7 +431,7 @@ static int parts(void) {
         n = snprintf(cmd, sizeof cmd,
                      "%s/bin/%s-w64-mingw32-clang -std=c23 -O2 -Wall -Wextra -Werror -municode -mwindows -s "
                      "-ffile-prefix-map=$PWD=. -Wl,--no-insert-timestamp -Wl,--build-id=none src/setup/rubrapack_setup.c " PART_PROVEN
-                     "vendor/proven/src/proven/hash.c -lmsi -lshell32 -luser32 -ladvapi32 -lruntimeobject -lole32 -o %s",
+                     "-Ivendor/proven/crypto/include vendor/proven/crypto/src/sha2.c -lmsi -lshell32 -luser32 -ladvapi32 -lruntimeobject -lole32 -o %s",
                      root, part_archs[i][1], out);
         if (n < 0 || (size_t)n >= sizeof cmd || run(cmd) != 0 || (data = read_all(out, &len)) == NULL) {
             rc = 1;
@@ -524,6 +530,33 @@ static int gen_parts(const char *gen_dir, const char *gen_c) {
     return 0;
 }
 
+// A proven_c_lib file that moved (v0.113.0: src/proven/sign.c to crypto/src/sign.c) leaves its old
+// object in obj/; the tests and win-check link every obj/*.o, so it would be defined twice. The
+// vendor objects this build does not link are deleted.
+static void prune_vendor_objects(const char *obj_dir, const char *link) {
+#if !defined(_WIN32)
+    DIR *d = opendir(obj_dir);
+    if (d == NULL) return;
+    for (struct dirent *e; (e = readdir(d)) != NULL;) {
+        size_t n = strlen(e->d_name);
+        if (strncmp(e->d_name, "vendor_proven_", 14) != 0 || n < 3 || strcmp(e->d_name + n - 2, ".o") != 0) continue;
+        char path[512], word[520];
+        snprintf(path, sizeof path, "%s/%s", obj_dir, e->d_name);
+        snprintf(word, sizeof word, " %s ", path);
+        char padded[16400];
+        snprintf(padded, sizeof padded, "%s ", link);
+        if (strstr(padded, word) == NULL) {
+            printf("nob: removing %s (not built any more)\n", path);
+            (void)unlink(path);
+        }
+    }
+    closedir(d);
+#else
+    (void)obj_dir;
+    (void)link;
+#endif
+}
+
 static int build(const target_t *t) {
     char dir[128], obj_dir[160], exe[160], object[512], source[256];
     snprintf(dir, sizeof dir, "build/%s%s", t->name, t->sanitize ? "-asan" : "");
@@ -532,14 +565,14 @@ static int build(const target_t *t) {
     if (mkdirs(obj_dir) != 0) return 1;
 
     const char *own =
-        "-std=c23 -Wall -Wextra -pedantic -Werror -Iinclude -Ivendor/proven/include -Ivendor/proven/net/include";
+        "-std=c23 -Wall -Wextra -pedantic -Werror -Iinclude -Ivendor/proven/include -Ivendor/proven/crypto/include -Ivendor/proven/codec/include -Ivendor/proven/net/include";
     // The sanitized build's proven stops at a formatting call whose arguments do not match its
     // format (PROVEN_FMT_CHECK_ARGS); the release build writes nothing for it instead.
     const char *vendor = t->sanitize
         ? "-std=c23 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -DPROVEN_FMT_CHECK_ARGS "
-          "-Ivendor/proven/include -Ivendor/proven/platform -Ivendor/proven/net/include"
+          "-Ivendor/proven/include -Ivendor/proven/platform -Ivendor/proven/crypto/platform -Ivendor/proven/codec/platform -Ivendor/proven/crypto/include -Ivendor/proven/codec/include -Ivendor/proven/net/include"
         : "-std=c23 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror "
-          "-Ivendor/proven/include -Ivendor/proven/platform -Ivendor/proven/net/include";
+          "-Ivendor/proven/include -Ivendor/proven/platform -Ivendor/proven/crypto/platform -Ivendor/proven/codec/platform -Ivendor/proven/crypto/include -Ivendor/proven/codec/include -Ivendor/proven/net/include";
 
     char gen_dir[192], gen_c[256];
     snprintf(gen_dir, sizeof gen_dir, "%s/gen", dir);
@@ -569,6 +602,8 @@ static int build(const target_t *t) {
         if (n < 0 || (size_t)n >= sizeof link - link_len) return 1;
         link_len += (size_t)n;
     }
+
+    prune_vendor_objects(obj_dir, link);
 
     object_path(object, sizeof object, obj_dir, "gen/ca_parts.c");
     if (compile(t, "-std=c23 -w", gen_c, object) != 0) return 1;

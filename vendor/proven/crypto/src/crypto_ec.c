@@ -338,6 +338,7 @@ __extension__ typedef unsigned __int128 ec_u128;
 #define P256_P3 0xffffffff00000001ull
 static const proven_u64 P256_P[4] = { 0xffffffffffffffffull, 0x00000000ffffffffull, 0, P256_P3 };
 
+#if defined(__clang__)
 /* Every carry is the high half of a 128-bit sum - branch-free at every optimisation level. */
 #define P256_MAC(t, x, y, c) do { const ec_u128 v_ = (ec_u128)(x) * (y) + (t) + (c); (t) = (proven_u64)v_; (c) = (proven_u64)(v_ >> 64); } while (0)
 /* One step of the reduction: m = t0, the low word, cleared by adding m p, and what it carries
@@ -354,6 +355,34 @@ static const proven_u64 P256_P[4] = { 0xffffffffffffffffull, 0x00000000ffffffffu
         (t4) = (proven_u64)v_;                                                        \
         (top) = (proven_u64)(v_ >> 64);                                               \
     } while (0)
+#else
+/* GCC: each 128-bit product split into its words and every carry a comparison of 64-bit words
+ * (`lo < t` after `lo += t`), branch-free at every optimisation level too. With the high half of
+ * a 128-bit sum as the carry, as above, GCC zeroed a register for each sum and spilled: the
+ * reduction 191 instructions against Clang's 123. An ECDH 6 % (GCC 14) and 10-13 % (GCC 16)
+ * fewer cycles this way; Clang 5 % more, so it keeps the form above (2026-11-10). */
+#define P256_MAC(t, x, y, c) do {                                                     \
+        const ec_u128 p_ = (ec_u128)(x) * (y);                                        \
+        proven_u64 lo_ = (proven_u64)p_, hi_ = (proven_u64)(p_ >> 64);                \
+        lo_ += (t); hi_ += lo_ < (t);                                                 \
+        lo_ += (c); hi_ += lo_ < (c);                                                 \
+        (t) = lo_; (c) = hi_;                                                         \
+    } while (0)
+/* One step of the reduction: m = t0, the low word, cleared by adding m p, and what it carries
+ * into the four words above it (m (2^64 - 1) only carries m on, m (2^32 - 1) plus that is m 2^32,
+ * the third limb is zero, the fourth one multiplication). */
+#define P256_RED(m, t1, t2, t3, t4, top) do {                                         \
+        const proven_u64 ml_ = (m) << 32, mh_ = (m) >> 32;                            \
+        const ec_u128 p_ = (ec_u128)(m) * P256_P3;                                    \
+        const proven_u64 pl_ = (proven_u64)p_, ph_ = (proven_u64)(p_ >> 64);          \
+        proven_u64 c_, k_;                                                            \
+        (t1) += ml_; c_ = (t1) < ml_;                                                 \
+        (t2) += mh_; k_ = (t2) < mh_; (t2) += c_; k_ += (t2) < c_; c_ = k_;           \
+        (t3) += pl_; k_ = (t3) < pl_; (t3) += c_; k_ += (t3) < c_; c_ = k_;           \
+        (t4) += ph_; k_ = (t4) < ph_; (t4) += c_; k_ += (t4) < c_;                    \
+        (t4) += (top); k_ += (t4) < (top); (top) = k_;                                \
+    } while (0)
+#endif
 
 /* t0..t7, a value below p^2: t / 2^256 mod p into o, fully reduced. */
 static inline void p256_reduce8(proven_u64 o[4], proven_u64 t0, proven_u64 t1, proven_u64 t2, proven_u64 t3,
@@ -419,35 +448,51 @@ static void p256_sqr(proven_u64 o[4], const proven_u64 a[4]) {
     p256_reduce8(o, t0, t1, t2, t3, t4, t5, t6, t7);
 }
 
+/* The sum and the difference on named words, each carry the high half of a 128-bit sum, as in
+ * p256_reduce8: GCC made 114-119 instructions of the loops over arrays these replace, with a
+ * vector select, and kept the function out of line - a quarter to a third of an ECDH's
+ * instructions (2026-11-10, hardware counters). (`__builtin_addcll` and `__builtin_subcll` were
+ * shorter still, but GCC 14 compiles them to conditional jumps at -O0 and -Og.) */
 static void p256_add(proven_u64 o[4], const proven_u64 a[4], const proven_u64 b[4]) {
-    proven_u64 r[4], d[4], carry = 0, borrow = 0;
-    for (int i = 0; i < 4; ++i) {
-        const ec_u128 v = (ec_u128)a[i] + b[i] + carry;
-        r[i] = (proven_u64)v;
-        carry = (proven_u64)(v >> 64);
-    }
-    for (int i = 0; i < 4; ++i) {
-        const ec_u128 v = (ec_u128)r[i] - P256_P[i] - borrow;
-        d[i] = (proven_u64)v;
-        borrow = (proven_u64)(v >> 64) & 1u;
-    }
-    const proven_u64 keep = (proven_u64)0 - ((carry | (borrow ^ 1u)) & 1u);
-    for (int i = 0; i < 4; ++i) o[i] = (d[i] & keep) | (r[i] & ~keep);
+    ec_u128 v = (ec_u128)a[0] + b[0];
+    const proven_u64 r0 = (proven_u64)v;
+    v = (ec_u128)a[1] + b[1] + (proven_u64)(v >> 64);
+    const proven_u64 r1 = (proven_u64)v;
+    v = (ec_u128)a[2] + b[2] + (proven_u64)(v >> 64);
+    const proven_u64 r2 = (proven_u64)v;
+    v = (ec_u128)a[3] + b[3] + (proven_u64)(v >> 64);
+    const proven_u64 r3 = (proven_u64)v, carry = (proven_u64)(v >> 64);
+    v = (ec_u128)r0 - P256_P[0];
+    const proven_u64 d0 = (proven_u64)v;
+    v = (ec_u128)r1 - P256_P[1] - ((proven_u64)(v >> 64) & 1u);
+    const proven_u64 d1 = (proven_u64)v;
+    v = (ec_u128)r2 - ((proven_u64)(v >> 64) & 1u);
+    const proven_u64 d2 = (proven_u64)v;
+    v = (ec_u128)r3 - P256_P3 - ((proven_u64)(v >> 64) & 1u);
+    const proven_u64 d3 = (proven_u64)v, borrow = (proven_u64)(v >> 64) & 1u;
+    const proven_u64 keep = (proven_u64)0 - ((carry | (borrow ^ 1u)) & 1u);    /* all ones: take d */
+    o[0] = (d0 & keep) | (r0 & ~keep);
+    o[1] = (d1 & keep) | (r1 & ~keep);
+    o[2] = (d2 & keep) | (r2 & ~keep);
+    o[3] = (d3 & keep) | (r3 & ~keep);
 }
 
 static void p256_sub(proven_u64 o[4], const proven_u64 a[4], const proven_u64 b[4]) {
-    proven_u64 r[4], borrow = 0, carry = 0;
-    for (int i = 0; i < 4; ++i) {
-        const ec_u128 v = (ec_u128)a[i] - b[i] - borrow;
-        r[i] = (proven_u64)v;
-        borrow = (proven_u64)(v >> 64) & 1u;
-    }
-    const proven_u64 mask = (proven_u64)0 - borrow;                  /* add p back when it borrowed */
-    for (int i = 0; i < 4; ++i) {
-        const ec_u128 v = (ec_u128)r[i] + (P256_P[i] & mask) + carry;
-        o[i] = (proven_u64)v;
-        carry = (proven_u64)(v >> 64);
-    }
+    ec_u128 v = (ec_u128)a[0] - b[0];
+    const proven_u64 r0 = (proven_u64)v;
+    v = (ec_u128)a[1] - b[1] - ((proven_u64)(v >> 64) & 1u);
+    const proven_u64 r1 = (proven_u64)v;
+    v = (ec_u128)a[2] - b[2] - ((proven_u64)(v >> 64) & 1u);
+    const proven_u64 r2 = (proven_u64)v;
+    v = (ec_u128)a[3] - b[3] - ((proven_u64)(v >> 64) & 1u);
+    const proven_u64 r3 = (proven_u64)v, mask = (proven_u64)0 - ((proven_u64)(v >> 64) & 1u);  /* add p back when it borrowed */
+    v = (ec_u128)r0 + (P256_P[0] & mask);
+    o[0] = (proven_u64)v;
+    v = (ec_u128)r1 + (P256_P[1] & mask) + (proven_u64)(v >> 64);
+    o[1] = (proven_u64)v;
+    v = (ec_u128)r2 + (proven_u64)(v >> 64);
+    o[2] = (proven_u64)v;
+    o[3] = r3 + (P256_P3 & mask) + (proven_u64)(v >> 64);
 }
 
 static void p256_sqr_n(proven_u64 o[4], const proven_u64 a[4], int n) {
@@ -1223,6 +1268,25 @@ int proven_crypto_ec_test_p256_reduce(const proven_u64 t[8]) {
     return proven_crypto_mp_eq(got, want, 4) != 0;
 #else
     (void)t;
+    return -1;
+#endif
+}
+
+int proven_crypto_ec_test_p256_addsub(const proven_u64 a[4], const proven_u64 b[4]) {
+#if EC_P256_FIELD
+    proven_ec_curve_t c;
+    if (!ec_curve_init(&c, PROVEN_CRYPTO_EC_P256)) return -1;
+    proven_crypto_limb_t x[4], y[4], want[4], got[4];
+    for (int i = 0; i < 4; ++i) { x[i] = a[i]; y[i] = b[i]; }
+    if (!proven_crypto_mp_lt(x, c.p.n, 4) || !proven_crypto_mp_lt(y, c.p.n, 4)) return -1;
+    proven_crypto_mp_add(&c.p, want, x, y);
+    p256_add(got, x, y);
+    if (!proven_crypto_mp_eq(got, want, 4)) return 0;
+    proven_crypto_mp_sub(&c.p, want, x, y);
+    p256_sub(got, x, y);
+    return proven_crypto_mp_eq(got, want, 4) != 0;
+#else
+    (void)a; (void)b;
     return -1;
 #endif
 }

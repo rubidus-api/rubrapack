@@ -3,6 +3,13 @@
 #ifndef PROVEN_NO_BROTLI
 
 #include "brotli_dict.h"
+#include "proven_internal_brotli.h"
+#if !defined(PROVEN_FREESTANDING) && (defined(__x86_64__) || defined(__i386__)) && (defined(__GNUC__) || defined(__clang__))
+#define BROTLI_BMI2 1
+#include "../platform/proven_sys_cpu.h"
+#else
+#define BROTLI_BMI2 0
+#endif
 
 /* Brotli (RFC 7932), decompression only.
  *
@@ -861,21 +868,29 @@ static const proven_u16 *single_code(const proven_u16 *const *codes) {
  * without its checks for input, with the reader and the position in locals. It leaves the
  * state at an item the other path can go on from, and gives back the whole bytes it read
  * ahead. */
-static void fast(proven_brotli_decoder_t *b, proven_io_t *io) {
+HOT void fast_body(proven_brotli_decoder_t *b, proven_io_t *io) {
     const proven_size_t start = io->in_at;
     const proven_byte_t *end = io->in + io->in_len;
     proven_category_t *ci = &b->c[1], *cl = &b->c[0], *cd = &b->c[2];
     const proven_u16 *codes[64];
     literal_codes(b, codes);
     const proven_u16 *one = single_code(codes);
+    /* The command code and the four distance codes of the current block types, as pointers: one
+     * load from each command's lookup instead of a chain of three (type, map, code) - the chain
+     * is on the path from one command to the next. Made again at a block switch. */
+    const proven_u16 *icode = b->tab + b->code_i[ci->type], *dcode[4];
+    for (unsigned k = 0; k < 4; ++k) dcode[k] = b->tab + b->code_d[b->cmap_d[4 * cd->type + k]];
     proven_brotli_reader_t r;
     sync_in(b, io, &r);
     while (b->state == S_COMMAND && end - r.p >= 64) {
         if (b->left == 0) { meta_end(b); break; }
         fill(&r);
-        if (ci->count == 0) { sync_out(b, io, &r); (void)block_switch(b, io, ci); sync_in(b, io, &r); fill(&r); }
+        if (ci->count == 0) {
+            sync_out(b, io, &r); (void)block_switch(b, io, ci); sync_in(b, io, &r); fill(&r);
+            icode = b->tab + b->code_i[ci->type];
+        }
         unsigned len;
-        const unsigned s = lookup(b->tab + b->code_i[ci->type], r.bits, &len);
+        const unsigned s = lookup(icode, r.bits, &len);
         const unsigned cell = s >> 6;
         const unsigned ic = (cell < 2 ? 0u : CELL_INS[cell - 2]) + ((s >> 3) & 7u);
         const unsigned cc = (cell < 2 ? (cell == 1 ? 8u : 0u) : CELL_COPY[cell - 2]) + (s & 7u);
@@ -964,9 +979,12 @@ static void fast(proven_brotli_decoder_t *b, proven_io_t *io) {
         proven_u32 extra = 0;
         if (!b->implicit_zero) {
             fill(&r);
-            if (cd->count == 0) { sync_out(b, io, &r); (void)block_switch(b, io, cd); sync_in(b, io, &r); fill(&r); }
+            if (cd->count == 0) {
+                sync_out(b, io, &r); (void)block_switch(b, io, cd); sync_in(b, io, &r); fill(&r);
+                for (unsigned k = 0; k < 4; ++k) dcode[k] = b->tab + b->code_d[b->cmap_d[4 * cd->type + k]];
+            }
             const unsigned ctx = copy > 4 ? 3u : copy - 2;
-            code = take_sym(&r, b->tab + b->code_d[b->cmap_d[4 * cd->type + ctx]]);
+            code = take_sym(&r, dcode[ctx]);
             extra = take_bits(&r, distance_extra(b, code));
             cd->count--;
             b->implicit_zero = true;            /* read: if the other path goes on from here, it reads none */
@@ -1003,6 +1021,40 @@ static void fast(proven_brotli_decoder_t *b, proven_io_t *io) {
     io->in_at -= ahead;
     b->bitcnt -= 8 * (unsigned)ahead;
     b->bitbuf &= ((proven_u64)1 << b->bitcnt) - 1u;
+}
+
+/* The fast path twice: as the build compiles it, and on x86 once more with BMI2 allowed - the bit
+ * reader shifts by amounts in registers, three micro-operations each without BMI2 and one with
+ * it (2026-11-10). The same C and the same output; which one runs is asked of the processor once. */
+static void fast_plain(proven_brotli_decoder_t *b, proven_io_t *io) { fast_body(b, io); }
+
+#if BROTLI_BMI2
+__attribute__((target("bmi2")))
+static void fast_bmi2(proven_brotli_decoder_t *b, proven_io_t *io) { fast_body(b, io); }
+
+static int g_brotli_bmi2 = -1;                   /* -1: not asked yet */
+
+void proven_brotli_decode_force_plain_(bool on) {
+    __atomic_store_n(&g_brotli_bmi2, on ? 0 : -1, __ATOMIC_RELAXED);
+}
+
+static bool brotli_use_bmi2(void) {
+    int v = __atomic_load_n(&g_brotli_bmi2, __ATOMIC_RELAXED);
+    if (v < 0) {
+        v = proven_sys_cpu_bmi2() ? 1 : 0;
+        __atomic_store_n(&g_brotli_bmi2, v, __ATOMIC_RELAXED);
+    }
+    return v != 0;
+}
+#else
+void proven_brotli_decode_force_plain_(bool on) { (void)on; }
+#endif
+
+static void fast(proven_brotli_decoder_t *b, proven_io_t *io) {
+#if BROTLI_BMI2
+    if (brotli_use_bmi2()) { fast_bmi2(b, io); return; }
+#endif
+    fast_plain(b, io);
 }
 
 proven_err_t proven_brotli_decode(proven_brotli_decoder_t *b, proven_mem_view_t in, proven_size_t *consumed,

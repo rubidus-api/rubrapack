@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include "proven/encode.h"
-#include "proven/hash.h"
+#include "proven/sha2.h"
 #include "proven/random.h"
 
 static void feed(proven_sha256_t *h, const void *p, size_t n) {

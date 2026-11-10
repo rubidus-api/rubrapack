@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "proven/hash.h"
+#include "proven/sha2.h"
 
 static char *copy_text(proven_allocator_t alloc, const char *s, bool *ok) {
     if (s == NULL) return NULL;

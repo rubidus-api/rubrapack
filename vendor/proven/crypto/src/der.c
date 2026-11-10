@@ -1,5 +1,4 @@
 #include "proven/der.h"
-#include "../../platform/proven_sys_mem.h"
 
 /* DER (X.690): the strict reader of der.h and its writer. */
 
@@ -131,7 +130,7 @@ static void dw_head(proven_der_writer_t *w, proven_u8 tag, proven_size_t len) {
 
 static void dw_bytes(proven_der_writer_t *w, const proven_byte_t *p, proven_size_t n) {
     if (n == 0 || !dw_room(w, n)) return;
-    proven_sys_mem_copy(w->buf + w->len, p, n);
+    (void)proven_mem_copy(w->buf + w->len, n, (proven_mem_view_t){ .ptr = p, .size = n });
     w->len += n;
 }
 
@@ -155,7 +154,7 @@ void proven_der_end(proven_der_writer_t *w) {
     if (ls > 1) {
         /* The length needs more than its byte: the content moves along to make room. */
         if (!dw_room(w, ls - 1)) return;
-        proven_sys_mem_move(w->buf + start + ls - 1, w->buf + start, len);
+        (void)proven_mem_move(w->buf + start + ls - 1, len, (proven_mem_view_t){ .ptr = w->buf + start, .size = len });
         w->len += ls - 1;
     }
     dw_len_write(w->buf + start - 1, len);
@@ -298,7 +297,7 @@ static bool ber_head(const proven_byte_t *p, proven_size_t n, ber_head_t *h) {
 }
 
 static void ber_put(ber_out_t *o, const proven_byte_t *p, proven_size_t n) {
-    if (o->buf && n) proven_sys_mem_copy(o->buf + o->len, p, n);
+    if (o->buf && n) (void)proven_mem_copy(o->buf + o->len, n, (proven_mem_view_t){ .ptr = p, .size = n });
     o->len += n;
 }
 

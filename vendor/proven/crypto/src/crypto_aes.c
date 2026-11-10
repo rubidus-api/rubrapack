@@ -1,6 +1,6 @@
 #include "proven_internal_crypto.h"
 #ifndef PROVEN_FREESTANDING
-#include "../../platform/proven_sys_aes.h"
+#include "../platform/proven_sys_aes.h"
 #endif
 
 /* AES-GCM. See the note in proven_internal_crypto.h: bitsliced in portable C, with the

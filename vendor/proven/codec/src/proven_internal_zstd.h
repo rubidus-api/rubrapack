@@ -18,6 +18,8 @@
 /* Tests: true makes the encoder use its plain build even where the processor has BMI2; false
  * asks the processor again. Output is the same either way. */
 void proven_zstd_encode_force_plain_(bool on);
+/* Tests: the same for the decoder's block builds. */
+void proven_zstd_decode_force_plain_(bool on);
 
 static inline proven_u64 le64(const proven_byte_t *p) {
     return (proven_u64)p[0] | ((proven_u64)p[1] << 8) | ((proven_u64)p[2] << 16) | ((proven_u64)p[3] << 24) |

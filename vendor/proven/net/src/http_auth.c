@@ -1,6 +1,7 @@
 #include "proven/http_auth.h"
 #include "proven/encode.h"
 #include "proven/hash.h"
+#include "proven/sha2.h"
 #include "proven/hash_legacy.h"
 
 /* RFC 7617 (Basic) and RFC 7616 (Digest), written from those documents. Pure computation. */

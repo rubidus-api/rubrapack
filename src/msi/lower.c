@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "proven/hash.h"
+#include "proven/sha2.h"
 
 // ---- string keeping --------------------------------------------------------------------------
 

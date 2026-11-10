@@ -1,7 +1,7 @@
 #include "proven/cert.h"
 #include "proven/fs.h"
-#include "../../platform/proven_sys_trust.h"
-#include "../../platform/proven_sys_env.h"
+#include "../platform/proven_sys_trust.h"
+#include "proven/sysio.h"
 
 /* The operating system's trusted roots, into a store. Hosted only. */
 
@@ -52,7 +52,14 @@ proven_err_t proven_cert_store_add_system(proven_cert_store_t *store, proven_siz
     size_t env_len = 0;
     /* SSL_CERT_FILE is the convention other TLS libraries read; honouring it lets one setting
      * serve every program on the machine. */
-    if (proven_sys_env_get("SSL_CERT_FILE", env_path, sizeof env_path, &env_len) == PROVEN_OK && env_len > 0 && env_len < sizeof env_path) {
+    /* Through the base library's public call (RFC-0045): a value that is not UTF-8 is not taken. */
+    proven_result_u8str_t ev = proven_env_get(alloc, (proven_u8str_view_t){ .ptr = (const proven_byte_t *)"SSL_CERT_FILE", .size = 13 });
+    if (ev.err == PROVEN_OK) {
+        const proven_u8str_view_t v = proven_u8str_as_view(&ev.value);
+        if (v.size < sizeof env_path) { for (size_t i = 0; i < v.size; ++i) env_path[i] = (char)v.ptr[i]; env_len = v.size; }
+        proven_u8str_destroy(alloc, &ev.value);
+    }
+    if (env_len > 0 && env_len < sizeof env_path) {
         env_path[env_len] = 0;
         proven_err_t e = cert_add_file(store, alloc, env_path, &count);
         if (e == PROVEN_OK || e == PROVEN_ERR_NOMEM) { if (added) *added = count; return e; }

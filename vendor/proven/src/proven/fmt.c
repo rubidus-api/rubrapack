@@ -998,7 +998,10 @@ proven_fmt_result_t proven_u8str_fmt_internal(proven_allocator_t alloc, proven_u
     // CSTR self-alias check (Option A: Explicitly reject as per docs)
     for (proven_size_t i = 0; i < args_count; i++) {
         if (args[i].type == PROVEN_ARG_CSTR) {
-            proven_bufref_t alias_ref = proven_bufref_capture(str->internal.ptr, str->internal.cap, args[i].value.cstr, 0);
+            /* Its first byte inside the buffer: one byte, not an empty range, which would also
+             * take a text that starts just past the buffer's end - nothing is written there, and
+             * an array that happens to follow the caller's buffer was refused (v0.112.3). */
+            proven_bufref_t alias_ref = proven_bufref_capture(str->internal.ptr, str->internal.cap, args[i].value.cstr, 1);
             if (alias_ref.valid) {
                 res.err = PROVEN_ERR_INVALID_ARG;
                 return res;

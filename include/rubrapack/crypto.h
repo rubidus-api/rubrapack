@@ -9,7 +9,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "proven/hash.h"
+#include "proven/sha2.h"
 #include "proven/hash_legacy.h"
 #include "proven/hmac.h"
 #include "proven/types.h"

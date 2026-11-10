@@ -2,6 +2,7 @@
 #include "proven/der.h"
 #include "proven/cert.h"
 #include "proven/hash.h"
+#include "proven/sha2.h"
 #include "proven_internal_crypto.h"
 #include <stdatomic.h>
 

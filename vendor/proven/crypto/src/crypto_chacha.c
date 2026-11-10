@@ -1,6 +1,6 @@
 #include "proven_internal_crypto.h"
 #ifndef PROVEN_FREESTANDING
-#include "../../platform/proven_sys_chacha.h"
+#include "../platform/proven_sys_chacha.h"
 #endif
 
 /* ChaCha20, Poly1305 and their AEAD (RFC 8439). Additions, rotations and XORs only: there is

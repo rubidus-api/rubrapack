@@ -4,7 +4,7 @@
 #include "proven/types.h"
 #include "proven/error.h"
 #include "proven/memory.h"
-#include "proven/hash.h"
+#include "proven/sha2.h"
 #include "proven/hash_legacy.h"
 
 /**

@@ -33,7 +33,7 @@
 #include "../ca/rp_appx.h"
 #include "../ca/rp_ask.h"
 
-#include "proven/hash.h"
+#include "proven/sha2.h"
 #include "proven/utf.h"
 
 enum {

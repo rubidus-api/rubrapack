@@ -1,5 +1,6 @@
 #include "proven_internal_crypto.h"
 #include "proven/hash.h"
+#include "proven/sha2.h"
 
 /* Curve25519: the field, X25519 and Ed25519.
  *

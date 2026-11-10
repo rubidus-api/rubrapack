@@ -310,6 +310,10 @@ proven_size_t proven_crypto_rsa_min_bits(void);
  * upper four words are below p) against the general code: 1 the same, 0 not, -1 where the build
  * has no field of P-256's own or t is not such a value. */
 [[nodiscard]] int proven_crypto_ec_test_p256_reduce(const proven_u64 t[8]);
+/* P-256's own modular addition and subtraction of a and b (least significant word first, both
+ * below p) against the general code: 1 both the same, 0 not, -1 where the build has no field of
+ * P-256's own or a value is not below p. */
+[[nodiscard]] int proven_crypto_ec_test_p256_addsub(const proven_u64 a[4], const proven_u64 b[4]);
 
 /* ---- RSA signing (RFC 8017). Everything in a key but n and e is SECRET. ---- */
 

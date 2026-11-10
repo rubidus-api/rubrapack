@@ -2,7 +2,7 @@
 #include "proven_internal_zstd.h"
 #if !defined(PROVEN_FREESTANDING) && (defined(__x86_64__) || defined(__i386__)) && (defined(__GNUC__) || defined(__clang__))
 #define ZSTD_BMI2 1
-#include "../../platform/proven_sys_cpu.h"
+#include "../platform/proven_sys_cpu.h"
 #else
 #define ZSTD_BMI2 0
 #endif
