@@ -273,7 +273,7 @@ installed into a folder given on the command line (`INSTALLDIR=...`) is looked f
 one - files are left behind and an action that runs an installed program fails (1721). Components
 keyed by their files do not have this problem. rubrapack's per-user components (keyed by `HKCU`
 values, ICE38) write each user-settable directory to a registry value
-(`Software\[Manufacturer]\[ProductName]\Folders`, name and value `[INSTALLDIR]`) and read it back with
+(`Software\[Manufacturer]\[ProductName]\Folders`, name `INSTALLDIR`, value `[INSTALLDIR]`) and read it back with
 AppSearch (a `RegLocator` of type 0, a folder that must exist) and a type-51 action,
 `Installed AND <found> AND NOT INSTALLDIR`, before `CostInitialize`. A major upgrade's new product
 is not `Installed`: like a per-machine package, it goes to its default folder unless given one.

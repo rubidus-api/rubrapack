@@ -227,7 +227,7 @@ Count 비트 8 은 권한 상승이 필요 없다는 뜻이다. Registry Root -1
 엔진은 처음 설치할 때처럼 디렉터리를 정하므로, 명령줄에 준 폴더(`INSTALLDIR=...`)에 설치한 제품을 기본
 폴더에서 찾는다 - 파일이 남고, 설치된 프로그램을 실행하는 동작은 실패한다(1721). 파일로 키를 삼은 구성
 요소는 이런 문제가 없다. rubrapack 의 사용자별 구성 요소(`HKCU` 값으로 키, ICE38)는 사용자가 정할 수 있는
-디렉터리마다 레지스트리 값(`Software\[Manufacturer]\[ProductName]\Folders`, 이름과 값 `[INSTALLDIR]`)을
+디렉터리마다 레지스트리 값(`Software\[Manufacturer]\[ProductName]\Folders`, 이름 `INSTALLDIR`, 값 `[INSTALLDIR]`)을
 쓰고, AppSearch(종류 0 의 `RegLocator`, 있어야 하는 폴더)와 종류 51 동작
 `Installed AND <찾은 값> AND NOT INSTALLDIR` 로 `CostInitialize` 전에 다시 읽는다. 메이저 업그레이드의 새
 제품은 `Installed` 가 아니다: 컴퓨터 전체용 패키지처럼, 폴더를 주지 않으면 기본 폴더로 간다. [observed]
