@@ -5,11 +5,10 @@
 #include "rubrapack/lang.h"
 #include "rubrapack/str.h"
 
-#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-void rp_srcdiag_add(rp_srcdiags_t *d, rp_pos_t pos, const char *code, bool warning, const char *fmt, ...) {
+void rp_srcdiag_add_a(rp_srcdiags_t *d, rp_pos_t pos, const char *code, bool warning, const char *fmt, const proven_arg_t *args, size_t nargs) {
     if (!warning) d->errors++;
     else d->warnings++;
     if (d->count >= RP_SRCDIAG_MAX) {
@@ -20,10 +19,7 @@ void rp_srcdiag_add(rp_srcdiags_t *d, rp_pos_t pos, const char *code, bool warni
     e->pos = pos;
     e->warning = warning;
     (void)proven_fmt_to(e->code, sizeof e->code, "{}", proven_arg_cstr(code));
-    va_list ap;
-    va_start(ap, fmt);
-    int n = rp_lang_vformat(e->msg, sizeof e->msg, fmt, ap);
-    va_end(ap);
+    int n = rp_lang_format_a(e->msg, sizeof e->msg, fmt, args, nargs);
     if (n >= (int)sizeof e->msg) {     // cut: drop a partial UTF-8 character at the end
         size_t len = sizeof e->msg - 1, p = len;
         while (p > 0 && ((unsigned char)e->msg[p - 1] & 0xC0u) == 0x80u) --p;
@@ -55,7 +51,7 @@ void rp_srcdiag_print(const rp_srcdiags_t *d, const char *path) {
         (void)rp_pal_puts(RP_OUT_STDERR, line);
     }
     if (d->dropped) {
-        rp_lang_format(line, sizeof line, "%s: %zu more diagnostics not shown\n", path, d->dropped);
+        rp_lang_format(line, sizeof line, "{}: {} more diagnostics not shown\n", proven_arg_cstr(path), proven_arg_u64(d->dropped));
         (void)rp_pal_puts(RP_OUT_STDERR, line);
     }
 }

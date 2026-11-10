@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Segoe UI\n"
 "X-Rubrapack-Group: 8\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dijalozi {6}{7}\n  1 naziv, proizvođač, verzija, arhitektura      2 fascikla za instalaciju, za koga se instalira\n  3 dijalozi, licenca, jezici                    4 opcionalni delovi\n  5 prečice                                      6 datoteke: uskladi sa fasciklom programa\n  7 bilo koji ključ                              v prikaz   l lint   s sačuvaj   q izlaz\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\nPoruke sa ovim kodom (* označava ime ili vrednost):\n"
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nRezultati idu na stdout, dijagnostika na stderr.\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\nŠta uraditi: {1}.\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} više ne postoji, ali ga otvara prečica: prvo promenite prečice (5)\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  {1} datoteka i {2} fascikli tamo\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7, v, l, s ili q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  dodati [dir.{1}] i [files.{2}]\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  dodat [file.{1}]\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint: pogledajte probleme iznad (navedena datoteka je kopija za prover
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  ostali jezici u [ui] languages se zadržavaju; promenite tu listu sa 7 (bilo koji ključ)\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  uklonjen [file.{1}]\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  uklonjen [files.{1}]{2}\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  to ne odgovara podskupu TOML-a; ništa nije promenjeno\n"
 msgid "  that was not readable text; again, please\n"
 msgstr "  to nije bio čitljiv tekst; ponovite, molim\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  fascikla programa '{1}': {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - pravi pakete Windows Installer (.msi) i MSIX (.msix)\n\nupotreba: rub
 msgid " and its dir"
 msgstr " i njegov dir"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}) nema promenljivu okruženja, pa je proširiva vrednost ne može sadržati; koristite vrednost niske (popunjava se pri instalaciji)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) je {2}: može da započne putanju ili da zameni vrednost koju popunjava Windows Installer (registar, okruženje, INI, argumenti, poruke), ali ne ovde"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) nije fascikla od koje može da počne putanja (dir ID, ili ProgramFiles, LOCALAPPDATA, ProgramData ... - pogledajte Paths u priručniku){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  struktura:    {2}\n  sažetak:      {3}\n  potpis:       {4}\n  lanac:        {5}{6}{7}\n  opoziv:       nije provereno\n  vremenski žig: {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2}: promenljiva nije postavljena"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' nije kontrola ovog dijaloga"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' nije u {3}"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}': {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': tekst licence traži englesko ime fonta, pa se prikazuje fontom samog jezika; napišite englesko ime (npr. \"Malgun Gothic\") da bi se i tamo koristio ovaj font"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "{1} = '{2}' mora biti fascikla"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "komponenta {1}, ali platforma paketa je {2}"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} ne pripada kind = \"{2}\""
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} ne pripada kind = \"firewall\""
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} sadrži LANGID-ove (1..65535), npr. 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} sadrži niske"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "{1} je dug od {2} do {3} znakova"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} je lista tekstova \"Ključ=Vrednost\""
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "{1} je lista tekstova, npr. [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} je ime fonta od 1 do 31 znaka, npr. \"Segoe UI\" (dobijeno {2})"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} je MSI uslov sa zatvorenim navodnicima i uravnoteženim zagradama"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} je niz niski, po jedna za svaku vrednost"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} je za MSI pakete: MSIX ne uklanja msiexec"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} više ne postoji. Ukloniti [file.{2}]?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} je duže od 240 znakova"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} je novo. Dodati?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} nije GUID u formatu registra"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} nije kod koji ovaj rubrapack koristi{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} mora biti \"file:<ID>\" koji imenuje [file.*] ovog paketa"
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "{1} mora imati od {2} do {3} slova, cifara, '.' ili '-' i ne sme počinjati sa '.' (dobijeno '{4}')"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1} mora biti GUID"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1} mora biti GUID kao {{12345678-...} (dobijeno '{2}')"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "{1} mora biti adresa http:// ili https:// (primljeno '{2}')"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1} mora biti adresa https://, http:// ili file://, ili putanja \\\\server\\share (dobijeno '{2}')"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1} mora se razlikovati od upgrade-code (jedna porodica nadogradnje po arhitekturi)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} traži Windows build {2} ili noviji: postavite [msix] min-version = \"10.0.{3}.0\""
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} traži resources/bin/rubrapack_ca-{2}.dll, bez kog je ovaj rubrapack napravljen"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}, TSA nije proveren (navedite --tsa-trust)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}, TSA pouzdan"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}, TSA nepouzdan - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} ne postoji ili je prazna. Ukloniti [files.{3}] i [dir.{4}]?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ je nova fascikla. Dodati?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1}: greške: {2}{-3}, upozorenja: {4}{-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1}: greške: {2}{-3}, upozorenja: {4}{-5} (u odnosu na {6})\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1}: {2} datoteka, {3} bajtova\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1}: {2} datoteka, {3} grešaka, 0 upozorenja\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1}: još {2} dijagnostika nije prikazano\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1}: '{2}' nije program (.exe)"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' nije standardna radnja koju rubrapack postavlja"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1}: datoteka '{2}' nije [file.*] ovog paketa"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1}: datoteka '{2}' nije program (.exe)"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "'$(' nije zatvoreno (napišite '$$(' za tekst '$(')"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' već postoji; ostaje kakav jeste"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' već postoji; uklonite ga ili pravite u drugu fasciklu"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}' već ima rukovalac {2} ([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}' već ima dozvole"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' i '{2}' su ista putanja u paketu"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' pripada Windowsu ili pregledačima"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "'{1}' ne može da se pročita u odnosu na '{2}': {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' ne odgovara podskupu TOML-a; ništa nije sačuvano"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' već postoji"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' već postoji; promenite ga sa `rubrapack edit {2}`"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' postoji i nije prazan direktorijum; raspakujte u novi"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' ide u {2}; ili msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}' ima nečitljiv tok sažetka informacija"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' nema tabele Directory, Component, File i Media iz kojih bi se raspakovalo"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "'{1}' nema ugrađenu transformaciju '{2}'"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}' nema čitljiv sažetak informacija"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}' nema transformaciju '{2}'"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' je UTF-16: edit menja samo UTF-8 izvore (prvo ga sačuvajte kao UTF-8)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' je ime Windowsa; dajte promenljivoj drugo ime"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' je [chain]: pravi instalacioni program, -o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' je kontrola ugrađenog okvira; izaberite drugi ID"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' je fascikla računara; paket {2} ne može da piše tamo"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' je modul za spajanje: spojite ga sa [merge.ID]"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' je ime koje format MSIX zadržava za sebe"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' je simbolička veza; veze se ne prate"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' je takođe [property.*]"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' je takođe dir ID; dajte promenljivoj drugo ime"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' je napravljen za mašinu 0x{2}, ne za arhitekturu ovog paketa; postavite any-arch = true ako je to namerno"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' nije ni PE datoteka (.exe, .dll), ni MSI paket, ni MSIX paket ili skup, ni cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' nije ni PE datoteka, ni MSI paket, ni MSIX paket ili skup, ni cabinet"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nije ni poznata fascikla ni dir ID (poznate fascikle: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' nije ni MSIX paket ni naziv porodice paketa (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' nije cabinet koji rubrapack može da čita (stored ili MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' nije dijagnostički kod (RP i četiri cifre, npr. RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' nije program (.exe)"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' nije obična datoteka"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' nije instalacioni program rubrapacka{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' nije važeći ID (slova, cifre i '_', ne počinje cifrom, najviše {2})"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' nije važeća MSI baza podataka: {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' nije važeći MSIX paket: {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' nije važeći paket: {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' nije važeći izvor (podskup TOML-a); prvo ga ispravite ručno"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' nije važeća transformacija: {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' nije važeće ime promenljive"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' je rezervisano i ne može da se koristi kao ID"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' je ime dira: samo pretraga registra ili dira može da popuni dir"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' izgleda kao programska datoteka (PE), ali su joj zaglavlja ili resursi oštećeni"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}' mora biti niska"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}' mora biti ceo broj"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}' mora biti između {2} i {3}"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}' mora biti true ili false"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' ne sme biti prazno"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' ne imenuje transformacije (svojstvo sažetka 8): nije zakrpa"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' počinje fasciklom: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}': {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}': {2} '{3}' ima {4}; ništa nije raspakovano"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}': {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}': {2} unosa, više od ograničenja {3} (--limit-entries); ništa nije raspakovano"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}': '{2}' i '{3}' bili bi ista putanja na Windowsu; ništa nije raspakovano"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}': '{2}' nije u [ui] languages"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}': tabela ne može da se pročita"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}': tabela je nečitljiva"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}': MSIX instalira sve svoje datoteke (when); koristite msi-only = true"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}': MSIX uklanja sve svoje datoteke (keep); koristite msi-only = true"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}': cabinet '{2}' je oštećen ili nije stored/MSZIP"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}': ime cabineta '{2}' nije obično ime datoteke"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}': komprimovana datoteka '{2}' (redosled {3}) nema cabinet"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}': direktorijum '{2}' ima roditelja '{3}' koji ne postoji"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}': direktorijum '{2}' je sam sebi predak ili je predubok"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}': datoteka '{2}' ne odgovara svom MsiFileHash"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}': datoteka '{2}' nema komponentu ili direktorijum"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}': datoteka '{2}' ima {3} bajtova, tabela File navodi {4}"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}': datoteka '{2}' nije u cabinetu '{3}'"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}': njegovi spoljni cabineti nisu obuhvaćeni potpisom (--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}': njegova fascikla ne vodi do poznate lokacije"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}': više od {2} bajtova za pisanje (--limit-bytes); ništa nije raspakovano"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}': nema --timestamp: potpis prestaje da važi kada sertifikat istekne"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}': paket '{2}' ne odgovara svom SHA-256"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}': tok cabineta '{2}' ne postoji"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}': manifest nema {2} {3}"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}': manifest navodi '{2}', koji nije u paketu"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}': vremenski žig od {2}: {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}': transformacija '{2}' ne može da se pročita u odnosu na '{3}': {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' je sopstveni jezik paketa ({2}); navedite taj tekst bez sufiksa"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "'version' ne prima argumente"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "--allow-unsigned-cabs je za .msi"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "--arch za skup: lista od x64, x86 i arm64, svaki jednom (dobijeno '{1}')"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "--dist imenuje novu fasciklu pored izvora (bez putanje)"
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "--flat je za izlaz .msixbundle (njegovi paketi se zapisuju pored)"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "--jobs prima broj od 1 do 64 (dobijeno '{1}')"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "--key potpisuje najviše {1} spoljnih cabineta; povećajte cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "--key-store je skladište sertifikata Windowsa; drugde koristite datotek
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store prima SHA-1 otisak sertifikata (40 heksadecimalnih cifara)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1}: nema takvog jezika (ugrađeni: {2}; drugi traži svoj jezički paket, {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "--lang (ili RUBRAPACK_LANG) bira jezik ovih tekstova: {1}, ili jezik koji ima jezički paket.\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "--lang traži jezik, npr. en ili ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "--languages traži dijaloge: navedite i --ui"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "--msix-compress prima deflate ili store (dobijeno '{1}')"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1}: promenljiva nije postavljena"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "--patch-code prima GUID velikim slovima sa vitičastim zagradama: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1}: promenljiva nije postavljena"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "--previous poredi dva .msi paketa"
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots: korenski sertifikati operativnog sistema ne mogu da se pročitaju"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "--target {1} ne odgovara izlazu '{2}'"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "--target {1} nije implementiran (msi ili msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "--target prima msi ili msix (dobijeno '{1}')"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "--winget traži tabelu [winget]: identifier, installer-url, license, sho
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "--winget traži paket u jednoj datoteci: winget preuzima jednu, dakle ne cab = \"external\""
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "-D {1} je naveden dvaput"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1}: '{2}' je ime Windowsa; dajte promenljivoj drugo ime"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "-D traži NAME=VALUE (dobijeno '{1}')"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "-i pita za svaki odgovor; navedite ili -i ili opcije"
 msgid "; its range is "
 msgstr "; njegov opseg je "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "ActionProperty '{1}' nije u SecureCustomProperties"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Ime fascikle u Program Files"
 msgid "Folder with the files to install"
 msgstr "Fascikla sa datotekama za instalaciju"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "ID '{1}' se već koristi (red {2}); ID-ovi moraju da se razlikuju u svim tabelama"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "Instaliraj za (machine, user, dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "Ključ kao table.key (package.version, dir.INSTALLDIR.path, ...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "KeyPath '{1}' pripada drugoj komponenti"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "KeyPath '{1}' nije u File"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "KeyPath '{1}' nije u Registry"
 
 msgid "Korean dialogs as well as English?"
 msgstr "Dijalozi na korejskom pored engleskog?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "LastSequence {1} je ispod onog nižeg DiskId-a"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX: šta MSIX paket traži, i šta ne može da nosi"
 msgid "Main program, for shortcuts (- for none)"
 msgstr "Glavni program, za prečice (- ako nema)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "Priručnik: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "Naziv proizvoda"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "ProductCode i UpgradeCode su isti GUID"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} nije veća od prethodne {2} u prva tri polja: Windows Installer ne nadograđuje"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Program koji prečice otvaraju (- bez prečica)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1}: nema takvog jezika (ugrađeni: {2}; drugi traži svoj jezički paket, {3}.po)"
 
 msgid "Reference, "
 msgstr "Referenca, "
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "Redosled {1} nije obuhvaćen nijednim redom Media (poslednji {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "Redosled {1} koristi druga datoteka"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "Izvorna datoteka za pisanje"
 msgid "Source format"
 msgstr "Format izvora"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "Source mora da imenuje red File za tip {1}"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "Podskup TOML-a"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "UTF-16 big-endian datoteke nisu podržane; sačuvajte kao UTF-8"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "UpgradeCode {1} razlikuje se od {2} prethodne verzije: ovaj paket je ne zamenjuje"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "Verzije i nadogradnje"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer dozvoljava najviše 255.255.65535(.65535)"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "Windows nije rekao šta je instalirano za '{1}'"
 
 msgid "Windows name"
 msgstr "Windows naziv"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] traži '{4}'"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] ne može da uđe u modul za spajanje; ima ga paket koji ga spaja"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] još nije podržan (planirano za {3})"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] ne može da uđe u MSIX; dodajte msi-only = true da se MSIX napravi bez njega"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] ne može da uđe u MSIX; dodajte msi-only = true da se MSIX napravi bez njega"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "[{1}.{2}] nalazi se u korisnikovom AppData ili LocalAppData: dual paket instaliran za sve korisnike stavlja ga samo u profil korisnika koji instalira"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID u modulu za spajanje ima najviše 35 znakova (dodaje mu se GUID modula)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] traži ID: napišite [{2}.ID]"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] ne prima ID: napišite [{2}]"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "[Content_Types].xml nije poslednji unos (nije paket koji je napisao rubr
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Nizovi tabela [[...]] nisu podržani; dajte svakoj stavci sopstveni [kind.ID]"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] se postavlja jednom: before, after ili sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] traži i do i undo (undo takođe poništava neuspeli do)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] zahteva entry: funkciju DLL-a koju treba pozvati"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] zahteva run = \"file:<ID>\": program koji pokreću do i undo"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "[action.{1}] pokreće datoteku ovog paketa pre InstallFinalize, a prva instalacija je još nema (greška Windows Installer-a 1721 ili 1723): stavite radnju posle InstallFinalize ili je postavite kao deferred"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] pokreće jedno: run (exe), dll (instalirana DLL) ili binary (DLL u paketu); ili do i undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}]: {2} je za jednu radnju, ne za par do/undo"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}]: odložena radnja koja pokreće instaliran fajl mora biti posle InstallFiles (sequence > 4000)"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}]: trenutna radnja se izvršava kao korisnik koji instalira; as je za ostale faze"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}]: args pripadaju programu; DLL dobija data"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}]: check ide sa parom do/undo"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}]: data je za odloženu, commit ili rollback radnju (trenutna čita svojstva)"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}]: entry je funkcija DLL-a; run uzima args"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: args za MSIX moraju biti običan tekst (bez [...] koji se popunjava pri instalaciji)"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}]: u MSIX-u tip datoteke otvara aplikaciju: target mora biti izvršna datoteka [msix-app.*]"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] postoji dvaput"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "[chain-package] traži ID: napišite [chain-package.ID]"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}]: app-id i typelib se pišu samo za MSI; MSIX registruje klasu bez njih"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}]: args pripadaju programu; DLL se učitava, ne pokreće"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}]: surrogate pokreće DLL u dllhost; '{2}' je program"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}]: threading je za DLL; program sam postavlja svoj apartment"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}]: typelib-version i typelib-file traže typelib"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] ide u {2}; ili msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}]: izvor mora biti datoteka koja ulazi u paket"
 
 msgid "[define] values must be strings"
 msgstr "Vrednosti [define] moraju biti niske"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] traži '{2}'"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "[dialog-control.{1}] zahteva image"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] traži 'property'"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] traži 'text'"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] traži 'values'"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}] ima {2} kontrola; najviše 64"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}] nema [dialog-control.*]"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] je postavljen iza samog sebe preko drugih dijaloga"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] traži ui = \"minimal\", \"installdir\" ili \"features\""
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}]: '{2}' je ime Windowsa; dajte diru drugi ID"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}]: guard traži pomoćni DLL rubrapacka, koji modul za spajanje ne nosi"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] traži funkciju"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}]: MSIX postavlja sve svoje promenljive (when); koristite msi-only = true"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: njegova vrednost navodi mesto koje MSIX ne može da da (fasciklu van paketa koja nije fascikla Windowsa, ili deo iz vremena instalacije); koristite msi-only = true"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}]: sa external-location = true paket ne nosi nijednu datoteku programa, pa ni pokretač rubrapack-a; ili msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] je već u fascikli svog programa; isolate-for je za deljenu DLL instaliranu drugde"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] nalazi se u korisničkom profilu i ima component-guid: putanja ključa ostaje datoteka, a pravila sistema Windows tu traže HKCU vrednost (ICE38); izostavite component-guid da biste je dobili"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}]: {2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' nije .NET sklop (nema CLI zaglavlja sa redom Assembly)"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}]: .NET sklop sam nosi svoj manifest; manifest je za Win32 sklop"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}]: Win32 sklop zahteva manifest = \"file:<ID>\", svoju datoteku manifesta"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: deljeni .NET sklop ide u GAC, koji prima samo sklopove sa jakim imenom; potpišite ga ili navedite assembly-for = \"file:<program>\""
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: deljeni Win32 sklop ide u WinSxS sa katalogom potpisanim ključem koji navodi publicKeyToken u manifestu; napravite ga sa --key (ili za privatni zadajte assembly-for = \"file:<program>\")"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: manifest '{2}' deljenog Win32 sklopa navodi potpisnika: publicKeyToken u assemblyIdentity (token ključa --key sa kojim se pravi)"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for i manifest idu uz assembly = \"dotnet\" ili \"win32\""
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}]: njegov manifest '{2}' nema assemblyIdentity sa name i version"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: njegov manifest '{2}' mora biti u istom dir i feature (i pod istim when): oba su jedna komponenta"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}]: manifest navodi publicKeyToken \"{2}\", ali token ključa --key je \"{3}\""
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifest '{2}' pripada drugom sklopu ili je i sam sklop"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}]: Explorer učitava rukovalac {2} iz DLL-a; [com.{3}] je program"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}]: Windows čita rukovaoce svojstava samo po računaru; paket traži scope = \"machine\""
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}]: rukovalac pregleda radi u prevhost-u Windowsa; izostavite app-id i surrogate iz [com.{2}]"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}]: MSIX nosi samo rukovaoce sličica i pregleda (upakovani rukovalac svojstava nije dao vrednosti Exploreru); msi-only = true ga zadržava za MSI"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}]: tip datoteke MSIX-a pripada aplikaciji; dodajte [msix-app.*]"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}]: klasa {2} nije [com.*] ovog paketa (DLL rukovaoca je opslužuje)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}]: u MSIX-u rukovaoci dele sve svoje tipove ili nijedan (tip je u jednom povezivanju tipa datoteke)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}]: u MSIX-u njegova klasa radi u surrogate-u; threading = \"sta\" u [com.{2}] daje njenom prozoru petlju poruka (sa threading = {3} pregled može ostati prazan)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}]: u MSIX-u svi njegovi tipovi su u jednom tipu datoteke [assoc], ili ni u jednom"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}]: njegova klasa je msi-only ([com.{2}]); MSIX ne bi imao server za nju"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}]: types je lista tipova datoteka, npr. [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] ide u {2}; ili msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] traži 'value'"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] traži funkciju: postavite 'feature' ovde ili na njegov dir"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}]: MSIX upisuje sve svoje INI unose (when); koristite msi-only = true"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}]: njegova vrednost ima deo koji Windows Installer popunjava pri instalaciji ([...]); MSIX upisuje datoteku kada se pravi"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] traži 'on': gde se stavka prikazuje, npr. [\".txt\"] ili \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] traži 'target' (program koji pokreće), ili stavke sa parent = \"{2}\" (podmeni)"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] traži 'target': program koji stavka pokreće"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}]: meni operativnog sistema Windows 11 prima ID samo od slova i cifara (bez '_'): preimenujte ga ili postavite windows11 = false"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: podmeni ništa ne pokreće: izostavite 'args'"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}]: stavka podmenija se prikazuje gde i njen podmeni: izostavite 'on'"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args ima deo koji Windows Installer popunjava pri instalaciji ([...]); MSIX sadrži samo fiksni tekst"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}]: hide-when je \"HKCU\\\\key\\\\value\" ili \"HKLM\\\\...\", na stavci menija operativnog sistema Windows 11 koja nije u podmeniju"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}]: hide-when navodi vrednost koju upisuje sam ovaj paket ([registry.{2}]): stavka se nikad ne bi prikazala"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: njegov program nije u MSIX-u (msi-only?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: njegove vrednosti ne mogu da uđu u registar paketa"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: list ima deo koji Windows Installer popunjava pri instalaciji ([...]); MSIX sadrži samo fiksni tekst"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}]: list zamenjuje {2} kada putanje ne staju u komandnu liniju: potrebni su multi = \"one\", {3} u args i {4} (datoteka sa spiskom) u list"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}]: on = \"{2}\": nema [assoc.{3}]"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}]: on je tip datoteke ili lista tipova, npr. [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}]: parent '{2}' nije [menu.*]"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}]: parent '{2}' mora biti podmeni: [menu.*] bez target-a i bez sopstvenog parent-a"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] ide u {2}; ili msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] traži funkciju: postavite 'feature' ovde ili na njegov dir"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}]: '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; ili msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] zahteva feature (ili with = \"file:<ID>\")"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}]: feature ide sa sopstvenom komponentom, ne sa with"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name navodi jedan fajl; name ima zamenske znakove"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}]: cilju deljenja trebaju types, formats ili oba"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}]: rukovaocu automatske reprodukcije trebaju content-events, device-events ili oba"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args moraju biti običan tekst (bez [...] koji se popunjava pri instalaciji)"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}]: device-events traže class (COM klasu IHWEventHandler programa)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}]: file mora biti {2}"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}]: file mora da imenuje datoteku koja ulazi u paket"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}]: file mora da imenuje program koji ulazi u paket"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types je lista tipova datoteka, npr. [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows prima samo slova i cifre"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "[msix-psf] ne ide ni sa external-location = true ni sa [env.*] (sopstven
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "[msix-psf] pokreće aplikacije preko PSF pokretača: potreban je [msix-app.ID]"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf]: config '{1}' ne navodi aplikaciju '{2}' u svojim \"applications\""
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf]: files nema '{1}' (pokretač)"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}]: fajl '{2}' nije DLL"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] svoj upravljački program navodi jednom: driver (jedan [odbc-driver]) ili driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] sa driver-name zahteva with = \"file:<ID>\": komponentu sa kojom se instalira"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}]: paket po računaru registruje izvore podataka za računar"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] navodi jednu kopiju: msix (sa publisher) ili upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}]: msix je naziv identiteta paketa (3 do 50 slova, cifara, '.' ili '-') i traži publisher (\"CN=...\"), kako ih ima njegov manifest"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}]: drugu kopiju traži prethodna provera: potrebno je preflight = true"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}]: upgrade-code pripada ovom paketu (to je nadogradnja, a ne druga kopija)"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] traži da njegov dir ima funkciju"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}]: args za MSIX moraju biti običan tekst (bez [...] koji se popunjava pri instalaciji)"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}]: u MSIX-u šema otvara aplikaciju: target mora biti izvršna datoteka [msix-app.*]"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] traži 'value' (ili remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}]: HKCR ne doseže van MSIX-a; koristite [assoc.*], [protocol.*], [com.*] ili [handler.*], ili msi-only = true"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: qword vrednost traži pomoćni DLL rubrapacka, koji modul za spajanje ne nosi"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}]: MSIX nosi vrednosti samo ispod {2}\\Software"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}]: MSIX niti uklanja vrednosti niti ih ostavlja (remove, keep); koristite msi-only = true"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}]: MSIX upisuje sve svoje vrednosti (when); koristite msi-only = true"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}]: njegova vrednost ima deo koji Windows Installer popunjava pri instalaciji ([...]); MSIX sadrži samo fiksne vrednosti"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: on = \"uninstall\" traži pomoćni DLL rubrapacka, koji modul za spajanje ne nosi"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: ime ključa ili vrednosti ne može da uđe u hive registra"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}]: users = \"all\" je za root = \"HKCU\" sa on = \"uninstall\", u paketu za računar"
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] traži funkciju: postavite 'feature' ovde ili na njegov dir"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}]: recursive = true nije za fasciklu ispod {2}"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true traži pomoćni DLL rubrapacka, koji modul za spajanje ne nosi"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}]: users = \"all\" je za recursive = true na fascikli u AppData ili LocalAppData, u paketu za računar"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args za MSIX moraju biti običan tekst (bez [...] koji se popunjava pri instalaciji)"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file mora da imenuje program koji ulazi u paket"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] oglašava funkciju '{2}', koja ima advertise = \"disallow\""
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}]: advertise se ne kombinuje sa when"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}]: MSIX ima prečice samo na radnoj površini i u meniju Start{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}]: MSIX prečica nema working-dir"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}]: MSIX prečica uvek postoji (when je za MSI)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX prečica prikazuje logo svoje aplikacije; icon je za MSI"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}]: oglašavana prečica je za MSI (MSIX instalira ceo paket)"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}]: oglašavana prečica zahteva ikonu"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args za MSIX moraju biti običan tekst (bez [...] koji se popunjava pri instalaciji)"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}]: u MSIX-u prečica pokreće aplikaciju: target mora biti izvršna datoteka [msix-app.*]"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}]: unos menija Start u MSIX-u je njegova aplikacija, koja ne prima args"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: nijedan tekst dijaloga nema ovaj ID"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "[ui] embedded je za MSI; MSIX nema sopstveni instalacioni interfejs"
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "[ui] zahteva ui = \"basic\" ili drugi skup dijaloga u [package] (ili embedded = \"....dll\")"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "izlazna sekvenca \\{1} nije skalarna vrednost Unicode-a"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "`lint` paketa: dijalozi, kodna strana, normalizacija teksta"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` MSIX paketa ili skupa"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "kontrola {1} nema property"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "kontrola {1} nema tekst; postavite tekstualnu kontrolu pored nje"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "kontrola {1} traži [property.{2}] sa jednom od njenih vrednosti kao podrazumevanom (tiha instalacija je koristi)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "paket {1} ne može da piše u HKLM; koristite HKMU"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "sertifikat u putanji ima kritično proširenje koje rubrapack ne razume"
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "sertifikat u putanji potpisan je sertifikatom koji nije CA"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "lanac sadrži samo [chain], [chain-package.ID] i [define], ne [{1}]; paketi se prave iz sopstvenih izvora"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "lanac sadrži najviše {1} paketa"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "lanac traži bar jedan [chain-package.ID]"
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "znak koji Windows ne dozvoljava u imenu (/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "kontejner drži najviše {1} porodica paketa"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "funkcija koju ovaj rubrapack ne pruža (ili je napravljen bez nje)"
 msgid "a file larger than allowed"
 msgstr "datoteka veća od dozvoljenog"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "ime datoteke ispod '{1}' nije važeći Unicode i ne može da se upakuje"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "lanac komponente ili direktorijuma datoteke je prekinut"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "font ulazi u MSIX preko [font.*] koji ga imenuje"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "paket okvira nema sopstvene aplikacije, mogućnosti ni zavisnosti ({1})"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "ćelija hive-a prelazi svoj bin"
 msgid "a hive version or type rubrapack does not read"
 msgstr "verzija ili tip hive-a koji rubrapack ne čita"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "sama poznata fascikla ('{1}') ne može da dobije dozvole"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "proxy sa korisničkim imenom ili lozinkom nije podržan"
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "qword vrednost je ceo broj ili \"0x\" i 1 do 16 heksadecimalnih cifara"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "radio kontrola slaže svoje dugmiće jedno ispod drugog: visina mora biti najmanje 12 po vrednosti ({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "rezervisano ime uređaja"
 msgid "a rollback action cannot be asynchronous"
 msgstr "akcija vraćanja ne može biti asinhrona"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "šema je malo slovo, pa mala slova, cifre, '+', '-' ili '.' (dobijeno '{1}')"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "sekcija je izvan datoteke"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "ime usluge ne sme sadržati '/' ili '\\' (najviše 256 znakova)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "setup .exe se pravi iz izvora sa [chain]; '{1}' pravi paket (.msi, .msix)"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "verzija je 3 ili 4 broja sa tačkama, npr. 1.0.0"
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "account mora biti LocalSystem, LocalService ili NetworkService"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "akcija '{1}' je već definisana"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "akcija nije ni standardna akcija ni u CustomAction"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "action mora biti \"warn\" ili \"refuse\" (primljeno '{1}')"
 
 msgid "adds too many tables"
 msgstr "dodaje previše tabela"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "advertise mora biti \"allow\" ili \"disallow\" (dobijeno '{1}')"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "after = '{1}' nije stranica ovog skupa dijaloga (RpWelcomeDlg{2}{3}{4}) ni [dialog.*]"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "alias pripada kind = \"alias\""
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "alias mora biti ime datoteke koje se završava sa .exe: slova, cifre, '.', '_', '-' (dobijeno '{1}')"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "INI odeljak ne sme sadržati ']', a ključ ne sme sadržati '='"
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "MSIX ne može da stavi datoteke u privremenu fasciklu"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "aplikacija ima jedan alias ([msix-extension.{1}] je već jedan)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "aplikacija ima jedan cilj deljenja ([msix-extension.{1}] to već jeste)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "opcionalni paket ili paket za izmenu ne deklariše mogućnosti ni postav
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "x86 paket piše samo u 32-bitni prikaz registra"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "aplikacija '{1}' nije [msix-app.*]"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "appinstaller-uri i package-uri idu zajedno: gde će biti datoteka .appinstaller i paket"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "arch mora biti \"x64\", \"arm64\" ili \"x86\" (dobijeno '{1}')"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "arch mora biti \"x64\", \"x86\" ili \"arm64\" (sopstveni za instalacioni program)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "argument {1} nije važeći UTF-8 (bajt {2})"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "argument {1} nije važeći Unicode (UTF-16 jedinica {2})"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "nizovi unutar nizova nisu podržani"
 msgid "arrays must hold only strings or only integers"
 msgstr "nizovi moraju sadržati samo niske ili samo cele brojeve"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "as mora biti \"system\" ili \"user\" (primljeno '{1}')"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "assembly mora biti \"dotnet\" ili \"win32\""
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "najviše {1} jezika osim engleskog"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "najviše 100 tabela [msix-app.*]"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "najviše 50 tabela [action.*] (ova datoteka ima {1})"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "banner mora biti datoteka .bmp (Windows Installer prikazuje samo BMP)"
 msgid "build a package from a source file"
 msgstr "pravljenje paketa iz izvorne datoteke"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "pravljenje {1} iz izvora {2} traži sopstvenu porodicu nadogradnje: dodajte {3} = \"{{...}\" u [package]"
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "cab mora biti \"embed\" ili \"external\""
 msgid "cannot be read"
 msgstr "ne može da se pročita"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "paketi ne mogu da se spoje u skup: {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "'{1}' i '{2}' ne mogu da se uporede"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "'{1}' ne može da se napravi"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "'{1}' ne može da se napravi{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "'{1}' nije pronađen; napravite ga sa `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "podrazumevani logo ne može da se napravi"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "zakrpa od '{1}' do '{2}' ne može da se napravi"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "transformacija od '{1}' do '{2}' ne može da se napravi"
 
 msgid "cannot open the certificate store"
 msgstr "skladište sertifikata ne može da se otvori"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "'{1}' ne može da se pročita"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "'{1}' ne može da se pročita ({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "paket '{1}' ne može da se pročita"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "izvorna datoteka '{1}' ne može da se pročita"
 
 msgid "cannot read that folder"
 msgstr "ta fascikla ne može da se pročita"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "datoteka {1} '{2}' ne može da se pročita"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "PIN datoteka '{1}' ne može da se pročita"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "cabinet '{1}' pored '{2}' ne može da se pročita"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "datoteka sertifikata '{1}' ne može da se pročita"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "sertifikati u '{1}' ne mogu da se pročitaju"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "sertifikati u '{1}' ne mogu da se pročitaju: {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "datoteka ključa '{1}' ne može da se pročita"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "datoteka lozinke '{1}' ne može da se pročita"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "nekomprimovana datoteka '{1}' pored '{2}' ne može da se pročita"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "{1} ne može da se upiše"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "'{1}' ne može da se upiše"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "'{1}' ne može da se upiše radi provere"
 
 msgid "cannot write resources.pri"
 msgstr "resources.pri ne može da se upiše"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "datoteke menija pored '{1}' ne mogu da se upišu"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "paket resursa za {1} ne može da se upiše"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "capabilities je niz imena, npr. [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "mogućnost '{1}' nije poznata rubrapacku (priručnik ih navodi)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "mogućnost '{1}' traži Windows build 17763 ili noviji"
 
 msgid "carriage return without a line feed"
 msgstr "povratak na početak reda bez novog reda"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "datoteka sertifikata '{1}': {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "proverite izvorne putanje (u odnosu na izvornu datoteku); postavite any-
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "proverite pravopis (poruka predlaže najbliže ime) i ključeve tabele"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "klasu {1} već opslužuje [com.{2}]"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "klasa {1} je takođe u [msix-extension.{2}]"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "class mora biti GUID kao {{12345678-...} (dobijeno '{1}')"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "close-programs nema efekta uz preflight = false"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "close-programs mora biti \"ask\", \"always\" ili \"never\" (dobijeno '{1}')"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "kolona {1} sadrži pogrešnu vrstu vrednosti"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "kolona {1} nije važeći UTF-8"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "kolona {1} ne sme biti null"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "kolona {1}: {2} je izvan opsega kolone"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "kolona {1}: {2} UTF-16 jedinica, kolona prima {3}"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "kolona {1}: {2} znakova, kolona prima {3}"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "komanda '{1}' još nije implementirana"
 
 msgid "command-line"
 msgstr "komandna linija"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "komponenta {1} {2} promenila se između 32 i 64 bita: pravila komponenti traže novi GUID"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "komponenta {1} {2} više ne postoji (njeni resursi se uklanjaju sa prethodnom verzijom)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "komponenta {1} {2} sada ima ključnu putanju {3} umesto {4}: pravila komponenti traže novi GUID"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "uslov ima nezatvoren navodnik ili neuravnotežene zagrade"
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "uslov je duži od 240 znakova (rubrapack dodaje \"Installed OR ( )\")"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "config sadrži niske \"Name=value\" (dobijeno '{1}')"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "sadrži kontrolni znak"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "sadrži jedan od < > : \" / \\ | ? *"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "content-type je tip medija, npr. \"image/png\" (dobijeno '{1}')"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "default-when traži level iznad 1 (funkcija nivoa 1 se ionako podrazumev
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "definišite promenljivu ([define] ili -D NAME=value), ili napišite $$ za doslovni $"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "dijalog '{1}' nije [dialog.*]"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "ID-ovi dijaloga koji počinju sa 'Rp' (i FilesInUse) pripadaju rubrapacku"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "dir '{1}' je unutar samog sebe (petlja putanje)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "dir '{1}' nije ni dir ID ni Programs, Desktop, StartMenu ili Startup"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "dir '{1}' nije dir ID"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "dir '{1}' nije definisan"
 
 msgid "dir ID"
 msgstr "ID dir"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "direction mora biti \"in\" ili \"out\" (dobijeno '{1}')"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "argumenti do/undo duži su od 255 znakova"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "ključevi sa tačkama nisu podržani; stavite ključ u sopstvenu tabelu"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "upravljački program '{1}' nije [odbc-driver.*]"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "završava se razmakom ili tačkom"
 msgid "error"
 msgstr "greška"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "executable = \"{1}\" mora da imenuje [file.*] koji ulazi u paket"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "očekuje se ']' za zatvaranje imena tabele"
 msgid "expected a key, a [table] or a comment"
 msgstr "očekuje se ključ, [table] ili komentar"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "ekstenzija '{1}' već ima program ([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "extension mora biti '.' i mala slova, cifre, '_' ili '-' (dobijeno '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "external-location = true zahteva Windows verziju 19041 ili noviju: posta
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files nema efekta uz preflight = false"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "extra-files mora biti \"ask\", \"keep\" ili \"delete\" (dobijeno '{1}')"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "funkcija {1} više ne postoji: instalacije koje su je imale gube ono što je sadržala"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "funkcija '{1}' je sama sebi predak"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "funkcija '{1}' nije definisana"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "roditeljska funkcija '{1}' nije definisana"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "datoteka '{1}' već pokreće uslugu '{2}'"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "datoteka '{1}' je već registrovana kao font"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "datoteka '{1}' nije [file.*] ovog paketa"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "datoteka '{1}' mora se instalirati u samu fasciklu Fonts ([dir.*] sa path = \"Fonts\")"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "datoteka '{1}' traži funkciju: postavite 'feature' ovde ili na njen dir"
 
 msgid "file must be \"file:<ID>\""
 msgstr "file mora biti \"file:<ID>\""
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "ime datoteke ima {1} UTF-16 jedinica; sa kratkim imenom 8.3 MSI prima najviše {2}"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "file-system-virtualization i registry-virtualization = false traže Windows build 18362 ili noviji: postavite [msix] min-version = \"10.0.18362.0\""
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file: '{1}' nije [file.*] ovog paketa"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' opslužuje COM klase samo kao .exe ili .dll"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "ispravite vrednost koju poruka navodi; ID-ovi su slova, cifre i '_' i ra
 msgid "floating-point numbers are not supported"
 msgstr "brojevi sa pokretnim zarezom nisu podržani"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "fascikla '{1}' traži funkciju: postavite 'feature' ovde ili na njen dir"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "ime fascikle ima {1} UTF-16 jedinica; sa kratkim imenom 8.3 MSI prima najviše {2}"
 
 msgid "follow-parent needs a parent"
 msgstr "follow-parent traži roditelja"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "fontovi traže scope = \"machine\" (ovo je {1})"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "format {1} traži noviji rubrapack (ovaj čita format {2})"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "format je ceo broj: format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "navedite jedno od --key, --pkcs11 i --key-store"
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "navedite potfascikle fascikle programa, razdvojene zarezima, ili - ako nema"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "šablon '{1}' ne odgovara nijednoj datoteci"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "šablon '{1}' odgovara izlaznoj datoteci '{2}'"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "ima tekst izvan ASCII-ja u kodnoj strani koja nije 65001 (UTF-8)"
 msgid "icon must be an .ico file"
 msgstr "icon mora biti datoteka .ico"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon: datoteka '{1}' nije [file.*] ovog paketa"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "id mora biti GUID kao {{12345678-1234-1234-1234-123456789ABC}: sopstveni GUID modula, isti u svakoj verziji"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "identifier je winget-ov Publisher.Package: od 2 do 8 delova po 1 do 32 znaka, bez razmaka i \\ / : * ? \" < > | (primljeno '{1}')"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "identity-name mora imati 3 do 50 znakova iz A-Z, a-z, 0-9, '.' i '-' (dobijeno '{1}')"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "inline tabele nisu podržane; koristite tabelu [kind.ID]"
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "installed pita Windows šta je instalirano; radi samo na Windows-u"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "instalira se na istu putanju kao red {1} (Windows ne razlikuje velika i mala slova u imenima{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "interna greška: ugrađeni dijalog ima pokvaren redosled tabulatora; pri
 msgid "internal: a module table has no _Validation rule"
 msgstr "interno: tabela modula nema pravilo _Validation"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "interno: nema pravila _Validation za kolonu od {1}"
 
 msgid "invalid"
 msgstr "nevažeće"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "nevažeće - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "nije ispravan MSIX paket"
 msgid "is not valid UTF-8"
 msgstr "nije važeći UTF-8"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for: '{1}' nije program (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "zadržite kod nadogradnje, povećajte verziju, zadržite kodove komponenti datoteka koje ostaju"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "ključ '{1}' je postavljen dvaput u ovoj tabeli (prvi put u redu {2})"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "ključ '{1}' ne sme da počinje ni da se završava sa '\\' ni da sadrži prazan deo"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "ključ '{1}' je izvan tabele; samo 'format' dolazi pre prve tabele"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "datoteka ključa '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "kind mora biti \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" ili \"autoplay\" (dobijeno '{1}')"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "kind mora biti \"preview\", \"thumbnail\" ili \"property\" (dobijeno '{1}')"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "kind mora biti registry, file, dir ili component"
 msgid "labels is an array of strings, one per value"
 msgstr "labels je niz niski, po jedna za svaku vrednost"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "jezik '{1}' nema jezički paket (lang/{2}.po pored izvora, ili RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "jezik '{1}' je naveden dvaput"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "jezik '{1}' nije u [ui] languages"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "jeziku '{1}' nedostaje {2} tekstova, prvi je {3}: dodajte ih u njegov jezički paket (lang/{4}.po) ili navedite [ui-text.ID] text-{5}"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "jezik '{1}' traži [ui] langid-{2} (njegove LANGID-ove, za automatski izbor)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "jezik '{1}' traži [ui] name-{2} (njegovo ime na stranici jezika)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "language mora biti \"neutral\", \"en-US\" ili \"ko-KR\""
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" stoji samostalno, ne u nizu: uzima sve ugrađene jezike"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "languages sadrži kodove kao \"ko\" ili \"zh_TW\" (2 ili 3 mala slova, i _ i dva velika slova regiona) (dobijeno '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "launcher je naziv datoteke PSF pokretača u files, na primer \"PsfLaunch
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license mora biti datoteka .txt, .md (prikazuje se kao običan tekst) ili .rtf"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint: {1} red {2}: kolona {3} nije u NFC ({4} red{-5}); build --nfc stavlja imena fascikli, datoteka i prečica u NFC"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint: {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint: kodna strana {1}, ne 65001: tekst se ne proverava kao UTF-8, širine samo za ASCII"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint: pogledajte probleme iznad\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "lista ključeva kojima token ili skladište sertifikata Windowsa može da potpisuje"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "logo '{1}' i njegova varijanta .scale-100 oba postoje: zadržite jedan"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "logo '{1}' u razmeri {2} ima {3}x{4} piksela; mora biti {5}x{6}"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "logo '{1}' u razmeri {2} nije datoteka PNG"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "logo '{1}' ima {2}x{3} piksela; logo tipa datoteke mora biti kvadratan"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "logo '{1}' ima {2}x{3} piksela; mora biti {4}x{5}"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "logo '{1}' nije datoteka PNG"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "logo '{1}' nije pronađen (ni kao varijante .scale-100 ... .scale-400)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': logo sa varijantama razmere traži ASCII ime datoteke sa ekstenzijom"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "logo mora biti .png u 8-bitnom RGB ili RGBA, bez preplitanja, najviše 1024 piksela po strani"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "main-package je ime identiteta glavnog paketa (dobijeno '{1}')"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "ne sme sadržati kontrolne znakove ni / \\ : * ? \" < > | $"
 msgid "may not start with a space or end with a space or a dot"
 msgstr "ne sme da počinje razmakom ni da se završava razmakom ili tačkom"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "modul za spajanje '{1}' nije pronađen"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "više od 3 preusmeravanja"
 msgid "more than 96 sections"
 msgstr "više od 96 sekcija"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "više od jedne izvorne datoteke ('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "prisutno je više od jednog tokena: imenujte jedan sa --token-label"
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "multi mora biti \"each\", \"one\" ili \"single\" (dobijeno '{1}')"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "mora imati 1 do 64 bajta"
 msgid "name contains a control character"
 msgstr "ime sadrži kontrolni znak"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "name je ime identiteta paketa (dobijeno '{1}')"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "imenuje fasciklu koju njegova tabela Directory nema"
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "new msix još nije implementiran: napravite MSI izvor i dodajte [msix] (pogledajte priručnik)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "nema reda 'format = {1}': izvor u formatu rubrapacka 0.18 ili starijeg, koji ova verzija ne čita (putanje sada počinju sa $(ProgramFiles) ili $(INSTALLDIR)); pogledajte Source format u priručniku"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "nema imena servera, ili je duže od 255 bajtova"
 msgid "no string pool: not a transform"
 msgstr "nema skladišta niski: nije transformacija"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "nema tabele '{1}' u '{2}'"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "oktalni i binarni brojevi nisu podržani; koristite decimalne ili 0x"
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "on = \"uninstall\" je za HKLM, HKCU i HKMU (klase idu sa [assoc.*], [com.*] i sličnim)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "on = \"uninstall\" uklanja ključ sa svim ispod njega: '{1}' nije sopstveni ključ proizvoda ispod Software"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "on = \"uninstall\" uklanja ceo ključ pri uklanjanju; ne prima '{1}'"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "on mora biti \"install\" ili \"uninstall\""
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "on mora biti \"install\", \"uninstall\" ili \"both\""
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on: svaki je tip datoteke ('.' i mala slova, cifre, '_' ili '-'), \"*\" (svaka datoteka), \"folder\", \"background\" (prazan deo fascikle), \"drive\" ili \"assoc:<ID>\" (dobijeno '{1}')"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "samo kontrole radio, combo i listbox primaju values"
 msgid "out of memory"
 msgstr "nema dovoljno memorije"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "izlaz '{1}': rubrapack piše .msi, .msm, .msix, .msixbundle, .msixupload i setup .exe lanca"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "paket '{1}' {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "paket '{1}' nije pronađen"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "parent mora biti upgrade-code drugog proizvoda, ne sopstveni ovog paketa"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "parent mora biti upgrade-code glavnog proizvoda, GUID kao {{12345678-1234-1234-1234-123456789ABC}"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "path mora početi fasciklom Windowsa (kao $(ProgramFiles) ili $(System))
 msgid "paths"
 msgstr "putanje"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "perceived-type mora biti \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" ili \"application\" (dobijeno '{1}')"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "dozvole traže scope = \"machine\" (ovo je {1})"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "phase mora biti \"immediate\", \"deferred\", \"commit\" ili \"rollback\" (primljeno '{1}')"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "ports mora biti port ili opseg kao \"8000-8100\" u okviru 1-65535 (dobijeno '{1}')"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "ispis ove pomoći ili upotrebe jedne komande"
 msgid "product-code must be a GUID"
 msgstr "product-code mora biti GUID"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "profile mora biti \"all\", \"domain\", \"private\" ili \"public\" (dobijeno '{1}')"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "prog-id '{1}' već pripada [com.{2}]"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "prog-id '{1}' pripada i [assoc.{2}]: tip datoteke i COM klasa traže dva imena"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "prog-id '{1}' je i u [assoc.{2}] sa drugim opisom, target-om, icon-om ili args"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "prog-id '{1}' se nalazi i u [assoc.{2}] sa drugim logo"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "prog-id moraju biti slova, cifre, '.', '_' ili '-', ne počinjati cifrom, najviše 39 (dobijeno '{1}')"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "properties su za pakete Windows Installer-a; MSIX ih ne prima"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "svojstvo '{1}' već pripada kontroli '{2}'"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "svojstvo '{1}' ima ime dira ili funkcije"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "svojstvo '{1}' je već definisano (red {2})"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "svojstvo '{1}' se već pretražuje (red {2})"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "svojstvo '{1}' postavlja rubrapack ili instalacioni program i ne može se ovde definisati"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "svojstvo '{1}' mora biti vaše sopstveno javno ime (velikim slovima)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "svojstvo '{1}' mora biti javno ime: velika slova, cifre i '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "protocol mora biti \"tcp\" ili \"udp\" (dobijeno '{1}')"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "public-folder mora biti fascikla paketa, npr. \"Public\" (dobijeno '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "recursive = true se nikada ne izvršava kada nadogradnja uklanja ovu ver
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "recursive = true uklanja fasciklu sa svim u njoj; ne prima 'name'"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "refuse-upgrade-below {1} je iznad verzije ovog paketa {2}"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "refuse-upgrade-below '{1}' mora biti verzija kao 1.2.3"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message traži refuse-upgrade-below"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "region {1} stranice jezika ima {2} jezika, najviše {3} (X-Rubrapack-Group njihovih paketa)"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "registration mora biti \"machine\" ili \"user\" (primljeno '{1}')"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "registar '{1}' uklanja vrednost; nema šta da štiti"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "vrednost registra '{1}' traži funkciju"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "remove-addons traži zadatak čišćenja: uklonite cleanup = false"
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "replaces sadrži najviše 16 kodova nadogradnje"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "replaces sadrži kodove nadogradnje, GUID-ove kao {{12345678-1234-1234-1234-123456789ABC} (dobijeno '{1}')"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "replaces je niz kodova nadogradnje, npr. [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "replaces navodi {1} dvaput"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "replaces navodi {1}, što je upgrade-code ovog paketa ili njegovog roditelja"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "nedostaje obavezno svojstvo {1}"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "blizanac vraćanja mora doći pre {1} ({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "root mora biti HKLM, HKCR ili HKCU"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "root mora biti HKLM, HKCU, HKCR ili HKMU (dobijeno '{1}')"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new: nekoliko pitanja pravi izvor (Enter uzima vrednost u [ ])
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "pokrenite `rubrapack help <command>`; proverite putanje i da li izlazna fascikla postoji"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run: '{1}' (mašina 0x{2}) ne može da radi na mašinama ovog paketa"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run: '{1}' nije program (.exe)"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run: datoteka '{1}' nije [file.*] ovog paketa"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "sačuvajte izvor kao UTF-8 (ili UTF-16 sa BOM-om), sa završecima redova
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "govori da li je u ovom Windows-u instaliran proizvod sa tim kodom nadogradnje ili paket aplikacije te porodice"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "šema '{1}' već ima program ([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "scope mora biti \"machine\", \"user\" ili \"dual\""
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "sddl mora biti SDDL niska kao \"D:PAI(A;OICI;FA;;;BA)\""
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "svojstvo pretrage '{1}' mora biti vaše sopstveno javno ime (velikim slovima)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "pogledajte poruku; ponovno pravljenje sa rubrapack-om ispravlja većinu ovih"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "redosled {1} nije posle {2} ({3})"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "postavlja akciju pored one koju ne izvršava ni paket ni modul"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "ime usluge '{1}' se već koristi"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "usluge traže scope = \"machine\" (ovo je {1})"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "ime prečice ima {1} UTF-16 jedinica; sa kratkim imenom 8.3 MSI prima najviše {2}"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "prikazuje po čemu se dva paketa razlikuju: tabele, redovi, ćelije i sa
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "potpisivanje PE datoteke, MSI paketa, MSIX paketa ili skupa"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "potpisano {1}\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "izvor '{1}' je direktorijum; koristite [files.ID] za mnogo datoteka"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "izvor '{1}' je simbolička veza; veze se ne prate"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "izvor '{1}' nije obična datoteka"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "izvorna datoteka '{1}' se promenila dok se paket pravio"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "izvorna datoteka '{1}' je veća od 2 GiB"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "izvorna datoteka '{1}' nije pronađena"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "source mora biti \"file:<ID>\""
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "source mora biti paket .msi, .msix, .msixbundle ili .msp"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "izvorna putanja '{1}' mora biti relativna u odnosu na izvornu datoteku"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "izvorne putanje koriste '/', ne '\\\\' (dobijeno '{1}')"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source: datoteka '{1}' nije [file.*] ovog paketa"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "summary-name mora biti ASCII (sažetak informacija sadrži samo ASCII)"
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "symbols je lista .pdb datoteka, na primer [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "tabela {1} {2}"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "tabela '{1}' je nečitljiva"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "tabela [{1}{2}{3}] je definisana dvaput (prvi put u redu {4})"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "tags je lista od najviše 16 pojmova za pretragu, na primer [\"editor\",
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "ne prima konfiguraciju (nema ModuleConfiguration)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "cilj '{1}' ne postoji"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "target mora biti \"dir:<ID>\", \"file:<ID>\" ili \"registry:<ID>\""
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "target mora biti \"file:<ID>\" koji imenuje [file.*] ovog paketa"
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "ime cilja '{1}' {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target: datoteka '{1}' nije [file.*] ovog paketa"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "task-id '{1}' već koristi [msix-extension.{2}]"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "datoteka UTF-16 nije ispravan UTF-16"
 msgid "the ZIP central directory lies outside the file"
 msgstr "centralni direktorijum ZIP-a je izvan datoteke"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "ID aplikacije '{1}' postaje Application Id: samo slova i cifre, ne počinje cifrom"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "ugrađeni cabinet-i čine paket od 2 GiB ili više, što Windows Install
 msgid "the entry is not in the central directory"
 msgstr "unos nije u centralnom direktorijumu"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "dijalog greške '{1}' traži kontrolu {2} po imenu {3} (greška 2835)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "izvršna datoteka '{1}' mora biti .exe"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "manifest nema Identity Publisher"
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "Identity manifesta ne može se pročitati za puno ime paketa"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "modul za spajanje {1}"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "ime {1}"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "porodica paketa {1} je u kontejneru dvaput"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "sadržaj paketa se ne poklapa sa njegovim potpisom (promenjen je posle p
 msgid "the package's directory cannot be read"
 msgstr "direktorijum paketa ne može da se pročita"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "naziv datoteke paketa ne sme sadržati navodnike ni znak procenta: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "odgovor je veći od 4 MiB"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "odgovor koristi kodiranje prenosa drugačije od chunked"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "isti uslov se već traži (red {1})"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "kodiranje izvorne datoteke"
 msgid "the system random source failed"
 msgstr "sistemski izvor slučajnosti nije uspeo"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "redosled tabulatora (Control_Next) nije jedan krug kroz njegovih {1} kontrola od Control_First (Windows Installer staje sa greškom 2809 ili 2810)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "ovaj rubrapack je napravljen bez dela za meni: stavke [menu.*] ne stižu
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "ovaj rubrapack je napravljen bez instalacionog programa (nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "threading mora biti \"sta\", \"mta\", \"both\" ili \"neutral\" (dobijeno '{1}')"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "previše lokalizovanih tekstova i razmera logotipa za resources.pri"
 msgid "too many packages in the bundle"
 msgstr "previše paketa u skupu"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "transformaciju '{1}' u '{2}' nije moguće pročitati: {3}"
 
 msgid "trusted"
 msgstr "pouzdano"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "dve radnje dele sequence {1} ({2} i {3}); dajte jednoj [action] drugu sequence, before ili after"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "dva paketa istog imena u skupu"
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "dva paketa resursa istog ResourceId-a u skupu"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "type mora biti string, expand, dword, qword, binary ili multi (dobijeno '{1}')"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "type mora biti text, checkbox, edit, radio, combo, listbox ili bitmap (dobijeno '{1}')"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' nije [file.*] ovog paketa"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "typelib-version je major.minor u heksadecimalnim ciframa, npr. \"1.0\" (dobijeno '{1}')"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "types i verb pripadaju kind = \"context-menu\""
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types: svaki je \".ext\" ili \"*\" (svaka datoteka)"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types: svaki je '.' i mala slova, cifre, '_' ili '-' (dobijeno '{1}')"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "ui = \"{1}\" dozvoljava korisniku da izabere fasciklu dira '{2}', koji ne postoji (postavite [ui] install-dir)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "ui = \"features\" traži tabele [feature.*] za izbor"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "ui mora biti none, basic, minimal, installdir ili features (dobijeno '{1}')"
 
 msgid "unexpected text after the value"
 msgstr "neočekivan tekst posle vrednosti"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "nepoznata komanda '{1}' (pogledajte 'rubrapack help')"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "nepoznata izlazna sekvenca \\{1} (koristite '...' za tekst sa obrnutim kosim crtama)"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "nepoznata opcija za inspect (koristite ime tabele, --summary, --files ili --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "nepoznat ključ '{1}' u [{2}{3}{4}]"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "nepoznat ključ '{1}' u [{2}{3}{4}] (da li ste mislili '{5}'?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "nepoznata ili nepotpuna opcija za {1} '{2}'"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "nepoznata tabela [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "nepoznata tabela [{1}{2}{3}] (da li ste mislili [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "raspakivanje paketa u novi direktorijum, raspoređen kao pri instalaciji"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "nije podržano - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "ključevi update-* traže appinstaller-uri i package-uri"
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "upgrade = false je za on = \"uninstall\" ili \"both\" (instalacija nikada nije uklanjanje pri nadogradnji)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "upgrade-code mora biti GUID kao {{12345678-1234-1234-1234-123456789ABC}"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "upotreba: rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "upotreba: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "koristite potpunu verziju rubrapack-a ili drugi način"
 msgid "used by more than one component"
 msgstr "koristi ga više od jedne komponente"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "users mora biti \"all\" (dobijeno '{1}')"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "vrednost '{1}' je navedena dvaput"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "values je niz od 1 do 32 niske"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "vrednosti: ID-ovi, GUID-ovi, verzije, brojevi izvan opsega, reference na stvari koje ne postoje"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "promenljiva '{1}' nije definisana ([define] ili -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "ime promenljive '{1}' ne sme sadržati '=' niti počinjati sa = + - ! *"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "promenljive"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "promenljive: $(NAME) bez vrednosti, nezatvoreno $(, ime Windows-a ili dir ID tamo gde ne može da stoji"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "verzija '{1}' mora biti a.b.c ili a.b.c.d"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "verzija '{1}' mora biti a.b.c ili a.b.c.d uz a, b <= 255 i c, d <= 65535"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "šta znači dijagnostički kod, poruke koje ga nose, šta učiniti i gde
 msgid "with must be \"file:<ID>\""
 msgstr "with mora biti \"file:<ID>\""
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with: datoteka '{1}' nije [file.*] ovog paketa"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "bez --pkcs11 `keys list` prikazuje skladište sertifikata Windows-a"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "working-dir '{1}' nije dir ID"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "napišite tabelu ili vrednost na jednostavan način koji priručnik poka
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "napišite vrednost bez '[~]'; mode = \"append\" ili \"prepend\" je dodaje"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "zapisano {1}\n"
 
 msgid "x + width must be at most 370 (the page width)"

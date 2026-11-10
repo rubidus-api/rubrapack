@@ -9,6 +9,8 @@
 
 #include <stddef.h>
 
+#include "proven/fmt.h"
+
 // Process exit codes.
 enum {
     RP_EXIT_OK = 0,
@@ -35,20 +37,19 @@ enum {
 #define RP_DIAG_VERIFY          "RP0012"   // a signature does not verify or is not trusted
 #define RP_DIAG_TRANSFORM       "RP0013"   // a difference a transform cannot carry
 
-// MinGW checks `printf` formats against the MS runtime, which rejects %zu; the UCRT that
-// rubrapack links accepts C99 formats, so check against GNU rules there.
-#if defined(__MINGW32__)
-#define RP_PRINTF_FORMAT gnu_printf
-#else
-#define RP_PRINTF_FORMAT printf
-#endif
+// The arguments of a proven format, as proven_fmt_to passes them: the array (its first element
+// empty) and its length. The formatting entry points below are macros over it.
+#define RP_ARGS(...)                                                                                \
+    ((const proven_arg_t[]){ proven_arg_none() __VA_OPT__(,) __VA_ARGS__ }),                       \
+    (sizeof((const proven_arg_t[]){ proven_arg_none() __VA_OPT__(,) __VA_ARGS__ }) / sizeof(proven_arg_t))
 
-// Prints `rubrapack: error[CODE]: message` to stderr. The formatted message must be UTF-8;
-// it is cut at 1023 bytes on a character boundary.
-[[gnu::format(RP_PRINTF_FORMAT, 2, 3)]]
-void rp_diag_error(const char *code, const char *fmt, ...);
-[[gnu::format(RP_PRINTF_FORMAT, 2, 3)]]
-void rp_diag_warning(const char *code, const char *fmt, ...);
+// Prints `rubrapack: error[CODE]: message` to stderr: a proven format (`{}` for each value, the
+// English text and the key of its translation) and its proven_arg_* values, as proven_fmt_to takes
+// them. The message must be UTF-8; it is cut at 1023 bytes on a character boundary.
+#define rp_diag_error(code, fmt, ...)   rp_diag_error_a(code, fmt, RP_ARGS(__VA_ARGS__))
+#define rp_diag_warning(code, fmt, ...) rp_diag_warning_a(code, fmt, RP_ARGS(__VA_ARGS__))
+void rp_diag_error_a(const char *code, const char *fmt, const proven_arg_t *args, size_t nargs);
+void rp_diag_warning_a(const char *code, const char *fmt, const proven_arg_t *args, size_t nargs);
 
 // `lint --json` (RFC-0025): from begin to end the diagnostics (these and the source ones of
 // srcdiag.h) are collected instead of printed; end prints one JSON object on stdout:

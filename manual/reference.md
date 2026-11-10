@@ -1548,7 +1548,7 @@ msgstr ""
 "X-Rubrapack-Group: 1\n"           # its region on a grouped language page
 
 # The command line: msgid is the English text as rubrapack writes it.
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "'{1}' を読めません ({2})"
 
 # The installers rubrapack builds: msgctxt "installer", msgid is the text's ID.
@@ -1561,11 +1561,15 @@ msgstr "[ProductName] セットアップ"
   source being built; then `lang/` beside the rubrapack program; then the packs built in. A file
   with a built-in language's code comes first, so a corrected or reworded `de.po` beside the
   source replaces the built-in German.
-- **The command line**: `--lang ja` (or `RUBRAPACK_LANG=ja`) uses the pack. A translation names the
-  English text's values by number, `{1}` for the first `%s` or `%zu`, so it can put them in the
-  order its language wants; `{-2}` says the second has no place (a plural "s"); `{{` is a brace. It
-  is not a format string: a pack can leave a value out but cannot make rubrapack read one that is
-  not there. A text the pack lacks comes out in English.
+- **The command line**: `--lang ja` (or `RUBRAPACK_LANG=ja`) uses the pack. Its msgid is the
+  English text with a `{}` for each value, as rubrapack writes it (`{{` and `}}` are braces). A
+  translation names those values by number, `{1}` for the first `{}`, so it can put them in the
+  order its language wants; `{-2}` says the second has no place (a plural "s"); `{{` is a brace. A
+  pack can leave a value out but cannot make rubrapack read one that is not there. A text the pack
+  lacks comes out in English. Packs written for 0.53.0 and earlier have `%s` and `%zu` in their
+  msgids: those rows no longer match, and their texts come out in English until the msgids are
+  written with `{}` (each `%s`, `%zu`, `%u`, `%d`, `%.*s` ... becomes `{}`, `%04X` becomes
+  `{:04X}`, `%%` becomes `%`, and a brace is doubled); their installer texts are not affected.
 - **Installers**: `[ui] languages = ["ja"]` takes the dialogs' texts (the IDs listed under
   [Several languages](#several-languages)), the status line (`Action.InstallFiles`, ...), the
   details box (`Details.FileCopy`, ...) and the helper's messages from the pack, and the language's

@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Segoe UI\n"
 "X-Rubrapack-Group: 4\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, диалогтар {6}{7}\n  1 атауы, өндіруші, нұсқа, архитектура          2 орнату қалтасы, кім үшін\n  3 диалогтар, лицензия, тілдер                  4 қосымша бөліктер\n  5 төте жолдар                                  6 файлдар: бағдарлама қалтасымен сәйкестендіру\n  7 кез келген кілт                              v қарау   l lint   s сақтау   q шығу\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\nОсы коды бар хабарлар (* атау немесе мә�
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nНәтижелер stdout-қа, диагностика stderr-ге шығады.\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\nНе істеу керек: {1}.\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} жоқ, бірақ төте жол оны ашады: алдымен төте жолдарды өзгертіңіз (5)\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  онда {1} файл және {2} қалта бар\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7, v, l, s немесе q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  [dir.{1}] және [files.{2}] қосылды\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  [file.{1}] қосылды\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint: жоғарыдағы ақауларды қараңыз (онда
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  [ui] languages ішіндегі басқа тілдер сақталады; ол тізімді 7 арқылы өзгертіңіз (кез келген кілт)\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  [file.{1}] жойылды\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  [files.{1}] жойылды{2}\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  бұл TOML ішкі жиынына сай емес; ештеңе өз
 msgid "  that was not readable text; again, please\n"
 msgstr "  бұл оқылатын мәтін емес еді; қайталаңыз\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  бағдарлама қалтасы '{1}': {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - Windows Installer (.msi) және MSIX (.msix) бумаларын ж�
 msgid " and its dir"
 msgstr " және оның қалтасы"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}) орта айнымалысы жоқ, сондықтан кеңейтілетін мән оны ұстай алмайды; жол мәнін пайдаланыңыз (орнату кезінде толтырылады)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) - {2}: ол жолды бастай алады немесе Windows Installer толтыратын мәннің орнына тұра алады (тізілім, орта, INI, аргументтер, хабарлар), бірақ мұнда емес"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) жол басталатын қалта емес (dir ID немесе ProgramFiles, LOCALAPPDATA, ProgramData ... - нұсқаулықтағы Жолдар бөлімін қараңыз){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  құрылым:     {2}\n  дайджест:    {3}\n  қолтаңба:    {4}\n  тізбек:      {5}{6}{7}\n  кері қайтарып алу: тексерілмеді\n  уақыт белгісі: {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2}: айнымалы орнатылмаған"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' осы диалогтың басқару элементі емес"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' {3} ішінде жоқ"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}': {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': лицензия мәтініне қаріптің ағылшынша атауы керек, сондықтан ол тілдің өз қаріпімен көрсетіледі; бұл қаріпті онда да пайдалану үшін ағылшынша атауын жазыңыз (мысалы, \"Malgun Gothic\")"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "{1} = '{2}' қалта болуы керек"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "{1} құрамдас бөлігі, бірақ буманың платформасы - {2}"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} kind = \"{2}\" түріне жатпайды"
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} kind = \"firewall\" түріне жатпайды"
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} LANGID мәндерін қамтиды (1..65535), мысалы 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} жолдарды қамтиды"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "{1} ұзындығы {2}–{3} таңба"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} — \"Кілт=Мән\" мәтіндерінің тізімі"
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "{1} — мәтіндер тізімі, мысалы [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} - 1-31 таңбадан тұратын қаріп атауы, мысалы \"Segoe UI\" ({2} алынды)"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} - тырнақшалары жабық, жақшалары теңгерілген MSI шарты"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} - жолдар массиві, әр мәнге біреу"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} MSI бумаларына арналған: msiexec MSIX жоймайды"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} жоқ. [file.{2}] жою керек пе?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} 240 таңбадан ұзын"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} жаңа. Қосу керек пе?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} тізілім пішіміндегі GUID емес"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} - бұл rubrapack пайдаланатын код емес{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} осы буманың [file.*] атайтын \"file:<ID>\" болуы керек"
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "{1} {2}–{3} әріп, сан, '.' немесе '-' болуы және '.' таңбасынан басталмауы керек ('{4}' алынды)"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1} GUID болуы керек"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1} {{12345678-...} сияқты GUID болуы керек ('{2}' алынды)"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "{1} http:// немесе https:// мекенжайы болуы керек ('{2}' алынды)"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1} https://, http:// не file:// мекенжайы немесе \\\\server\\share жолы болуы керек ('{2}' алынды)"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1} upgrade-code мәнінен өзгеше болуы керек (әр архитектураға бір жаңарту отбасы)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} үшін Windows {2} немесе кейінгі жинақ қажет: [msix] min-version = \"10.0.{3}.0\" орнатыңыз"
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} үшін resources/bin/rubrapack_ca-{2}.dll қажет, бұл rubrapack онсыз жасалған"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}, TSA тексерілмеді (--tsa-trust беріңіз)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}, TSA сенімді"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}, TSA сенімсіз - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} жоқ немесе бос. [files.{3}] және [dir.{4}] жою керек пе?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ - жаңа қалта. Қосу керек пе?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1}: қателер: {2}{-3}, ескертулер: {4}{-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1}: қателер: {2}{-3}, ескертулер: {4}{-5} ({6} бойынша)\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1}: {2} файл, {3} байт\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1}: {2} файл, {3} қате, 0 ескерту\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1}: тағы {2} диагностика көрсетілмеді\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1}: '{2}' бағдарлама (.exe) емес"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' — rubrapack қоятын стандартты әрекет емес"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1}: '{2}' файлы осы буманың [file.*] емес"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1}: '{2}' файлы бағдарлама емес (.exe)"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "'$(' жабылмаған ('$(' мәтіні үшін '$$(' жазыңыз)"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' бар; ол сол күйінде қалдырылады"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' бар; оны жойыңыз немесе басқа қалтаға жинаңыз"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}' үшін {2} өңдегіші бар ([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}' үшін рұқсаттар бар"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' және '{2}' бумадағы бір жол"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' Windows-қа немесе браузерлерге тиесілі"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "'{1}' файлын '{2}' бойынша оқу мүмкін емес: {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' TOML ішкі жиынына сай емес; ештеңе сақталмады"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' бар"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' бар; оны `rubrapack edit {2}` арқылы өзгертіңіз"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' бар және бос каталог емес; жаңасына шығарыңыз"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' {2} ішіне барады; немесе msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}' ішінде оқылмайтын жиынтық ақпарат ағыны бар"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' ішінде шығаруға арналған Directory, Component, File және Media кестелері жоқ"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "'{1}' ішінде '{2}' ендірілген түрлендіруі жоқ"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}' ішінде оқылатын жиынтық ақпарат жоқ"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}' ішінде '{2}' түрлендіруі жоқ"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' - UTF-16: edit тек UTF-8 бастапқы файлдарды өзгертеді (алдымен UTF-8 ретінде сақтаңыз)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' - Windows атауы; айнымалыға басқа атау беріңіз"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' - [chain]: ол орнату бағдарламасын жасайды, -o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' - кірістірілген жақтаудың басқару элементі; басқа ID таңдаңыз"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' - компьютер қалтасы; {2} бумасы оған жаза алмайды"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' - біріктіру модулі: оны [merge.ID] арқылы біріктіріңіз"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' - MSIX пішімі өзіне сақтайтын атау"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' - символдық сілтеме; сілтемелерге өтілмейді"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' сонымен қатар [property.*]"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' сонымен қатар dir ID; айнымалыға басқа атау беріңіз"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' осы буманың архитектурасы үшін емес, 0x{2} машинасы үшін жасалған; әдейі болса any-arch = true орнатыңыз"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' PE файлы (.exe, .dll) да, MSI бумасы да, MSIX бумасы не жиыны да, cabinet да емес"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' PE файлы да, MSI бумасы да, MSIX бумасы не жиыны да, cabinet да емес"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' белгілі қалта да, dir ID да емес (белгілі қалталар: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' MSIX бумасы да, бума отбасының аты да емес (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' rubrapack оқи алатын cabinet емес (stored немесе MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' диагностика коды емес (RP және төрт сан, мысалы RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' бағдарлама емес (.exe)"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' кәдімгі файл емес"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' rubrapack орнату бағдарламасы емес{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' жарамды ID емес (әріптер, сандар және '_', саннан басталмайды, ең көбі {2})"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' жарамды MSI дерекқоры емес: {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' жарамды MSIX бумасы емес: {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' жарамды бума емес: {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' жарамды бастапқы файл емес (TOML ішкі жиыны); алдымен оны қолмен түзетіңіз"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' жарамды түрлендіру емес: {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' жарамды айнымалы атауы емес"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' сақталған және ID ретінде пайдаланылмайды"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' - dir атауы: dir-ді тек тізілім не dir іздеуі толтыра алады"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' бағдарлама файлына (PE) ұқсайды, бірақ тақырыптары не ресурстары бүлінген"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}' жол болуы керек"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}' бүтін сан болуы керек"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}' {2} мен {3} аралығында болуы керек"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}' true немесе false болуы керек"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' бос болмауы керек"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' ешбір түрлендіруді атамайды (жиынтық сипаты 8): бұл түзету емес"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' қалтадан басталады: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}': {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}': {2} '{3}' ішінде {4} бар; ештеңе шығарылмады"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}': {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}': {2} жазба, {3} шегінен көп (--limit-entries); ештеңе шығарылмады"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}': '{2}' және '{3}' Windows-та бір жол болар еді; ештеңе шығарылмады"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}': '{2}' [ui] languages ішінде жоқ"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}': кестені оқу мүмкін емес"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}': кесте оқылмайды"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}': MSIX барлық файлдарын орнатады (when); msi-only = true пайдаланыңыз"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}': MSIX барлық файлдарын жояды (keep); msi-only = true пайдаланыңыз"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}': '{2}' cabinet бүлінген немесе stored/MSZIP емес"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}': '{2}' cabinet атауы қарапайым файл атауы емес"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}': '{2}' сығылған файлының ({3} реті) cabinet-і жоқ"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}': '{2}' каталогының '{3}' ата-каталогы жоқ"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}': '{2}' каталогы өзінің арғы тегі немесе тым терең кірістірілген"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}': '{2}' файлы өзінің MsiFileHash мәніне сай емес"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}': '{2}' файлының құрамдас бөлігі де, каталогы да жоқ"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}': '{2}' файлы {3} байт, File кестесі {4} дейді"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}': '{2}' файлы '{3}' cabinet ішінде жоқ"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}': оның сыртқы cabinet файлдарын қолтаңба қамтымайды (--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}': оның қалтасы белгілі орынға апармайды"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}': жазуға {2} байттан көп (--limit-bytes); ештеңе шығарылмады"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}': --timestamp жоқ: сертификат мерзімі біткенде қолтаңба жарамсыз болады"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}': '{2}' бумасы өзінің SHA-256 мәніне сай емес"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}': '{2}' cabinet ағыны жоқ"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}': манифестте {2} {3} жоқ"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}': манифест бумада жоқ '{2}' атайды"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}': {2} уақыт белгісі: {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}': '{2}' түрлендіруін '{3}' бойынша оқу мүмкін емес: {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' - буманың өз тілі ({2}); ол мәтінді жұрнақсыз беріңіз"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "'version' аргумент алмайды"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "--allow-unsigned-cabs .msi үшін"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "--arch жиын үшін: x64, x86 және arm64 тізімі, әрқайсысы бір рет ('{1}' алынды)"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "--dist бастапқы файлдың жанындағы жаңа қа�
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "--flat .msixbundle шығысына арналған (бумалары оның жанына жазылады)"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "--jobs 1-ден 64-ке дейінгі санды алады ('{1}' алынды)"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "--key ең көбі {1} сыртқы cabinet қолтаңбалайды; cab-max-size мәнін арттырыңыз"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "--key-store - Windows сертификаттар қоймасы; бас�
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store сертификаттың SHA-1 таңбасын алады (40 он алтылық сан)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1}: мұндай тіл жоқ (кірістірілгендер: {2}; басқасына өз тіл бумасы керек, {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "--lang (немесе RUBRAPACK_LANG) осы мәтіндердің тілін таңдайды: {1} немесе тіл бумасы бар тіл.\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "--lang үшін тіл керек, мысалы en немесе ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "--languages үшін диалогтар керек: --ui да беріңіз"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "--msix-compress deflate немесе store алады ('{1}' алынды)"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1}: айнымалы орнатылмаған"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "--patch-code бас әріптермен және жақшалармен GUID алады: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1}: айнымалы орнатылмаған"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "--previous екі .msi бумасын салыстырады"
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots: операциялық жүйенің түбірлік сертификаттарын оқу мүмкін емес"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "--target {1} '{2}' шығысына сай емес"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "--target {1} іске асырылмаған (msi немесе msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "--target msi немесе msix алады ('{1}' алынды)"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "--winget үшін [winget] кестесі керек: identifier, instal
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "--winget буманың бір файлда болуын талап етеді: winget біреуін жүктейді, демек cab = \"external\" болмайды"
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "-D {1} екі рет берілген"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1}: '{2}' - Windows атауы; айнымалыға басқа атау беріңіз"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "-D үшін АТАУ=МӘН керек ('{1}' алынды)"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "-i барлық жауапты сұрайды; -i немесе опци�
 msgid "; its range is "
 msgstr "; оның ауқымы: "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "ActionProperty '{1}' SecureCustomProperties ішінде жоқ"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Program Files ішіндегі қалта атауы"
 msgid "Folder with the files to install"
 msgstr "Орнатылатын файлдар қалтасы"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "'{1}' ID пайдаланылған ({2} жол); ID барлық кестелерде әртүрлі болуы керек"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "Кім үшін орнату (machine, user, dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "Кілт кесте.кілт түрінде (package.version, dir.INSTALLDIR.path, ...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "KeyPath '{1}' басқа құрамдас бөлікке тиесілі"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "KeyPath '{1}' File ішінде жоқ"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "KeyPath '{1}' Registry ішінде жоқ"
 
 msgid "Korean dialogs as well as English?"
 msgstr "Ағылшынмен қатар корей тіліндегі диалогтар да ма?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "LastSequence {1} кішірек DiskId мәнінікінен төмен"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX: MSIX бумасына не керек және ол нені ал�
 msgid "Main program, for shortcuts (- for none)"
 msgstr "Төте жолдарға арналған негізгі бағдарлама (- жоқ болса)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "Нұсқаулық: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "Өнім атауы"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "ProductCode және UpgradeCode бірдей GUID"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} алғашқы үш өрісте алдыңғы {2} мәнінен жоғары емес: Windows Installer жаңартпайды"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Төте жолдар ашатын бағдарлама (- төте жолсыз)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1}: мұндай тіл жоқ (кірістірілгендер: {2}; басқасына өз тіл бумасы керек, {3}.po)"
 
 msgid "Reference, "
 msgstr "Анықтама, "
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "{1} ретін ешбір Media жолы қамтымайды (соңғысы {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "{1} ретін басқа файл пайдаланады"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "Жазылатын бастапқы файл"
 msgid "Source format"
 msgstr "Бастапқы файл пішімі"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "Source {1} түрі үшін File жолын атауы керек"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "TOML ішкі жиыны"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "UTF-16 big-endian файлдарына қолдау жоқ; UTF-8 ретінде сақтаңыз"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "{1} UpgradeCode алдыңғы нұсқаның {2} мәнінен өзгеше: бұл бума оны алмастырмайды"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "Нұсқалар және жаңартулар"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer ең көбі 255.255.65535(.65535) рұқсат етеді"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "Windows '{1}' үшін не орнатылғанын айтпады"
 
 msgid "Windows name"
 msgstr "Windows атауы"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] үшін '{4}' керек"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] біріктіру модуліне кіре алмайды; оны біріктіретін бумада болады"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] әзірге қолдау көрсетілмейді ({3} үшін жоспарланған)"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] MSIX-ке кіре алмайды; MSIX-ті онсыз жасау үшін msi-only = true қосыңыз"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] MSIX-ке кіре алмайды; MSIX-ті онсыз жасау үшін msi-only = true қосыңыз"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "[{1}.{2}] пайдаланушының AppData немесе LocalAppData қалтасында: барлық пайдаланушыларға орнатылған dual бумасы оны тек орнатушы пайдаланушының профиліне қояды"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: біріктіру модуліндегі ID ең көбі 35 таңба (оған модульдің GUID-і қосылады)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] үшін ID керек: [{2}.ID] жазыңыз"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] ID алмайды: [{2}] жазыңыз"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "[Content_Types].xml соңғы жазба емес (rubrapack немес
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] кестелер массивтеріне қолдау жоқ; әр элементке өз [kind.ID] беріңіз"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] бір рет орналастырылады: before, after не sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] үшін do мен undo екеуі де керек (undo сәтсіз do-ны да кері қайтарады)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] entry қажет етеді: шақырылатын DLL функциясы"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] run = \"file:<ID>\" қажет етеді: do мен undo іске қосатын бағдарлама"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "[action.{1}] InstallFinalize алдында осы буманың файлын іске қосады, ал алғашқы орнатуда ол файл әлі жоқ (Windows Installer қатесі 1721 не 1723): әрекетті InstallFinalize кейін қойыңыз немесе deferred етіңіз"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] бір нәрсені іске қосады: run (exe), dll (орнатылған DLL) не binary (бумадағы DLL); не do мен undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}]: {2} — бір әрекет үшін, do/undo жұбы үшін емес"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}]: орнатылған файлды іске қосатын кейінге қалдырылған әрекет InstallFiles-тан кейін болуы керек (sequence > 4000)"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}]: дереу әрекет орнатушы пайдаланушы ретінде орындалады; as басқа фазалар үшін"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}]: args — бағдарламаныкі; DLL data алады"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}]: check do/undo жұбымен бірге жүреді"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}]: data кейінге қалдырылған, commit не rollback әрекеті үшін (дереу әрекет сипаттарды оқиды)"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}]: entry — DLL функциясы; run args алады"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX үшін args қарапайым мәтін болуы керек (орнату кезінде толтырылатын [...] жоқ)"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}]: MSIX ішінде файл түрі қолданбаны ашады: target [msix-app.*] орындалатын файлы болуы керек"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] екі рет бар"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "[chain-package] үшін ID керек: [chain-package.ID] жазыңыз"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}]: app-id мен typelib тек MSI үшін жазылады; MSIX класты оларсыз тіркейді"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}]: args бағдарламаға арналған; DLL жүктеледі, іске қосылмайды"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}]: surrogate DLL-ді dllhost ішінде орындайды; '{2}' - бағдарлама"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}]: threading DLL үшін; бағдарлама өз пәтерін өзі орнатады"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}]: typelib-version мен typelib-file үшін typelib керек"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] {2} ішіне барады; немесе msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}]: оның көзі бумаға кіретін файл болуы керек"
 
 msgid "[define] values must be strings"
 msgstr "[define] мәндері жол болуы керек"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] үшін '{2}' керек"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "[dialog-control.{1}] image қажет етеді"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] үшін 'property' керек"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] үшін 'text' керек"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] үшін 'values' керек"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}] ішінде {2} басқару элементі бар; ең көбі 64"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}] ішінде [dialog-control.*] жоқ"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] басқа диалогтар арқылы өзінен кейін орналасқан"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] үшін ui = \"minimal\", \"installdir\" немесе \"features\" керек"
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}]: '{2}' - Windows атауы; dir-ге басқа ID беріңіз"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}]: guard үшін rubrapack көмекші DLL-і керек, біріктіру модулі оны алып жүрмейді"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] үшін мүмкіндік керек"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}]: MSIX барлық айнымалыларын орнатады (when); msi-only = true пайдаланыңыз"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: оның мәні MSIX бере алмайтын орынды атайды (бумадан тыс, Windows-қа жатпайтын қалта немесе орнату кезіндегі бөлік); msi-only = true пайдаланыңыз"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}]: external-location = true кезінде бумада бағдарламаның бірде-бір файлы жоқ, демек rubrapack іске қосқышы да жоқ; немесе msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] әлдеқашан өз бағдарламасының қалтасында; isolate-for басқа жерге орнатылған ортақ DLL үшін"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] пайдаланушы профилінде және оның component-guid мәні бар: кілт жолы файл болып қалады, ал Windows ережелері онда HKCU мәнін талап етеді (ICE38); оны алу үшін component-guid алып тастаңыз"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}]: {2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' .NET жинағы емес (Assembly жолы бар CLI тақырыбы жоқ)"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}]: .NET жинағы манифестін өзі алып жүреді; manifest Win32 жинағына арналған"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}]: Win32 жинағына manifest = \"file:<ID>\", яғни манифест файлы керек"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: ортақ .NET жинағы GAC-қа түседі, ол тек күшті атауы барларды қабылдайды; оған қол қойыңыз немесе assembly-for = \"file:<бағдарлама>\" беріңіз"
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: ортақ Win32 жинағы WinSxS-ке манифесттегі publicKeyToken атайтын кілтпен қол қойылған каталогпен кіреді; --key арқылы жасаңыз (немесе жеке жинақ үшін assembly-for = \"file:<бағдарлама>\" беріңіз)"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: ортақ Win32 жинағының '{2}' манифесі қол қоюшыны атайды: assemblyIdentity ішіндегі publicKeyToken (жасауға қолданылатын --key таңбалауышы)"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for және manifest assembly = \"dotnet\" немесе \"win32\" бірге қолданылады"
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}]: '{2}' манифестінде name мен version бар assemblyIdentity жоқ"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: '{2}' манифесті сол dir және feature ішінде (сол when астында) болуы керек: екеуі бір құрамдас"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}]: манифест publicKeyToken \"{2}\" атайды, бірақ --key таңбалауышы \"{3}\""
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: '{2}' манифесті басқа жинақтікі немесе өзі жинақ"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}]: Explorer {2} өңдегішін DLL-ден жүктейді; [com.{3}] - бағдарлама"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}]: Windows сипат өңдегіштерін тек компьютер деңгейінде оқиды; бумаға scope = \"machine\" керек"
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}]: алдын ала қарау өңдегіші Windows prevhost ішінде жұмыс істейді; app-id мен surrogate-ты [com.{2}] ішіне жазбаңыз"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}]: MSIX тек нобай және алдын ала қарау өңдегіштерін алып жүреді (бумаланған сипат өңдегіші Explorer-ге мән бермеді); msi-only = true оны MSI үшін сақтайды"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}]: MSIX файл түрі қолданбаға тиесілі; [msix-app.*] қосыңыз"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}]: {2} класы осы буманың [com.*] емес (оны өңдегіштің DLL-і қамтамасыз етеді)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}]: MSIX ішінде өңдегіштер барлық түрлерін ортақ пайдаланады немесе ешқайсысын (түр бір ғана файл түрі байланысында болады)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}]: MSIX ішінде оның класы суррогатта жұмыс істейді; [com.{2}] ішіндегі threading = \"sta\" терезеге хабар циклін береді (threading = {3} болса, алдын ала қарау бос қалуы мүмкін)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}]: MSIX ішінде оның барлық түрлері бір [assoc] файл түрінде болады немесе ешқайсысы"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}]: оның класы тек MSI үшін ([com.{2}]); MSIX-те оған сервер болмас еді"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}]: types - файл түрлерінің тізімі, мысалы [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] {2} ішіне барады; немесе msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] үшін 'value' керек"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] үшін мүмкіндік керек: 'feature' мұнда немесе оның dir-інде орнатыңыз"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}]: MSIX барлық INI жазбаларын жазады (when); msi-only = true пайдаланыңыз"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}]: оның мәнінде Windows Installer орнату кезінде толтыратын бөлік бар ([...]); MSIX файлды жасалған кезде жазады"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] үшін 'on' керек: элемент қайда көрінетіні, мысалы [\".txt\"] немесе \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] үшін 'target' (ол іске қосатын бағдарлама) немесе parent = \"{2}\" бар элементтер (ішкі мәзір) керек"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] үшін 'target' керек: элемент іске қосатын бағдарлама"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}]: Windows 11 мәзірі тек әріптер мен цифрлардан тұратын ID қабылдайды ('_' болмайды): атын өзгертіңіз немесе windows11 = false"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: ішкі мәзір ештеңені іске қоспайды: 'args' жазбаңыз"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}]: ішкі мәзір элементі ішкі мәзір көрінетін жерде көрінеді: 'on' жазбаңыз"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args ішінде Windows Installer орнату кезінде толтыратын бөлік бар ([...]); MSIX тек тұрақты мәтінді ұстайды"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}]: hide-when — \"HKCU\\\\key\\\\value\" не \"HKLM\\\\...\", ішкі мәзірде емес Windows 11 мәзірі элементінде"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}]: hide-when осы буманың өзі жазатын мәнді атайды ([registry.{2}]): элемент ешқашан көрінбейді"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: оның бағдарламасы MSIX ішінде жоқ (msi-only?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: оның мәндері буманың тізіліміне кіре алмайды"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: list ішінде Windows Installer орнату кезінде толтыратын бөлік бар ([...]); MSIX тек тұрақты мәтінді ұстайды"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}]: жолдар пәрмен жолына сыймағанда list {2} орнына тұрады: multi = \"one\", args ішінде {3} және list ішінде {4} (тізім файлы) керек"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] жоқ"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}]: on - файл түрі немесе олардың тізімі, мысалы [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}]: '{2}' ата-элементі [menu.*] емес"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}]: '{2}' ата-элементі ішкі мәзір болуы керек: target-сыз және өз ата-элементі жоқ [menu.*]"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] {2} ішіне барады; немесе msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] үшін мүмкіндік керек: 'feature' мұнда немесе оның dir-інде орнатыңыз"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}]: '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; немесе msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] feature қажет етеді (не with = \"file:<ID>\")"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}]: feature өз құрамдасымен бірге жүреді, with-пен емес"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name бір файлды көрсетеді; name-де қойылмалы таңбалар бар"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}]: бөлісу мақсатына types, formats немесе екеуі де керек"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}]: автоойнату өңдегішіне content-events, device-events немесе екеуі де керек"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args қарапайым мәтін болуы керек (орнату кезінде толтырылатын [...] жоқ)"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}]: device-events үшін class керек (бағдарламаның IHWEventHandler COM класы)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}]: file {2} болуы керек"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}]: file бумаға кіретін файлды атауы керек"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}]: file бумаға кіретін бағдарламаны атауы керек"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types - файл түрлерінің тізімі, мысалы [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows тек әріптер мен цифрларды қабылдайды"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "[msix-psf] external-location = true-мен де, [env.*]-пен де (ru
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "[msix-psf] қолданбаларды PSF іске қосқышы арқылы іске қосады: оған [msix-app.ID] керек"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf]: '{1}' config өз \"applications\" ішінде '{2}' қолданбасын атамайды"
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf]: files ішінде '{1}' жоқ (іске қосқыш)"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}]: '{2}' файлы DLL емес"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] драйверін бір рет көрсетеді: driver (бір [odbc-driver]) не driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] driver-name-мен with = \"file:<ID>\" қажет: онымен бірге орнатылатын құрамдас"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}]: компьютер үшін бума деректер көздерін компьютер үшін тіркейді"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] бір көшірмені атайды: msix (publisher-мен) не upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}]: msix — буманың сәйкестік атауы (3-тен 50-ге дейін әріп, цифр, '.' не '-'), оған publisher (\"CN=...\") керек, манифестте қалай болса солай"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}]: басқа көшірмені алдын ала тексеру іздейді: preflight = true керек"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}]: upgrade-code осы буманың өзінікі (бұл жаңарту, басқа көшірме емес)"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] үшін оның dir-інде мүмкіндік болуы керек"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}]: MSIX үшін args қарапайым мәтін болуы керек (орнату кезінде толтырылатын [...] жоқ)"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}]: MSIX ішінде схема қолданбаны ашады: target [msix-app.*] орындалатын файлы болуы керек"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] үшін 'value' керек (немесе remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}]: HKCR MSIX-тен тыс жетпейді; [assoc.*], [protocol.*], [com.*] не [handler.*] пайдаланыңыз немесе msi-only = true"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: qword мәні үшін rubrapack көмекші DLL-і керек, біріктіру модулі оны алып жүрмейді"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}]: MSIX тек {2}\\Software астындағы мәндерді алып жүреді"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}]: MSIX мәндерді жоймайды да, қалдырмайды да (remove, keep); msi-only = true пайдаланыңыз"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}]: MSIX барлық мәндерін жазады (when); msi-only = true пайдаланыңыз"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}]: оның мәнінде Windows Installer орнату кезінде толтыратын бөлік бар ([...]); MSIX тек тұрақты мәндерді ұстайды"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: on = \"uninstall\" үшін rubrapack көмекші DLL-і керек, біріктіру модулі оны алып жүрмейді"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: кілт не мән атауы тізілім hive-ына кіре алмайды"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}]: users = \"all\" компьютерге арналған бумада on = \"uninstall\" бар root = \"HKCU\" үшін"
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] үшін мүмкіндік керек: 'feature' мұнда немесе оның dir-інде орнатыңыз"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}]: recursive = true {2} астындағы қалта үшін емес"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true үшін rubrapack көмекші DLL-і керек, біріктіру модулі оны алып жүрмейді"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}]: users = \"all\" компьютерге арналған бумада AppData не LocalAppData қалтасындағы recursive = true үшін"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX үшін args қарапайым мәтін болуы керек (орнату кезінде толтырылатын [...] жоқ)"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file бумаға кіретін бағдарламаны атауы керек"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] '{2}' мүмкіндігін жарнамалайды, бірақ ол advertise = \"disallow\""
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}]: advertise when-мен біріктірілмейді"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}]: MSIX-те төте жолдар тек жұмыс үстелінде және Бастау мәзірінде болады{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}]: MSIX төте жолында working-dir жоқ"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}]: MSIX төте жолы әрқашан болады (when MSI үшін)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX төте жолы өз қолданбасының логотипін көрсетеді; icon MSI үшін"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}]: жарнамаланатын таңбаша MSI үшін (MSIX бүкіл бумаларды орнатады)"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}]: жарнамаланатын таңбашаға белгіше қажет"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: MSIX үшін args қарапайым мәтін болуы керек (орнату кезінде толтырылатын [...] жоқ)"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}]: MSIX ішінде төте жол қолданбаны іске қосады: target [msix-app.*] орындалатын файлы болуы керек"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}]: MSIX-тің Бастау мәзіріндегі жазбасы - оның қолданбасы, ол args алмайды"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: бұл ID бар диалог мәтіні жоқ"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "[ui] embedded MSI үшін; MSIX-тің өз орнатушы интер
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "[ui] үшін [package] ішінде ui = \"basic\" немесе басқа диалог жинағы қажет (немесе embedded = \"....dll\")"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "\\{1} басқару тізбегі Unicode скаляр мәні емес"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "буманың `lint`: диалогтар, код беті, мәтінд
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX бумасының не жиынының `lint`"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "{1} басқару элементінде property жоқ"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "{1} басқару элементінде мәтін жоқ; жанына мәтін элементін қойыңыз"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "{1} басқару элементіне мәндерінің бірі әдепкі болатын [property.{2}] керек (дыбыссыз орнату соны пайдаланады)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "{1} бумасы HKLM-ге жаза алмайды; HKMU пайдаланыңыз"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "жолдағы сертификатта rubrapack түсінбейтін
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "жолдағы сертификатқа CA емес сертификат қол қойған"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "тізбек тек [chain], [chain-package.ID] және [define] ұстайды, [{1}] емес; бумалар өз бастапқы файлдарынан жасалады"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "тізбекте ең көбі {1} бума болады"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "тізбекке кемінде бір [chain-package.ID] керек"
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "Windows атауда рұқсат етпейтін таңба (/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "контейнерде ең көбі {1} бума отбасы болады"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "бұл rubrapack бермейтін мүмкіндік (немесе о�
 msgid "a file larger than allowed"
 msgstr "рұқсат етілгеннен үлкен файл"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "'{1}' астындағы файл атауы жарамды Unicode емес және буып-түюге болмайды"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "файлдың құрамдас бөлік не каталог тізб�
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "қаріп MSIX-ке оны атайтын [font.*] арқылы кіреді"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "фреймворк бумасының өз қолданбалары, мүмкіндіктері немесе тәуелділіктері жоқ ({1})"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "hive ұяшығы өз bin шегінен шығады"
 msgid "a hive version or type rubrapack does not read"
 msgstr "rubrapack оқымайтын hive нұсқасы не түрі"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "белгілі қалтаның өзіне ('{1}') рұқсат берілмейді"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "пайдаланушы аты не құпия сөзі бар прокс
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "qword мәні - бүтін сан немесе \"0x\" және 1-16 он алтылық цифр"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "радио басқару элементі түймелерін бірінің үстіне бірін қояды: биіктік әр мәнге кемінде 12 болуы керек ({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "сақталған құрылғы атауы"
 msgid "a rollback action cannot be asynchronous"
 msgstr "кері қайтару әрекеті асинхронды бола алмайды"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "схема - кіші әріп, одан кейін кіші әріптер, сандар, '+', '-' немесе '.' ('{1}' алынды)"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "бөлім файлдан тыс жатыр"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "қызмет атауында '/' не '\\' болмауы керек (ең көбі 256 таңба)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "орнату .exe файлы [chain] бар бастапқы файлдан жасалады; '{1}' бума жасайды (.msi, .msix)"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "нұсқа - нүктелермен бөлінген 3 не 4 сан, м
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "account LocalSystem, LocalService немесе NetworkService болуы керек"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "'{1}' әрекеті анықталған"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "әрекет стандартты әрекет те емес, CustomAction ішінде де жоқ"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "action \"warn\" не \"refuse\" болуы керек ('{1}' алынды)"
 
 msgid "adds too many tables"
 msgstr "тым көп кесте қосады"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "advertise \"allow\" немесе \"disallow\" болуы керек ('{1}' алынды)"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "after = '{1}' осы диалогтар жиынының беті емес (RpWelcomeDlg{2}{3}{4}) және [dialog.*] емес"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "alias kind = \"alias\" түріне жатады"
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "alias .exe-пен аяқталатын файл атауы болуы керек: әріптер, сандар, '.', '_', '-' ('{1}' алынды)"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "INI бөлімінде ']' болмауы, кілтте '=' болмау
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "MSIX уақытша қалтаға файл қоя алмайды"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "қолданбаның бір бүркеншік аты болады ([msix-extension.{1}] - сол)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "қолданбада бір бөлісу мақсаты болады ([msix-extension.{1}] қазірдің өзінде сол)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "қосымша не өзгерту бумасы мүмкіндіктер
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "x86 бумасы тек 32 биттік тізілім көрінісіне жазады"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "'{1}' қолданбасы [msix-app.*] емес"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "appinstaller-uri мен package-uri бірге беріледі: .appinstaller файлы мен бума қайда болатыны"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "arch \"x64\", \"arm64\" немесе \"x86\" болуы керек ('{1}' алынды)"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "arch \"x64\", \"x86\" немесе \"arm64\" болуы керек (орнату бағдарламасының өзінікі)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "{1}-аргумент жарамды UTF-8 емес ({2}-байт)"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "{1}-аргумент жарамды Unicode емес ({2}-UTF-16 бірлігі)"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "массив ішіндегі массивтерге қолдау жоқ
 msgid "arrays must hold only strings or only integers"
 msgstr "массивтерде тек жолдар немесе тек бүтін сандар болуы керек"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "as \"system\" не \"user\" болуы керек ('{1}' алынды)"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "assembly \"dotnet\" немесе \"win32\" болуы керек"
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "ағылшыннан басқа ең көбі {1} тіл"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "ең көбі 100 [msix-app.*] кестесі"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "ең көбі 50 [action.*] кестесі (бұл файлда {1})"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "banner .bmp файлы болуы керек (Windows Installer тек B
 msgid "build a package from a source file"
 msgstr "бастапқы файлдан бума жасау"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "{1} файлын {2} бастапқы файлынан жасау үшін өз жаңарту отбасы керек: [package] ішіне {3} = \"{{...}\" қосыңыз"
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "cab \"embed\" немесе \"external\" болуы керек"
 msgid "cannot be read"
 msgstr "оқу мүмкін емес"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "бумаларды жиынға біріктіру мүмкін емес: {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "'{1}' мен '{2}' салыстыру мүмкін емес"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "'{1}' жасау мүмкін емес"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "'{1}' жасау мүмкін емес{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "'{1}' табылмады; оны `rubrapack new {2}` арқылы жасаңыз"
 
 msgid "cannot make a default logo"
 msgstr "әдепкі логотип жасау мүмкін емес"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "'{1}' файлынан '{2}' файлына түзету жасау мүмкін емес"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "'{1}' файлынан '{2}' файлына түрлендіру жасау мүмкін емес"
 
 msgid "cannot open the certificate store"
 msgstr "сертификаттар қоймасын ашу мүмкін емес"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "'{1}' оқу мүмкін емес"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "'{1}' оқу мүмкін емес ({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "'{1}' бумасын оқу мүмкін емес"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "'{1}' бастапқы файлын оқу мүмкін емес"
 
 msgid "cannot read that folder"
 msgstr "ол қалтаны оқу мүмкін емес"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "{1} файлын оқу мүмкін емес: '{2}'"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "'{1}' PIN файлын оқу мүмкін емес"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "'{2}' жанындағы '{1}' cabinet файлын оқу мүмкін емес"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "'{1}' сертификат файлын оқу мүмкін емес"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "'{1}' ішіндегі сертификаттарды оқу мүмкін емес"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "'{1}' ішіндегі сертификаттарды оқу мүмкін емес: {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "'{1}' кілт файлын оқу мүмкін емес"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "'{1}' құпия сөз файлын оқу мүмкін емес"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "'{2}' жанындағы '{1}' сығылмаған файлын оқу мүмкін емес"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "{1} жазу мүмкін емес"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "'{1}' жазу мүмкін емес"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "'{1}' тексеру үшін жазу мүмкін емес"
 
 msgid "cannot write resources.pri"
 msgstr "resources.pri жазу мүмкін емес"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "'{1}' жанына мәзір файлдарын жазу мүмкін емес"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "{1} ресурс бумасын жазу мүмкін емес"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "capabilities - атаулар массиві, мысалы [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "'{1}' мүмкіндігін rubrapack білмейді (нұсқаулықта тізімі бар)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "'{1}' мүмкіндігіне Windows 17763 немесе кейінгі жинақ керек"
 
 msgid "carriage return without a line feed"
 msgstr "жол аудармасыз каретка қайтаруы"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "'{1}' сертификат файлы: {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "бастапқы жолдарды тексеріңіз (бастапқы
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "жазылуын тексеріңіз (хабар ең жақын атауды ұсынады) және кестенің кілттерін"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "{1} класын [com.{2}] қамтамасыз етеді"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "{1} класы [msix-extension.{2}] ішінде де бар"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "class {{12345678-...} сияқты GUID болуы керек ('{1}' алынды)"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "preflight = false болса, close-programs әсер етпейді"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "close-programs \"ask\", \"always\" немесе \"never\" болуы керек ('{1}' алынды)"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "{1} бағанында мәннің қате түрі бар"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "{1} бағаны жарамды UTF-8 емес"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "{1} бағаны null болмауы керек"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "{1} бағаны: {2} бағанның ауқымынан тыс"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "{1} бағаны: {2} UTF-16 бірлігі, баған {3} сыйғызады"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "{1} бағаны: {2} таңба, баған {3} сыйғызады"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "'{1}' командасы әлі іске асырылмаған"
 
 msgid "command-line"
 msgstr "пәрмен жолы"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "{1} {2} құрамдас бөлігі 32 және 64 бит арасында өзгерді: құрамдас бөлік ережелері жаңа GUID талап етеді"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "{1} {2} құрамдас бөлігі жоқ (оның ресурстары алдыңғы нұсқамен бірге жойылады)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "{1} {2} құрамдас бөлігінің кілт жолы енді {4} емес, {3}: құрамдас бөлік ережелері жаңа GUID талап етеді"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "шартта жабылмаған тырнақша не теңгеріл
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "шарт 240 таңбадан ұзын (rubrapack \"Installed OR ( )\" қосады)"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "config \"Атауы=мәні\" жолдарын ұстайды ('{1}' алынды)"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "басқару таңбасы бар"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "< > : \" / \\ | ? * таңбаларының бірі бар"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "content-type - медиа түрі, мысалы \"image/png\" ('{1}' алынды)"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "default-when үшін 1-ден жоғары деңгей керек (1-�
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "айнымалыны анықтаңыз ([define] немесе -D АТАУЫ=мәні) немесе $ таңбасы үшін $$ жазыңыз"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "'{1}' диалогы [dialog.*] емес"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "'Rp'-мен басталатын диалог ID-лері (және FilesInUse) rubrapack-тің өзінікі"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "'{1}' dir өзінің ішінде (жол циклі)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "'{1}' dir - dir ID де, Programs, Desktop, StartMenu не Startup да емес"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "'{1}' dir - dir ID емес"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "'{1}' dir анықталмаған"
 
 msgid "dir ID"
 msgstr "dir ID"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "direction \"in\" немесе \"out\" болуы керек ('{1}' алынды)"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "do/undo аргументтері 255 таңбадан ұзын"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "нүктелі кілттерге қолдау жоқ; кілтті өз кестесіне қойыңыз"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "'{1}' драйвері [odbc-driver.*] емес"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "бос орынмен не нүктемен аяқталады"
 msgid "error"
 msgstr "қате"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "executable = \"{1}\" бумаға кіретін [file.*] атауы керек"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "кесте атауын жабу үшін ']' күтілді"
 msgid "expected a key, a [table] or a comment"
 msgstr "кілт, [кесте] немесе түсініктеме күтілді"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "'{1}' кеңейтімінің бағдарламасы бар ([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "кеңейтім '.' және кіші әріптер, сандар, '_' не '-' болуы керек ('{1}' алынды)"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "external-location = true үшін Windows 19041 немесе одан ж
 msgid "extra-files has no effect with preflight = false"
 msgstr "preflight = false болса, extra-files әсер етпейді"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "extra-files \"ask\", \"keep\" немесе \"delete\" болуы керек ('{1}' алынды)"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "{1} мүмкіндігі жоқ: оны орнатқандар оның ішіндегісін жоғалтады"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "'{1}' мүмкіндігі өзінің арғы тегі"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "'{1}' мүмкіндігі анықталмаған"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "'{1}' ата-мүмкіндігі анықталмаған"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "'{1}' файлы '{2}' қызметін орындап тұр"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "'{1}' файлы қаріп ретінде тіркелген"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "'{1}' файлы осы буманың [file.*] емес"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "'{1}' файлы Fonts қалтасының өзіне орнатылуы керек (path = \"Fonts\" бар [dir.*])"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "'{1}' файлына мүмкіндік керек: 'feature' мұнда немесе оның dir-інде орнатыңыз"
 
 msgid "file must be \"file:<ID>\""
 msgstr "file \"file:<ID>\" болуы керек"
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "файл атауы {1} UTF-16 бірлігі; 8.3 қысқа атауымен MSI ең көбі {2} сыйғызады"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "file-system-virtualization мен registry-virtualization = false үшін Windows 18362 немесе кейінгі жинақ керек: [msix] min-version = \"10.0.18362.0\" орнатыңыз"
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file: '{1}' осы буманың [file.*] емес"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' COM кластарын тек .exe не .dll ретінде қамтамасыз етеді"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "хабар атаған мәнді түзетіңіз; ID - әріпте
 msgid "floating-point numbers are not supported"
 msgstr "өзгермелі нүктелі сандарға қолдау жоқ"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "'{1}' қалтасына мүмкіндік керек: 'feature' мұнда немесе оның dir-інде орнатыңыз"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "қалта атауы {1} UTF-16 бірлігі; 8.3 қысқа атауымен MSI ең көбі {2} сыйғызады"
 
 msgid "follow-parent needs a parent"
 msgstr "follow-parent үшін ата-элемент керек"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "қаріптерге scope = \"machine\" керек (бұл - {1})"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "{1} пішіміне жаңарақ rubrapack керек (бұл {2} пішімін оқиды)"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "format - бүтін сан: format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "--key, --pkcs11 және --key-store ішінен бірін берің�
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "бағдарлама қалтасының ішкі қалталарын үтірмен бөліп беріңіз немесе жоқ болса -"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "'{1}' үлгісіне ешбір файл сай келмейді"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "'{1}' үлгісі '{2}' шығыс файлына сай келеді"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "65001 (UTF-8) емес код бетінде ASCII-ден тыс мәт�
 msgid "icon must be an .ico file"
 msgstr "icon .ico файлы болуы керек"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon: '{1}' файлы осы буманың [file.*] емес"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "id {{12345678-1234-1234-1234-123456789ABC} сияқты GUID болуы керек: модульдің өзінікі, барлық нұсқада сақталады"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "identifier — winget-тің Publisher.Package-і: 1–32 таңбалы 2–8 бөлік, бос орынсыз және \\ / : * ? \" < > | таңбаларынсыз ('{1}' алынды)"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "identity-name A-Z, a-z, 0-9, '.' және '-' таңбаларынан тұратын 3-50 таңба болуы керек ('{1}' алынды)"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "кірістірілген кестелерге қолдау жоқ; [ki
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "installed Windows жүйесінен не орнатылғанын сұрайды; тек Windows жүйесінде жұмыс істейді"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "{1}-жолмен бір жолға орнатылады (Windows атауларда әріп регистрін ескермейді{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "ішкі қате: кірістірілген диалогтың таб�
 msgid "internal: a module table has no _Validation rule"
 msgstr "ішкі: модуль кестесінде _Validation ережесі жоқ"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "ішкі: {1} бағанына _Validation ережесі жоқ"
 
 msgid "invalid"
 msgstr "жарамсыз"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "жарамсыз - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "жарамды MSIX бумасы емес"
 msgid "is not valid UTF-8"
 msgstr "жарамды UTF-8 емес"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for: '{1}' — бағдарлама (.exe) емес"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "жаңарту кодын сақтаңыз, нұсқаны көтеріңіз, қалатын файлдардың құрамдас бөлік кодтарын сақтаңыз"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "'{1}' кілті осы кестеде екі рет орнатылған (алғашқысы {2}-жолда)"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "'{1}' кілті '\\'-пен басталмауы не аяқталмауы және бос бөлік қамтымауы керек"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "'{1}' кілті кестеден тыс; бірінші кестеге дейін тек 'format' тұрады"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "'{1}' кілт файлы: {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" немесе \"autoplay\" болуы керек ('{1}' алынды)"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "kind \"preview\", \"thumbnail\" немесе \"property\" болуы керек ('{1}' алынды)"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "kind registry, file, dir немесе component болуы керек"
 msgid "labels is an array of strings, one per value"
 msgstr "labels - жолдар массиві, әр мәнге біреу"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "'{1}' тілінің тіл бумасы жоқ (бастапқы файл жанындағы lang/{2}.po немесе RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "'{1}' тілі екі рет көрсетілген"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "'{1}' тілі [ui] languages ішінде жоқ"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "'{1}' тіліне {2} мәтін жетіспейді, біріншісі - {3}: оларды тіл бумасына қосыңыз (lang/{4}.po) немесе [ui-text.ID] text-{5} беріңіз"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "'{1}' тіліне [ui] langid-{2} керек (автоматты таңдау үшін оның LANGID мәндері)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "'{1}' тіліне [ui] name-{2} керек (тіл бетіндегі атауы)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "language \"neutral\", \"en-US\" немесе \"ko-KR\" болуы кер
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" массив ішінде емес, жеке жазылады: ол барлық кірістірілген тілдерді алады"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "languages \"ko\" не \"zh_TW\" сияқты кодтарды ұстайды (2-3 кіші әріп, және _ мен аймақтың екі бас әрпі) ('{1}' алынды)"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "launcher — files ішіндегі PSF іске қосқышының ф
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license .txt, .md (қарапайым мәтін ретінде көрсетіледі) немесе .rtf файлы болуы керек"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint: {1} {2}-жол: {3} бағаны NFC пішімінде емес ({4} жол{-5}); build --nfc қалта, файл және төте жол атауларын NFC-ге келтіреді"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint: {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint: {1} код беті, 65001 емес: мәтін UTF-8 ретінде тексерілмейді, ендер тек ASCII үшін"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint: жоғарыдағы ақауларды қараңыз\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "токен немесе Windows сертификаттар қоймасы қол қоя алатын кілттерді тізу"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "'{1}' логотипі де, оның .scale-100 нұсқасы да бар: біреуін қалдырыңыз"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "{2} масштабтағы '{1}' логотипі {3}x{4} пиксель; ол {5}x{6} болуы керек"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "{2} масштабтағы '{1}' логотипі PNG файлы емес"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "'{1}' логотипі {2}x{3} пиксель; файл түрінің логотипі шаршы болуы керек"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "'{1}' логотипі {2}x{3} пиксель; ол {4}x{5} болуы керек"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "'{1}' логотипі PNG файлы емес"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "'{1}' логотипі табылмады (.scale-100 ... .scale-400 нұсқалары ретінде де)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "'{1}' логотипі: масштаб нұсқалары бар логотипке кеңейтімі бар ASCII файл атауы керек"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "logo 8 биттік RGB не RGBA .png болуы керек, жоларалық емес, әр қабырғасы ең көбі 1024 пиксель"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "main-package - негізгі буманың сәйкестендіру атауы ('{1}' алынды)"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "басқару таңбаларын не / \\ : * ? \" < > | $ қамт�
 msgid "may not start with a space or end with a space or a dot"
 msgstr "бос орыннан басталмауы және бос орынмен не нүктемен аяқталмауы керек"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "'{1}' біріктіру модулі табылмады"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "3-тен көп қайта бағыттау"
 msgid "more than 96 sections"
 msgstr "96-дан көп бөлім"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "бірнеше бастапқы файл ('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "бірнеше токен бар: біреуін --token-label арқы�
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "multi \"each\", \"one\" немесе \"single\" болуы керек ('{1}' алынды)"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "1-64 байт болуы керек"
 msgid "name contains a control character"
 msgstr "атауда басқару таңбасы бар"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "name - буманың сәйкестендіру атауы ('{1}' алынды)"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "Directory кестесінде жоқ қалтаны атайды"
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "new msix әлі іске асырылмаған: MSI бастапқы файлын жасап, [msix] қосыңыз (нұсқаулықты қараңыз)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "'format = {1}' жолы жоқ: бұл нұсқа оқымайтын rubrapack 0.18 немесе ертерек пішіміндегі бастапқы файл (енді жолдар $(ProgramFiles) не $(INSTALLDIR)-ден басталады); нұсқаулықтағы Бастапқы файл пішімі бөлімін қараңыз"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "сервер атауы жоқ немесе 255 байттан ұзын"
 msgid "no string pool: not a transform"
 msgstr "жолдар пулы жоқ: бұл түрлендіру емес"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "'{2}' ішінде '{1}' кестесі жоқ"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "сегіздік және екілік сандарға қолдау ж�
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "on = \"uninstall\" HKLM, HKCU және HKMU үшін (кластар [assoc.*], [com.*] т.б. арқылы)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "on = \"uninstall\" кілтті астындағылармен бірге жояды: '{1}' Software астындағы өнімнің өз кілті емес"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "on = \"uninstall\" жою кезінде бүкіл кілтті жояды; ол '{1}' алмайды"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "on \"install\" немесе \"uninstall\" болуы керек"
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "on \"install\", \"uninstall\" немесе \"both\" болуы керек"
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on: әрқайсысы - файл түрі ('.' және кіші әріптер, сандар, '_' не '-'), \"*\" (барлық файл), \"folder\", \"background\" (қалтаның бос бөлігі), \"drive\" немесе \"assoc:<ID>\" ('{1}' алынды)"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "values тек radio, combo және listbox басқару элемен�
 msgid "out of memory"
 msgstr "жад жеткіліксіз"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "'{1}' шығысы: rubrapack .msi, .msm, .msix, .msixbundle, .msixupload және тізбектің орнату .exe файлын жазады"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "'{1}' бумасы {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "'{1}' бумасы табылмады"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "parent - басқа өнімнің upgrade-code мәні болуы керек, осы буманыкі емес"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "parent - негізгі өнімнің upgrade-code мәні, {{12345678-1234-1234-1234-123456789ABC} сияқты GUID болуы керек"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "path Windows қалтасынан басталуы керек (мыса�
 msgid "paths"
 msgstr "жолдар"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "perceived-type \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" немесе \"application\" болуы керек ('{1}' алынды)"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "рұқсаттарға scope = \"machine\" керек (бұл - {1})"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "phase \"immediate\", \"deferred\", \"commit\" не \"rollback\" болуы керек ('{1}' алынды)"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "ports 1-65535 аралығындағы порт немесе \"8000-8100\" сияқты ауқым болуы керек ('{1}' алынды)"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "осы анықтаманы немесе бір команданың қ�
 msgid "product-code must be a GUID"
 msgstr "product-code GUID болуы керек"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "profile \"all\", \"domain\", \"private\" немесе \"public\" болуы керек ('{1}' алынды)"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "'{1}' prog-id [com.{2}] кестесіне тиесілі"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "'{1}' prog-id [assoc.{2}] кестесіне де тиесілі: файл түрі мен COM класына екі атау керек"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "'{1}' prog-id [assoc.{2}] ішінде басқа сипаттама, target, icon не args мәнімен де бар"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "prog-id '{1}' [assoc.{2}] ішінде де басқа logo-мен бар"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "prog-id әріптер, сандар, '.', '_' не '-' болуы керек, саннан басталмайды, ең көбі 39 ('{1}' алынды)"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "properties Windows Installer бумаларына арналған; MSIX оларды қабылдамайды"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "'{1}' сипаты '{2}' басқару элементіне тиесілі"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "'{1}' сипатының атауы dir не мүмкіндік атауымен бірдей"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "'{1}' сипаты анықталған ({2}-жол)"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "'{1}' сипаты ізделуде ({2}-жол)"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "'{1}' сипатын rubrapack немесе орнатушы орнатады, оны мұнда анықтауға болмайды"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "'{1}' сипаты сіздің өз жалпы атауыңыз болуы керек (бас әріптермен)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "'{1}' сипаты жалпы атау болуы керек: бас әріптер, сандар және '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "protocol \"tcp\" немесе \"udp\" болуы керек ('{1}' алынды)"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "public-folder буманың қалтасы болуы керек, мысалы \"Public\" ('{1}' алынды)"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "жаңарту осы нұсқаны жойғанда recursive = true �
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "recursive = true қалтаны ішіндегісімен бірге жояды; ол 'name' алмайды"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "refuse-upgrade-below {1} осы буманың {2} нұсқасынан жоғары"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "refuse-upgrade-below '{1}' 1.2.3 сияқты нұсқа болуы керек"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message үшін refuse-upgrade-below керек"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "тілдер бетінің {1}-аймағында {2} тіл бар, ең көбі {3} (бумалардың X-Rubrapack-Group)"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "registration \"machine\" не \"user\" болуы керек ('{1}' алынды)"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "'{1}' тізілімі мәнді жояды; оған қорғайтын ештеңе жоқ"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "'{1}' тізілім мәніне мүмкіндік керек"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "remove-addons үшін тазалау тапсырмасы керек: c
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "replaces ең көбі 16 жаңарту кодын ұстайды"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "replaces жаңарту кодтарын ұстайды, {{12345678-1234-1234-1234-123456789ABC} сияқты GUID ('{1}' алынды)"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "replaces - жаңарту кодтарының массиві, мысалы [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "replaces {1} кодын екі рет көрсетеді"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "replaces {1} атайды, ол осы буманың не оның ата-бумасының upgrade-code мәні"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "{1} міндетті сипаты жоқ"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "кері қайтару егізі {1} алдында болуы керек ({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "root HKLM, HKCR немесе HKCU болуы керек"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "root HKLM, HKCU, HKCR немесе HKMU болуы керек ('{1}' алынды)"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new: бірнеше сұрақ бастапқы файлды �
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "`rubrapack help <command>` орындаңыз; жолдарды және шығыс қалтасы бар екенін тексеріңіз"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run: '{1}' (0x{2} машинасы) осы буманың машиналарында жұмыс істей алмайды"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run: '{1}' бағдарлама емес (.exe)"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run: '{1}' файлы осы буманың [file.*] емес"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "бастапқы файлды LF не CRLF жол соңдарымен U
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "осы Windows жүйесінде сол жаңарту коды бар өнім немесе сол отбасының қолданба бумасы орнатылғанын айтады"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "'{1}' схемасының бағдарламасы бар ([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "scope \"machine\", \"user\" немесе \"dual\" болуы керек"
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "sddl \"D:PAI(A;OICI;FA;;;BA)\" сияқты SDDL жолы болуы керек"
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "'{1}' іздеу сипаты сіздің өз жалпы атауыңыз болуы керек (бас әріптермен)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "хабарды қараңыз; rubrapack арқылы қайта жасау бұлардың көбін түзетеді"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "{1} реті {2} кейін емес ({3})"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "әрекетті бума да, модуль де орындамайтын әрекеттің жанына қояды"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "'{1}' қызмет атауы пайдаланылған"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "қызметтерге scope = \"machine\" керек (бұл - {1})"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "төте жол атауы {1} UTF-16 бірлігі; 8.3 қысқа атауымен MSI ең көбі {2} сыйғызады"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "екі буманың айырмасын көрсетеді: кесте�
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "PE файлына, MSI бумасына, MSIX бумасына не жиынына қол қою"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "қол қойылды: {1}\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "'{1}' көзі - каталог; көп файл үшін [files.ID] пайдаланыңыз"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "'{1}' көзі - символдық сілтеме; сілтемелерге өтілмейді"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "'{1}' көзі кәдімгі файл емес"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "бума жасалып жатқанда '{1}' бастапқы файлы өзгерді"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "'{1}' бастапқы файлы 2 GiB-тан үлкен"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "'{1}' бастапқы файлы табылмады"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "source \"file:<ID>\" болуы керек"
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "source .msi, .msix, .msixbundle немесе .msp бумасы болуы керек"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "'{1}' бастапқы жолы бастапқы файлға қатысты болуы керек"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "бастапқы жолдарда '\\\\' емес, '/' қолданылады ('{1}' алынды)"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source: '{1}' файлы осы буманың [file.*] емес"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "summary-name ASCII болуы керек (жиынтық ақпарат 
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "symbols — .pdb файлдарының тізімі, мысалы [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "{1} {2} кестесі"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "'{1}' кестесі оқылмайды"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "[{1}{2}{3}] кестесі екі рет анықталған (алғашқысы {4}-жолда)"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "tags — ең көбі 16 іздеу сөзінің тізімі, мыс
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "конфигурация алмайды (ModuleConfiguration жоқ)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "'{1}' нысаны жоқ"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "target \"dir:<ID>\", \"file:<ID>\" немесе \"registry:<ID>\" бол
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "target осы буманың [file.*] атайтын \"file:<ID>\" болуы керек"
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "'{1}' нысан атауы {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target: '{1}' файлы осы буманың [file.*] емес"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "'{1}' task-id мәнін [msix-extension.{2}] пайдаланып тұр"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "UTF-16 файлы жарамды UTF-16 емес"
 msgid "the ZIP central directory lies outside the file"
 msgstr "ZIP орталық каталогы файлдан тыс жатыр"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "'{1}' қолданба ID-і Application Id болады: тек әріптер мен сандар, саннан басталмайды"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "ендірілген cabinet файлдары буманы 2 GiB не о
 msgid "the entry is not in the central directory"
 msgstr "жазба орталық каталогта жоқ"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "'{1}' қате диалогына {3} деп аталған {2} элементі керек (қате 2835)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "'{1}' орындалатын файлы .exe болуы керек"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "манифестте Identity Publisher жоқ"
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "буманың толық атауы үшін манифесттің Identity мәнін оқу мүмкін емес"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "{1} біріктіру модулі"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "{1} атауы"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "{1} бума отбасы контейнерде екі рет бар"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "буманың мазмұны қолтаңбасына сай емес (
 msgid "the package's directory cannot be read"
 msgstr "буманың каталогын оқу мүмкін емес"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "бума файлының атында тырнақша немесе пайыз белгісі болмауы керек: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "жауап 4 MiB-тан үлкен"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "жауап chunked-тен басқа тасымалдау кодтауын пайдаланады"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "дәл осы шарт талап етілген ({1}-жол)"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "бастапқы файлдың кодтауы"
 msgid "the system random source failed"
 msgstr "жүйенің кездейсоқ сандар көзі істен шықты"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "табуляция реті (Control_Next) Control_First-тен оның {1} элементі арқылы бір цикл емес (Windows Installer 2809 не 2810 қатесімен тоқтайды)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "бұл rubrapack мәзір бөлігінсіз жасалған: [menu
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "бұл rubrapack орнату бағдарламасынсыз жасалған (nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "threading \"sta\", \"mta\", \"both\" немесе \"neutral\" болуы керек ('{1}' алынды)"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "resources.pri үшін аударылған мәтіндер мен ло
 msgid "too many packages in the bundle"
 msgstr "жиында бумалар тым көп"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "'{2}' ішіндегі '{1}' түрлендіруін оқу мүмкін емес: {3}"
 
 msgid "trusted"
 msgstr "сенімді"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "екі әрекет бір sequence {1} бөліседі ({2} мен {3}); бір [action]-ге басқа sequence, before не after беріңіз"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "жиындағы бір атаулы екі бума"
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "жиындағы бір ResourceId бар екі ресурс бумасы"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "type string, expand, dword, qword, binary немесе multi болуы керек ('{1}' алынды)"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "type мәні text, checkbox, edit, radio, combo, listbox немесе bitmap болуы керек ('{1}' алынды)"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' осы буманың [file.*] емес"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "typelib-version - он алтылық цифрлардағы major.minor, мысалы \"1.0\" ('{1}' алынды)"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "types пен verb kind = \"context-menu\" түріне жатады"
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types: әрқайсысы \".ext\" немесе \"*\" (барлық файл)"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types: әрқайсысы '.' және кіші әріптер, сандар, '_' не '-' ('{1}' алынды)"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "ui = \"{1}\" пайдаланушыға жоқ '{2}' dir қалтасын таңдауға мүмкіндік береді ([ui] install-dir орнатыңыз)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "ui = \"features\" таңдау үшін [feature.*] кестелерін талап етеді"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "ui none, basic, minimal, installdir немесе features болуы керек ('{1}' алынды)"
 
 msgid "unexpected text after the value"
 msgstr "мәннен кейін күтпеген мәтін"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "белгісіз команда '{1}' ('rubrapack help' қараңыз)"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "белгісіз басқару тізбегі \\{1} (кері қиғаш сызығы бар мәтін үшін '...' пайдаланыңыз)"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "белгісіз inspect опциясы (кесте атауын, --summary, --files не --streams пайдаланыңыз)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "[{2}{3}{4}] ішіндегі белгісіз кілт '{1}'"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "[{2}{3}{4}] ішіндегі белгісіз кілт '{1}' ('{5}' дегіңіз келді ме?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "белгісіз не толық емес {1} опциясы '{2}'"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "белгісіз кесте [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "белгісіз кесте [{1}{2}{3}] ([{4}] дегіңіз келді ме?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "буманы жаңа каталогқа орнатылатындай етіп ашу"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "қолдау жоқ - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "update-* кілттеріне appinstaller-uri және package-uri ке
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "upgrade = false on = \"uninstall\" немесе \"both\" үшін (орнату ешқашан жаңартудағы жою емес)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "upgrade-code {{12345678-1234-1234-1234-123456789ABC} сияқты GUID болуы керек"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "пайдалану: rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "пайдалану: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "rubrapack толық жинағын немесе басқа тәсілд
 msgid "used by more than one component"
 msgstr "оны бірнеше құрамдас бөлік пайдаланады"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "users \"all\" болуы керек ('{1}' алынды)"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "'{1}' мәні екі рет көрсетілген"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "values - 1-32 жолдан тұратын массив"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "мәндер: ID, GUID, нұсқалар, ауқымнан тыс сандар, жоқ нәрселерге сілтемелер"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "'{1}' айнымалысы анықталмаған ([define] немесе -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "'{1}' айнымалы атауында '=' болмауы және ол = + - ! * таңбасымен басталмауы керек"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "айнымалылар"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "айнымалылар: мәнсіз $(АТАУЫ), жабылмаған $(, тұра алмайтын жердегі Windows атауы не dir ID"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "'{1}' нұсқасы a.b.c немесе a.b.c.d болуы керек"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "'{1}' нұсқасы a, b <= 255 және c, d <= 65535 болатын a.b.c немесе a.b.c.d болуы керек"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "диагностика кодының мағынасы, оны тасы�
 msgid "with must be \"file:<ID>\""
 msgstr "with \"file:<ID>\" болуы керек"
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with: '{1}' файлы осы буманың [file.*] емес"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "--pkcs11 жоқ болса, `keys list` Windows сертификаттар қоймасын көрсетеді"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "working-dir '{1}' dir ID емес"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "кестені не мәнді нұсқаулық көрсеткен қ�
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "мәнді '[~]' жоқ жазыңыз; оны mode = \"append\" не \"prepend\" қосады"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "жазылды: {1}\n"
 
 msgid "x + width must be at most 370 (the page width)"

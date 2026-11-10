@@ -31,8 +31,8 @@ int wmain(int argc, wchar_t **argv) {
         proven_u16str_view_t view = { .ptr = (const proven_u16 *)argv[i], .size = wcslen(argv[i]) };
         rp_text_result_t r = rp_utf16_to_u8str(heap, view, &strs[i]);
         if (r.err != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "argument %d is not valid Unicode (UTF-16 unit %zu)",
-                          i, r.offset);
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "argument {} is not valid Unicode (UTF-16 unit {})",
+                          proven_arg_i32(i), proven_arg_u64(r.offset));
             status = RP_EXIT_USAGE;
             break;
         }

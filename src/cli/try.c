@@ -51,7 +51,7 @@ int rp_cmd_try(int argc, char **argv) {
     proven_allocator_t heap = proven_heap_allocator();
     uint64_t size = 0;
     if (rp_pal_stat(heap, pkg, &size) != RP_FS_FILE) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", pkg);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(pkg));
         return RP_EXIT_IO;
     }
     // The package's name and folder: the folder is shared, the name runs inside.
@@ -62,7 +62,7 @@ int rp_cmd_try(int argc, char **argv) {
 #endif
     const char *name = slash ? slash + 1 : pkg;
     if (strpbrk(name, "\"'%")) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "the package's file name must not hold quotes or a percent sign: '%s'", name);
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "the package's file name must not hold quotes or a percent sign: '{}'", proven_arg_cstr(name));
         return RP_EXIT_USAGE;
     }
     char dir[2048];
@@ -70,7 +70,7 @@ int rp_cmd_try(int argc, char **argv) {
     if (slash == pkg) (void)proven_fmt_to(dir, sizeof dir, "/");
     char *full = host ? NULL : rp_pal_full_path(heap, dir);
     if (host == NULL && full == NULL) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", dir);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(dir));
         return RP_EXIT_IO;
     }
     char wsb[2100];
@@ -103,7 +103,7 @@ int rp_cmd_try(int argc, char **argv) {
     rp_mem_free(heap, full);
     int rc = RP_EXIT_OK;
     if (b.err != PROVEN_OK || rp_pal_write_file_atomic(heap, out, b.data, b.len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(out));
         rc = RP_EXIT_IO;
     }
     rp_buf_free(&b);

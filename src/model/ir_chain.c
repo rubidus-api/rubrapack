@@ -50,15 +50,15 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
         if (RP_EQ(t->kind, "chain") || RP_EQ(t->kind, "define")) {
-            if (t->id.ptr) ERR(&c, t->pos, "RP1201", "[%s] takes no ID: write [%s]", rp_cs(t->kind), rp_cs(t->kind));
+            if (t->id.ptr) ERR(&c, t->pos, "RP1201", "[{}] takes no ID: write [{}]", proven_arg_cstr(rp_cs(t->kind)), proven_arg_cstr(rp_cs(t->kind)));
             else if (RP_EQ(t->kind, "chain")) chain = t;
             else c.define = t;
         } else if (RP_EQ(t->kind, "chain-package")) {
             if (t->id.ptr == NULL) ERR(&c, t->pos, "RP1201", "[chain-package] needs an ID: write [chain-package.ID]");
             else ++npkg;
         } else {
-            ERR(&c, t->pos, "RP1201", "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources",
-                rp_cs(t->kind));
+            ERR(&c, t->pos, "RP1201", "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources",
+                proven_arg_cstr(rp_cs(t->kind)));
         }
     }
     if (chain == NULL) {
@@ -74,7 +74,7 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
     uint16_t vparts[4];
     size_t vcount;
     if (out->version && !ir_parse_version(out->version, vparts, &vcount)) {
-        ERR(&c, ir_key_pos(chain, "version"), "RP1308", "version '%s' must be a.b.c or a.b.c.d", out->version);
+        ERR(&c, ir_key_pos(chain, "version"), "RP1308", "version '{}' must be a.b.c or a.b.c.d", proven_arg_cstr(out->version));
     }
     char *arch = ir_get_str(&c, chain, "arch", false, NULL);
     out->arch = RP_ARCH_X64;
@@ -99,13 +99,13 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
         const char *code = v->kind == RP_TV_STRING ? rp_cs(v->s) : "";
         if (strcmp(code, "en") == 0) continue;
         if (rp_langpack_get(code, opt->source_dir.ptr ? rp_cs(opt->source_dir) : ".") == NULL) {
-            ERR(&c, lk->pos, "RP1509", "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)", code, code);
+            ERR(&c, lk->pos, "RP1509", "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)", proven_arg_cstr(code), proven_arg_cstr(code));
         } else if (out->language_count < 8) {
             (void)proven_fmt_to(out->languages[out->language_count++], 16, "{}", proven_arg_cstr(code));
         }
     }
     if (npkg == 0) ERR(&c, chain->pos, "RP1202", "a chain needs at least one [chain-package.ID]");
-    if (npkg > RP_CHAIN_MAX) ERR(&c, chain->pos, "RP1308", "a chain holds at most %d packages", RP_CHAIN_MAX);
+    if (npkg > RP_CHAIN_MAX) ERR(&c, chain->pos, "RP1308", "a chain holds at most {} packages", proven_arg_i32(RP_CHAIN_MAX));
     out->pkgs = rp_mem_alloc(alloc, npkg + 1, sizeof *out->pkgs);
     if (out->pkgs == NULL) return PROVEN_ERR_NOMEM;
     memset(out->pkgs, 0, (npkg + 1) * sizeof *out->pkgs);
@@ -117,7 +117,7 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
         ir_check_keys(&c, t, pkg_keys);
         ir_check_id(&c, t, 60);
         for (size_t j = 0; j + 1 < out->count; ++j) {
-            if (ir_ascii_casecmp(out->pkgs[j].id, rp_cs(t->id)) == 0) ERR(&c, t->pos, "RP1301", "[chain-package.%s] is there twice", rp_cs(t->id));
+            if (ir_ascii_casecmp(out->pkgs[j].id, rp_cs(t->id)) == 0) ERR(&c, t->pos, "RP1301", "[chain-package.{}] is there twice", proven_arg_cstr(rp_cs(t->id)));
         }
         p->id = ir_dup(&c, rp_cs(t->id));
         p->pos = t->pos;
@@ -138,7 +138,7 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
                 p->source = ir_join(&c, opt->source_dir.ptr ? rp_cs(opt->source_dir) : ".", p->shown);
                 uint64_t size;
                 if (p->source && rp_pal_stat(alloc, p->source, &size) != RP_FS_FILE) {
-                    ERR(&c, ir_key_pos(t, "source"), "RP1507", "package '%s' not found", p->shown);
+                    ERR(&c, ir_key_pos(t, "source"), "RP1507", "package '{}' not found", proven_arg_cstr(p->shown));
                 }
             }
         }
@@ -282,7 +282,7 @@ proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const
     const unsigned char *stub = c->arch == RP_ARCH_X64 ? rp_setup_x64 : c->arch == RP_ARCH_X86 ? rp_setup_x86 : rp_setup_arm64;
     size_t stub_len = c->arch == RP_ARCH_X64 ? rp_setup_x64_len : c->arch == RP_ARCH_X86 ? rp_setup_x86_len : rp_setup_arm64_len;
     if (stub_len == 0) {
-        rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false, "this rubrapack was built without the setup program (nob parts)");
+        rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP1901", false, "this rubrapack was built without the setup program (nob parts)");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     rp_buf_t b = rp_buf_new(alloc, (size_t)limits->max_output);
@@ -303,7 +303,7 @@ proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const
         size_t n = 0;
         err = rp_pal_read_file(alloc, p->source, MAX_PACKAGE, &data, &n);
         if (err != PROVEN_OK) {
-            rp_srcdiag_add(diags, p->pos, "RP1507", false, "cannot read package '%s'", p->shown);
+            rp_srcdiag_add(diags, p->pos, "RP1507", false, "cannot read package '{}'", proven_arg_cstr(p->shown));
             break;
         }
         char *code = NULL, *version = NULL;
@@ -311,7 +311,7 @@ proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const
                           : p->kind == RP_CHAIN_MSP ? msp_codes(alloc, data, n, limits, &code, &version)
                                                     : msi_codes(alloc, data, n, limits, &code, &version);
         if (bad) {
-            rp_srcdiag_add(diags, p->pos, "RP1308", false, "package '%s' %s", p->shown, bad);
+            rp_srcdiag_add(diags, p->pos, "RP1308", false, "package '{}' {}", proven_arg_cstr(p->shown), proven_arg_cstr(bad));
             err = PROVEN_ERR_INVALID_FORMAT;
         } else {
             uint8_t sha[32];

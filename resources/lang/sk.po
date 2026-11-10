@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Segoe UI\n"
 "X-Rubrapack-Group: 8\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialógy {6}{7}\n  1 názov, výrobca, verzia, architektúra         2 priečinok inštalácie, pre koho sa inštaluje\n  3 dialógy, licencia, jazyky                    4 voliteľné časti\n  5 odkazy                                       6 súbory: zosúladiť s priečinkom programu\n  7 ľubovoľný kľúč                               v zobraziť   l lint   s uložiť   q koniec\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\nSprávy s týmto kódom (* zastupuje názov alebo hodnotu):\n"
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nVýsledky idú na stdout, diagnostika na stderr.\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\nČo robiť: {1}.\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} už neexistuje, ale otvára ho odkaz: najprv zmeňte odkazy (5)\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  {1} súborov a {2} priečinkov tam\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7, v, l, s alebo q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  pridané [dir.{1}] a [files.{2}]\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  pridané [file.{1}]\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint: pozrite problémy vyššie (súbor tam uvedený je kontrolná k�
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  ostatné jazyky v [ui] languages sa zachovajú; tento zoznam zmeníte cez 7 (ľubovoľný kľúč)\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  odstránené [file.{1}]\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  odstránené [files.{1}]{2}\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  to nezodpovedá podmnožine TOML; nič sa nezmenilo\n"
 msgid "  that was not readable text; again, please\n"
 msgstr "  to nebol čitateľný text; znova, prosím\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  priečinok programu '{1}': {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - vytvára balíky Windows Installer (.msi) a MSIX (.msix)\n\npoužitie
 msgid " and its dir"
 msgstr " a jeho dir"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}) nemá premennú prostredia, preto ho rozšíriteľná hodnota nemôže obsahovať; použite reťazcovú hodnotu (doplní sa pri inštalácii)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) je {2}: môže začínať cestu alebo zastupovať hodnotu, ktorú dopĺňa Windows Installer (register, prostredie, INI, argumenty, správy), ale nie tu"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) nie je priečinok, z ktorého môže začínať cesta (dir ID, alebo ProgramFiles, LOCALAPPDATA, ProgramData ... - pozrite Paths v príručke){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  štruktúra:    {2}\n  digest:       {3}\n  podpis:       {4}\n  reťaz:        {5}{6}{7}\n  odvolanie:    nekontrolované\n  časová pečiatka: {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2}: premenná nie je nastavená"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' nie je ovládací prvok tohto dialógu"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' nie je v {3}"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}': {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': text licencie potrebuje anglický názov písma, preto sa zobrazí písmom daného jazyka; napíšte anglický názov (napr. \"Malgun Gothic\"), aby sa toto písmo použilo aj tam"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "{1} = '{2}' musí byť priečinok"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "komponent {1}, ale platforma balíka je {2}"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} nepatrí k kind = \"{2}\""
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} nepatrí k kind = \"firewall\""
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} obsahuje LANGID (1..65535), napr. 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} obsahuje reťazce"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "{1} má dĺžku {2} až {3} znakov"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} je zoznam textov \"Kľúč=Hodnota\""
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "{1} je zoznam textov, napríklad [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} je názov písma s 1 až 31 znakmi, napr. \"Segoe UI\" (zadané {2})"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} je podmienka MSI s uzavretými úvodzovkami a vyváženými zátvorkami"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} je pole reťazcov, jeden pre každú hodnotu"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} je pre balíky MSI: MSIX neodstraňuje msiexec"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} už neexistuje. Odstrániť [file.{2}]?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} je dlhšie ako 240 znakov"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} je nové. Pridať?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} nie je GUID vo formáte registra"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} nie je kód, ktorý tento rubrapack používa{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} musí byť \"file:<ID>\" označujúce [file.*] tohto balíka"
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "{1} musí mať {2} až {3} písmen, číslic, '.' alebo '-' a nesmie začínať '.' (zadané '{4}')"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1} musí byť GUID"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1} musí byť GUID ako {{12345678-...} (zadané '{2}')"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "{1} musí byť adresa http:// alebo https:// (zadané '{2}')"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1} musí byť adresa https://, http:// alebo file://, alebo cesta \\\\server\\share (zadané '{2}')"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1} sa musí líšiť od upgrade-code (jedna rodina aktualizácií na architektúru)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} potrebuje Windows build {2} alebo novší: nastavte [msix] min-version = \"10.0.{3}.0\""
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} potrebuje resources/bin/rubrapack_ca-{2}.dll, bez ktorého bol tento rubrapack zostavený"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}, TSA nekontrolovaná (zadajte --tsa-trust)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}, TSA dôveryhodná"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}, TSA nedôveryhodná - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} neexistuje alebo je prázdny. Odstrániť [files.{3}] a [dir.{4}]?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ je nový priečinok. Pridať?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1}: chyby: {2}{-3}, upozornenia: {4}{-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1}: chyby: {2}{-3}, upozornenia: {4}{-5} (oproti {6})\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1}: {2} súborov, {3} bajtov\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1}: {2} súborov, {3} chýb, 0 upozornení\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1}: ďalších {2} diagnostík sa nezobrazilo\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1}: '{2}' nie je program (.exe)"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' nie je štandardná akcia, ktorú rubrapack umiestňuje"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1}: súbor '{2}' nie je [file.*] tohto balíka"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1}: súbor '{2}' nie je program (.exe)"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "'$(' nie je uzavreté (pre text '$(' napíšte '$$(')"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' už existuje; ponecháva sa tak, ako je"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' už existuje; odstráňte ho alebo zostavte do iného priečinka"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}' už má obslužný program {2} ([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}' už má povolenia"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' a '{2}' sú v balíku tá istá cesta"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' patrí systému Windows alebo prehliadačom"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "'{1}' sa nedá prečítať voči '{2}': {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' nezodpovedá podmnožine TOML; nič sa neuložilo"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' už existuje"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' už existuje; zmeňte ho cez `rubrapack edit {2}`"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' existuje a nie je prázdny adresár; rozbaľte do nového"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' ide do {2}; alebo msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}' má nečitateľný prúd súhrnných informácií"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' nemá tabuľky Directory, Component, File a Media, z ktorých by sa dalo rozbaliť"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "'{1}' nemá vloženú transformáciu '{2}'"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}' nemá čitateľné súhrnné informácie"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}' nemá transformáciu '{2}'"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' je UTF-16: edit mení len zdroje v UTF-8 (najprv ho uložte ako UTF-8)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' je názov systému Windows; dajte premennej iný názov"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' je [chain]: vytvára inštalačný program, -o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' je ovládací prvok vstavaného rámca; vyberte iné ID"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' je priečinok počítača; balík {2} tam nemôže zapisovať"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' je zlučovací modul: zlúčte ho cez [merge.ID]"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' je názov, ktorý si formát MSIX vyhradzuje"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' je symbolický odkaz; odkazy sa nesledujú"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' je aj [property.*]"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' je aj dir ID; dajte premennej iný názov"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' je zostavený pre stroj 0x{2}, nie pre architektúru tohto balíka; nastavte any-arch = true, ak je to zámerné"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' nie je ani súbor PE (.exe, .dll), ani balík MSI, ani balík či zväzok MSIX, ani cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' nie je ani súbor PE, ani balík MSI, ani balík či zväzok MSIX, ani cabinet"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nie je ani známy priečinok, ani dir ID (známe priečinky: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' nie je balík MSIX ani názov rodiny balíkov (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' nie je cabinet, ktorý rubrapack vie čítať (stored alebo MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' nie je diagnostický kód (RP a štyri číslice, napr. RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' nie je program (.exe)"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' nie je bežný súbor"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' nie je inštalačný program rubrapack{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' nie je platné ID (písmená, číslice a '_', nezačína číslicou, najviac {2})"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' nie je platná databáza MSI: {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' nie je platný balík MSIX: {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' nie je platný balík: {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' nie je platný zdroj (podmnožina TOML); najprv ho opravte ručne"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' nie je platná transformácia: {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' nie je platný názov premennej"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' je vyhradené a nedá sa použiť ako ID"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' je názov dir: dir môže vyplniť len vyhľadávanie v registri alebo dir"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' vyzerá ako programový súbor (PE), ale jeho hlavičky alebo prostriedky sú poškodené"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}' musí byť reťazec"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}' musí byť celé číslo"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}' musí byť medzi {2} a {3}"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}' musí byť true alebo false"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' nesmie byť prázdne"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' neuvádza žiadne transformácie (súhrnná vlastnosť 8): nie je opravou"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' začína priečinkom: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}': {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}': {2} '{3}' má {4}; nič sa nerozbalilo"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}': {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}': {2} položiek, viac ako limit {3} (--limit-entries); nič sa nerozbalilo"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}': '{2}' a '{3}' by boli v systéme Windows tá istá cesta; nič sa nerozbalilo"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}': '{2}' nie je v [ui] languages"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}': tabuľku nemožno prečítať"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}': tabuľka je nečitateľná"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}': MSIX inštaluje všetky svoje súbory (when); použite msi-only = true"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}': MSIX odstraňuje všetky svoje súbory (keep); použite msi-only = true"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}': cabinet '{2}' je poškodený alebo nie je stored/MSZIP"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}': názov cabinetu '{2}' nie je obyčajný názov súboru"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}': komprimovaný súbor '{2}' (poradie {3}) nemá cabinet"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}': adresár '{2}' má nadradený '{3}', ktorý neexistuje"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}': adresár '{2}' je svojím vlastným predkom alebo je vnorený príliš hlboko"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}': súbor '{2}' nezodpovedá svojmu MsiFileHash"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}': súbor '{2}' nemá komponent ani adresár"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}': súbor '{2}' má {3} bajtov, tabuľka File uvádza {4}"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}': súbor '{2}' nie je v cabinete '{3}'"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}': jeho externé cabinety nie sú pokryté podpisom (--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}': jeho priečinok nevedie na známe miesto"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}': viac ako {2} bajtov na zápis (--limit-bytes); nič sa nerozbalilo"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}': bez --timestamp: podpis prestane platiť, keď certifikát vyprší"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}': balík '{2}' nezodpovedá svojmu SHA-256"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}': prúd cabinetu '{2}' neexistuje"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}': manifest nemá {2} {3}"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}': manifest uvádza '{2}', ktoré nie je v balíku"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}': časová pečiatka z {2}: {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}': transformáciu '{2}' nemožno prečítať voči '{3}': {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' je vlastný jazyk balíka ({2}); zadajte ten text bez prípony"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "'version' neprijíma argumenty"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "--allow-unsigned-cabs je pre .msi"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "--arch pre zväzok: zoznam x64, x86 a arm64, každý raz (zadané '{1}')"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "--dist určuje nový priečinok vedľa zdroja (bez cesty)"
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "--flat je pre výstup .msixbundle (jeho balíky sa zapíšu vedľa)"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "--jobs prijíma číslo od 1 do 64 (zadané '{1}')"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "--key podpíše najviac {1} externých cabinetov; zvýšte cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "--key-store je úložisko certifikátov systému Windows; inde použite 
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store prijíma odtlačok SHA-1 certifikátu (40 šestnástkových číslic)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1}: taký jazyk neexistuje (vstavané: {2}; iný potrebuje svoj jazykový balík, {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "--lang (alebo RUBRAPACK_LANG) vyberá jazyk týchto textov: {1}, alebo jazyk s jazykovým balíkom.\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "--lang potrebuje jazyk, napr. en alebo ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "--languages potrebuje dialógy: zadajte aj --ui"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "--msix-compress prijíma deflate alebo store (zadané '{1}')"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1}: premenná nie je nastavená"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "--patch-code prijíma GUID veľkými písmenami so zátvorkami: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1}: premenná nie je nastavená"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "--previous porovnáva dva balíky .msi"
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots: koreňové certifikáty operačného systému nemožno prečítať"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "--target {1} nezodpovedá výstupu '{2}'"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "--target {1} nie je implementovaný (msi alebo msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "--target prijíma msi alebo msix (zadané '{1}')"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "--winget potrebuje tabuľku [winget]: identifier, installer-url, license
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "--winget potrebuje balík v jednom súbore: winget sťahuje jeden, teda nie cab = \"external\""
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "-D {1} je zadané dvakrát"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1}: '{2}' je názov systému Windows; dajte premennej iný názov"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "-D potrebuje NAME=VALUE (zadané '{1}')"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "-i sa pýta na každú odpoveď; zadajte buď -i, alebo možnosti"
 msgid "; its range is "
 msgstr "; jeho rozsah je "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "ActionProperty '{1}' nie je v SecureCustomProperties"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Názov priečinka v Program Files"
 msgid "Folder with the files to install"
 msgstr "Priečinok so súbormi na inštaláciu"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "ID '{1}' sa už používa (riadok {2}); ID sa musia líšiť naprieč všetkými tabuľkami"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "Inštalovať pre (machine, user, dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "Kľúč ako table.key (package.version, dir.INSTALLDIR.path, ...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "KeyPath '{1}' patrí inému komponentu"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "KeyPath '{1}' nie je v File"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "KeyPath '{1}' nie je v Registry"
 
 msgid "Korean dialogs as well as English?"
 msgstr "Dialógy v kórejčine popri angličtine?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "LastSequence {1} je nižšie ako pri nižšom DiskId"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX: čo balík MSIX potrebuje a čo nemôže obsahovať"
 msgid "Main program, for shortcuts (- for none)"
 msgstr "Hlavný program, pre odkazy (- pre žiadny)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "Príručka: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "Názov produktu"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "ProductCode a UpgradeCode sú ten istý GUID"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} nie je v prvých troch poliach vyššia ako predchádzajúca {2}: Windows Installer neaktualizuje"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Program, ktorý otvárajú odkazy (- bez odkazov)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1}: taký jazyk neexistuje (vstavané: {2}; iný potrebuje svoj jazykový balík, {3}.po)"
 
 msgid "Reference, "
 msgstr "Referencia, "
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "Poradie {1} nepokrýva žiadny riadok Media (posledný {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "Poradie {1} používa iný súbor"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "Zdrojový súbor na zápis"
 msgid "Source format"
 msgstr "Formát zdroja"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "Source musí uvádzať riadok File pre typ {1}"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "Podmnožina TOML"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "Súbory UTF-16 big-endian nie sú podporované; uložte ako UTF-8"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "UpgradeCode {1} sa líši od {2} predchádzajúcej verzie: tento balík ju nenahrádza"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "Verzie a aktualizácie"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer povoľuje najviac 255.255.65535(.65535)"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "Windows nepovedal, čo je pre '{1}' nainštalované"
 
 msgid "Windows name"
 msgstr "názov Windows"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] potrebuje '{4}'"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] nemôže byť v zlučovacom module; má ho balík, ktorý ho zlučuje"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] zatiaľ nie je podporované (plánované pre {3})"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] nemôže byť v MSIX; pridajte msi-only = true, aby sa MSIX zostavil bez neho"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] nemôže byť v MSIX; pridajte msi-only = true, aby sa MSIX zostavil bez neho"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "[{1}.{2}] je v AppData alebo LocalAppData používateľa: balík dual nainštalovaný pre všetkých používateľov ho umiestni len do profilu inštalujúceho používateľa"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID v zlučovacom module má najviac 35 znakov (pridá sa k nemu GUID modulu)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] potrebuje ID: napíšte [{2}.ID]"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] neprijíma ID: napíšte [{2}]"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "[Content_Types].xml nie je posledná položka (nie je to balík zapísan
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Polia tabuliek [[...]] nie sú podporované; každej položke dajte vlastné [kind.ID]"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] sa umiestňuje raz: before, after alebo sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] potrebuje do aj undo (undo vráti aj neúspešné do)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] vyžaduje entry: funkciu DLL, ktorá sa má zavolať"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] vyžaduje run = \"file:<ID>\": program, ktorý spúšťajú do a undo"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "[action.{1}] spúšťa súbor tohto balíka pred InstallFinalize, keď ho prvá inštalácia ešte nemá (chyba Inštalátora systému Windows 1721 alebo 1723): umiestnite akciu za InstallFinalize alebo ju nastavte ako deferred"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] spúšťa jednu vec: run (exe), dll (nainštalovaná DLL) alebo binary (DLL v balíku); alebo do a undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}]: {2} je pre jednu akciu, nie pre dvojicu do/undo"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}]: odložená akcia spúšťajúca nainštalovaný súbor musí byť za InstallFiles (sequence > 4000)"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}]: okamžitá akcia beží ako inštalujúci používateľ; as je pre ostatné fázy"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}]: args patria programu; DLL dostáva data"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}]: check patrí k dvojici do/undo"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}]: data je pre odloženú, commit alebo rollback akciu (okamžitá číta vlastnosti)"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}]: entry je funkcia knižnice DLL; run berie args"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: args pre MSIX musia byť obyčajný text (bez [...] dopĺňaných pri inštalácii)"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}]: v MSIX typ súboru otvára aplikáciu: target musí byť spustiteľný súbor [msix-app.*]"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] je tam dvakrát"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "[chain-package] potrebuje ID: napíšte [chain-package.ID]"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}]: app-id a typelib sa zapisujú len pre MSI; MSIX registruje triedu bez nich"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}]: args patria programu; DLL sa načíta, nespúšťa"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}]: surrogate spúšťa DLL v dllhost; '{2}' je program"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}]: threading je pre DLL; program si nastavuje vlastný apartment"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}]: typelib-version a typelib-file potrebujú typelib"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] ide do {2}; alebo msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}]: jeho zdroj musí byť súbor, ktorý ide do balíka"
 
 msgid "[define] values must be strings"
 msgstr "Hodnoty [define] musia byť reťazce"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] potrebuje '{2}'"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "[dialog-control.{1}] vyžaduje image"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] potrebuje 'property'"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] potrebuje 'text'"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] potrebuje 'values'"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}] má {2} ovládacích prvkov; najviac 64"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}] nemá [dialog-control.*]"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] je umiestnený za sebou samým cez iné dialógy"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] potrebuje ui = \"minimal\", \"installdir\" alebo \"features\""
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}]: '{2}' je názov systému Windows; dajte dir iné ID"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}]: guard potrebuje pomocnú knižnicu DLL rubrapack, ktorú zlučovací modul nemá"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] potrebuje funkciu"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}]: MSIX nastaví všetky svoje premenné (when); použite msi-only = true"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: jeho hodnota uvádza miesto, ktoré MSIX nemôže poskytnúť (priečinok mimo balíka, ktorý nie je priečinkom systému Windows, alebo časť z času inštalácie); použite msi-only = true"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}]: s external-location = true balík neobsahuje žiadny súbor programu, teda ani spúšťač rubrapacku; alebo msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] je už v priečinku svojho programu; isolate-for je pre zdieľanú knižnicu DLL nainštalovanú inde"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] je v profile používateľa a má component-guid: cestou kľúča zostáva súbor, kde pravidlá Windows chcú hodnotu HKCU (ICE38); vynechajte component-guid, aby ste ju získali"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}]: {2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' nie je zostava .NET (chýba hlavička CLI s riadkom Assembly)"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}]: zostava .NET nesie svoj manifest sama; manifest je pre zostavu Win32"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}]: zostava Win32 potrebuje manifest = \"file:<ID>\", svoj súbor manifestu"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: zdieľaná zostava .NET ide do GAC, ktorá prijíma iba zostavy so silným názvom; podpíšte ju alebo zadajte assembly-for = \"file:<program>\""
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: zdieľané zostavenie Win32 ide do WinSxS s katalógom podpísaným kľúčom, ktorý uvádza publicKeyToken v manifeste; zostavte s --key (alebo pre súkromné zadajte assembly-for = \"file:<program>\")"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: manifest '{2}' zdieľaného zostavenia Win32 uvádza podpisujúceho: publicKeyToken v assemblyIdentity (token kľúča --key, s ktorým sa zostavuje)"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for a manifest patria k assembly = \"dotnet\" alebo \"win32\""
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}]: jeho manifest '{2}' nemá assemblyIdentity s name a version"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: jeho manifest '{2}' musí byť v rovnakom dir a feature (a pod rovnakým when): obe tvoria jeden komponent"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}]: manifest uvádza publicKeyToken \"{2}\", ale token kľúča --key je \"{3}\""
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifest '{2}' patrí inej zostave alebo je sám zostavou"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}]: Prieskumník načítava obslužný program {2} z DLL; [com.{3}] je program"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}]: Windows číta obslužné programy vlastností len pre počítač; balík potrebuje scope = \"machine\""
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}]: obslužný program ukážky beží v prevhost systému Windows; vynechajte app-id a surrogate z [com.{2}]"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}]: MSIX obsahuje len obslužné programy miniatúr a ukážok (zabalený obslužný program vlastností nedal Prieskumníkovi žiadne hodnoty); msi-only = true ho ponechá pre MSI"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}]: typ súboru MSIX patrí aplikácii; pridajte [msix-app.*]"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}]: trieda {2} nie je [com.*] tohto balíka (obsluhuje ju DLL obslužného programu)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}]: v MSIX obslužné programy zdieľajú všetky svoje typy alebo žiadny (typ je v jednom priradení typu súboru)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}]: v MSIX jeho trieda beží v surrogate; threading = \"sta\" v [com.{2}] dá jej oknu slučku správ (s threading = {3} môže ukážka zostať prázdna)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}]: v MSIX sú všetky jeho typy v jednom type súboru [assoc], alebo v žiadnom"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}]: jeho trieda je msi-only ([com.{2}]); MSIX by pre ňu nemal server"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}]: types je zoznam typov súborov, napr. [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] ide do {2}; alebo msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] potrebuje 'value'"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] potrebuje funkciu: nastavte 'feature' tu alebo na jeho dir"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}]: MSIX zapíše všetky svoje položky INI (when); použite msi-only = true"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}]: jeho hodnota má časť, ktorú Windows Installer dopĺňa pri inštalácii ([...]); MSIX zapíše súbor pri zostavení"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] potrebuje 'on': kde sa položka zobrazí, napr. [\".txt\"] alebo \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] potrebuje 'target' (program, ktorý spúšťa) alebo položky s parent = \"{2}\" (podponuka)"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] potrebuje 'target': program, ktorý položka spúšťa"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}]: ponuka Windows 11 prijíma ID iba z písmen a číslic (bez '_'): premenujte ju alebo windows11 = false"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: podponuka nič nespúšťa: vynechajte 'args'"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}]: položka podponuky sa zobrazí tam, kde jej podponuka: vynechajte 'on'"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args má časť, ktorú Windows Installer dopĺňa pri inštalácii ([...]); MSIX obsahuje len pevný text"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}]: hide-when je \"HKCU\\\\key\\\\value\" alebo \"HKLM\\\\...\", pri položke ponuky Windows 11, ktorá nie je v podponuke"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}]: hide-when ukazuje na hodnotu, ktorú zapisuje sám tento balík ([registry.{2}]): položka by sa nikdy neukázala"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: jeho program nie je v MSIX (msi-only?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: jeho hodnoty nemôžu ísť do registra balíka"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: list má časť, ktorú Windows Installer dopĺňa pri inštalácii ([...]); MSIX obsahuje len pevný text"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}]: list zastupuje {2}, keď sa cesty nezmestia do príkazového riadka: treba multi = \"one\", {3} v args a {4} (súbor so zoznamom) v list"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}]: on = \"{2}\": neexistuje [assoc.{3}]"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}]: on je typ súboru alebo ich zoznam, napr. [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}]: parent '{2}' nie je [menu.*]"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}]: parent '{2}' musí byť podponuka: [menu.*] bez target a bez vlastného parent"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] ide do {2}; alebo msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] potrebuje funkciu: nastavte 'feature' tu alebo na jeho dir"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}]: '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; alebo msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] vyžaduje feature (alebo with = \"file:<ID>\")"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}]: feature patrí k vlastnému komponentu, nie k with"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name určuje jeden súbor; name má zástupné znaky"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}]: cieľ zdieľania potrebuje types, formats alebo oboje"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}]: obslužný program automatického prehrávania potrebuje content-events, device-events alebo oboje"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args musia byť obyčajný text (bez [...] dopĺňaných pri inštalácii)"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}]: device-events potrebujú class (triedu COM IHWEventHandler programu)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}]: file musí byť {2}"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}]: file musí uvádzať súbor, ktorý ide do balíka"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}]: file musí uvádzať program, ktorý ide do balíka"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types je zoznam typov súborov, napr. [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows prijíma iba písmená a číslice"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "[msix-psf] nejde spolu s external-location = true ani s [env.*] (vlastn�
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "[msix-psf] spúšťa aplikácie cez spúšťač PSF: potrebuje [msix-app.ID]"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf]: config '{1}' neuvádza aplikáciu '{2}' vo svojich \"applications\""
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf]: vo files chýba '{1}' (spúšťač)"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}]: súbor '{2}' nie je knižnica DLL"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] určuje svoj ovládač raz: driver (jeden [odbc-driver]) alebo driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] s driver-name vyžaduje with = \"file:<ID>\": komponent, s ktorým sa inštaluje"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}]: balík pre počítač registruje zdroje údajov pre počítač"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] určuje jednu kópiu: msix (s publisher) alebo upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}]: msix je názov identity balíka (3 až 50 písmen, číslic, '.' alebo '-') a vyžaduje publisher (\"CN=...\"), ako ich má jeho manifest"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}]: druhú kópiu hľadá predbežná kontrola: treba preflight = true"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}]: upgrade-code patrí tomuto balíku (to je inovácia, nie iná kópia)"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] potrebuje, aby jeho dir mal funkciu"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}]: args pre MSIX musia byť obyčajný text (bez [...] dopĺňaných pri inštalácii)"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}]: v MSIX schéma otvára aplikáciu: target musí byť spustiteľný súbor [msix-app.*]"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] potrebuje 'value' (alebo remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}]: HKCR nesiaha mimo MSIX; použite [assoc.*], [protocol.*], [com.*] alebo [handler.*], alebo msi-only = true"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: hodnota qword potrebuje pomocnú knižnicu DLL rubrapack, ktorú zlučovací modul nemá"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}]: MSIX obsahuje hodnoty len pod {2}\\Software"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}]: MSIX hodnoty ani neodstraňuje, ani ich nenecháva (remove, keep); použite msi-only = true"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}]: MSIX zapíše všetky svoje hodnoty (when); použite msi-only = true"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}]: jeho hodnota má časť, ktorú Windows Installer dopĺňa pri inštalácii ([...]); MSIX obsahuje len pevné hodnoty"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: on = \"uninstall\" potrebuje pomocnú knižnicu DLL rubrapack, ktorú zlučovací modul nemá"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: názov kľúča alebo hodnoty nemôže ísť do hive registra"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}]: users = \"all\" je pre root = \"HKCU\" s on = \"uninstall\", v balíku pre počítač"
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] potrebuje funkciu: nastavte 'feature' tu alebo na jeho dir"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}]: recursive = true nie je pre priečinok pod {2}"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true potrebuje pomocnú knižnicu DLL rubrapack, ktorú zlučovací modul nemá"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}]: users = \"all\" je pre recursive = true na priečinku v AppData alebo LocalAppData, v balíku pre počítač"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args pre MSIX musia byť obyčajný text (bez [...] dopĺňaných pri inštalácii)"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file musí uvádzať program, ktorý ide do balíka"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] inzeruje funkciu '{2}', ktorá má advertise = \"disallow\""
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}]: advertise sa nekombinuje s when"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}]: MSIX má odkazy len na pracovnej ploche a v ponuke Štart{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}]: odkaz MSIX nemá working-dir"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}]: odkaz MSIX existuje vždy (when je pre MSI)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: odkaz MSIX zobrazuje logo svojej aplikácie; icon je pre MSI"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}]: inzerovaný odkaz je pre MSI (MSIX nainštaluje celý balík)"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}]: inzerovaný odkaz potrebuje ikonu"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args pre MSIX musia byť obyčajný text (bez [...] dopĺňaných pri inštalácii)"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}]: v MSIX odkaz spúšťa aplikáciu: target musí byť spustiteľný súbor [msix-app.*]"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}]: položka ponuky Štart v MSIX je jeho aplikácia, ktorá neprijíma args"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: žiadny text dialógu nemá toto ID"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "[ui] embedded je pre MSI; MSIX nemá vlastné rozhranie inštalátora"
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "[ui] vyžaduje ui = \"basic\" alebo inú množinu dialógov v [package] (alebo embedded = \"....dll\")"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "escape \\{1} nie je skalárna hodnota Unicode"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "`lint` balíka: dialógy, kódová stránka, normalizácia textu"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` balíka alebo zväzku MSIX"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "ovládací prvok {1} nemá property"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "ovládací prvok {1} nemá text; vedľa neho umiestnite textový prvok"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "ovládací prvok {1} potrebuje [property.{2}] s jednou z jeho hodnôt ako predvolenou (tichá inštalácia ju použije)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "balík {1} nemôže zapisovať do HKLM; použite HKMU"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "certifikát v ceste má kritické rozšírenie, ktorému rubrapack neroz
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "certifikát v ceste je podpísaný certifikátom, ktorý nie je CA"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "reťaz obsahuje len [chain], [chain-package.ID] a [define], nie [{1}]; balíky sa zostavujú z vlastných zdrojov"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "reťaz obsahuje najviac {1} balíkov"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "reťaz potrebuje aspoň jeden [chain-package.ID]"
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "znak, ktorý Windows nepovoľuje v názve (/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "kontajner pojme najviac {1} rodín balíkov"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "funkcia, ktorú tento rubrapack neposkytuje (alebo bol zostavený bez ne
 msgid "a file larger than allowed"
 msgstr "súbor väčší, ako je povolené"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "názov súboru pod '{1}' nie je platný Unicode a nedá sa zabaliť"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "reťaz komponentu alebo adresára súboru je prerušená"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "písmo sa dostane do MSIX cez [font.*], ktoré ho uvádza"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "balík architektúry nemá vlastné aplikácie, schopnosti ani závislosti ({1})"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "bunka hive presahuje svoj bin"
 msgid "a hive version or type rubrapack does not read"
 msgstr "verzia alebo typ hive, ktoré rubrapack nečíta"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "samotný známy priečinok ('{1}') nemôže dostať povolenia"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "proxy s používateľským menom alebo heslom nie je podporovaný"
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "hodnota qword je celé číslo alebo \"0x\" a 1 až 16 šestnástkových číslic"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "ovládací prvok radio skladá svoje tlačidlá pod seba: výška musí byť aspoň 12 na hodnotu ({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "vyhradený názov zariadenia"
 msgid "a rollback action cannot be asynchronous"
 msgstr "akcia rollback nemôže byť asynchrónna"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "schéma je malé písmeno, potom malé písmená, číslice, '+', '-' alebo '.' (zadané '{1}')"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "sekcia leží mimo súboru"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "názov služby nesmie obsahovať '/' ani '\\' (najviac 256 znakov)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "setup .exe sa zostaví zo zdroja s [chain]; '{1}' zostaví balík (.msi, .msix)"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "verzia sú 3 alebo 4 čísla s bodkami, napr. 1.0.0"
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "account musí byť LocalSystem, LocalService alebo NetworkService"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "akcia '{1}' je už definovaná"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "akcia nie je ani štandardná akcia, ani v CustomAction"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "action musí byť \"warn\" alebo \"refuse\" (zadané '{1}')"
 
 msgid "adds too many tables"
 msgstr "pridáva príliš veľa tabuliek"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "advertise musí byť \"allow\" alebo \"disallow\" (získané '{1}')"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "after = '{1}' nie je stránka tejto sady dialógov (RpWelcomeDlg{2}{3}{4}) ani [dialog.*]"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "alias patrí k kind = \"alias\""
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "alias musí byť názov súboru končiaci .exe: písmená, číslice, '.', '_', '-' (zadané '{1}')"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "sekcia INI nesmie obsahovať ']' a kľúč nesmie obsahovať '='"
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "MSIX nemôže umiestniť súbory do dočasného priečinka"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "aplikácia má jeden alias ([msix-extension.{1}] už je jeden)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "aplikácia má jeden cieľ zdieľania ([msix-extension.{1}] ním už je)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "voliteľný alebo modifikačný balík nedeklaruje žiadne schopnosti an
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "balík x86 zapisuje len do 32-bitového zobrazenia registra"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "aplikácia '{1}' nie je [msix-app.*]"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "appinstaller-uri a package-uri idú spolu: kde bude súbor .appinstaller a balík"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "arch musí byť \"x64\", \"arm64\" alebo \"x86\" (zadané '{1}')"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "arch musí byť \"x64\", \"x86\" alebo \"arm64\" (vlastná pre inštalačný program)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "argument {1} nie je platné UTF-8 (bajt {2})"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "argument {1} nie je platný Unicode (jednotka UTF-16 {2})"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "polia v poliach nie sú podporované"
 msgid "arrays must hold only strings or only integers"
 msgstr "polia musia obsahovať len reťazce alebo len celé čísla"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "as musí byť \"system\" alebo \"user\" (zadané '{1}')"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "assembly musí byť \"dotnet\" alebo \"win32\""
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "najviac {1} jazykov okrem angličtiny"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "najviac 100 tabuliek [msix-app.*]"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "najviac 50 tabuliek [action.*] (tento súbor má {1})"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "banner musí byť súbor .bmp (Windows Installer zobrazuje len BMP)"
 msgid "build a package from a source file"
 msgstr "zostavenie balíka zo zdrojového súboru"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "zostavenie {1} zo zdroja {2} potrebuje vlastnú rodinu aktualizácií: pridajte {3} = \"{{...}\" do [package]"
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "cab musí byť \"embed\" alebo \"external\""
 msgid "cannot be read"
 msgstr "nedá sa prečítať"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "balíky nemožno zviazať do zväzku: {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "'{1}' a '{2}' nemožno porovnať"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "'{1}' nemožno vytvoriť"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "'{1}' nemožno vytvoriť{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "'{1}' sa nenašiel; vytvorte ho cez `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "predvolené logo nemožno vytvoriť"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "opravu z '{1}' na '{2}' nemožno vytvoriť"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "transformáciu z '{1}' na '{2}' nemožno vytvoriť"
 
 msgid "cannot open the certificate store"
 msgstr "úložisko certifikátov nemožno otvoriť"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "'{1}' nemožno prečítať"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "'{1}' nemožno prečítať ({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "balík '{1}' nemožno prečítať"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "zdrojový súbor '{1}' nemožno prečítať"
 
 msgid "cannot read that folder"
 msgstr "ten priečinok nemožno prečítať"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "súbor {1} '{2}' nemožno prečítať"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "súbor PIN '{1}' nemožno prečítať"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "cabinet '{1}' vedľa '{2}' nemožno prečítať"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "súbor certifikátu '{1}' nemožno prečítať"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "certifikáty v '{1}' nemožno prečítať"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "certifikáty v '{1}' nemožno prečítať: {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "súbor kľúča '{1}' nemožno prečítať"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "súbor hesla '{1}' nemožno prečítať"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "nekomprimovaný súbor '{1}' vedľa '{2}' nemožno prečítať"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "{1} nemožno zapísať"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "'{1}' nemožno zapísať"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "'{1}' nemožno zapísať na kontrolu"
 
 msgid "cannot write resources.pri"
 msgstr "resources.pri nemožno zapísať"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "súbory ponuky vedľa '{1}' nemožno zapísať"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "balík prostriedkov {1} nemožno zapísať"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "capabilities je pole názvov, napr. [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "schopnosť '{1}' rubrapack nepozná (príručka ich uvádza)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "schopnosť '{1}' potrebuje Windows build 17763 alebo novší"
 
 msgid "carriage return without a line feed"
 msgstr "návrat vozíka bez nového riadka"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "súbor certifikátu '{1}': {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "skontrolujte zdrojové cesty (relatívne k zdrojovému súboru); pre zá
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "skontrolujte pravopis (správa navrhne najbližší názov) a kľúče tabuľky"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "triedu {1} už obsluhuje [com.{2}]"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "trieda {1} je aj v [msix-extension.{2}]"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "class musí byť GUID ako {{12345678-...} (zadané '{1}')"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "close-programs nemá účinok pri preflight = false"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "close-programs musí byť \"ask\", \"always\" alebo \"never\" (zadané '{1}')"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "stĺpec {1} obsahuje nesprávny druh hodnoty"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "stĺpec {1} nie je platné UTF-8"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "stĺpec {1} nesmie byť null"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "stĺpec {1}: {2} je mimo rozsahu stĺpca"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "stĺpec {1}: {2} jednotiek UTF-16, stĺpec pojme {3}"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "stĺpec {1}: {2} znakov, stĺpec pojme {3}"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "príkaz '{1}' ešte nie je implementovaný"
 
 msgid "command-line"
 msgstr "príkazový riadok"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "komponent {1} {2} sa zmenil medzi 32 a 64 bitmi: pravidlá komponentov vyžadujú nový GUID"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "komponent {1} {2} zmizol (jeho prostriedky sa odstránia s predchádzajúcou verziou)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "komponent {1} {2} má teraz kľúčovú cestu {3} namiesto {4}: pravidlá komponentov vyžadujú nový GUID"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "podmienka má neuzavreté úvodzovky alebo nevyvážené zátvorky"
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "podmienka je dlhšia ako 240 znakov (rubrapack pridáva \"Installed OR ( )\")"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "config obsahuje reťazce \"Name=value\" (zadané '{1}')"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "obsahuje riadiaci znak"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "obsahuje jeden z < > : \" / \\ | ? *"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "content-type je typ média, napr. \"image/png\" (zadané '{1}')"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "default-when potrebuje level nad 1 (funkcia s level 1 sa aj tak inštalu
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "definujte premennú ([define] alebo -D NAME=value) alebo napíšte $$ pre doslovné $"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "dialóg '{1}' nie je [dialog.*]"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "ID dialógov začínajúce na 'Rp' (a FilesInUse) patria rubrapack"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "dir '{1}' je sám v sebe (slučka cesty)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "dir '{1}' nie je ani dir ID, ani Programs, Desktop, StartMenu či Startup"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "dir '{1}' nie je dir ID"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "dir '{1}' nie je definovaný"
 
 msgid "dir ID"
 msgstr "ID dir"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "direction musí byť \"in\" alebo \"out\" (zadané '{1}')"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "argumenty do/undo sú dlhšie ako 255 znakov"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "kľúče s bodkami nie sú podporované; dajte kľúč do vlastnej tabuľky"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "ovládač '{1}' nie je [odbc-driver.*]"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "končí medzerou alebo bodkou"
 msgid "error"
 msgstr "chyba"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "executable = \"{1}\" musí uvádzať [file.*], ktorý ide do balíka"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "očakáva sa ']' na uzavretie názvu tabuľky"
 msgid "expected a key, a [table] or a comment"
 msgstr "očakáva sa kľúč, [table] alebo komentár"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "prípona '{1}' už má program ([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "extension musí byť '.' a malé písmená, číslice, '_' alebo '-' (zadané '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "external-location = true vyžaduje zostavu Windows 19041 alebo novšiu: 
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files nemá účinok pri preflight = false"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "extra-files musí byť \"ask\", \"keep\" alebo \"delete\" (zadané '{1}')"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "funkcia {1} zmizla: inštalácie, ktoré ju mali, prídu o to, čo obsahovala"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "funkcia '{1}' je svojím vlastným predkom"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "funkcia '{1}' nie je definovaná"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "nadradená funkcia '{1}' nie je definovaná"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "súbor '{1}' už spúšťa službu '{2}'"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "súbor '{1}' je už registrovaný ako písmo"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "súbor '{1}' nie je [file.*] tohto balíka"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "súbor '{1}' sa musí inštalovať priamo do priečinka Fonts ([dir.*] s path = \"Fonts\")"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "súbor '{1}' potrebuje funkciu: nastavte 'feature' tu alebo na jeho dir"
 
 msgid "file must be \"file:<ID>\""
 msgstr "file musí byť \"file:<ID>\""
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "názov súboru má {1} jednotiek UTF-16; s krátkym názvom 8.3 pojme MSI najviac {2}"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "file-system-virtualization a registry-virtualization = false potrebujú Windows build 18362 alebo novší: nastavte [msix] min-version = \"10.0.18362.0\""
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file: '{1}' nie je [file.*] tohto balíka"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' obsluhuje triedy COM len ako .exe alebo .dll"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "opravte hodnotu, ktorú správa uvádza; ID sú písmená, číslice a '
 msgid "floating-point numbers are not supported"
 msgstr "čísla s pohyblivou desatinnou čiarkou nie sú podporované"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "priečinok '{1}' potrebuje funkciu: nastavte 'feature' tu alebo na jeho dir"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "názov priečinka má {1} jednotiek UTF-16; s krátkym názvom 8.3 pojme MSI najviac {2}"
 
 msgid "follow-parent needs a parent"
 msgstr "follow-parent potrebuje nadradený prvok"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "písma potrebujú scope = \"machine\" (toto je {1})"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "format {1} potrebuje novší rubrapack (tento číta format {2})"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "format je celé číslo: format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "zadajte jedno z --key, --pkcs11 a --key-store"
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "zadajte podpriečinky priečinka programu oddelené čiarkami alebo - pre žiadne"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "vzor '{1}' nezodpovedá žiadnemu súboru"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "vzor '{1}' zodpovedá výstupnému súboru '{2}'"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "má text mimo ASCII v inej kódovej stránke ako 65001 (UTF-8)"
 msgid "icon must be an .ico file"
 msgstr "icon musí byť súbor .ico"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon: súbor '{1}' nie je [file.*] tohto balíka"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "id musí byť GUID ako {{12345678-1234-1234-1234-123456789ABC}: vlastný GUID modulu, rovnaký v každej verzii"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "identifier je Publisher.Package pre winget: 2 až 8 častí po 1 až 32 znakov, bez medzier a \\ / : * ? \" < > | (zadané '{1}')"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "identity-name musí mať 3 až 50 znakov z A-Z, a-z, 0-9, '.' a '-' (zadané '{1}')"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "inline tabuľky nie sú podporované; použite tabuľku [kind.ID]"
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "installed sa pýta systému Windows, čo je nainštalované; beží len vo Windows"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "inštaluje sa na tú istú cestu ako riadok {1} (Windows v názvoch nerozlišuje veľké a malé písmená{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "vnútorná chyba: vstavaný dialóg má pokazené poradie tabulátora; n
 msgid "internal: a module table has no _Validation rule"
 msgstr "interné: tabuľka modulu nemá pravidlo _Validation"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "interné: žiadne pravidlo _Validation pre stĺpec {1}"
 
 msgid "invalid"
 msgstr "neplatné"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "neplatné - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "nie je platný balík MSIX"
 msgid "is not valid UTF-8"
 msgstr "nie je platné UTF-8"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for: '{1}' nie je program (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "ponechajte kód aktualizácie, zvýšte verziu, ponechajte kódy komponentov súborov, ktoré zostávajú"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "kľúč '{1}' je v tejto tabuľke nastavený dvakrát (prvýkrát na riadku {2})"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "kľúč '{1}' nesmie začínať ani končiť '\\' ani obsahovať prázdnu časť"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "kľúč '{1}' je mimo tabuľky; pred prvou tabuľkou je len 'format'"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "súbor kľúča '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "kind musí byť \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" alebo \"autoplay\" (zadané '{1}')"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "kind musí byť \"preview\", \"thumbnail\" alebo \"property\" (zadané '{1}')"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "kind musí byť registry, file, dir alebo component"
 msgid "labels is an array of strings, one per value"
 msgstr "labels je pole reťazcov, jeden pre každú hodnotu"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "jazyk '{1}' nemá jazykový balík (lang/{2}.po vedľa zdroja alebo RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "jazyk '{1}' je uvedený dvakrát"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "jazyk '{1}' nie je v [ui] languages"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "jazyku '{1}' chýba {2} textov, prvý je {3}: pridajte ich do jeho jazykového balíka (lang/{4}.po) alebo zadajte [ui-text.ID] text-{5}"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "jazyk '{1}' potrebuje [ui] langid-{2} (jeho LANGID, pre automatický výber)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "jazyk '{1}' potrebuje [ui] name-{2} (jeho názov na stránke jazyka)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "language musí byť \"neutral\", \"en-US\" alebo \"ko-KR\""
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" stojí samostatne, nie v poli: pridá všetky vstavané jazyky"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "languages obsahuje kódy ako \"ko\" alebo \"zh_TW\" (2 alebo 3 malé písmená, a _ a dve veľké písmená regiónu) (zadané '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "launcher je názov súboru spúšťača PSF vo files, napríklad \"PsfLa
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license musí byť súbor .txt, .md (zobrazí sa ako obyčajný text) alebo .rtf"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint: {1} riadok {2}: stĺpec {3} nie je v NFC ({4} riadok{-5}); build --nfc prevedie názvy priečinkov, súborov a odkazov do NFC"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint: {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint: kódová stránka {1}, nie 65001: text sa nekontroluje ako UTF-8, šírky len pre ASCII"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint: pozrite problémy vyššie\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "zoznam kľúčov, ktorými môže token alebo úložisko certifikátov Windows podpisovať"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "logo '{1}' aj jeho variant .scale-100 sú prítomné: ponechajte jeden"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "logo '{1}' v mierke {2} má {3}x{4} pixelov; musí mať {5}x{6}"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "logo '{1}' v mierke {2} nie je súbor PNG"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "logo '{1}' má {2}x{3} pixelov; logo typu súboru musí byť štvorcové"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "logo '{1}' má {2}x{3} pixelov; musí mať {4}x{5}"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "logo '{1}' nie je súbor PNG"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "logo '{1}' sa nenašlo (ani ako varianty .scale-100 ... .scale-400)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': logo s variantmi mierky potrebuje názov súboru v ASCII s príponou"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "logo musí byť .png v 8-bitovom RGB alebo RGBA, neprekladané, najviac 1024 pixelov na stranu"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "main-package je názov identity hlavného balíka (zadané '{1}')"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "nesmie obsahovať riadiace znaky ani / \\ : * ? \" < > | $"
 msgid "may not start with a space or end with a space or a dot"
 msgstr "nesmie začínať medzerou ani končiť medzerou alebo bodkou"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "zlučovací modul '{1}' sa nenašiel"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "viac ako 3 presmerovania"
 msgid "more than 96 sections"
 msgstr "viac ako 96 sekcií"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "viac ako jeden zdrojový súbor ('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "je prítomných viac tokenov: určte jeden cez --token-label"
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "multi musí byť \"each\", \"one\" alebo \"single\" (zadané '{1}')"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "musí mať 1 až 64 bajtov"
 msgid "name contains a control character"
 msgstr "názov obsahuje riadiaci znak"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "name je názov identity balíka (zadané '{1}')"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "uvádza priečinok, ktorý jeho tabuľka Directory nemá"
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "new msix ešte nie je implementovaný: vytvorte zdroj MSI a pridajte [msix] (pozrite príručku)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "chýba riadok 'format = {1}': zdroj vo formáte rubrapack 0.18 alebo staršom, ktorý táto verzia nečíta (cesty teraz začínajú $(ProgramFiles) alebo $(INSTALLDIR)); pozrite Source format v príručke"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "žiadny názov servera alebo dlhší ako 255 bajtov"
 msgid "no string pool: not a transform"
 msgstr "žiadny zásobník reťazcov: nie je transformácia"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "v '{2}' nie je tabuľka '{1}'"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "osmičkové a dvojkové čísla nie sú podporované; použite desiatkov
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "on = \"uninstall\" je pre HKLM, HKCU a HKMU (triedy patria k [assoc.*], [com.*] a podobným)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "on = \"uninstall\" odstráni kľúč so všetkým pod ním: '{1}' nie je vlastný kľúč produktu pod Software"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "on = \"uninstall\" pri odstraňovaní odstráni celý kľúč; neprijíma '{1}'"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "on musí byť \"install\" alebo \"uninstall\""
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "on musí byť \"install\", \"uninstall\" alebo \"both\""
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on: každé je typ súboru ('.' a malé písmená, číslice, '_' alebo '-'), \"*\" (každý súbor), \"folder\", \"background\" (prázdna časť priečinka), \"drive\" alebo \"assoc:<ID>\" (zadané '{1}')"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "values prijímajú iba ovládacie prvky radio, combo a listbox"
 msgid "out of memory"
 msgstr "nedostatok pamäte"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "výstup '{1}': rubrapack zapisuje .msi, .msm, .msix, .msixbundle, .msixupload a setup .exe reťaze"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "balík '{1}' {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "balík '{1}' sa nenašiel"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "parent musí byť upgrade-code iného produktu, nie vlastný tohto balíka"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "parent musí byť upgrade-code hlavného produktu, GUID ako {{12345678-1234-1234-1234-123456789ABC}"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "path musí začínať priečinkom systému Windows (ako $(ProgramFiles) 
 msgid "paths"
 msgstr "cesty"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "perceived-type musí byť \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" alebo \"application\" (zadané '{1}')"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "povolenia potrebujú scope = \"machine\" (toto je {1})"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "phase musí byť \"immediate\", \"deferred\", \"commit\" alebo \"rollback\" (zadané '{1}')"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "ports musí byť port alebo rozsah ako \"8000-8100\" v rámci 1-65535 (zadané '{1}')"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "vypísať tohto pomocníka alebo použitie jedného príkazu"
 msgid "product-code must be a GUID"
 msgstr "product-code musí byť GUID"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "profile musí byť \"all\", \"domain\", \"private\" alebo \"public\" (zadané '{1}')"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "prog-id '{1}' už patrí [com.{2}]"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "prog-id '{1}' patrí aj [assoc.{2}]: typ súboru a trieda COM potrebujú dva názvy"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "prog-id '{1}' je aj v [assoc.{2}] s iným popisom, target, icon alebo args"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "prog-id '{1}' je aj v [assoc.{2}] s iným logo"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "prog-id musí byť písmená, číslice, '.', '_' alebo '-', nezačínať číslicou, najviac 39 (zadané '{1}')"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "properties sú pre balíky Inštalátora systému Windows; MSIX ich neprijíma"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "vlastnosť '{1}' už patrí ovládaciemu prvku '{2}'"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "vlastnosť '{1}' má názov dir alebo funkcie"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "vlastnosť '{1}' je už definovaná (riadok {2})"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "vlastnosť '{1}' sa už vyhľadáva (riadok {2})"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "vlastnosť '{1}' nastavuje rubrapack alebo inštalátor a nedá sa tu definovať"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "vlastnosť '{1}' musí byť váš vlastný verejný názov (veľkými písmenami)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "vlastnosť '{1}' musí byť verejný názov: veľké písmená, číslice a '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "protocol musí byť \"tcp\" alebo \"udp\" (zadané '{1}')"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "public-folder musí byť priečinok balíka, napríklad \"Public\" (zadané '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "recursive = true sa nikdy nespustí, keď aktualizácia odstraňuje tút
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "recursive = true odstráni priečinok so všetkým v ňom; neprijíma 'name'"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "refuse-upgrade-below {1} je nad verziou tohto balíka {2}"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "refuse-upgrade-below '{1}' musí byť verzia ako 1.2.3"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message potrebuje refuse-upgrade-below"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "oblasť {1} stránky jazykov má {2} jazykov, najviac {3} (X-Rubrapack-Group ich balíkov)"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "registration musí byť \"machine\" alebo \"user\" (zadané '{1}')"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "register '{1}' odstraňuje hodnotu; nemá čo chrániť"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "hodnota registra '{1}' potrebuje funkciu"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "remove-addons potrebuje úlohu čistenia: odstráňte cleanup = false"
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "replaces obsahuje najviac 16 kódov aktualizácie"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "replaces obsahuje kódy aktualizácie, GUID ako {{12345678-1234-1234-1234-123456789ABC} (zadané '{1}')"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "replaces je pole kódov aktualizácie, napr. [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "replaces uvádza {1} dvakrát"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "replaces uvádza {1}, čo je upgrade-code tohto balíka alebo jeho nadradeného"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "chýba povinná vlastnosť {1}"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "dvojča rollback musí byť pred {1} ({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "root musí byť HKLM, HKCR alebo HKCU"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "root musí byť HKLM, HKCU, HKCR alebo HKMU (zadané '{1}')"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new: niekoľko otázok vytvorí zdroj (Enter prevezme hodnotu 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "spustite `rubrapack help <command>`; skontrolujte cesty a či existuje výstupný priečinok"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run: '{1}' (stroj 0x{2}) nemôže bežať na strojoch tohto balíka"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run: '{1}' nie je program (.exe)"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run: súbor '{1}' nie je [file.*] tohto balíka"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "uložte zdroj ako UTF-8 (alebo UTF-16 s BOM) s koncami riadkov LF alebo 
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "povie, či je v tomto systéme Windows nainštalovaný produkt s týmto kódom inovácie alebo balík aplikácie tejto rodiny"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "schéma '{1}' už má program ([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "scope musí byť \"machine\", \"user\" alebo \"dual\""
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "sddl musí byť reťazec SDDL ako \"D:PAI(A;OICI;FA;;;BA)\""
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "vyhľadávacia vlastnosť '{1}' musí byť váš vlastný verejný názov (veľkými písmenami)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "pozrite správu; opätovné zostavenie pomocou rubrapack opraví väčšinu z nich"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "poradie {1} nie je za {2} ({3})"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "zaraďuje akciu vedľa akcie, ktorú nespúšťa ani balík, ani modul"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "názov služby '{1}' sa už používa"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "služby potrebujú scope = \"machine\" (toto je {1})"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "názov odkazu má {1} jednotiek UTF-16; s krátkym názvom 8.3 pojme MSI najviac {2}"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "ukáže, čím sa dva balíky líšia: tabuľky, riadky, bunky a súhrn"
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "podpísanie súboru PE, balíka MSI, balíka alebo zväzku MSIX"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "podpísané {1}\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "zdroj '{1}' je adresár; pre veľa súborov použite [files.ID]"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "zdroj '{1}' je symbolický odkaz; odkazy sa nesledujú"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "zdroj '{1}' nie je bežný súbor"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "zdrojový súbor '{1}' sa zmenil počas zostavovania balíka"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "zdrojový súbor '{1}' je väčší ako 2 GiB"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "zdrojový súbor '{1}' sa nenašiel"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "source musí byť \"file:<ID>\""
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "source musí byť balík .msi, .msix, .msixbundle alebo .msp"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "zdrojová cesta '{1}' musí byť relatívna k zdrojovému súboru"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "zdrojové cesty používajú '/', nie '\\\\' (zadané '{1}')"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source: súbor '{1}' nie je [file.*] tohto balíka"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "summary-name musí byť ASCII (súhrnné informácie obsahujú len ASCII
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "symbols je zoznam súborov .pdb, napríklad [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "tabuľka {1} {2}"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "tabuľka '{1}' je nečitateľná"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "tabuľka [{1}{2}{3}] je definovaná dvakrát (prvýkrát na riadku {4})"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "tags je zoznam najviac 16 hľadaných výrazov, napríklad [\"editor\", 
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "neprijíma konfiguráciu (nemá ModuleConfiguration)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "cieľ '{1}' neexistuje"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "target musí byť \"dir:<ID>\", \"file:<ID>\" alebo \"registry:<ID>\""
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "target musí byť \"file:<ID>\" označujúce [file.*] tohto balíka"
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "názov cieľa '{1}' {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target: súbor '{1}' nie je [file.*] tohto balíka"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "task-id '{1}' už používa [msix-extension.{2}]"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "súbor UTF-16 nie je platné UTF-16"
 msgid "the ZIP central directory lies outside the file"
 msgstr "centrálny adresár ZIP leží mimo súboru"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "ID aplikácie '{1}' sa stane Application Id: len písmená a číslice, nezačína číslicou"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "vložené cabinety robia balík veľký 2 GiB alebo viac, čo Windows In
 msgid "the entry is not in the central directory"
 msgstr "položka nie je v centrálnom adresári"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "dialóg chyby '{1}' potrebuje ovládací prvok {2} s názvom {3} (chyba 2835)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "spustiteľný súbor '{1}' musí byť .exe"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "manifest nemá Identity Publisher"
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "Identity manifestu nemožno prečítať pre úplný názov balíka"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "zlučovací modul {1}"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "názov {1}"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "rodina balíkov {1} je v kontajneri dvakrát"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "obsah balíka nezodpovedá jeho podpisu (bol zmenený po podpísaní)"
 msgid "the package's directory cannot be read"
 msgstr "adresár balíka nemožno prečítať"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "názov súboru balíka nesmie obsahovať úvodzovky ani znak percenta: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "odpoveď je väčšia ako 4 MiB"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "odpoveď používa kódovanie prenosu iné ako chunked"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "rovnaká podmienka sa už vyžaduje (riadok {1})"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "kódovanie zdrojového súboru"
 msgid "the system random source failed"
 msgstr "systémový zdroj náhodnosti zlyhal"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "poradie tabulátora (Control_Next) nie je jeden cyklus cez jeho {1} ovládacích prvkov od Control_First (Windows Installer sa zastaví s chybou 2809 alebo 2810)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "tento rubrapack bol zostavený bez časti ponuky: položky [menu.*] sa n
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "tento rubrapack bol zostavený bez inštalačného programu (nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "threading musí byť \"sta\", \"mta\", \"both\" alebo \"neutral\" (zadané '{1}')"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "príliš veľa lokalizovaných textov a mierok loga pre resources.pri"
 msgid "too many packages in the bundle"
 msgstr "príliš veľa balíkov vo zväzku"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "transformáciu '{1}' v '{2}' nemožno prečítať: {3}"
 
 msgid "trusted"
 msgstr "dôveryhodné"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "dve akcie zdieľajú sequence {1} ({2} a {3}); daj jednej [action] inú sequence, before alebo after"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "dva balíky rovnakého názvu vo zväzku"
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "dva balíky prostriedkov s rovnakým ResourceId vo zväzku"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "type musí byť string, expand, dword, qword, binary alebo multi (zadané '{1}')"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "type musí byť text, checkbox, edit, radio, combo, listbox alebo bitmap (získané '{1}')"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' nie je [file.*] tohto balíka"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "typelib-version je major.minor v šestnástkových číslach, napr. \"1.0\" (zadané '{1}')"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "types a verb patria k kind = \"context-menu\""
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types: každé je \".ext\" alebo \"*\" (každý súbor)"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types: každé je '.' a malé písmená, číslice, '_' alebo '-' (zadané '{1}')"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "ui = \"{1}\" umožňuje používateľovi vybrať priečinok dir '{2}', ktorý neexistuje (nastavte [ui] install-dir)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "ui = \"features\" potrebuje tabuľky [feature.*] na výber"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "ui musí byť none, basic, minimal, installdir alebo features (zadané '{1}')"
 
 msgid "unexpected text after the value"
 msgstr "neočakávaný text za hodnotou"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "neznámy príkaz '{1}' (pozrite 'rubrapack help')"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "neznámy escape \\{1} (pre text so spätnými lomkami použite '...')"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "neznáma možnosť inspect (použite názov tabuľky, --summary, --files alebo --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "neznámy kľúč '{1}' v [{2}{3}{4}]"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "neznámy kľúč '{1}' v [{2}{3}{4}] (mali ste na mysli '{5}'?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "neznáma alebo neúplná možnosť {1} '{2}'"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "neznáma tabuľka [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "neznáma tabuľka [{1}{2}{3}] (mali ste na mysli [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "rozbalenie balíka do nového adresára s rozložením ako pri inštalácii"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "nepodporované - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "kľúče update-* potrebujú appinstaller-uri a package-uri"
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "upgrade = false je pre on = \"uninstall\" alebo \"both\" (inštalácia nikdy nie je odstránenie pri aktualizácii)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "upgrade-code musí byť GUID ako {{12345678-1234-1234-1234-123456789ABC}"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "použitie: rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "použitie: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "použite úplné zostavenie rubrapack alebo iný spôsob"
 msgid "used by more than one component"
 msgstr "používa ho viac ako jeden komponent"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "users musí byť \"all\" (zadané '{1}')"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "hodnota '{1}' je uvedená dvakrát"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "values je pole 1 až 32 reťazcov"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "hodnoty: ID, GUID, verzie, čísla mimo rozsahu, odkazy na veci, ktoré neexistujú"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "premenná '{1}' nie je definovaná ([define] alebo -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "názov premennej '{1}' nesmie obsahovať '=' ani začínať = + - ! *"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "premenné"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "premenné: $(NAME) bez hodnoty, neuzavreté $(, názov systému Windows alebo dir ID tam, kde nemôže stáť"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "verzia '{1}' musí byť a.b.c alebo a.b.c.d"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "verzia '{1}' musí byť a.b.c alebo a.b.c.d s a, b <= 255 a c, d <= 65535"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "čo znamená diagnostický kód, správy, ktoré ho nesú, čo robiť a 
 msgid "with must be \"file:<ID>\""
 msgstr "with musí byť \"file:<ID>\""
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with: súbor '{1}' nie je [file.*] tohto balíka"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "bez --pkcs11 `keys list` zobrazí úložisko certifikátov Windows"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "working-dir '{1}' nie je dir ID"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "napíšte tabuľku alebo hodnotu jednoduchým spôsobom, ktorý ukazuje 
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "napíšte hodnotu bez '[~]'; mode = \"append\" alebo \"prepend\" ju pridá"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "zapísané {1}\n"
 
 msgid "x + width must be at most 370 (the page width)"

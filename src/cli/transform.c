@@ -82,14 +82,14 @@ int rp_cmd_transform(int argc, char **argv) {
         rp_mst_opts_t opts = { .summary_flags = flags << 16 };      // checks in the high word, as msi.dll stores them
         proven_err_t err = rp_mst_write(heap, &sa, &sb, &opts, &limits, &mst, &len, &why, table, sizeof table);
         if (err == PROVEN_ERR_UNSUPPORTED && why) {
-            if (table[0]) rp_diag_error(RP_DIAG_TRANSFORM, "table %s %s", table, why);
-            else rp_diag_error(RP_DIAG_TRANSFORM, "%s", why);
+            if (table[0]) rp_diag_error(RP_DIAG_TRANSFORM, "table {} {}", proven_arg_cstr(table), proven_arg_cstr(why));
+            else rp_diag_error(RP_DIAG_TRANSFORM, "{}", proven_arg_cstr(why));
             rc = RP_EXIT_SOURCE;
         } else if (err != PROVEN_OK) {
-            rp_diag_error(err == PROVEN_ERR_NOMEM ? RP_DIAG_NOMEM : RP_DIAG_BAD_PACKAGE, "cannot make a transform from '%s' to '%s'", in[0], in[1]);
+            rp_diag_error(err == PROVEN_ERR_NOMEM ? RP_DIAG_NOMEM : RP_DIAG_BAD_PACKAGE, "cannot make a transform from '{}' to '{}'", proven_arg_cstr(in[0]), proven_arg_cstr(in[1]));
             rc = RP_EXIT_IO;
         } else if (rp_pal_write_file_atomic(heap, out, mst, len) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+            rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(out));
             rc = RP_EXIT_IO;
         }
         rp_mem_free(heap, mst);
@@ -115,7 +115,7 @@ int rp_cmd_diff(int argc, char **argv) {
         rp_mst_side_t sa = { &a.view.db, &a.cfb }, sb = { &b.view.db, &b.cfb };
         rp_buf_t out = rp_buf_new(heap, limits.max_metadata);
         if (rp_msi_diff(heap, &sa, &sb, &limits, &out) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "cannot compare '%s' and '%s'", argv[2], argv[3]);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "cannot compare '{}' and '{}'", proven_arg_cstr(argv[2]), proven_arg_cstr(argv[3]));
             rc = RP_EXIT_IO;
         } else if (out.len && fwrite(out.data, 1, out.len, stdout) != out.len) {
             rc = RP_EXIT_IO;
@@ -138,13 +138,13 @@ int rp_mst_inspect(const char *path, const char *what, const char *base) {
     uint8_t *data = NULL;
     size_t len = 0;
     if (rp_pal_read_file(heap, path, MAX_INPUT, &data, &len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", path);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(path));
         return RP_EXIT_IO;
     }
     rp_cfb_t cfb;
     const char *why = NULL;
     if (rp_cfb_open(&cfb, heap, data, len, &limits, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid transform: %s", path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid transform: {}", proven_arg_cstr(path), proven_arg_cstr(why ? why : "unreadable"));
         rp_mem_free(heap, data);
         return RP_EXIT_IO;
     }
@@ -161,7 +161,7 @@ int rp_mst_inspect(const char *path, const char *what, const char *base) {
         }
         if (sum == NULL || rp_cfb_read(&cfb, id, sum, n) != PROVEN_OK || rp_suminfo_parse(sum, n, &si) != PROVEN_OK ||
             rp_suminfo_export_idt(&si, heap, &idt, &idt_len) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' has no readable summary information", path);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' has no readable summary information", proven_arg_cstr(path));
             rc = RP_EXIT_IO;
         } else {
             rp_buf_put(&out, idt, idt_len);
@@ -172,7 +172,7 @@ int rp_mst_inspect(const char *path, const char *what, const char *base) {
         rp_pkg_t b;
         rc = rp_pkg_open(heap, base, &limits, &b);
         if (rc == RP_EXIT_OK && rp_mst_list(heap, &cfb, 0, &b.view.db, &limits, &out, &why) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' cannot be read against '%s': %s", path, base, why && *why ? why : "unreadable");
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' cannot be read against '{}': {}", proven_arg_cstr(path), proven_arg_cstr(base), proven_arg_cstr(why && *why ? why : "unreadable"));
             rc = RP_EXIT_IO;
         }
         rp_pkg_close(heap, &b);
@@ -201,7 +201,7 @@ int rp_cmd_patch(int argc, char **argv) {
                 ok = (k == 9 || k == 14 || k == 19 || k == 24) ? c == '-' : ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F'));
             }
             if (!ok) {
-                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}");
+                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}");
                 return RP_EXIT_USAGE;
             }
         } else if (strcmp(argv[i], "--family") == 0 && i + 1 < argc) {
@@ -243,14 +243,14 @@ int rp_cmd_patch(int argc, char **argv) {
         char what[128];
         proven_err_t err = rp_msp_write(heap, &sa, &sb, &opts, &limits, &msp, &len, &why, what, sizeof what);
         if (err == PROVEN_ERR_UNSUPPORTED && why) {
-            if (what[0]) rp_diag_error(RP_DIAG_TRANSFORM, "%s %s", what, why);
-            else rp_diag_error(RP_DIAG_TRANSFORM, "%s", why);
+            if (what[0]) rp_diag_error(RP_DIAG_TRANSFORM, "{} {}", proven_arg_cstr(what), proven_arg_cstr(why));
+            else rp_diag_error(RP_DIAG_TRANSFORM, "{}", proven_arg_cstr(why));
             rc = RP_EXIT_SOURCE;
         } else if (err != PROVEN_OK) {
-            rp_diag_error(err == PROVEN_ERR_NOMEM ? RP_DIAG_NOMEM : RP_DIAG_BAD_PACKAGE, "cannot make a patch from '%s' to '%s'", in[0], in[1]);
+            rp_diag_error(err == PROVEN_ERR_NOMEM ? RP_DIAG_NOMEM : RP_DIAG_BAD_PACKAGE, "cannot make a patch from '{}' to '{}'", proven_arg_cstr(in[0]), proven_arg_cstr(in[1]));
             rc = RP_EXIT_IO;
         } else if (rp_pal_write_file_atomic(heap, out, msp, len) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+            rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(out));
             rc = RP_EXIT_IO;
         }
         rp_mem_free(heap, msp);
@@ -278,10 +278,10 @@ int rp_instance_inspect(const char *path, const char *name) {
     rp_buf_t out = rp_buf_new(heap, limits.max_metadata);
     const char *why = NULL;
     if (rp_cfb_find(&p.cfb, 0, wname, nl, &id) != PROVEN_OK || p.cfb.entries[id].type != RP_CFB_STORAGE) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' has no embedded transform '%s'", path, name);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' has no embedded transform '{}'", proven_arg_cstr(path), proven_arg_cstr(name));
         rc = RP_EXIT_IO;
     } else if (rp_mst_list(heap, &p.cfb, id, &p.view.db, &limits, &out, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "transform '%s' in '%s' cannot be read: %s", name, path, why && *why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "transform '{}' in '{}' cannot be read: {}", proven_arg_cstr(name), proven_arg_cstr(path), proven_arg_cstr(why && *why ? why : "unreadable"));
         rc = RP_EXIT_IO;
     } else if (out.err != PROVEN_OK || rp_pal_write(RP_OUT_STDOUT, out.data, out.len) != PROVEN_OK) {
         rc = RP_EXIT_IO;
@@ -304,7 +304,7 @@ int rp_msp_inspect(const char *path, const char *base) {
         uint8_t *idt = NULL;
         size_t n = 0;
         if (rp_msi_export_idt(&p.msi, t, &idt, &n) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': a table is unreadable", path);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': a table is unreadable", proven_arg_cstr(path));
             rc = RP_EXIT_IO;
         } else {
             rp_buf_put(&out, idt, n);
@@ -325,7 +325,7 @@ int rp_msp_inspect(const char *path, const char *base) {
         if (si.props[i].pid == 8 && si.props[i].type == RP_VT_LPSTR) order = &si.props[i];
     }
     if (rc == RP_EXIT_OK && order == NULL) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' names no transforms (summary property 8): not a patch", path);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' names no transforms (summary property 8): not a patch", proven_arg_cstr(path));
         rc = RP_EXIT_IO;
     }
     for (size_t i = 0; rc == RP_EXIT_OK && i < order->str_len;) {
@@ -340,11 +340,10 @@ int rp_msp_inspect(const char *path, const char *base) {
         rp_buf_put(&out, order->str + s, e - s);
         rp_buf_byte(&out, '\n');
         if (rp_cfb_find(&p.cfb, 0, name, nl, &id) != PROVEN_OK || p.cfb.entries[id].type != RP_CFB_STORAGE) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' has no transform '%.*s'", path, (int)(e - s), (const char *)order->str + s);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' has no transform '{}'", proven_arg_cstr(path), proven_arg_cstr_n((const char *)order->str + s, (size_t)((int)(e - s))));
             rc = RP_EXIT_IO;
         } else if (rp_mst_list(heap, &p.cfb, id, &b.view.db, &limits, &out, &why) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': transform '%.*s' cannot be read against '%s': %s", path, (int)(e - s),
-                          (const char *)order->str + s, base, why && *why ? why : "unreadable");
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': transform '{}' cannot be read against '{}': {}", proven_arg_cstr(path), proven_arg_cstr_n((const char *)order->str + s, (size_t)((int)(e - s))), proven_arg_cstr(base), proven_arg_cstr(why && *why ? why : "unreadable"));
             rc = RP_EXIT_IO;
         }
         i = e + 1;

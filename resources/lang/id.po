@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Segoe UI\n"
 "X-Rubrapack-Group: 2\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialog {6}{7}\n  1 nama, produsen, versi, arsitektur            2 folder instalasi, untuk siapa diinstal\n  3 dialog, lisensi, bahasa                      4 bagian opsional\n  5 pintasan                                     6 file: samakan dengan folder program\n  7 kunci apa pun                                v lihat   l lint   s simpan   q keluar\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\nPesan dengan kode ini (* mewakili nama atau nilai):\n"
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nHasil dikirim ke stdout, diagnostik ke stderr.\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\nYang harus dilakukan: {1}.\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} sudah tidak ada, tetapi ada pintasan yang membukanya: ubah pintasan (5) terlebih dahulu\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  {1} file dan {2} folder di sana\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7, v, l, s atau q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  menambahkan [dir.{1}] dan [files.{2}]\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  menambahkan [file.{1}]\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint: lihat masalah di atas (file yang disebut di sana adalah salinan 
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  bahasa lain di [ui] languages tetap dipertahankan; ubah daftar itu dengan 7 (kunci apa pun)\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  menghapus [file.{1}]\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  menghapus [files.{1}]{2}\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  itu tidak sesuai dengan subset TOML; tidak ada yang diubah\n"
 msgid "  that was not readable text; again, please\n"
 msgstr "  itu bukan teks yang dapat dibaca; silakan ulangi\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  folder program '{1}': {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - membuat paket Windows Installer (.msi) dan MSIX (.msix)\n\npenggunaan
 msgid " and its dir"
 msgstr " dan dir-nya"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}) tidak memiliki variabel lingkungan, jadi nilai yang dapat diperluas tidak bisa memuatnya; gunakan nilai string (diisi saat instalasi)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) adalah {2}: dapat mengawali jalur, atau menggantikan nilai yang diisi Windows Installer (registri, lingkungan, INI, argumen, pesan), bukan di sini"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) bukan folder awal jalur (ID dir, atau ProgramFiles, LOCALAPPDATA, ProgramData ... - lihat Paths di manual){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  struktur:     {2}\n  digest:       {3}\n  tanda tangan: {4}\n  rantai:       {5}{6}{7}\n  pencabutan:   tidak diperiksa\n  stempel waktu: {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2}: variabel tidak diatur"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' bukan kontrol dialog ini"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' tidak ada di {3}"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}': {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': teks lisensi memerlukan nama font dalam bahasa Inggris, jadi ditampilkan dengan font bahasa itu sendiri; tulis nama bahasa Inggrisnya (seperti \"Malgun Gothic\") agar font ini juga dipakai di sana"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "{1} = '{2}' harus berupa folder"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "komponen {1}, tetapi platform paket adalah {2}"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} bukan bagian dari kind = \"{2}\""
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} bukan bagian dari kind = \"firewall\""
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} berisi LANGID (1..65535), seperti 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} berisi string"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "{1} panjangnya {2} sampai {3} karakter"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} adalah daftar teks \"Kunci=Nilai\""
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "{1} adalah daftar teks, seperti [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} adalah nama font 1 sampai 31 karakter, seperti \"Segoe UI\" (didapat {2})"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} adalah kondisi MSI dengan tanda kutip tertutup dan tanda kurung seimbang"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} adalah array string, satu per nilai"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} untuk paket MSI: MSIX tidak dihapus oleh msiexec"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} sudah tidak ada. Hapus [file.{2}]?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} lebih panjang dari 240 karakter"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} baru. Tambahkan?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} bukan GUID dalam format registri"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} bukan kode yang digunakan rubrapack ini{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} harus berupa \"file:<ID>\" yang menyebut [file.*] dari paket ini"
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "{1} harus terdiri atas {2} sampai {3} huruf, angka, '.' atau '-', tidak diawali '.' (didapat '{4}')"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1} harus berupa GUID"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1} harus berupa GUID seperti {{12345678-...} (didapat '{2}')"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "{1} harus berupa alamat http:// atau https:// (diterima '{2}')"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1} harus berupa alamat https://, http:// atau file://, atau jalur \\\\server\\share (didapat '{2}')"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1} harus berbeda dari upgrade-code (satu keluarga peningkatan per arsitektur)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} memerlukan Windows build {2} atau lebih baru: atur [msix] min-version = \"10.0.{3}.0\""
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} memerlukan resources/bin/rubrapack_ca-{2}.dll, yang tidak disertakan saat rubrapack ini dibangun"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}, TSA tidak diperiksa (berikan --tsa-trust)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}, TSA tepercaya"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}, TSA tidak tepercaya - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} sudah tidak ada atau kosong. Hapus [files.{3}] dan [dir.{4}]?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ adalah folder baru. Tambahkan?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1}: {2} kesalahan{-3}, {4} peringatan{-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1}: {2} kesalahan{-3}, {4} peringatan{-5} (terhadap {6})\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1}: {2} file, {3} byte\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1}: {2} file, {3} kesalahan, 0 peringatan\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1}: {2} diagnostik lagi tidak ditampilkan\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1}: '{2}' bukan program (.exe)"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' bukan tindakan standar yang ditempatkan rubrapack"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1}: file '{2}' bukan [file.*] dari paket ini"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1}: file '{2}' bukan program (.exe)"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "'$(' tidak ditutup (tulis '$$(' untuk teks '$(')"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' sudah ada; dibiarkan apa adanya"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' sudah ada; hapus atau bangun ke folder lain"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}' sudah memiliki handler {2} ([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}' sudah memiliki izin"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' dan '{2}' adalah jalur yang sama dalam paket"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' milik Windows atau browser"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "'{1}' tidak dapat dibaca terhadap '{2}': {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' tidak sesuai dengan subset TOML; tidak ada yang disimpan"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' sudah ada"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' sudah ada; ubah dengan `rubrapack edit {2}`"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' ada dan bukan direktori kosong; ekstrak ke direktori baru"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' masuk ke {2}; atau msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}' memiliki aliran informasi ringkasan yang tidak dapat dibaca"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' tidak memiliki tabel Directory, Component, File dan Media untuk diekstrak"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "'{1}' tidak memiliki transformasi tertanam '{2}'"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}' tidak memiliki informasi ringkasan yang dapat dibaca"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}' tidak memiliki transform '{2}'"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' adalah UTF-16: edit hanya mengubah sumber UTF-8 (simpan sebagai UTF-8 terlebih dahulu)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' adalah nama Windows; beri variabel nama lain"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' adalah [chain]: membangun program setup, -o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' adalah kontrol bingkai bawaan; pilih ID lain"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' adalah folder mesin; paket {2} tidak dapat menulis di sana"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' adalah modul gabungan: gabungkan dengan [merge.ID]"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' adalah nama yang dicadangkan format MSIX untuk dirinya"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' adalah tautan simbolik; tautan tidak diikuti"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' juga merupakan [property.*]"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' juga ID dir; beri variabel nama lain"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' dibangun untuk mesin 0x{2}, bukan arsitektur paket ini; atur any-arch = true jika memang disengaja"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' bukan file PE (.exe, .dll), paket MSI, paket atau bundel MSIX, maupun cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' bukan file PE, paket MSI, paket atau bundel MSIX, maupun cabinet"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' bukan folder yang dikenal maupun ID dir (folder yang dikenal: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' bukan paket MSIX maupun nama keluarga paket (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' bukan cabinet yang dapat dibaca rubrapack (stored atau MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' bukan kode diagnostik (RP dan empat digit, seperti RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' bukan program (.exe)"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' bukan file biasa"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' bukan program setup rubrapack{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' bukan ID yang valid (huruf, digit dan '_', tidak diawali digit, paling banyak {2})"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' bukan basis data MSI yang valid: {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' bukan paket MSIX yang valid: {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' bukan paket yang valid: {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' bukan sumber yang valid (subset TOML); perbaiki secara manual terlebih dahulu"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' bukan transform yang valid: {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' bukan nama variabel yang valid"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' dicadangkan dan tidak dapat digunakan sebagai ID"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' adalah nama dir: hanya pencarian registri atau dir yang dapat mengisi dir"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' tampak seperti file program (PE) tetapi header atau sumber dayanya rusak"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}' harus berupa string"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}' harus berupa bilangan bulat"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}' harus antara {2} dan {3}"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}' harus true atau false"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' tidak boleh kosong"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' tidak menyebut transform (properti ringkasan 8): bukan patch"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' diawali folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}': {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}': {2} '{3}' memiliki {4}; tidak ada yang diekstrak"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}': {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}': {2} entri, lebih dari batas {3} (--limit-entries); tidak ada yang diekstrak"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}': '{2}' dan '{3}' akan menjadi jalur yang sama di Windows; tidak ada yang diekstrak"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}': '{2}' tidak ada di [ui] languages"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}': sebuah tabel tidak dapat dibaca"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}': sebuah tabel tidak terbaca"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}': MSIX menginstal semua filenya (when); gunakan msi-only = true"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}': MSIX menghapus semua filenya (keep); gunakan msi-only = true"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}': cabinet '{2}' rusak atau bukan stored/MSZIP"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}': nama cabinet '{2}' bukan nama file biasa"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}': file terkompresi '{2}' (urutan {3}) tidak memiliki cabinet"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}': direktori '{2}' memiliki induk '{3}' yang tidak ada"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}': direktori '{2}' adalah leluhurnya sendiri atau bersarang terlalu dalam"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}': file '{2}' tidak cocok dengan MsiFileHash-nya"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}': file '{2}' tidak memiliki komponen atau direktori"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}': file '{2}' berukuran {3} byte, tabel File menyebut {4}"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}': file '{2}' tidak ada di cabinet '{3}'"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}': cabinet eksternalnya tidak dicakup tanda tangan (--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}': foldernya tidak mengarah ke lokasi yang dikenal"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}': lebih dari {2} byte untuk ditulis (--limit-bytes); tidak ada yang diekstrak"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}': tanpa --timestamp: tanda tangan tidak lagi valid saat sertifikat kedaluwarsa"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}': paket '{2}' tidak cocok dengan SHA-256-nya"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}': aliran cabinet '{2}' tidak ada"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}': manifest tidak memiliki {2} {3}"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}': manifest menyebut '{2}', yang tidak ada dalam paket"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}': stempel waktu dari {2}: {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}': transform '{2}' tidak dapat dibaca terhadap '{3}': {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' adalah bahasa paket itu sendiri ({2}); berikan teks itu tanpa akhiran"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "'version' tidak menerima argumen"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "--allow-unsigned-cabs untuk .msi"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "--arch untuk bundel: daftar x64, x86 dan arm64, masing-masing sekali (didapat '{1}')"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "--dist menyebut folder baru di samping sumber (tanpa jalur)"
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "--flat untuk keluaran .msixbundle (paket-paketnya ditulis di sampingnya)"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "--jobs menerima angka 1 sampai 64 (didapat '{1}')"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "--key menandatangani paling banyak {1} cabinet eksternal; naikkan cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "--key-store adalah penyimpanan sertifikat Windows; di tempat lain gunaka
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store menerima thumbprint SHA-1 sertifikat (40 digit heksadesimal)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1}: bahasa itu tidak ada (bawaan: {2}; bahasa lain memerlukan paket bahasanya, {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "--lang (atau RUBRAPACK_LANG) memilih bahasa teks-teks ini: {1}, atau bahasa yang memiliki paket bahasa.\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "--lang memerlukan bahasa, seperti en atau ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "--languages memerlukan dialog: berikan juga --ui"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "--msix-compress menerima deflate atau store (didapat '{1}')"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1}: variabel tidak diatur"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "--patch-code menerima GUID huruf besar dengan kurung kurawal: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1}: variabel tidak diatur"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "--previous membandingkan dua paket .msi"
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots: sertifikat root sistem operasi tidak dapat dibaca"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "--target {1} tidak cocok dengan output '{2}'"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "--target {1} belum diimplementasikan (msi atau msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "--target menerima msi atau msix (didapat '{1}')"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "--winget memerlukan tabel [winget]: identifier, installer-url, license, 
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "--winget memerlukan paket dalam satu file: winget mengunduh satu, jadi bukan cab = \"external\""
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "-D {1} diberikan dua kali"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1}: '{2}' adalah nama Windows; beri variabel nama lain"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "-D memerlukan NAME=VALUE (didapat '{1}')"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "-i menanyakan setiap jawaban; berikan -i atau opsi-opsinya"
 msgid "; its range is "
 msgstr "; rentangnya adalah "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "ActionProperty '{1}' tidak ada di SecureCustomProperties"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Nama folder di bawah Program Files"
 msgid "Folder with the files to install"
 msgstr "Folder berisi file yang akan diinstal"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "ID '{1}' sudah digunakan (baris {2}); ID harus berbeda di semua tabel"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "Instal untuk (machine, user, dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "Kunci sebagai table.key (package.version, dir.INSTALLDIR.path, ...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "KeyPath '{1}' milik komponen lain"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "KeyPath '{1}' tidak ada di File"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "KeyPath '{1}' tidak ada di Registry"
 
 msgid "Korean dialogs as well as English?"
 msgstr "Dialog bahasa Korea selain bahasa Inggris?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "LastSequence {1} lebih rendah dari milik DiskId yang lebih kecil"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX: apa yang dibutuhkan paket MSIX, dan apa yang tidak dapat dimuatnya
 msgid "Main program, for shortcuts (- for none)"
 msgstr "Program utama, untuk pintasan (- jika tidak ada)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "Manual: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "Nama produk"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "ProductCode dan UpgradeCode adalah GUID yang sama"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} tidak lebih tinggi dari {2} sebelumnya pada tiga bidang pertama: Windows Installer tidak meningkatkan"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Program yang dibuka pintasan (- jika tanpa pintasan)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1}: bahasa itu tidak ada (bawaan: {2}; bahasa lain memerlukan paket bahasanya, {3}.po)"
 
 msgid "Reference, "
 msgstr "Referensi, "
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "Urutan {1} tidak dicakup baris Media mana pun (terakhir {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "Urutan {1} digunakan oleh file lain"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "File sumber yang akan ditulis"
 msgid "Source format"
 msgstr "Format sumber"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "Source harus menyebut baris File untuk tipe {1}"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "Subset TOML"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "File UTF-16 big-endian tidak didukung; simpan sebagai UTF-8"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "UpgradeCode {1} berbeda dari {2} milik versi sebelumnya: paket ini tidak menggantikannya"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "Versi dan peningkatan"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer mengizinkan paling tinggi 255.255.65535(.65535)"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "Windows tidak memberi tahu apa yang terpasang untuk '{1}'"
 
 msgid "Windows name"
 msgstr "nama Windows"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] memerlukan '{4}'"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] tidak dapat masuk ke modul gabungan; paket yang menggabungkannya yang memilikinya"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] belum didukung (direncanakan untuk {3})"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] tidak dapat masuk ke MSIX; tambahkan msi-only = true untuk membangun MSIX tanpanya"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] tidak dapat masuk ke MSIX; tambahkan msi-only = true untuk membangun MSIX tanpanya"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "[{1}.{2}] berada di AppData atau LocalAppData pengguna: paket dual yang dipasang untuk semua pengguna hanya menaruhnya di profil pengguna yang memasang"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID dalam modul gabungan paling banyak 35 karakter (GUID modul ditambahkan)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] memerlukan ID: tulis [{2}.ID]"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] tidak menerima ID: tulis [{2}]"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "[Content_Types].xml bukan entri terakhir (bukan paket yang ditulis rubra
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Array tabel [[...]] tidak didukung; beri setiap item [kind.ID] sendiri"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] ditempatkan sekali: before, after atau sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] memerlukan do dan undo (undo juga membatalkan do yang gagal)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] perlu entry: fungsi DLL yang dipanggil"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] perlu run = \"file:<ID>\": program yang dijalankan do dan undo"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "[action.{1}] menjalankan file dari paket ini sebelum InstallFinalize, saat instalasi pertama belum memilikinya (galat Windows Installer 1721 atau 1723): letakkan setelah InstallFinalize atau jadikan deferred"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] menjalankan satu hal: run (exe), dll (DLL terpasang) atau binary (DLL dalam paket); atau do dan undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}]: {2} untuk satu tindakan, bukan untuk pasangan do/undo"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}]: tindakan tertunda yang menjalankan berkas terpasang harus setelah InstallFiles (sequence > 4000)"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}]: tindakan langsung berjalan sebagai pengguna yang memasang; as untuk fase lain"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}]: args milik program; DLL mendapat data"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}]: check ikut dengan pasangan do/undo"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}]: data untuk tindakan tertunda, commit atau rollback (yang langsung membaca properti)"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}]: entry adalah fungsi DLL; run mengambil args"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: args untuk MSIX harus berupa teks biasa (tanpa [...] yang diisi saat instalasi)"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}]: di MSIX jenis file membuka aplikasi: target harus berupa executable [msix-app.*]"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] ada dua kali"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "[chain-package] memerlukan ID: tulis [chain-package.ID]"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}]: app-id dan typelib hanya ditulis untuk MSI; MSIX mendaftarkan kelas tanpa keduanya"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}]: args milik program; DLL dimuat, tidak dijalankan"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}]: surrogate menjalankan DLL di dllhost; '{2}' adalah program"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}]: threading untuk DLL; program menetapkan apartment-nya sendiri"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}]: typelib-version dan typelib-file memerlukan typelib"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] masuk ke {2}; atau msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}]: sumbernya harus file yang masuk ke paket"
 
 msgid "[define] values must be strings"
 msgstr "Nilai [define] harus berupa string"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] memerlukan '{2}'"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "[dialog-control.{1}] memerlukan image"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] memerlukan 'property'"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] memerlukan 'text'"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] memerlukan 'values'"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}] memiliki {2} kontrol; paling banyak 64"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}] tidak memiliki [dialog-control.*]"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] ditempatkan setelah dirinya sendiri melalui dialog lain"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] memerlukan ui = \"minimal\", \"installdir\" atau \"features\""
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}]: '{2}' adalah nama Windows; beri dir ID lain"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}]: guard memerlukan DLL pembantu rubrapack, yang tidak dibawa modul gabungan"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] memerlukan fitur"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}]: MSIX mengatur semua variabelnya (when); gunakan msi-only = true"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: nilainya menyebut tempat yang tidak dapat diberikan MSIX (folder di luar paket yang bukan folder Windows, atau bagian waktu instalasi); gunakan msi-only = true"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}]: dengan external-location = true paket tidak membawa file program apa pun, jadi juga tidak membawa peluncur rubrapack; atau msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] sudah ada di folder programnya; isolate-for untuk DLL bersama yang dipasang di tempat lain"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] berada di profil pengguna dan memiliki component-guid: jalur kuncinya tetap berkas tersebut, sedangkan aturan Windows menghendaki nilai HKCU di sana (ICE38); hapus component-guid untuk mendapatkannya"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}]: {2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' bukan assembly .NET (tidak ada header CLI dengan baris Assembly)"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}]: assembly .NET membawa manifesnya sendiri; manifest untuk assembly Win32"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}]: assembly Win32 memerlukan manifest = \"file:<ID>\", file manifesnya"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: assembly .NET bersama masuk ke GAC, yang hanya menerima assembly bernama kuat; tandatangani atau berikan assembly-for = \"file:<program>\""
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: assembly Win32 bersama masuk ke WinSxS dengan katalog yang ditandatangani kunci yang disebut publicKeyToken pada manifesnya; bangun dengan --key (atau berikan assembly-for = \"file:<program>\" untuk yang privat)"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: manifes '{2}' assembly Win32 bersama menyebut penandatangannya: publicKeyToken di assemblyIdentity (token --key yang dipakai untuk membangun)"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for dan manifest dipakai bersama assembly = \"dotnet\" atau \"win32\""
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}]: manifesnya '{2}' tidak memiliki assemblyIdentity dengan name dan version"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: manifesnya '{2}' harus berada di dir dan feature yang sama (dan dengan when yang sama): keduanya satu komponen"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}]: manifes menyebut publicKeyToken \"{2}\", tetapi token --key adalah \"{3}\""
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifes '{2}' milik assembly lain atau merupakan assembly itu sendiri"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}]: Explorer memuat handler {2} dari DLL; [com.{3}] adalah program"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}]: Windows membaca handler properti hanya per mesin; paket memerlukan scope = \"machine\""
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}]: handler pratinjau berjalan di prevhost Windows; jangan cantumkan app-id dan surrogate di [com.{2}]"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}]: MSIX hanya membawa handler thumbnail dan pratinjau (handler properti dalam paket tidak memberi nilai ke Explorer); msi-only = true mempertahankannya untuk MSI"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}]: jenis file MSIX milik aplikasi; tambahkan [msix-app.*]"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}]: kelas {2} bukan [com.*] dari paket ini (DLL handler yang melayaninya)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}]: di MSIX handler berbagi semua jenisnya atau tidak sama sekali (satu jenis ada dalam satu asosiasi jenis file)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}]: di MSIX kelasnya berjalan dalam surrogate; threading = \"sta\" di [com.{2}] memberi jendelanya loop pesan (dengan threading = {3} pratinjau bisa tetap kosong)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}]: di MSIX semua jenisnya ada dalam satu jenis file [assoc], atau tidak ada"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}]: kelasnya msi-only ([com.{2}]); MSIX tidak akan memiliki server untuknya"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}]: types adalah daftar jenis file, seperti [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] masuk ke {2}; atau msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] memerlukan 'value'"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] memerlukan fitur: atur 'feature' di sini atau di dir-nya"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}]: MSIX menulis semua entri INI-nya (when); gunakan msi-only = true"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}]: nilainya memiliki bagian yang diisi Windows Installer saat instalasi ([...]); MSIX menulis file saat dibangun"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] memerlukan 'on': tempat item muncul, seperti [\".txt\"] atau \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] memerlukan 'target' (program yang dijalankannya), atau item dengan parent = \"{2}\" (submenu)"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] memerlukan 'target': program yang dijalankan item"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}]: menu Windows 11 hanya menerima ID dari huruf dan angka (tanpa '_'): ganti namanya, atau windows11 = false"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: submenu tidak menjalankan apa pun: hilangkan 'args'"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}]: item submenu muncul di tempat submenunya muncul: hilangkan 'on'"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args memiliki bagian yang diisi Windows Installer saat instalasi ([...]); MSIX hanya memuat teks tetap"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}]: hide-when adalah \"HKCU\\\\key\\\\value\" atau \"HKLM\\\\...\", pada item menu Windows 11 yang tidak berada di submenu"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}]: hide-when menyebut nilai yang ditulis paket ini sendiri ([registry.{2}]): item tidak akan pernah muncul"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: programnya tidak ada di MSIX (msi-only?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: nilainya tidak dapat masuk ke registri paket"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: list memiliki bagian yang diisi Windows Installer saat instalasi ([...]); MSIX hanya memuat teks tetap"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}]: list menggantikan {2} bila jalur tidak muat dalam satu baris perintah: perlu multi = \"one\", {3} di args dan {4} (file daftar) di list"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}]: on = \"{2}\": tidak ada [assoc.{3}]"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}]: on adalah jenis file atau daftar jenis file, seperti [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}]: parent '{2}' bukan [menu.*]"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}]: parent '{2}' harus berupa submenu: [menu.*] tanpa target dan tanpa parent sendiri"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] masuk ke {2}; atau msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] memerlukan fitur: atur 'feature' di sini atau di dir-nya"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}]: '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; atau msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] perlu feature (atau with = \"file:<ID>\")"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}]: feature ikut dengan komponen sendiri, bukan dengan with"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name menyebut satu berkas; name memiliki karakter pengganti"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}]: target berbagi memerlukan types, formats, atau keduanya"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}]: penangan putar otomatis memerlukan content-events, device-events, atau keduanya"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args harus berupa teks biasa (tanpa [...] yang diisi saat instalasi)"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}]: device-events memerlukan class (kelas COM IHWEventHandler milik program)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}]: file harus {2}"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}]: file harus menyebut file yang masuk ke paket"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}]: file harus menyebut program yang masuk ke paket"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types adalah daftar jenis file, seperti [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows hanya menerima huruf dan angka"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "[msix-psf] tidak dapat digabung dengan external-location = true maupun [
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "[msix-psf] memulai aplikasi melalui peluncur PSF: perlu [msix-app.ID]"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf]: config '{1}' tidak menyebut aplikasi '{2}' dalam \"applications\"-nya"
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf]: files tidak memiliki '{1}' (peluncur)"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}]: berkas '{2}' bukan DLL"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] menyebut drivernya sekali: driver (sebuah [odbc-driver]) atau driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] dengan driver-name perlu with = \"file:<ID>\": komponen tempat ia dipasang"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}]: paket per komputer mendaftarkan sumber data untuk komputer"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] menyebut satu salinan: msix (dengan publisher) atau upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}]: msix adalah nama identitas paket (3 sampai 50 huruf, angka, '.' atau '-') dan perlu publisher (\"CN=...\"), seperti di manifesnya"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}]: salinan lain dicari oleh pemeriksaan awal: perlu preflight = true"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}]: upgrade-code adalah milik paket ini (itu peningkatan, bukan salinan lain)"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] memerlukan dir-nya memiliki fitur"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}]: args untuk MSIX harus berupa teks biasa (tanpa [...] yang diisi saat instalasi)"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}]: di MSIX skema membuka aplikasi: target harus berupa executable [msix-app.*]"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] memerlukan 'value' (atau remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}]: HKCR tidak menjangkau ke luar MSIX; gunakan [assoc.*], [protocol.*], [com.*] atau [handler.*], atau msi-only = true"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: nilai qword memerlukan DLL pembantu rubrapack, yang tidak dibawa modul gabungan"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}]: MSIX hanya membawa nilai di bawah {2}\\Software"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}]: MSIX tidak menghapus nilai maupun meninggalkannya (remove, keep); gunakan msi-only = true"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}]: MSIX menulis semua nilainya (when); gunakan msi-only = true"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}]: nilainya memiliki bagian yang diisi Windows Installer saat instalasi ([...]); MSIX hanya memuat nilai tetap"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: on = \"uninstall\" memerlukan DLL pembantu rubrapack, yang tidak dibawa modul gabungan"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: nama kunci atau nilai tidak dapat masuk ke hive registri"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}]: users = \"all\" untuk root = \"HKCU\" dengan on = \"uninstall\", dalam paket per komputer"
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] memerlukan fitur: atur 'feature' di sini atau di dir-nya"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}]: recursive = true bukan untuk folder di bawah {2}"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true memerlukan DLL pembantu rubrapack, yang tidak dibawa modul gabungan"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}]: users = \"all\" untuk recursive = true pada folder di AppData atau LocalAppData, dalam paket per komputer"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args untuk MSIX harus berupa teks biasa (tanpa [...] yang diisi saat instalasi)"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file harus menyebut program yang masuk ke paket"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] mengiklankan fitur '{2}', yang memiliki advertise = \"disallow\""
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}]: advertise tidak digabungkan dengan when"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}]: MSIX hanya memiliki pintasan di desktop dan menu Start{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}]: pintasan MSIX tidak memiliki working-dir"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}]: pintasan MSIX selalu ada (when untuk MSI)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: pintasan MSIX menampilkan logo aplikasinya; icon untuk MSI"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}]: pintasan yang diiklankan adalah untuk MSI (MSIX memasang seluruh paket)"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}]: pintasan yang diiklankan memerlukan ikon"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args untuk MSIX harus berupa teks biasa (tanpa [...] yang diisi saat instalasi)"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}]: di MSIX pintasan menjalankan aplikasi: target harus berupa executable [msix-app.*]"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}]: entri menu Start MSIX adalah aplikasinya, yang tidak menerima args"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: tidak ada teks dialog dengan ID ini"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "[ui] embedded untuk MSI; MSIX tidak memiliki UI penginstal sendiri"
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "[ui] memerlukan ui = \"basic\" atau kumpulan dialog lain di [package] (atau embedded = \"....dll\")"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "Escape \\{1} bukan nilai skalar Unicode"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "`lint` paket: dialog, halaman kode, normalisasi teks"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` paket atau bundel MSIX"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "kontrol {1} tidak memiliki property"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "kontrol {1} tidak memiliki teks; letakkan kontrol teks di sampingnya"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "kontrol {1} memerlukan [property.{2}] dengan salah satu nilainya sebagai default (instalasi senyap menggunakannya)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "paket {1} tidak dapat menulis HKLM; gunakan HKMU"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "sebuah sertifikat di jalur memiliki ekstensi kritis yang tidak dipahami 
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "sebuah sertifikat di jalur ditandatangani oleh sertifikat yang bukan CA"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "chain hanya memuat [chain], [chain-package.ID] dan [define], bukan [{1}]; paket dibangun dari sumbernya sendiri"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "chain memuat paling banyak {1} paket"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "chain memerlukan setidaknya satu [chain-package.ID]"
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "karakter yang tidak diizinkan Windows dalam nama (/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "sebuah kontainer memuat paling banyak {1} keluarga paket"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "fitur yang tidak disediakan rubrapack ini (atau dibangun tanpanya)"
 msgid "a file larger than allowed"
 msgstr "file lebih besar dari yang diizinkan"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "nama file di bawah '{1}' bukan Unicode yang valid dan tidak dapat dikemas"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "rantai komponen atau direktori sebuah file terputus"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "font masuk ke MSIX melalui [font.*] yang menyebutnya"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "paket kerangka kerja tidak memiliki aplikasi, kapabilitas, atau dependensi sendiri ({1})"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "sel hive melewati bin-nya"
 msgid "a hive version or type rubrapack does not read"
 msgstr "versi atau jenis hive yang tidak dibaca rubrapack"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "folder yang dikenal itu sendiri ('{1}') tidak dapat diberi izin"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "proxy dengan nama pengguna atau kata sandi tidak didukung"
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "nilai qword adalah bilangan bulat atau \"0x\" dan 1 sampai 16 digit heksadesimal"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "kontrol radio menumpuk tombolnya: tinggi harus setidaknya 12 per nilai ({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "nama perangkat yang dicadangkan"
 msgid "a rollback action cannot be asynchronous"
 msgstr "tindakan rollback tidak boleh asinkron"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "skema adalah huruf kecil, lalu huruf kecil, digit, '+', '-' atau '.' (didapat '{1}')"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "sebuah section berada di luar file"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "nama layanan tidak boleh memuat '/' atau '\\' (paling banyak 256 karakter)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "setup .exe dibangun dari sumber dengan [chain]; '{1}' membangun paket (.msi, .msix)"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "versi adalah 3 atau 4 angka dengan titik, seperti 1.0.0"
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "account harus LocalSystem, LocalService atau NetworkService"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "tindakan '{1}' sudah didefinisikan"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "tindakan bukan tindakan standar maupun ada di CustomAction"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "action harus \"warn\" atau \"refuse\" (diterima '{1}')"
 
 msgid "adds too many tables"
 msgstr "menambahkan terlalu banyak tabel"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "advertise harus \"allow\" atau \"disallow\" (mendapat '{1}')"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "after = '{1}' bukan halaman set dialog ini (RpWelcomeDlg{2}{3}{4}) maupun [dialog.*]"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "alias milik kind = \"alias\""
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "alias harus nama file yang diakhiri .exe: huruf, digit, '.', '_', '-' (didapat '{1}')"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "bagian INI tidak boleh memuat ']' dan kunci tidak boleh memuat '='"
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "MSIX tidak dapat menempatkan file di folder sementara"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "aplikasi memiliki satu alias ([msix-extension.{1}] sudah menjadi satu)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "sebuah aplikasi memiliki satu target berbagi ([msix-extension.{1}] sudah menjadi target itu)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "paket opsional atau modifikasi tidak menyatakan kapabilitas maupun penga
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "paket x86 hanya menulis tampilan registri 32-bit"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "aplikasi '{1}' bukan [msix-app.*]"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "appinstaller-uri dan package-uri digunakan bersama: letak file .appinstaller dan paket"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "arch harus \"x64\", \"arm64\" atau \"x86\" (didapat '{1}')"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "arch harus \"x64\", \"x86\" atau \"arm64\" (milik program setup itu sendiri)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "argumen {1} bukan UTF-8 yang valid (byte {2})"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "argumen {1} bukan Unicode yang valid (unit UTF-16 {2})"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "array di dalam array tidak didukung"
 msgid "arrays must hold only strings or only integers"
 msgstr "array hanya boleh memuat string saja atau bilangan bulat saja"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "as harus \"system\" atau \"user\" (diterima '{1}')"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "assembly harus \"dotnet\" atau \"win32\""
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "paling banyak {1} bahasa selain bahasa Inggris"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "paling banyak 100 tabel [msix-app.*]"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "paling banyak 50 tabel [action.*] (file ini memiliki {1})"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "banner harus file .bmp (Windows Installer hanya menampilkan BMP)"
 msgid "build a package from a source file"
 msgstr "membangun paket dari file sumber"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "membangun {1} dari sumber {2} memerlukan keluarga peningkatan sendiri: tambahkan {3} = \"{{...}\" ke [package]"
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "cab harus \"embed\" atau \"external\""
 msgid "cannot be read"
 msgstr "tidak dapat dibaca"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "tidak dapat membundel paket: {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "tidak dapat membandingkan '{1}' dan '{2}'"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "tidak dapat membuat '{1}'"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "tidak dapat membuat '{1}'{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "tidak menemukan '{1}'; buat dengan `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "tidak dapat membuat logo default"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "tidak dapat membuat patch dari '{1}' ke '{2}'"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "tidak dapat membuat transform dari '{1}' ke '{2}'"
 
 msgid "cannot open the certificate store"
 msgstr "tidak dapat membuka penyimpanan sertifikat"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "tidak dapat membaca '{1}'"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "tidak dapat membaca '{1}' ({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "tidak dapat membaca paket '{1}'"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "tidak dapat membaca file sumber '{1}'"
 
 msgid "cannot read that folder"
 msgstr "tidak dapat membaca folder itu"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "tidak dapat membaca file {1} '{2}'"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "tidak dapat membaca file PIN '{1}'"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "tidak dapat membaca cabinet '{1}' di samping '{2}'"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "tidak dapat membaca file sertifikat '{1}'"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "tidak dapat membaca sertifikat di '{1}'"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "tidak dapat membaca sertifikat di '{1}': {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "tidak dapat membaca file kunci '{1}'"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "tidak dapat membaca file kata sandi '{1}'"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "tidak dapat membaca file tak terkompresi '{1}' di samping '{2}'"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "tidak dapat menulis {1}"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "tidak dapat menulis '{1}'"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "tidak dapat menulis '{1}' untuk memeriksanya"
 
 msgid "cannot write resources.pri"
 msgstr "tidak dapat menulis resources.pri"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "tidak dapat menulis file menu di samping '{1}'"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "tidak dapat menulis paket sumber daya {1}"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "capabilities adalah array nama, seperti [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "kapabilitas '{1}' tidak dikenal rubrapack (manual mencantumkannya)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "kapabilitas '{1}' memerlukan Windows build 17763 atau lebih baru"
 
 msgid "carriage return without a line feed"
 msgstr "carriage return tanpa line feed"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "file sertifikat '{1}': {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "periksa jalur sumber (relatif terhadap file sumber); atur any-arch = tru
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "periksa ejaan (pesan menyarankan nama terdekat) dan kunci tabel"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "kelas {1} sudah dilayani oleh [com.{2}]"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "kelas {1} juga ada di [msix-extension.{2}]"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "class harus berupa GUID seperti {{12345678-...} (didapat '{1}')"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "close-programs tidak berpengaruh dengan preflight = false"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "close-programs harus \"ask\", \"always\" atau \"never\" (didapat '{1}')"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "kolom {1} memuat jenis nilai yang salah"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "kolom {1} bukan UTF-8 yang valid"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "kolom {1} tidak boleh null"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "kolom {1}: {2} di luar rentang kolom"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "kolom {1}: {2} unit UTF-16, kolom menampung {3}"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "kolom {1}: {2} karakter, kolom menampung {3}"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "perintah '{1}' belum diimplementasikan"
 
 msgid "command-line"
 msgstr "baris perintah"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "komponen {1} {2} berubah antara 32 dan 64 bit: aturan komponen menginginkan GUID baru"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "komponen {1} {2} sudah tidak ada (sumber dayanya dihapus bersama versi sebelumnya)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "komponen {1} {2} kini memiliki jalur kunci {3} alih-alih {4}: aturan komponen menginginkan GUID baru"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "kondisi memiliki tanda kutip yang tidak ditutup atau tanda kurung tidak 
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "kondisi lebih panjang dari 240 karakter (rubrapack menambahkan \"Installed OR ( )\")"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "config memuat string \"Name=value\" (didapat '{1}')"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "memuat karakter kontrol"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "memuat salah satu dari < > : \" / \\ | ? *"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "content-type adalah jenis media, seperti \"image/png\" (didapat '{1}')"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "default-when memerlukan level di atas 1 (fitur level 1 memang terinstal 
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "definisikan variabel ([define] atau -D NAME=value), atau tulis $$ untuk $ literal"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "dialog '{1}' bukan [dialog.*]"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "ID dialog yang diawali 'Rp' (dan FilesInUse) milik rubrapack"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "dir '{1}' ada di dalam dirinya sendiri (loop jalur)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "dir '{1}' bukan ID dir maupun Programs, Desktop, StartMenu atau Startup"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "dir '{1}' bukan ID dir"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "dir '{1}' tidak didefinisikan"
 
 msgid "dir ID"
 msgstr "ID dir"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "direction harus \"in\" atau \"out\" (didapat '{1}')"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "argumen do/undo lebih panjang dari 255 karakter"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "kunci bertitik tidak didukung; taruh kunci di tabelnya sendiri"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "driver '{1}' bukan [odbc-driver.*]"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "diakhiri spasi atau titik"
 msgid "error"
 msgstr "kesalahan"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "executable = \"{1}\" harus menyebut [file.*] yang masuk ke paket"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "diharapkan ']' untuk menutup nama tabel"
 msgid "expected a key, a [table] or a comment"
 msgstr "diharapkan kunci, [table] atau komentar"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "ekstensi '{1}' sudah memiliki program ([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "extension harus '.' dan huruf kecil, digit, '_' atau '-' (didapat '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "external-location = true memerlukan build Windows 19041 atau yang lebih 
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files tidak berpengaruh dengan preflight = false"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "extra-files harus \"ask\", \"keep\" atau \"delete\" (didapat '{1}')"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "fitur {1} sudah tidak ada: instalasi yang memilikinya kehilangan isinya"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "fitur '{1}' adalah leluhurnya sendiri"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "fitur '{1}' tidak didefinisikan"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "fitur induk '{1}' tidak didefinisikan"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "file '{1}' sudah menjalankan layanan '{2}'"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "file '{1}' sudah terdaftar sebagai font"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "file '{1}' bukan [file.*] dari paket ini"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "file '{1}' harus diinstal di folder Fonts itu sendiri ([dir.*] dengan path = \"Fonts\")"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "file '{1}' memerlukan fitur: atur 'feature' di sini atau di dir-nya"
 
 msgid "file must be \"file:<ID>\""
 msgstr "file harus \"file:<ID>\""
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "nama file {1} unit UTF-16; dengan nama pendek 8.3 MSI menampung paling banyak {2}"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "file-system-virtualization dan registry-virtualization = false memerlukan Windows build 18362 atau lebih baru: atur [msix] min-version = \"10.0.18362.0\""
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file: '{1}' bukan [file.*] dari paket ini"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' melayani kelas COM hanya sebagai .exe atau .dll"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "perbaiki nilai yang disebut pesan; ID berupa huruf, digit dan '_' dan be
 msgid "floating-point numbers are not supported"
 msgstr "angka floating-point tidak didukung"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "folder '{1}' memerlukan fitur: atur 'feature' di sini atau di dir-nya"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "nama folder {1} unit UTF-16; dengan nama pendek 8.3 MSI menampung paling banyak {2}"
 
 msgid "follow-parent needs a parent"
 msgstr "follow-parent memerlukan parent"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "font memerlukan scope = \"machine\" (ini {1})"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "format {1} memerlukan rubrapack yang lebih baru (yang ini membaca format {2})"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "format adalah bilangan bulat: format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "berikan salah satu dari --key, --pkcs11 dan --key-store"
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "berikan subfolder dari folder program, dipisahkan koma, atau - jika tidak ada"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "glob '{1}' tidak cocok dengan file mana pun"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "glob '{1}' cocok dengan file output '{2}'"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "memiliki teks di luar ASCII dalam halaman kode selain 65001 (UTF-8)"
 msgid "icon must be an .ico file"
 msgstr "icon harus file .ico"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon: file '{1}' bukan [file.*] dari paket ini"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "id harus GUID seperti {{12345678-1234-1234-1234-123456789ABC}: milik modul itu sendiri, tetap di setiap versi"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "identifier adalah Publisher.Package winget: 2 sampai 8 bagian dari 1 sampai 32 karakter, tanpa spasi atau \\ / : * ? \" < > | (diterima '{1}')"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "identity-name harus 3 sampai 50 karakter dari A-Z, a-z, 0-9, '.' dan '-' (didapat '{1}')"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "tabel inline tidak didukung; gunakan tabel [kind.ID]"
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "installed menanyakan kepada Windows apa yang terpasang; hanya berjalan di Windows"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "terinstal ke jalur yang sama dengan baris {1} (Windows mengabaikan huruf besar/kecil dalam nama{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "kesalahan internal: dialog bawaan memiliki urutan tab yang rusak; lapork
 msgid "internal: a module table has no _Validation rule"
 msgstr "internal: tabel modul tidak memiliki aturan _Validation"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "internal: tidak ada aturan _Validation untuk kolom {1}"
 
 msgid "invalid"
 msgstr "tidak valid"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "tidak valid - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "bukan paket MSIX yang valid"
 msgid "is not valid UTF-8"
 msgstr "bukan UTF-8 yang valid"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for: '{1}' bukan program (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "pertahankan kode peningkatan, naikkan versi, pertahankan kode komponen file yang tetap ada"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "kunci '{1}' diatur dua kali di tabel ini (pertama di baris {2})"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "kunci '{1}' tidak boleh diawali atau diakhiri '\\' atau memuat bagian kosong"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "kunci '{1}' di luar tabel; hanya 'format' yang datang sebelum tabel pertama"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "file kunci '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "kind harus \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" atau \"autoplay\" (didapat '{1}')"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "kind harus \"preview\", \"thumbnail\" atau \"property\" (didapat '{1}')"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "kind harus registry, file, dir atau component"
 msgid "labels is an array of strings, one per value"
 msgstr "labels adalah array string, satu per nilai"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "bahasa '{1}' tidak memiliki paket bahasa (lang/{2}.po di samping sumber, atau RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "bahasa '{1}' tercantum dua kali"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "bahasa '{1}' tidak ada di [ui] languages"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "bahasa '{1}' kekurangan {2} teks, yang pertama {3}: tambahkan ke paket bahasanya (lang/{4}.po) atau berikan [ui-text.ID] text-{5}"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "bahasa '{1}' memerlukan [ui] langid-{2} (LANGID-nya, untuk pilihan otomatis)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "bahasa '{1}' memerlukan [ui] name-{2} (namanya di halaman bahasa)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "language harus \"neutral\", \"en-US\" atau \"ko-KR\""
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" berdiri sendiri, tidak di dalam larik: ia mengambil semua bahasa bawaan"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "languages memuat kode seperti \"ko\" atau \"zh_TW\" (2 atau 3 huruf kecil, lalu _ dan dua huruf besar wilayah) (didapat '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "launcher adalah nama file peluncur PSF di files, misalnya \"PsfLauncher6
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license harus file .txt, .md (ditampilkan sebagai teks biasa) atau .rtf"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint: {1} baris {2}: kolom {3} tidak dalam NFC ({4} baris{-5}); build --nfc menjadikan nama folder, file dan pintasan NFC"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint: {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint: halaman kode {1}, bukan 65001: teks tidak diperiksa sebagai UTF-8, lebar hanya untuk ASCII"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint: lihat masalah di atas\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "daftar kunci yang dapat digunakan token atau penyimpanan sertifikat Windows untuk menandatangani"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "logo '{1}' dan varian .scale-100-nya sama-sama ada: pertahankan satu"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "logo '{1}' pada skala {2} berukuran {3}x{4} piksel; harus {5}x{6}"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "logo '{1}' pada skala {2} bukan file PNG"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "logo '{1}' berukuran {2}x{3} piksel; logo jenis berkas harus persegi"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "logo '{1}' berukuran {2}x{3} piksel; harus {4}x{5}"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "logo '{1}' bukan file PNG"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "logo '{1}' tidak ditemukan (juga tidak sebagai varian .scale-100 ... .scale-400)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': logo dengan varian skala memerlukan nama file ASCII dengan ekstensi"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "logo harus berupa .png RGB atau RGBA 8 bit, tidak interlace, paling banyak 1024 piksel per sisi"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "main-package adalah nama identitas paket utama (didapat '{1}')"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "tidak boleh memuat karakter kontrol atau / \\ : * ? \" < > | $"
 msgid "may not start with a space or end with a space or a dot"
 msgstr "tidak boleh diawali spasi atau diakhiri spasi atau titik"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "modul gabungan '{1}' tidak ditemukan"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "lebih dari 3 pengalihan"
 msgid "more than 96 sections"
 msgstr "lebih dari 96 section"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "lebih dari satu file sumber ('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "ada lebih dari satu token: sebutkan satu dengan --token-label"
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "multi harus \"each\", \"one\" atau \"single\" (didapat '{1}')"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "harus 1 sampai 64 byte"
 msgid "name contains a control character"
 msgstr "nama memuat karakter kontrol"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "name adalah nama identitas paket (didapat '{1}')"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "menyebut folder yang tidak ada di tabel Directory-nya"
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "new msix belum diimplementasikan: buat sumber MSI dan tambahkan [msix] (lihat manual)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "tidak ada baris 'format = {1}': sumber dalam format rubrapack 0.18 atau sebelumnya, yang tidak dibaca versi ini (jalur kini diawali $(ProgramFiles) atau $(INSTALLDIR)); lihat Source format di manual"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "tidak ada nama server, atau lebih panjang dari 255 byte"
 msgid "no string pool: not a transform"
 msgstr "tidak ada pool string: bukan transform"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "tidak ada tabel '{1}' di '{2}'"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "angka oktal dan biner tidak didukung; gunakan desimal atau 0x"
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "on = \"uninstall\" untuk HKLM, HKCU dan HKMU (kelas menggunakan [assoc.*], [com.*] dan sejenisnya)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "on = \"uninstall\" menghapus kunci beserta semua di bawahnya: '{1}' bukan kunci milik produk di bawah Software"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "on = \"uninstall\" menghapus seluruh kunci saat penghapusan; tidak menerima '{1}'"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "on harus \"install\" atau \"uninstall\""
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "on harus \"install\", \"uninstall\" atau \"both\""
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on: masing-masing adalah jenis file ('.' dan huruf kecil, digit, '_' atau '-'), \"*\" (setiap file), \"folder\", \"background\" (bagian kosong folder), \"drive\" atau \"assoc:<ID>\" (didapat '{1}')"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "hanya kontrol radio, combo, dan listbox yang menerima values"
 msgid "out of memory"
 msgstr "memori habis"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "output '{1}': rubrapack menulis .msi, .msm, .msix, .msixbundle, .msixupload dan setup .exe untuk chain"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "paket '{1}' {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "paket '{1}' tidak ditemukan"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "parent harus upgrade-code produk lain, bukan milik paket ini sendiri"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "parent harus upgrade-code produk utama, GUID seperti {{12345678-1234-1234-1234-123456789ABC}"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "path harus diawali folder Windows (seperti $(ProgramFiles) atau $(System
 msgid "paths"
 msgstr "jalur"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "perceived-type harus \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" atau \"application\" (didapat '{1}')"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "izin memerlukan scope = \"machine\" (ini {1})"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "phase harus \"immediate\", \"deferred\", \"commit\" atau \"rollback\" (diterima '{1}')"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "ports harus port atau rentang seperti \"8000-8100\" dalam 1-65535 (didapat '{1}')"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "mencetak bantuan ini, atau penggunaan satu perintah"
 msgid "product-code must be a GUID"
 msgstr "product-code harus berupa GUID"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "profile harus \"all\", \"domain\", \"private\" atau \"public\" (didapat '{1}')"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "prog-id '{1}' sudah milik [com.{2}]"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "prog-id '{1}' juga milik [assoc.{2}]: jenis file dan kelas COM memerlukan dua nama"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "prog-id '{1}' juga ada di [assoc.{2}] dengan deskripsi, target, icon atau args yang lain"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "prog-id '{1}' juga ada di [assoc.{2}] dengan logo lain"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "prog-id harus huruf, digit, '.', '_' atau '-', tidak diawali digit, paling banyak 39 (didapat '{1}')"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "properties untuk paket Windows Installer; MSIX tidak menerimanya"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "properti '{1}' sudah milik kontrol '{2}'"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "properti '{1}' memiliki nama dir atau fitur"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "properti '{1}' sudah didefinisikan (baris {2})"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "properti '{1}' sudah dicari (baris {2})"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "properti '{1}' diatur oleh rubrapack atau penginstal dan tidak dapat didefinisikan di sini"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "properti '{1}' harus nama publik milik Anda sendiri (huruf besar)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "properti '{1}' harus nama publik: huruf besar, digit dan '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "protocol harus \"tcp\" atau \"udp\" (didapat '{1}')"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "public-folder harus berupa folder paket, seperti \"Public\" (didapat '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "recursive = true tidak pernah berjalan saat peningkatan menghapus versi 
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "recursive = true menghapus folder beserta semua isinya; tidak menerima 'name'"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "refuse-upgrade-below {1} di atas versi paket ini {2}"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "refuse-upgrade-below '{1}' harus versi seperti 1.2.3"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message memerlukan refuse-upgrade-below"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "wilayah {1} pada halaman bahasa berisi {2} bahasa, paling banyak {3} (X-Rubrapack-Group paketnya)"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "registration harus \"machine\" atau \"user\" (diterima '{1}')"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "registry '{1}' menghapus nilai; tidak ada yang perlu dilindungi"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "nilai registri '{1}' memerlukan fitur"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "remove-addons memerlukan tugas pembersihan: hapus cleanup = false"
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "replaces memuat paling banyak 16 kode peningkatan"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "replaces memuat kode peningkatan, GUID seperti {{12345678-1234-1234-1234-123456789ABC} (didapat '{1}')"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "replaces adalah array kode peningkatan, seperti [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "replaces mencantumkan {1} dua kali"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "replaces menyebut {1}, yang merupakan upgrade-code paket ini sendiri atau induknya"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "properti wajib {1} tidak ada"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "kembaran rollback harus datang sebelum {1} ({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "root harus HKLM, HKCR atau HKCU"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "root harus HKLM, HKCU, HKCR atau HKMU (didapat '{1}')"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new: beberapa pertanyaan membuat sumber (Enter mengambil nilai
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "jalankan `rubrapack help <command>`; periksa jalur dan bahwa folder output ada"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run: '{1}' (mesin 0x{2}) tidak dapat berjalan di mesin paket ini"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run: '{1}' bukan program (.exe)"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run: file '{1}' bukan [file.*] dari paket ini"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "simpan sumber sebagai UTF-8 (atau UTF-16 dengan BOM), dengan akhir baris
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "memberi tahu apakah Windows ini memiliki produk dengan kode peningkatan itu atau paket aplikasi dari keluarga itu yang terpasang"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "skema '{1}' sudah memiliki program ([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "scope harus \"machine\", \"user\" atau \"dual\""
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "sddl harus string SDDL seperti \"D:PAI(A;OICI;FA;;;BA)\""
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "properti pencarian '{1}' harus nama publik milik Anda sendiri (huruf besar)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "lihat pesan; membangun ulang dengan rubrapack memperbaiki sebagian besar"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "urutan {1} tidak setelah {2} ({3})"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "mengurutkan tindakan di samping tindakan yang tidak dijalankan paket maupun modul"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "nama layanan '{1}' sudah digunakan"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "layanan memerlukan scope = \"machine\" (ini {1})"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "nama pintasan {1} unit UTF-16; dengan nama pendek 8.3 MSI menampung paling banyak {2}"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "menampilkan apa yang berbeda di antara dua paket: tabel, baris, sel, dan
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "menandatangani file PE, paket MSI, paket atau bundel MSIX"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "menandatangani {1}\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "sumber '{1}' adalah direktori; gunakan [files.ID] untuk banyak file"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "sumber '{1}' adalah tautan simbolik; tautan tidak diikuti"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "sumber '{1}' bukan file biasa"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "file sumber '{1}' berubah saat paket sedang dibangun"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "file sumber '{1}' lebih besar dari 2 GiB"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "file sumber '{1}' tidak ditemukan"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "source harus \"file:<ID>\""
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "source harus paket .msi, .msix, .msixbundle, atau .msp"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "jalur sumber '{1}' harus relatif terhadap file sumber"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "jalur sumber menggunakan '/', bukan '\\\\' (didapat '{1}')"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source: file '{1}' bukan [file.*] dari paket ini"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "summary-name harus ASCII (informasi ringkasan hanya memuat ASCII)"
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "symbols adalah daftar file .pdb, misalnya [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "tabel {1} {2}"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "tabel '{1}' tidak dapat dibaca"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "tabel [{1}{2}{3}] didefinisikan dua kali (pertama di baris {4})"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "tags adalah daftar paling banyak 16 istilah pencarian, misalnya [\"edito
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "tidak menerima konfigurasi (tidak ada ModuleConfiguration)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "target '{1}' tidak ada"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "target harus \"dir:<ID>\", \"file:<ID>\" atau \"registry:<ID>\""
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "target harus \"file:<ID>\" yang menyebut [file.*] dari paket ini"
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "nama target '{1}' {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target: file '{1}' bukan [file.*] dari paket ini"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "task-id '{1}' sudah digunakan oleh [msix-extension.{2}]"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "file UTF-16 bukan UTF-16 yang valid"
 msgid "the ZIP central directory lies outside the file"
 msgstr "central directory ZIP berada di luar file"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "ID aplikasi '{1}' menjadi Application Id: hanya huruf dan digit, tidak diawali digit"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "cabinet tertanam membuat paket 2 GiB atau lebih, yang tidak dapat dibuka
 msgid "the entry is not in the central directory"
 msgstr "entri tidak ada di central directory"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "dialog kesalahan '{1}' memerlukan kontrol {2} bernama {3} (kesalahan 2835)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "executable '{1}' harus .exe"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "manifest tidak memiliki Identity Publisher"
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "Identity manifest tidak dapat dibaca untuk nama lengkap paket"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "modul gabungan {1}"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "nama {1}"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "keluarga paket {1} ada dua kali dalam kontainer"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "isi paket tidak cocok dengan tanda tangannya (diubah setelah ditandatang
 msgid "the package's directory cannot be read"
 msgstr "direktori paket tidak dapat dibaca"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "nama file paket tidak boleh berisi tanda kutip atau tanda persen: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "respons lebih besar dari 4 MiB"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "respons menggunakan transfer coding selain chunked"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "kondisi yang sama sudah diwajibkan (baris {1})"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "pengodean file sumber"
 msgid "the system random source failed"
 msgstr "sumber acak sistem gagal"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "urutan tab (Control_Next) bukan satu siklus melalui {1} kontrolnya dari Control_First (Windows Installer berhenti dengan kesalahan 2809 atau 2810)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "rubrapack ini dibangun tanpa bagian menunya: item [menu.*] tidak mencapa
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "rubrapack ini dibangun tanpa program setup (nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "threading harus \"sta\", \"mta\", \"both\" atau \"neutral\" (didapat '{1}')"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "terlalu banyak teks terlokalisasi dan skala logo untuk resources.pri"
 msgid "too many packages in the bundle"
 msgstr "terlalu banyak paket dalam bundel"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "tidak dapat membaca transformasi '{1}' di '{2}': {3}"
 
 msgid "trusted"
 msgstr "tepercaya"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "dua tindakan berbagi sequence {1} ({2} dan {3}); beri satu [action] sequence lain, before atau after"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "dua paket dengan nama yang sama dalam bundel"
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "dua paket sumber daya dengan ResourceId yang sama dalam bundel"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "type harus string, expand, dword, qword, binary atau multi (didapat '{1}')"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "type harus text, checkbox, edit, radio, combo, listbox atau bitmap (mendapat '{1}')"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' bukan [file.*] dari paket ini"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "typelib-version adalah major.minor dalam digit heksadesimal, seperti \"1.0\" (didapat '{1}')"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "types dan verb milik kind = \"context-menu\""
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types: masing-masing \".ext\" atau \"*\" (setiap file)"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types: masing-masing '.' dan huruf kecil, digit, '_' atau '-' (didapat '{1}')"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "ui = \"{1}\" membiarkan pengguna memilih folder dir '{2}', yang tidak ada (atur [ui] install-dir)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "ui = \"features\" memerlukan tabel [feature.*] untuk dipilih"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "ui harus none, basic, minimal, installdir atau features (didapat '{1}')"
 
 msgid "unexpected text after the value"
 msgstr "teks tak terduga setelah nilai"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "perintah tidak dikenal '{1}' (lihat 'rubrapack help')"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "escape tidak dikenal \\{1} (gunakan '...' untuk teks dengan garis miring terbalik)"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "opsi inspect tidak dikenal (gunakan nama tabel, --summary, --files atau --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "kunci tidak dikenal '{1}' di [{2}{3}{4}]"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "kunci tidak dikenal '{1}' di [{2}{3}{4}] (maksud Anda '{5}'?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "opsi {1} '{2}' tidak dikenal atau tidak lengkap"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "tabel tidak dikenal [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "tabel tidak dikenal [{1}{2}{3}] (maksud Anda [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "membongkar paket ke direktori baru, ditata seperti saat diinstal"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "tidak didukung - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "kunci update-* memerlukan appinstaller-uri dan package-uri"
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "upgrade = false untuk on = \"uninstall\" atau \"both\" (instalasi tidak pernah merupakan penghapusan dalam peningkatan)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "upgrade-code harus GUID seperti {{12345678-1234-1234-1234-123456789ABC}"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "penggunaan: rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "penggunaan: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "gunakan build lengkap rubrapack atau cara lain"
 msgid "used by more than one component"
 msgstr "digunakan oleh lebih dari satu komponen"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "users harus \"all\" (didapat '{1}')"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "nilai '{1}' tercantum dua kali"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "values adalah array 1 sampai 32 string"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "nilai: ID, GUID, versi, angka di luar rentang, rujukan ke hal yang tidak ada"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "variabel '{1}' tidak didefinisikan ([define] atau -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "nama variabel '{1}' tidak boleh memuat '=' atau diawali = + - ! *"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "variabel"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "variabel: $(NAME) tanpa nilai, $( tidak ditutup, nama Windows atau ID dir di tempat yang tidak boleh"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "versi '{1}' harus a.b.c atau a.b.c.d"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "versi '{1}' harus a.b.c atau a.b.c.d dengan a, b <= 255 dan c, d <= 65535"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "arti kode diagnostik, pesan yang memuatnya, apa yang harus dilakukan dan
 msgid "with must be \"file:<ID>\""
 msgstr "with harus \"file:<ID>\""
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with: file '{1}' bukan [file.*] dari paket ini"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "tanpa --pkcs11, `keys list` menampilkan penyimpanan sertifikat Windows"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "working-dir '{1}' bukan ID dir"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "tulis tabel atau nilai dengan cara sederhana yang ditunjukkan manual"
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "tulis nilai tanpa '[~]'; mode = \"append\" atau \"prepend\" yang menambahkannya"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "menulis {1}\n"
 
 msgid "x + width must be at most 370 (the page width)"

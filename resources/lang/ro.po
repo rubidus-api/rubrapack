@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Segoe UI\n"
 "X-Rubrapack-Group: 8\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialoguri {6}{7}\n  1 nume, producător, versiune, arhitectură     2 folder de instalare, pentru cine\n  3 dialoguri, licență, limbi                   4 părți opționale\n  5 comenzi rapide                              6 fișiere: potrivire cu folderul programului\n  7 orice cheie                                 v vizualizare   l lint   s salvare   q ieșire\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\nMesaje cu acest cod (* ține locul unui nume sau al unei valori):\n"
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nRezultatele merg la stdout, diagnosticele la stderr.\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\nCe trebuie făcut: {1}.\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} nu mai există, dar o comandă rapidă îl deschide: modificați mai întâi comenzile rapide (5)\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  acolo sunt {1} fișiere și {2} foldere\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7, v, l, s sau q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  s-au adăugat [dir.{1}] și [files.{2}]\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  s-a adăugat [file.{1}]\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint: vedeți problemele de mai sus (fișierul numit acolo este o copi
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  celelalte limbi din [ui] languages se păstrează; modificați lista cu 7 (orice cheie)\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  s-a eliminat [file.{1}]\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  s-a eliminat [files.{1}]{2}\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  aceasta nu se încadrează în subsetul TOML; nu s-a modificat nimic\n
 msgid "  that was not readable text; again, please\n"
 msgstr "  acesta nu a fost text lizibil; încă o dată, vă rog\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  folderul programului '{1}': {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - creează pachete Windows Installer (.msi) și MSIX (.msix)\n\nutiliza
 msgid " and its dir"
 msgstr " și dir-ul său"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}) nu are o variabilă de mediu, deci o valoare expandabilă nu o poate conține; folosiți o valoare șir (completată la instalare)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) este un {2}: poate începe o cale sau ține locul unei valori pe care o completează Windows Installer (registry, mediu, INI, argumente, mesaje), dar nu aici"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) nu este un folder de la care poate începe o cale (un ID dir, sau ProgramFiles, LOCALAPPDATA, ProgramData ... - vedeți Paths în manual){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  structură:    {2}\n  rezumat:      {3}\n  semnătură:    {4}\n  lanț:         {5}{6}{7}\n  revocare:     neverificată\n  marcaj de timp: {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2}: variabila nu este setată"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' nu este un control al acestui dialog"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' nu este în {3}"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}': {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': textul licenței are nevoie de numele englezesc al fontului, așa că apare în fontul propriu al limbii; scrieți numele englezesc (de exemplu \"Malgun Gothic\") pentru a folosi acest font și acolo"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "{1} = '{2}' trebuie să fie un folder"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "componentă {1}, dar platforma pachetului este {2}"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} nu aparține de kind = \"{2}\""
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} nu aparține de kind = \"firewall\""
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} conține LANGID-uri (1..65535), de exemplu 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} conține șiruri"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "{1} are între {2} și {3} caractere"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} este o listă de texte \"Cheie=Valoare\""
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "{1} este o listă de texte, de exemplu [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} este un nume de font de 1 până la 31 de caractere, de exemplu \"Segoe UI\" (primit {2})"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} este o condiție MSI cu ghilimele închise și paranteze echilibrate"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} este un tablou de șiruri, câte unul pe valoare"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} este pentru pachete MSI: un MSIX nu este eliminat de msiexec"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} nu mai există. Eliminați [file.{2}]?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} are peste 240 de caractere"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} este nou. Îl adăugați?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} nu este un GUID în format registry"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} nu este un cod pe care îl folosește acest rubrapack{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} trebuie să fie \"file:<ID>\" și să numească un [file.*] al acestui pachet"
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "{1} trebuie să aibă între {2} și {3} litere, cifre, '.' sau '-' și să nu înceapă cu '.' (primit '{4}')"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1} trebuie să fie un GUID"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1} trebuie să fie un GUID ca {12345678-...} (primit '{2}')"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "{1} trebuie să fie o adresă http:// sau https:// (primit '{2}')"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1} trebuie să fie o adresă https://, http:// sau file://, ori o cale \\\\server\\share (primit '{2}')"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1} trebuie să difere de upgrade-code (o familie de actualizare pe arhitectură)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} necesită versiunea Windows {2} sau ulterioară: setați [msix] min-version = \"10.0.{3}.0\""
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} necesită resources/bin/rubrapack_ca-{2}.dll, fără de care a fost construit acest rubrapack"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}, TSA neverificat (dați --tsa-trust)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}, TSA de încredere"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}, TSA nu este de încredere - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} nu mai există sau este gol. Eliminați [files.{3}] și [dir.{4}]?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ este un folder nou. Îl adăugați?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1}: {2} erori{-3}, {4} avertismente{-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1}: {2} erori{-3}, {4} avertismente{-5} (față de {6})\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1}: {2} fișiere, {3} octeți\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1}: {2} fișiere, {3} erori, 0 avertismente\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1}: încă {2} diagnostice neafișate\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1}: '{2}' nu este un program (.exe)"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' nu este o acțiune standard pe care o plasează rubrapack"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1}: fișierul '{2}' nu este un [file.*] al acestui pachet"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1}: fișierul '{2}' nu este un program (.exe)"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "'$(' nu este închis (scrieți '$$(' pentru textul '$(')"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' există deja; este lăsat așa cum este"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' există deja; eliminați-l sau construiți în alt folder"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}' are deja un handler {2} ([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}' are deja permisiuni"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' și '{2}' sunt aceeași cale în pachet"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' aparține Windows sau browserelor"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "'{1}' nu poate fi citit față de '{2}': {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' nu se încadrează în subsetul TOML; nu s-a salvat nimic"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' există deja"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' există deja; modificați-l cu `rubrapack edit {2}`"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' există și nu este un director gol; extrageți într-unul nou"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' ajunge în {2}; sau msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}' are un flux de informații rezumat ilizibil"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' nu are tabele Directory, Component, File și Media din care să se extragă"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "'{1}' nu are transformarea încorporată '{2}'"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}' nu are informații rezumat lizibile"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}' nu are transformarea '{2}'"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' este UTF-16: edit modifică doar surse UTF-8 (salvați-l mai întâi ca UTF-8)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' este un nume Windows; dați variabilei alt nume"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' este un [chain]: construiește un program de instalare, -o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' este un control al cadrului încorporat; alegeți alt ID"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' este un folder al computerului; un pachet {2} nu poate scrie acolo"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' este un modul de îmbinare: îmbinați-l în schimb cu [merge.ID]"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' este un nume pe care formatul MSIX îl păstrează pentru sine"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' este o legătură simbolică; legăturile nu sunt urmate"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' este și un [property.*]"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' este și un ID dir; dați variabilei alt nume"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' este construit pentru mașina 0x{2}, nu pentru arch-ul acestui pachet; setați any-arch = true dacă asta se intenționează"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' nu este nici fișier PE (.exe, .dll), nici pachet MSI, nici pachet sau pachet grupat MSIX, nici cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' nu este nici fișier PE, nici pachet MSI, nici pachet sau pachet grupat MSIX, nici cabinet"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nu este nici folder cunoscut, nici ID dir (foldere cunoscute: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' nu este nici pachet MSIX, nici nume de familie de pachete (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' nu este un cabinet pe care rubrapack îl poate citi (stored sau MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' nu este un cod de diagnostic (RP și patru cifre, de exemplu RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' nu este un program (.exe)"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' nu este un fișier obișnuit"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' nu este un program de instalare rubrapack{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' nu este un ID valid (litere, cifre și '_', nu începe cu o cifră, cel mult {2})"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' nu este o bază de date MSI validă: {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' nu este un pachet MSIX valid: {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' nu este un pachet valid: {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' nu este o sursă validă (subsetul TOML); corectați-l mai întâi manual"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' nu este o transformare validă: {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' nu este un nume de variabilă valid"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' este rezervat și nu poate fi folosit ca ID"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' este numele unui dir: doar o căutare în registry sau dir poate completa un dir"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' pare un fișier de program (PE), dar antetele sau resursele lui sunt deteriorate"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}' trebuie să fie un șir"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}' trebuie să fie un număr întreg"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}' trebuie să fie între {2} și {3}"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}' trebuie să fie true sau false"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' nu trebuie să fie gol"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' nu numește transformări (proprietatea rezumat 8): nu este un patch"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' începe cu un folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}': {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}': {2} '{3}' are {4}; nu s-a extras nimic"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}': {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}': {2} intrări, mai mult decât limita {3} (--limit-entries); nu s-a extras nimic"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}': '{2}' și '{3}' ar fi aceeași cale în Windows; nu s-a extras nimic"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}': '{2}' nu este în [ui] languages"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}': un tabel nu poate fi citit"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}': un tabel este ilizibil"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}': un MSIX instalează toate fișierele sale (when); folosiți msi-only = true"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}': un MSIX elimină toate fișierele sale (keep); folosiți msi-only = true"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}': cabinet-ul '{2}' este deteriorat sau nu este stored/MSZIP"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}': numele de cabinet '{2}' nu este un simplu nume de fișier"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}': fișierul comprimat '{2}' (secvența {3}) nu are cabinet"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}': directorul '{2}' are un părinte '{3}' care nu există"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}': directorul '{2}' este propriul strămoș sau este imbricat prea adânc"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}': fișierul '{2}' nu corespunde cu MsiFileHash-ul său"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}': fișierul '{2}' nu are componentă sau director"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}': fișierul '{2}' are {3} octeți, tabelul File spune {4}"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}': fișierul '{2}' nu este în cabinet-ul '{3}'"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}': cabinet-urile sale externe nu sunt acoperite de semnătură (--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}': folderul său nu duce la o locație cunoscută"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}': mai mult de {2} octeți de scris (--limit-bytes); nu s-a extras nimic"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}': fără --timestamp: semnătura nu mai este validă când expiră certificatul"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}': pachetul '{2}' nu corespunde cu SHA-256-ul său"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}': fluxul cabinet '{2}' nu există"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}': manifestul nu are {2} {3}"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}': manifestul numește '{2}', care nu este în pachet"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}': marcaj de timp de la {2}: {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}': transformarea '{2}' nu poate fi citită față de '{3}': {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' este limba proprie a pachetului ({2}); dați acel text fără sufix"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "'version' nu primește argumente"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "--allow-unsigned-cabs este pentru .msi"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "--arch pentru un pachet grupat: o listă de x64, x86 și arm64, fiecare o dată (primit '{1}')"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "--dist numește un folder nou lângă sursă (fără cale)"
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "--flat este pentru o ieșire .msixbundle (pachetele sale sunt scrise alături)"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "--jobs primește un număr de la 1 la 64 (primit '{1}')"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "--key semnează cel mult {1} cabinet-uri externe; măriți cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "--key-store este un depozit de certificate Windows; în alte părți fol
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store primește amprenta SHA-1 a certificatului (40 de cifre hexazecimale)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1}: nu există o astfel de limbă (încorporate: {2}; alta are nevoie de pachetul ei de limbă, {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "--lang (sau RUBRAPACK_LANG) alege limba acestor texte: {1} sau o limbă cu pachet de limbă.\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "--lang are nevoie de o limbă, de exemplu en sau ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "--languages are nevoie de dialoguri: dați și --ui"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "--msix-compress primește deflate sau store (primit '{1}')"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1}: variabila nu este setată"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "--patch-code primește un GUID cu majuscule și acolade: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1}: variabila nu este setată"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "--previous compară două pachete .msi"
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots: certificatele rădăcină ale sistemului de operare nu pot fi citite"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "--target {1} nu corespunde ieșirii '{2}'"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "--target {1} nu este implementat (msi sau msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "--target primește msi sau msix (primit '{1}')"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "--winget are nevoie de un tabel [winget]: identifier, installer-url, lic
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "--winget are nevoie de pachet într-un singur fișier: winget descarcă unul, deci nu cab = \"external\""
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "-D {1} este dat de două ori"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1}: '{2}' este un nume Windows; dați variabilei alt nume"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "-D are nevoie de NUME=VALOARE (primit '{1}')"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "-i cere fiecare răspuns; dați fie -i, fie opțiunile"
 msgid "; its range is "
 msgstr "; intervalul său este "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "ActionProperty '{1}' nu este în SecureCustomProperties"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Numele folderului sub Program Files"
 msgid "Folder with the files to install"
 msgstr "Folderul cu fișierele de instalat"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "ID-ul '{1}' este deja folosit (linia {2}); ID-urile trebuie să difere în toate tabelele"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "Instalare pentru (machine, user, dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "Cheie ca tabel.cheie (package.version, dir.INSTALLDIR.path, ...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "KeyPath '{1}' aparține altei componente"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "KeyPath '{1}' nu este în File"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "KeyPath '{1}' nu este în Registry"
 
 msgid "Korean dialogs as well as English?"
 msgstr "Dialoguri în coreeană pe lângă cele în engleză?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "LastSequence {1} este sub cel al unui DiskId mai mic"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX: de ce are nevoie un pachet MSIX și ce nu poate conține"
 msgid "Main program, for shortcuts (- for none)"
 msgstr "Programul principal, pentru comenzi rapide (- pentru niciunul)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "Manual: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "Numele produsului"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "ProductCode și UpgradeCode sunt același GUID"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} nu este mai mare decât precedenta {2} în primele trei câmpuri: Windows Installer nu actualizează"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Programul pe care îl deschid comenzile rapide (- fără comenzi rapide)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1}: nu există o astfel de limbă (încorporate: {2}; alta are nevoie de pachetul ei de limbă, {3}.po)"
 
 msgid "Reference, "
 msgstr "Referință, "
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "Secvența {1} nu este acoperită de niciun rând Media (ultimul {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "Secvența {1} este folosită de alt fișier"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "Fișierul sursă de scris"
 msgid "Source format"
 msgstr "Formatul sursei"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "Source trebuie să numească un rând File pentru tipul {1}"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "Subsetul TOML"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "Fișierele UTF-16 big-endian nu sunt acceptate; salvați ca UTF-8"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "UpgradeCode {1} diferă de cel al versiunii anterioare {2}: acest pachet nu o înlocuiește"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "Versiuni și actualizări"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer permite cel mult 255.255.65535(.65535)"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "Windows nu a spus ce este instalat pentru '{1}'"
 
 msgid "Windows name"
 msgstr "nume Windows"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] are nevoie de '{4}'"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] nu poate intra într-un modul de îmbinare; îl are pachetul care îl îmbină"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] nu este încă acceptat (planificat pentru {3})"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] nu poate intra într-un MSIX; adăugați msi-only = true pentru a construi MSIX-ul fără el"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] nu poate intra într-un MSIX; adăugați msi-only = true pentru a construi MSIX-ul fără el"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "[{1}.{2}] se află în AppData sau LocalAppData al utilizatorului: un pachet dual instalat pentru toți utilizatorii îl pune doar în profilul utilizatorului care instalează"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: un ID într-un modul de îmbinare are cel mult 35 de caractere (i se adaugă GUID-ul modulului)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] are nevoie de un ID: scrieți [{2}.ID]"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] nu primește un ID: scrieți [{2}]"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "[Content_Types].xml nu este ultima intrare (nu este un pachet scris de r
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Tablourile de tabele [[...]] nu sunt acceptate; dați fiecărui element propriul [kind.ID]"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] se plasează o dată: before, after sau sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] are nevoie atât de do, cât și de undo (undo anulează și un do eșuat)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] are nevoie de entry: funcția DLL de apelat"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] are nevoie de run = \"file:<ID>\": programul pe care îl rulează do și undo"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "[action.{1}] rulează un fișier al acestui pachet înainte de InstallFinalize, când o primă instalare încă nu îl are (eroarea Windows Installer 1721 sau 1723): puneți-o după InstallFinalize sau faceți-o deferred"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] rulează un lucru: run (un exe), dll (o DLL instalată) sau binary (o DLL din pachet); sau do și undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}]: {2} este pentru o singură acțiune, nu pentru o pereche do/undo"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}]: o acțiune amânată care rulează un fișier instalat trebuie să fie după InstallFiles (sequence > 4000)"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}]: o acțiune imediată rulează ca utilizatorul care instalează; as este pentru celelalte faze"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}]: args sunt ale unui program; o DLL primește data"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}]: check merge cu o pereche do/undo"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}]: data este pentru o acțiune amânată, commit sau rollback (una imediată citește proprietăți)"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}]: entry este funcția unei DLL; run ia args"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: args pentru un MSIX trebuie să fie text simplu (fără [...] completate la instalare)"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}]: într-un MSIX un tip de fișier deschide o aplicație: target trebuie să fie un executabil [msix-app.*]"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] apare de două ori"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "[chain-package] are nevoie de un ID: scrieți [chain-package.ID]"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}]: app-id și typelib sunt scrise doar pentru MSI; MSIX-ul înregistrează clasa fără ele"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}]: args sunt ale unui program; un DLL este încărcat, nu pornit"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}]: surrogate rulează un DLL în dllhost; '{2}' este un program"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}]: threading este pentru un DLL; un program își setează singur apartment-ul"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}]: typelib-version și typelib-file au nevoie de typelib"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] ajunge în {2}; sau msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}]: sursa sa trebuie să fie un fișier care intră în pachet"
 
 msgid "[define] values must be strings"
 msgstr "Valorile [define] trebuie să fie șiruri"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] are nevoie de '{2}'"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "[dialog-control.{1}] are nevoie de image"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] are nevoie de 'property'"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] are nevoie de 'text'"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] are nevoie de 'values'"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}] are {2} controale; cel mult 64"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}] nu are [dialog-control.*]"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] este plasat după el însuși prin alte dialoguri"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] are nevoie de ui = \"minimal\", \"installdir\" sau \"features\""
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}]: '{2}' este un nume Windows; dați dir-ului alt ID"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}]: guard are nevoie de DLL-ul ajutător rubrapack, pe care un modul de îmbinare nu îl conține"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] are nevoie de o caracteristică"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}]: un MSIX setează toate variabilele sale (when); folosiți msi-only = true"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: valoarea sa numește un loc pe care un MSIX nu îl poate oferi (un folder din afara pachetului care nu este folder Windows, sau o parte din momentul instalării); folosiți msi-only = true"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}]: cu external-location = true pachetul nu conține niciun fișier al programului, deci nici lansatorul rubrapack; sau msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] este deja în folderul programului său; isolate-for este pentru o DLL partajată instalată în altă parte"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] se află în profilul utilizatorului și are component-guid: calea cheie rămâne fișierul, unde regulile Windows cer o valoare HKCU (ICE38); omiteți component-guid pentru a obține una"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}]: {2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' nu este un ansamblu .NET (niciun antet CLI cu un rând Assembly)"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}]: un ansamblu .NET își poartă singur manifestul; manifest este pentru un ansamblu Win32"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}]: un ansamblu Win32 are nevoie de manifest = \"file:<ID>\", fișierul său manifest"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: un ansamblu .NET partajat merge în GAC, care acceptă doar ansambluri cu nume tare; semnați-l sau dați assembly-for = \"file:<program>\""
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: un ansamblu Win32 partajat intră în WinSxS cu un catalog semnat cu cheia pe care o numește publicKeyToken din manifest; construiți cu --key (sau dați assembly-for = \"file:<program>\" pentru unul privat)"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: manifestul '{2}' al unui ansamblu Win32 partajat își numește semnatarul: publicKeyToken în assemblyIdentity (tokenul cheii --key cu care se construiește)"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for și manifest merg cu assembly = \"dotnet\" sau \"win32\""
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}]: manifestul său '{2}' nu are assemblyIdentity cu name și version"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: manifestul său '{2}' trebuie să fie în același dir și feature (și sub același when): cele două sunt o componentă"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}]: manifestul numește publicKeyToken \"{2}\", dar tokenul cheii --key este \"{3}\""
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifestul '{2}' este al altui ansamblu sau este el însuși un ansamblu"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}]: Explorer încarcă un handler {2} dintr-un DLL; [com.{3}] este un program"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}]: Windows citește handlerele de proprietăți doar per computer; pachetul are nevoie de scope = \"machine\""
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}]: un handler de previzualizare rulează în prevhost al Windows; omiteți app-id și surrogate din [com.{2}]"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}]: un MSIX conține doar handlere de miniaturi și previzualizare (un handler de proprietăți împachetat nu a dat valori Explorer-ului); msi-only = true îl păstrează pentru MSI"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}]: un tip de fișier MSIX aparține unei aplicații; adăugați un [msix-app.*]"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}]: clasa {2} nu este un [com.*] al acestui pachet (o servește DLL-ul handlerului)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}]: într-un MSIX handlerele își împart toate tipurile sau niciunul (un tip este într-o singură asociere de tip de fișier)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}]: într-un MSIX clasa sa rulează într-un surrogate; threading = \"sta\" în [com.{2}] dă ferestrei sale o buclă de mesaje (cu threading = {3} previzualizarea poate rămâne goală)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}]: într-un MSIX toate tipurile sale sunt într-un singur tip de fișier [assoc], sau în niciunul"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}]: clasa sa este msi-only ([com.{2}]); MSIX-ul nu ar avea un server pentru ea"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}]: types este o listă de tipuri de fișiere, de exemplu [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] ajunge în {2}; sau msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] are nevoie de 'value'"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] are nevoie de o caracteristică: setați 'feature' aici sau pe dir-ul său"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}]: un MSIX scrie toate intrările sale INI (when); folosiți msi-only = true"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}]: valoarea sa are o parte pe care Windows Installer o completează la instalare ([...]); un MSIX scrie fișierul când este construit"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] are nevoie de 'on': unde apare elementul, de exemplu [\".txt\"] sau \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] are nevoie de 'target' (programul pe care îl pornește) sau de elemente cu parent = \"{2}\" (un submeniu)"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] are nevoie de 'target': programul pe care îl pornește elementul"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}]: meniul Windows 11 acceptă doar un ID din litere și cifre (fără '_'): redenumiți-l sau folosiți windows11 = false"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: un submeniu nu pornește nimic: omiteți 'args'"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}]: un element al unui submeniu apare unde apare submeniul său: omiteți 'on'"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args are o parte pe care Windows Installer o completează la instalare ([...]); un MSIX conține doar text fix"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}]: hide-when este \"HKCU\\\\key\\\\value\" sau \"HKLM\\\\...\", la un element al meniului Windows 11 care nu e într-un submeniu"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}]: hide-when numește o valoare pe care o scrie chiar acest pachet ([registry.{2}]): elementul nu s-ar arăta niciodată"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: programul său nu este în MSIX (msi-only?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: valorile sale nu pot intra în registry-ul pachetului"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: list are o parte pe care Windows Installer o completează la instalare ([...]); un MSIX conține doar text fix"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}]: list ține locul lui {2} când căile nu încap într-o linie de comandă: sunt necesare multi = \"one\", {3} în args și {4} (fișierul listă) în list"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}]: on = \"{2}\": nu există [assoc.{3}]"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}]: on este un tip de fișier sau o listă de tipuri, de exemplu [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}]: parent '{2}' nu este un [menu.*]"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}]: parent '{2}' trebuie să fie un submeniu: un [menu.*] fără target și fără parent propriu"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] ajunge în {2}; sau msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] are nevoie de o caracteristică: setați 'feature' aici sau pe dir-ul său"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}]: '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; sau msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] are nevoie de feature (sau with = \"file:<ID>\")"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}]: feature merge cu o componentă proprie, nu cu with"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name indică un fișier; name are metacaractere"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}]: o țintă de partajare are nevoie de types, formats sau ambele"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}]: un handler de redare automată are nevoie de content-events, device-events sau ambele"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args trebuie să fie text simplu (fără [...] completate la instalare)"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}]: device-events au nevoie de class (clasa COM IHWEventHandler a programului)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}]: file trebuie să fie {2}"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}]: file trebuie să numească un fișier care intră în pachet"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}]: file trebuie să numească un program care intră în pachet"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types este o listă de tipuri de fișiere, de exemplu [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows acceptă doar litere și cifre"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "[msix-psf] nu merge nici cu external-location = true, nici cu [env.*] (l
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "[msix-psf] pornește aplicațiile prin lansatorul PSF: are nevoie de un [msix-app.ID]"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf]: config '{1}' nu numește aplicația '{2}' în \"applications\""
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf]: files nu are '{1}' (lansatorul)"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}]: fișierul '{2}' nu este o DLL"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] își indică driverul o dată: driver (un [odbc-driver]) sau driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] cu driver-name are nevoie de with = \"file:<ID>\": componenta cu care se instalează"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}]: un pachet pe mașină înregistrează sursele de date pentru mașină"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] numește o copie: msix (cu publisher) sau upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}]: msix este numele de identitate al pachetului (3–50 litere, cifre, '.' sau '-') și cere publisher (\"CN=...\"), cum le are manifestul său"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}]: cealaltă copie o caută verificarea prealabilă: este necesar preflight = true"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}]: upgrade-code este al acestui pachet (aceea e o actualizare, nu altă copie)"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] are nevoie ca dir-ul său să aibă o caracteristică"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}]: args pentru un MSIX trebuie să fie text simplu (fără [...] completate la instalare)"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}]: într-un MSIX o schemă deschide o aplicație: target trebuie să fie un executabil [msix-app.*]"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] are nevoie de 'value' (sau remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}]: HKCR nu ajunge în afara unui MSIX; folosiți [assoc.*], [protocol.*], [com.*] sau [handler.*], ori msi-only = true"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: o valoare qword are nevoie de DLL-ul ajutător rubrapack, pe care un modul de îmbinare nu îl conține"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}]: un MSIX conține valori doar sub {2}\\Software"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}]: un MSIX nici nu elimină valori, nici nu le lasă în urmă (remove, keep); folosiți msi-only = true"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}]: un MSIX scrie toate valorile sale (when); folosiți msi-only = true"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}]: valoarea sa are o parte pe care Windows Installer o completează la instalare ([...]); un MSIX conține doar valori fixe"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: on = \"uninstall\" are nevoie de DLL-ul ajutător rubrapack, pe care un modul de îmbinare nu îl conține"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: numele cheii sau al valorii nu poate intra într-un hive de registry"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}]: users = \"all\" este pentru root = \"HKCU\" cu on = \"uninstall\", într-un pachet pentru computer"
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] are nevoie de o caracteristică: setați 'feature' aici sau pe dir-ul său"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}]: recursive = true nu este pentru un folder sub {2}"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true are nevoie de DLL-ul ajutător rubrapack, pe care un modul de îmbinare nu îl conține"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}]: users = \"all\" este pentru recursive = true pe un folder din AppData sau LocalAppData, într-un pachet pentru computer"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args pentru un MSIX trebuie să fie text simplu (fără [...] completate la instalare)"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file trebuie să numească un program care intră în pachet"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] anunță caracteristica '{2}', care are advertise = \"disallow\""
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}]: advertise nu se combină cu when"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}]: un MSIX are comenzi rapide doar pe desktop și în meniul Start{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}]: o comandă rapidă MSIX nu are working-dir"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}]: o comandă rapidă MSIX există mereu (when este pentru un MSI)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: o comandă rapidă MSIX arată sigla aplicației sale; icon este pentru un MSI"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}]: o scurtătură anunțată este pentru un MSI (un MSIX instalează tot pachetul)"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}]: o scurtătură anunțată are nevoie de o pictogramă"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args pentru un MSIX trebuie să fie text simplu (fără [...] completate la instalare)"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}]: într-un MSIX o comandă rapidă pornește o aplicație: target trebuie să fie un executabil [msix-app.*]"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}]: intrarea din meniul Start a unui MSIX este aplicația sa, care nu primește args"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: niciun text de dialog nu are acest ID"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "[ui] embedded este pentru un MSI; un MSIX nu are propria interfață de 
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "[ui] are nevoie de ui = \"basic\" sau de un alt set de dialoguri în [package] (sau embedded = \"....dll\")"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "secvența escape \\{1} nu este o valoare scalară Unicode"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "`lint` al unui pachet: dialoguri, pagină de cod, normalizarea textului"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` al unui pachet sau pachet grupat MSIX"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "un control {1} nu are property"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "un control {1} nu are text; puneți un control text lângă el"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "un control {1} are nevoie de [property.{2}] cu una dintre valorile sale ca implicită (o folosește o instalare silențioasă)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "un pachet {1} nu poate scrie în HKLM; folosiți HKMU"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "un certificat din cale are o extensie critică pe care rubrapack nu o î
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "un certificat din cale este semnat de un certificat care nu este CA"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "un lanț conține doar [chain], [chain-package.ID] și [define], nu [{1}]; pachetele sunt construite din propriile surse"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "un lanț conține cel mult {1} pachete"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "un lanț are nevoie de cel puțin un [chain-package.ID]"
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "un caracter pe care Windows nu îl permite într-un nume (/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "un container cuprinde cel mult {1} familii de pachete"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "o funcție pe care acest rubrapack nu o oferă (sau fără de care a fos
 msgid "a file larger than allowed"
 msgstr "un fișier mai mare decât e permis"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "un nume de fișier sub '{1}' nu este Unicode valid și nu poate fi împachetat"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "lanțul de componentă sau director al unui fișier este rupt"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "un font intră într-un MSIX printr-un [font.*] care îl numește"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "un pachet cadru nu are aplicații, capabilități sau dependențe proprii ({1})"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "o celulă de hive trece peste bin-ul său"
 msgid "a hive version or type rubrapack does not read"
 msgstr "o versiune sau un tip de hive pe care rubrapack nu îl citește"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "un folder cunoscut însuși ('{1}') nu poate primi permisiuni"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "un proxy cu nume de utilizator sau parolă nu este acceptat"
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "o valoare qword este un număr întreg sau \"0x\" și 1 până la 16 cifre hexazecimale"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "un control radio își stivuiește butoanele: înălțimea trebuie să fie de cel puțin 12 pe valoare ({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "un nume de dispozitiv rezervat"
 msgid "a rollback action cannot be asynchronous"
 msgstr "o acțiune de anulare nu poate fi asincronă"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "o schemă este o literă mică, apoi litere mici, cifre, '+', '-' sau '.' (primit '{1}')"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "o secțiune se află în afara fișierului"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "un nume de serviciu nu poate conține '/' sau '\\' (cel mult 256 de caractere)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "un .exe de instalare este construit dintr-o sursă cu [chain]; '{1}' construiește un pachet (.msi, .msix)"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "o versiune înseamnă 3 sau 4 numere cu puncte, de exemplu 1.0.0"
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "account trebuie să fie LocalSystem, LocalService sau NetworkService"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "acțiunea '{1}' este deja definită"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "acțiunea nu este nici standard, nici în CustomAction"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "action trebuie să fie \"warn\" sau \"refuse\" (s-a primit '{1}')"
 
 msgid "adds too many tables"
 msgstr "adaugă prea multe tabele"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "advertise trebuie să fie \"allow\" sau \"disallow\" (s-a primit '{1}')"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "after = '{1}' nu este nici o pagină a acestui set de dialoguri (RpWelcomeDlg{2}{3}{4}), nici un [dialog.*]"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "alias aparține de kind = \"alias\""
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "alias trebuie să fie un nume de fișier care se termină cu .exe: litere, cifre, '.', '_', '-' (primit '{1}')"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "o secțiune INI nu poate conține ']' iar o cheie nu poate conține '='"
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "un MSIX nu poate plasa fișiere în folderul temporar"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "o aplicație are un singur alias ([msix-extension.{1}] este deja unul)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "o aplicație are o singură țintă de partajare ([msix-extension.{1}] este deja una)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "un pachet opțional sau de modificare nu declară capabilități și set
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "un pachet x86 scrie doar vizualizarea pe 32 de biți a registry-ului"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "aplicația '{1}' nu este un [msix-app.*]"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "appinstaller-uri și package-uri merg împreună: unde vor fi fișierul .appinstaller și pachetul"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "arch trebuie să fie \"x64\", \"arm64\" sau \"x86\" (primit '{1}')"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "arch trebuie să fie \"x64\", \"x86\" sau \"arm64\" (a programului de instalare însuși)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "argumentul {1} nu este UTF-8 valid (octetul {2})"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "argumentul {1} nu este Unicode valid (unitatea UTF-16 {2})"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "tablourile în tablouri nu sunt acceptate"
 msgid "arrays must hold only strings or only integers"
 msgstr "tablourile trebuie să conțină doar șiruri sau doar numere întregi"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "as trebuie să fie \"system\" sau \"user\" (s-a primit '{1}')"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "assembly trebuie să fie \"dotnet\" sau \"win32\""
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "cel mult {1} limbi pe lângă engleză"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "cel mult 100 de tabele [msix-app.*]"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "cel mult 50 de tabele [action.*] (acest fișier are {1})"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "banner trebuie să fie un fișier .bmp (Windows Installer afișează doa
 msgid "build a package from a source file"
 msgstr "construiește un pachet dintr-un fișier sursă"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "construirea {1} dintr-o sursă {2} are nevoie de propria familie de actualizare: adăugați {3} = \"{...}\" în [package]"
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "cab trebuie să fie \"embed\" sau \"external\""
 msgid "cannot be read"
 msgstr "nu poate fi citit"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "pachetele nu pot fi grupate: {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "nu se pot compara '{1}' și '{2}'"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "'{1}' nu poate fi creat"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "'{1}' nu poate fi creat{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "'{1}' nu poate fi găsit; creați unul cu `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "nu se poate crea o siglă implicită"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "nu se poate crea un patch de la '{1}' la '{2}'"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "nu se poate crea o transformare de la '{1}' la '{2}'"
 
 msgid "cannot open the certificate store"
 msgstr "depozitul de certificate nu poate fi deschis"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "'{1}' nu poate fi citit"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "'{1}' nu poate fi citit ({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "pachetul '{1}' nu poate fi citit"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "fișierul sursă '{1}' nu poate fi citit"
 
 msgid "cannot read that folder"
 msgstr "acel folder nu poate fi citit"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "fișierul {1} '{2}' nu poate fi citit"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "fișierul PIN '{1}' nu poate fi citit"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "cabinet-ul '{1}' de lângă '{2}' nu poate fi citit"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "fișierul de certificat '{1}' nu poate fi citit"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "certificatele din '{1}' nu pot fi citite"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "certificatele din '{1}' nu pot fi citite: {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "fișierul de cheie '{1}' nu poate fi citit"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "fișierul de parolă '{1}' nu poate fi citit"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "fișierul necomprimat '{1}' de lângă '{2}' nu poate fi citit"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "{1} nu poate fi scris"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "'{1}' nu poate fi scris"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "'{1}' nu poate fi scris pentru verificare"
 
 msgid "cannot write resources.pri"
 msgstr "resources.pri nu poate fi scris"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "fișierele de meniu nu pot fi scrise lângă '{1}'"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "pachetul de resurse al {1} nu poate fi scris"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "capabilities este un tablou de nume, de exemplu [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "capabilitatea '{1}' nu este una cunoscută de rubrapack (manualul le enumeră)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "capabilitatea '{1}' necesită versiunea Windows 17763 sau ulterioară"
 
 msgid "carriage return without a line feed"
 msgstr "retur de car fără avans de linie"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "fișierul de certificat '{1}': {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "verificați căile sursei (relative la fișierul sursă); setați any-ar
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "verificați ortografia (mesajul sugerează cel mai apropiat nume) și cheile tabelului"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "clasa {1} este deja servită de [com.{2}]"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "clasa {1} este și în [msix-extension.{2}]"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "class trebuie să fie un GUID ca {12345678-...} (primit '{1}')"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "close-programs nu are efect cu preflight = false"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "close-programs trebuie să fie \"ask\", \"always\" sau \"never\" (primit '{1}')"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "coloana {1} conține un tip greșit de valoare"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "coloana {1} nu este UTF-8 valid"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "coloana {1} nu poate fi null"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "coloana {1}: {2} este în afara intervalului coloanei"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "coloana {1}: {2} unități UTF-16, coloana conține {3}"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "coloana {1}: {2} caractere, coloana conține {3}"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "comanda '{1}' nu este încă implementată"
 
 msgid "command-line"
 msgstr "linie de comandă"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "componenta {1} {2} s-a schimbat între 32 și 64 de biți: regulile componentelor cer un GUID nou"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "componenta {1} {2} a dispărut (resursele ei sunt eliminate odată cu versiunea anterioară)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "componenta {1} {2} are acum calea cheie {3} în loc de {4}: regulile componentelor cer un GUID nou"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "condition are ghilimele neînchise sau paranteze neechilibrate"
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "condition are peste 240 de caractere (rubrapack adaugă \"Installed OR ( )\")"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "config conține șiruri \"Nume=valoare\" (primit '{1}')"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "conține un caracter de control"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "conține unul dintre < > : \" / \\ | ? *"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "content-type este un tip media, de exemplu \"image/png\" (primit '{1}')"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "default-when are nevoie de level peste 1 (o caracteristică de level 1 e
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "definiți variabila ([define] sau -D NUME=valoare), sau scrieți $$ pentru un $ literal"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "dialogul '{1}' nu este un [dialog.*]"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "ID-urile de dialog care încep cu 'Rp' (și FilesInUse) sunt ale rubrapack"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "dir '{1}' este în el însuși (buclă de cale)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "dir '{1}' nu este nici ID dir, nici Programs, Desktop, StartMenu sau Startup"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "dir '{1}' nu este un ID dir"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "dir '{1}' nu este definit"
 
 msgid "dir ID"
 msgstr "ID dir"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "direction trebuie să fie \"in\" sau \"out\" (primit '{1}')"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "argumentele do/undo au peste 255 de caractere"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "cheile cu puncte nu sunt acceptate; puneți cheia în propriul tabel"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "driverul '{1}' nu este un [odbc-driver.*]"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "se termină cu un spațiu sau un punct"
 msgid "error"
 msgstr "eroare"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "executable = \"{1}\" trebuie să numească un [file.*] care intră în pachet"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "se aștepta ']' pentru a închide numele tabelului"
 msgid "expected a key, a [table] or a comment"
 msgstr "se aștepta o cheie, un [tabel] sau un comentariu"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "extensia '{1}' are deja un program ([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "extension trebuie să fie '.' și litere mici, cifre, '_' sau '-' (primit '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "external-location = true necesită versiunea Windows 19041 sau mai nouă
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files nu are efect cu preflight = false"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "extra-files trebuie să fie \"ask\", \"keep\" sau \"delete\" (primit '{1}')"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "caracteristica {1} a dispărut: instalările care o aveau pierd ce conținea"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "caracteristica '{1}' este propriul strămoș"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "caracteristica '{1}' nu este definită"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "caracteristica părinte '{1}' nu este definită"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "fișierul '{1}' rulează deja serviciul '{2}'"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "fișierul '{1}' este deja înregistrat ca font"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "fișierul '{1}' nu este un [file.*] al acestui pachet"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "fișierul '{1}' trebuie instalat chiar în folderul Fonts (un [dir.*] cu path = \"Fonts\")"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "fișierul '{1}' are nevoie de o caracteristică: setați 'feature' aici sau pe dir-ul său"
 
 msgid "file must be \"file:<ID>\""
 msgstr "file trebuie să fie \"file:<ID>\""
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "numele fișierului are {1} unități UTF-16; cu numele scurt 8.3, MSI conține cel mult {2}"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "file-system-virtualization și registry-virtualization = false necesită versiunea Windows 18362 sau ulterioară: setați [msix] min-version = \"10.0.18362.0\""
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file: '{1}' nu este un [file.*] al acestui pachet"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' servește clase COM doar ca .exe sau .dll"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "corectați valoarea numită de mesaj; ID-urile sunt litere, cifre și '_
 msgid "floating-point numbers are not supported"
 msgstr "numerele în virgulă mobilă nu sunt acceptate"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "folderul '{1}' are nevoie de o caracteristică: setați 'feature' aici sau pe dir-ul său"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "numele folderului are {1} unități UTF-16; cu numele scurt 8.3, MSI conține cel mult {2}"
 
 msgid "follow-parent needs a parent"
 msgstr "follow-parent are nevoie de un parent"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "fonturile au nevoie de scope = \"machine\" (acesta este {1})"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "format {1} are nevoie de un rubrapack mai nou (acesta citește format {2})"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "format este un număr întreg: format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "dați una dintre --key, --pkcs11 și --key-store"
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "dați subfolderele folderului programului, separate prin virgule, sau - pentru niciunul"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "modelul '{1}' nu se potrivește cu niciun fișier"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "modelul '{1}' se potrivește cu fișierul de ieșire '{2}'"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "are text non-ASCII într-o altă pagină de cod decât 65001 (UTF-8)"
 msgid "icon must be an .ico file"
 msgstr "icon trebuie să fie un fișier .ico"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon: fișierul '{1}' nu este un [file.*] al acestui pachet"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "id trebuie să fie un GUID ca {12345678-1234-1234-1234-123456789ABC}: al modulului însuși, păstrat în fiecare versiune"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "identifier este Publisher.Package al winget: 2 până la 8 părți de 1 până la 32 de caractere, fără spații sau \\ / : * ? \" < > | (primit '{1}')"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "identity-name trebuie să aibă 3 până la 50 de caractere din A-Z, a-z, 0-9, '.' și '-' (primit '{1}')"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "tabelele inline nu sunt acceptate; folosiți un tabel [kind.ID]"
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "installed întreabă Windows ce este instalat; funcționează numai pe Windows"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "se instalează în aceeași cale ca linia {1} (Windows ignoră majusculele în nume{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "eroare internă: un dialog încorporat are o ordine de tabulare stricat�
 msgid "internal: a module table has no _Validation rule"
 msgstr "intern: un tabel de modul nu are regulă _Validation"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "intern: nicio regulă _Validation pentru o coloană din {1}"
 
 msgid "invalid"
 msgstr "nevalid"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "nevalid - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "nu este un pachet MSIX valid"
 msgid "is not valid UTF-8"
 msgstr "nu este UTF-8 valid"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for: '{1}' nu este un program (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "păstrați codul de actualizare, măriți versiunea, păstrați codurile componentelor fișierelor care rămân"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "cheia '{1}' este setată de două ori în acest tabel (prima dată la linia {2})"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "cheia '{1}' nu trebuie să înceapă sau să se termine cu '\\' și nici să conțină o parte goală"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "cheia '{1}' în afara unui tabel; doar 'format' vine înaintea primului tabel"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "fișierul de cheie '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "kind trebuie să fie \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" sau \"autoplay\" (primit '{1}')"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "kind trebuie să fie \"preview\", \"thumbnail\" sau \"property\" (primit '{1}')"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "kind trebuie să fie registry, file, dir sau component"
 msgid "labels is an array of strings, one per value"
 msgstr "labels este un tablou de șiruri, câte unul pe valoare"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "limba '{1}' nu are pachet de limbă (lang/{2}.po lângă sursă, sau RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "limba '{1}' este listată de două ori"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "limba '{1}' nu este în [ui] languages"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "limbii '{1}' îi lipsesc {2} texte, primul este {3}: adăugați-le în pachetul ei de limbă (lang/{4}.po) sau dați [ui-text.ID] text-{5}"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "limba '{1}' are nevoie de [ui] langid-{2} (LANGID-urile ei, pentru alegerea automată)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "limba '{1}' are nevoie de [ui] name-{2} (numele ei pe pagina de limbă)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "language trebuie să fie \"neutral\", \"en-US\" sau \"ko-KR\""
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" stă singur, nu într-o matrice: include toate limbile integrate"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "languages conține coduri ca \"ko\" sau \"zh_TW\" (2 sau 3 litere mici, și _ și două majuscule ale unei regiuni) (primit '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "launcher este numele fișierului lansatorului PSF din files, de exemplu 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license trebuie să fie un fișier .txt, .md (afișat ca text simplu) sau .rtf"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint: {1} rândul {2}: coloana {3} nu este în NFC ({4} rânduri{-5}); build --nfc pune numele de foldere, fișiere și comenzi rapide în NFC"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint: {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint: pagina de cod {1}, nu 65001: textul nu este verificat ca UTF-8, lățimile doar pentru ASCII"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint: vedeți problemele de mai sus\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "listează cheile cu care pot semna un token sau depozitul de certificate Windows"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "sigla '{1}' și varianta ei .scale-100 sunt ambele prezente: păstrați una"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "sigla '{1}' la scara {2} are {3}x{4} pixeli; trebuie să aibă {5}x{6}"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "sigla '{1}' la scara {2} nu este un fișier PNG"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "logoul '{1}' are {2}x{3} pixeli; logoul unui tip de fișier trebuie să fie pătrat"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "sigla '{1}' are {2}x{3} pixeli; trebuie să aibă {4}x{5}"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "sigla '{1}' nu este un fișier PNG"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "sigla '{1}' nu a fost găsită (nici ca variante .scale-100 ... .scale-400)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "sigla '{1}': o siglă cu variante de scară are nevoie de un nume de fișier ASCII cu extensie"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "logo trebuie să fie un .png RGB sau RGBA pe 8 biți, neîntrețesut, de cel mult 1024 pixeli pe latură"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "main-package este numele de identitate al pachetului principal (primit '{1}')"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "nu poate conține caractere de control sau / \\ : * ? \" < > | $"
 msgid "may not start with a space or end with a space or a dot"
 msgstr "nu poate începe cu un spațiu sau să se termine cu un spațiu ori un punct"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "modulul de îmbinare '{1}' nu a fost găsit"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "mai mult de 3 redirecționări"
 msgid "more than 96 sections"
 msgstr "mai mult de 96 de secțiuni"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "mai mult de un fișier sursă ('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "este prezent mai mult de un token: numiți unul cu --token-label"
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "multi trebuie să fie \"each\", \"one\" sau \"single\" (primit '{1}')"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "trebuie să aibă 1 până la 64 de octeți"
 msgid "name contains a control character"
 msgstr "numele conține un caracter de control"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "name este numele de identitate al unui pachet (primit '{1}')"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "numește un folder pe care tabelul său Directory nu îl are"
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "new msix nu este încă implementat: faceți o sursă MSI și adăugați [msix] (vedeți manualul)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "nicio linie 'format = {1}': o sursă în formatul rubrapack 0.18 sau mai vechi, pe care această versiune nu o citește (căile încep acum cu $(ProgramFiles) sau $(INSTALLDIR)); vedeți Source format în manual"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "niciun nume de server, sau unul mai lung de 255 de octeți"
 msgid "no string pool: not a transform"
 msgstr "nicio rezervă de șiruri: nu este o transformare"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "niciun tabel '{1}' în '{2}'"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "numerele octale și binare nu sunt acceptate; folosiți zecimal sau 0x"
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "on = \"uninstall\" este pentru HKLM, HKCU și HKMU (clasele merg cu [assoc.*], [com.*] și altele asemenea)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "on = \"uninstall\" elimină o cheie cu tot ce este sub ea: '{1}' nu este cheia proprie a unui produs sub Software"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "on = \"uninstall\" elimină întreaga cheie la eliminare; nu primește '{1}'"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "on trebuie să fie \"install\" sau \"uninstall\""
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "on trebuie să fie \"install\", \"uninstall\" sau \"both\""
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on: fiecare este un tip de fișier ('.' și litere mici, cifre, '_' sau '-'), \"*\" (orice fișier), \"folder\", \"background\" (partea goală a unui folder), \"drive\" sau \"assoc:<ID>\" (primit '{1}')"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "doar controalele radio, combo și listbox acceptă values"
 msgid "out of memory"
 msgstr "memorie insuficientă"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "ieșirea '{1}': rubrapack scrie .msi, .msm, .msix, .msixbundle, .msixupload și .exe-ul de instalare al unui lanț"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "pachetul '{1}' {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "pachetul '{1}' nu a fost găsit"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "parent trebuie să fie upgrade-code-ul altui produs, nu al acestui pachet"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "parent trebuie să fie upgrade-code-ul produsului principal, un GUID ca {12345678-1234-1234-1234-123456789ABC}"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "path trebuie să înceapă cu un folder Windows (ca $(ProgramFiles) sau 
 msgid "paths"
 msgstr "căi"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "perceived-type trebuie să fie \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" sau \"application\" (primit '{1}')"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "permisiunile au nevoie de scope = \"machine\" (acesta este {1})"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "phase trebuie să fie \"immediate\", \"deferred\", \"commit\" sau \"rollback\" (s-a primit '{1}')"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "ports trebuie să fie un port sau un interval ca \"8000-8100\" în 1-65535 (primit '{1}')"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "afișează acest ajutor sau utilizarea unei comenzi"
 msgid "product-code must be a GUID"
 msgstr "product-code trebuie să fie un GUID"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "profile trebuie să fie \"all\", \"domain\", \"private\" sau \"public\" (primit '{1}')"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "prog-id '{1}' aparține deja lui [com.{2}]"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "prog-id '{1}' aparține și lui [assoc.{2}]: un tip de fișier și o clasă COM au nevoie de două nume"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "prog-id '{1}' este și în [assoc.{2}] cu alt description, target, icon sau args"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "prog-id '{1}' apare și în [assoc.{2}] cu alt logo"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "prog-id trebuie să fie litere, cifre, '.', '_' sau '-', să nu înceapă cu o cifră, cel mult 39 (primit '{1}')"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "properties sunt pentru pachetele Windows Installer; un MSIX nu le acceptă"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "proprietatea '{1}' aparține deja controlului '{2}'"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "proprietatea '{1}' are numele unui dir sau al unei caracteristici"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "proprietatea '{1}' este deja definită (linia {2})"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "proprietatea '{1}' este deja căutată (linia {2})"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "proprietatea '{1}' este setată de rubrapack sau de programul de instalare și nu poate fi definită aici"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "proprietatea '{1}' trebuie să fie un nume public propriu (majuscule)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "proprietatea '{1}' trebuie să fie un nume public: majuscule, cifre și '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "protocol trebuie să fie \"tcp\" sau \"udp\" (primit '{1}')"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "public-folder trebuie să fie un folder al pachetului, de exemplu \"Public\" (primit '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "recursive = true nu rulează niciodată când o actualizare elimină ace
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "recursive = true elimină folderul cu tot ce este în el; nu primește 'name'"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "refuse-upgrade-below {1} este peste versiunea {2} a acestui pachet"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "refuse-upgrade-below '{1}' trebuie să fie o versiune ca 1.2.3"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message are nevoie de refuse-upgrade-below"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "regiunea {1} a paginii de limbi are {2} limbi, cel mult {3} (X-Rubrapack-Group al pachetelor)"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "registration trebuie să fie \"machine\" sau \"user\" (s-a primit '{1}')"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "registry-ul '{1}' elimină o valoare; nu are nimic de protejat"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "valoarea de registry '{1}' are nevoie de o caracteristică"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "remove-addons are nevoie de sarcina de curățare: eliminați cleanup = 
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "replaces conține cel mult 16 coduri de actualizare"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "replaces conține coduri de actualizare, GUID-uri ca {12345678-1234-1234-1234-123456789ABC} (primit '{1}')"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "replaces este un tablou de coduri de actualizare, de exemplu [\"{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "replaces listează {1} de două ori"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "replaces numește {1}, care este upgrade-code-ul propriu al acestui pachet sau parent-ul său"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "lipsește proprietatea obligatorie {1}"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "geamănul de anulare trebuie să vină înainte de {1} ({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "root trebuie să fie HKLM, HKCR sau HKCU"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "root trebuie să fie HKLM, HKCU, HKCR sau HKMU (primit '{1}')"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new: câteva întrebări creează sursa (Enter preia valoarea 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "rulați `rubrapack help <comandă>`; verificați căile și că folderul de ieșire există"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run: '{1}' (mașina 0x{2}) nu poate rula pe mașinile acestui pachet"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run: '{1}' nu este un program (.exe)"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run: fișierul '{1}' nu este un [file.*] al acestui pachet"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "salvați sursa ca UTF-8 (sau UTF-16 cu BOM), cu sfârșituri de linie LF
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "spune dacă acest Windows are instalat un produs cu acel cod de upgrade sau un pachet de aplicație din acea familie"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "schema '{1}' are deja un program ([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "scope trebuie să fie \"machine\", \"user\" sau \"dual\""
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "sddl trebuie să fie un șir SDDL ca \"D:PAI(A;OICI;FA;;;BA)\""
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "proprietatea de căutare '{1}' trebuie să fie un nume public propriu (majuscule)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "vedeți mesajul; reconstruirea cu rubrapack le rezolvă pe cele mai multe"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "secvența {1} nu este după {2} ({3})"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "secvențiază o acțiune lângă una pe care nu o rulează nici pachetul, nici modulul"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "numele de serviciu '{1}' este deja folosit"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "serviciile au nevoie de scope = \"machine\" (acesta este {1})"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "numele comenzii rapide are {1} unități UTF-16; cu numele scurt 8.3, MSI conține cel mult {2}"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "arată ce diferă între două pachete: tabele, rânduri, celule și rez
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "semnează un fișier PE, un pachet MSI, un pachet sau pachet grupat MSIX"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "s-a semnat {1}\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "sursa '{1}' este un director; folosiți [files.ID] pentru multe fișiere"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "sursa '{1}' este o legătură simbolică; legăturile nu sunt urmate"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "sursa '{1}' nu este un fișier obișnuit"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "fișierul sursă '{1}' s-a modificat în timpul construirii pachetului"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "fișierul sursă '{1}' este mai mare de 2 GiB"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "fișierul sursă '{1}' nu a fost găsit"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "source trebuie să fie \"file:<ID>\""
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "source trebuie să fie un pachet .msi, .msix, .msixbundle sau .msp"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "calea sursă '{1}' trebuie să fie relativă la fișierul sursă"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "căile sursei folosesc '/', nu '\\\\' (primit '{1}')"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source: fișierul '{1}' nu este un [file.*] al acestui pachet"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "summary-name trebuie să fie ASCII (informațiile rezumat conțin doar A
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "symbols este o listă de fișiere .pdb, de exemplu [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "tabelul {1} {2}"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "tabelul '{1}' este ilizibil"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "tabelul [{1}{2}{3}] este definit de două ori (prima dată la linia {4})"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "tags este o listă de cel mult 16 termeni de căutare, de exemplu [\"edi
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "nu primește configurație (nu are ModuleConfiguration)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "ținta '{1}' nu există"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "target trebuie să fie \"dir:<ID>\", \"file:<ID>\" sau \"registry:<ID>\"
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "target trebuie să fie \"file:<ID>\" și să numească un [file.*] al acestui pachet"
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "numele țintă '{1}' {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target: fișierul '{1}' nu este un [file.*] al acestui pachet"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "task-id '{1}' este deja folosit de [msix-extension.{2}]"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "fișierul UTF-16 nu este UTF-16 valid"
 msgid "the ZIP central directory lies outside the file"
 msgstr "directorul central ZIP se află în afara fișierului"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "ID-ul aplicației '{1}' devine Application Id: doar litere și cifre, fără să înceapă cu o cifră"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "cabinet-urile încorporate fac pachetul de 2 GiB sau mai mare, pe care W
 msgid "the entry is not in the central directory"
 msgstr "intrarea nu este în directorul central"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "dialogul de eroare '{1}' are nevoie de un control {2} numit {3} (eroarea 2835)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "executabilul '{1}' trebuie să fie un .exe"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "manifestul nu are Identity Publisher"
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "Identity din manifest nu poate fi citit pentru numele complet al pachetului"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "modulul de îmbinare {1}"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "numele {1}"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "familia de pachete {1} apare de două ori în container"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "conținutul pachetului nu corespunde semnăturii sale (a fost modificat 
 msgid "the package's directory cannot be read"
 msgstr "directorul pachetului nu poate fi citit"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "numele fișierului pachetului nu trebuie să conțină ghilimele sau semnul procent: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "răspunsul este mai mare de 4 MiB"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "răspunsul folosește o codificare de transfer alta decât chunked"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "aceeași condiție este deja cerută (linia {1})"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "codificarea fișierului sursă"
 msgid "the system random source failed"
 msgstr "sursa aleatoare a sistemului a eșuat"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "ordinea de tabulare (Control_Next) nu este un singur ciclu prin cele {1} controale ale sale de la Control_First (Windows Installer se oprește cu eroarea 2809 sau 2810)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "acest rubrapack a fost construit fără partea de meniu: elementele [men
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "acest rubrapack a fost construit fără programul de instalare (nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "threading trebuie să fie \"sta\", \"mta\", \"both\" sau \"neutral\" (primit '{1}')"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "prea multe texte localizate și scări de siglă pentru resources.pri"
 msgid "too many packages in the bundle"
 msgstr "prea multe pachete în pachetul grupat"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "transformarea '{1}' din '{2}' nu poate fi citită: {3}"
 
 msgid "trusted"
 msgstr "de încredere"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "două acțiuni au aceeași sequence {1} ({2} și {3}); dați unei [action] o altă sequence, before sau after"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "două pachete cu același nume într-un pachet grupat"
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "două pachete de resurse cu același ResourceId într-un pachet grupat"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "type trebuie să fie string, expand, dword, qword, binary sau multi (primit '{1}')"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "type trebuie să fie text, checkbox, edit, radio, combo, listbox sau bitmap (s-a primit '{1}')"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' nu este un [file.*] al acestui pachet"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "typelib-version este major.minor în cifre hexazecimale, de exemplu \"1.0\" (primit '{1}')"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "types și verb aparțin de kind = \"context-menu\""
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types: fiecare este \".ext\" sau \"*\" (orice fișier)"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types: fiecare este '.' și litere mici, cifre, '_' sau '-' (primit '{1}')"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "ui = \"{1}\" îl lasă pe utilizator să aleagă folderul dir-ului '{2}', care nu există (setați [ui] install-dir)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "ui = \"features\" are nevoie de tabele [feature.*] din care să se aleagă"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "ui trebuie să fie none, basic, minimal, installdir sau features (primit '{1}')"
 
 msgid "unexpected text after the value"
 msgstr "text neașteptat după valoare"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "comandă necunoscută '{1}' (vedeți 'rubrapack help')"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "secvență escape necunoscută \\{1} (folosiți '...' pentru text cu bare oblice inverse)"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "opțiune inspect necunoscută (folosiți un nume de tabel, --summary, --files sau --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "cheie necunoscută '{1}' în [{2}{3}{4}]"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "cheie necunoscută '{1}' în [{2}{3}{4}] (ați vrut să scrieți '{5}'?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "opțiune {1} necunoscută sau incompletă '{2}'"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "tabel necunoscut [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "tabel necunoscut [{1}{2}{3}] (ați vrut să scrieți [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "despachetează un pachet într-un director nou, așezat cum se instalează"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "neacceptat - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "cheile update-* au nevoie de appinstaller-uri și package-uri"
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "upgrade = false este pentru on = \"uninstall\" sau \"both\" (o instalare nu este niciodată eliminarea unei actualizări)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "upgrade-code trebuie să fie un GUID ca {12345678-1234-1234-1234-123456789ABC}"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "utilizare: rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "utilizare: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "folosiți o versiune completă rubrapack sau altă cale"
 msgid "used by more than one component"
 msgstr "folosit de mai multe componente"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "users trebuie să fie \"all\" (primit '{1}')"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "valoarea '{1}' este listată de două ori"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "values este un tablou de 1 până la 32 de șiruri"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "valori: ID-uri, GUID-uri, versiuni, numere în afara intervalului, referințe la lucruri care nu există"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "variabila '{1}' nu este definită ([define] sau -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "numele de variabilă '{1}' nu poate conține '=' sau începe cu = + - ! *"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "variabile"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "variabile: $(NUME) fără valoare, $( neînchis, un nume Windows sau un ID dir unde nu poate sta"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "versiunea '{1}' trebuie să fie a.b.c sau a.b.c.d"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "versiunea '{1}' trebuie să fie a.b.c sau a.b.c.d cu a, b <= 255 și c, d <= 65535"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "ce înseamnă un cod de diagnostic, mesajele care îl poartă, ce trebui
 msgid "with must be \"file:<ID>\""
 msgstr "with trebuie să fie \"file:<ID>\""
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with: fișierul '{1}' nu este un [file.*] al acestui pachet"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "fără --pkcs11, `keys list` arată depozitul de certificate Windows"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "working-dir '{1}' nu este un ID dir"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "scrieți tabelul sau valoarea în modul simplu arătat de manual"
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "scrieți valoarea fără '[~]'; mode = \"append\" sau \"prepend\" o adaugă"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "s-a scris {1}\n"
 
 msgid "x + width must be at most 370 (the page width)"

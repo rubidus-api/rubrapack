@@ -44,7 +44,7 @@ static char *ui_source(ctx_t *c, const char *shown, rp_pos_t pos) {
     char *path = ir_join(c, rp_cs(c->opt->source_dir), shown);
     uint64_t size = 0;
     if (path && rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) {
-        ERR(c, pos, "RP1509", "cannot read '%s'", shown);
+        ERR(c, pos, "RP1509", "cannot read '{}'", proven_arg_cstr(shown));
         rp_mem_free(c->alloc, path);
         return NULL;
     }
@@ -58,7 +58,7 @@ void ir_parse_ui_text(ctx_t *c, const rp_ttable_t *t, rp_ir_ui_text_t *x) {
     x->pos = t->pos;
     ir_get_ltexts(c, t, "text", &x->by_lang, &x->by_lang_count);
     x->text = RP_V(ir_get_str(c, t, "text", x->by_lang_count == 0, NULL));
-    if (!rp_ui_text_known(rp_cs(t->id))) ERR(c, t->pos, "RP1201", "[ui-text.%s]: no dialog text has this ID", rp_cs(t->id));
+    if (!rp_ui_text_known(rp_cs(t->id))) ERR(c, t->pos, "RP1201", "[ui-text.{}]: no dialog text has this ID", proven_arg_cstr(rp_cs(t->id)));
 }
 
 static bool public_property(const char *s) {
@@ -116,7 +116,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
     x->id = ir_dup_v(c, t->id);
     x->pos = t->pos;
     if (!ir_check_id(c, t, 50)) return;
-    if (frame_control(rp_cs(t->id))) ERR(c, t->pos, "RP1302", "'%s' is a control of the built-in frame; choose another ID", rp_cs(t->id));
+    if (frame_control(rp_cs(t->id))) ERR(c, t->pos, "RP1302", "'{}' is a control of the built-in frame; choose another ID", proven_arg_cstr(rp_cs(t->id)));
     x->dialog = RP_V(ir_get_str(c, t, "dialog", true, NULL));
     char *type = ir_get_str(c, t, "type", true, NULL);
     static const char *const types[] = { "text", "checkbox", "edit", "radio", "combo", "listbox", "bitmap", NULL };
@@ -124,11 +124,11 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
     for (int k = 0; type && types[k]; ++k) {
         if (strcmp(type, types[k]) == 0) x->type = k;
     }
-    if (type && x->type < 0) ERR(c, ir_key_pos(t, "type"), "RP1316", "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')", type);
+    if (type && x->type < 0) ERR(c, ir_key_pos(t, "type"), "RP1316", "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')", proven_arg_cstr(type));
     rp_mem_free(c->alloc, type);
     static const char *const req[] = { "x", "y", "width", "height" };
     for (int k = 0; k < 4; ++k) {
-        if (!ir_find_key(t, req[k])) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs '%s'", rp_cs(t->id), req[k]);
+        if (!ir_find_key(t, req[k])) ERR(c, t->pos, "RP1202", "[dialog-control.{}] needs '{}'", proven_arg_cstr(rp_cs(t->id)), proven_arg_cstr(req[k]));
     }
     // The body between the banner line (44) and the button line (234) of a 370 x 270 page.
     x->x = (int)ir_get_int(c, t, "x", 0, 0, 369);
@@ -150,24 +150,24 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
             else x->image_source = RP_V(ui_source(c, image, ir_key_pos(t, "image")));
             x->image_shown = RP_V(ir_dup(c, image));
         } else {
-            ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'image'", rp_cs(t->id));
+            ERR(c, t->pos, "RP1202", "[dialog-control.{}] needs 'image'", proven_arg_cstr(rp_cs(t->id)));
         }
     } else if (has_image) {
         ERR(c, ir_key_pos(t, "image"), "RP1316", "only a bitmap control takes an image");
     }
     rp_mem_free(c->alloc, image);
     if (x->type == RP_DC_TEXT || x->type == RP_DC_CHECKBOX) {
-        if (!has_text && x->text_by_lang_count == 0) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'text'", rp_cs(t->id));
+        if (!has_text && x->text_by_lang_count == 0) ERR(c, t->pos, "RP1202", "[dialog-control.{}] needs 'text'", proven_arg_cstr(rp_cs(t->id)));
     } else if (x->type >= 0 && (has_text || x->text_by_lang_count)) {
         static const char *const noname[] = { "text", "checkbox", "edit", "radio", "combo", "listbox", "bitmap" };
-        ERR(c, ir_key_pos(t, "text"), "RP1316", "a %s control has no text; put a text control beside it", noname[x->type]);
+        ERR(c, ir_key_pos(t, "text"), "RP1316", "a {} control has no text; put a text control beside it", proven_arg_cstr(noname[x->type]));
     }
     if (x->type == RP_DC_TEXT || x->type == RP_DC_BITMAP) {
-        if (x->property.ptr) ERR(c, ir_key_pos(t, "property"), "RP1316", "a %s control has no property", x->type == RP_DC_BITMAP ? "bitmap" : "text");
+        if (x->property.ptr) ERR(c, ir_key_pos(t, "property"), "RP1316", "a {} control has no property", proven_arg_cstr(x->type == RP_DC_BITMAP ? "bitmap" : "text"));
     } else if (x->type >= 0) {
-        if (x->property.ptr == NULL) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'property'", rp_cs(t->id));
+        if (x->property.ptr == NULL) ERR(c, t->pos, "RP1202", "[dialog-control.{}] needs 'property'", proven_arg_cstr(rp_cs(t->id)));
         else if (!public_property(rp_cs(x->property)))
-            ERR(c, ir_key_pos(t, "property"), "RP1310", "property '%s' must be a public name of your own (upper case)", rp_cs(x->property));
+            ERR(c, ir_key_pos(t, "property"), "RP1310", "property '{}' must be a public name of your own (upper case)", proven_arg_cstr(rp_cs(x->property)));
     }
     const rp_tkey_t *vk = ir_find_key(t, "values"), *lk = ir_find_key(t, "labels");
     bool list = x->type == RP_DC_RADIO || x->type == RP_DC_COMBO || x->type == RP_DC_LISTBOX;
@@ -180,7 +180,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
         return;
     }
     if (vk == NULL) {
-        ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'values'", rp_cs(t->id));
+        ERR(c, t->pos, "RP1202", "[dialog-control.{}] needs 'values'", proven_arg_cstr(rp_cs(t->id)));
         return;
     }
     if (vk->val.kind != RP_TV_ARRAY || vk->val.count == 0 || vk->val.count > 32) {
@@ -207,7 +207,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
         if (val == NULL) break;         // reported; a list with a hole in it is nobody's to read
         if (val && (val[0] == '\0' || strlen(val) > 64)) ERR(c, vk->pos, "RP1316", "a value is 1 to 64 bytes");
         for (size_t j = 0; val && j < x->value_count; ++j) {
-            if (strcmp(x->values[j], val) == 0) ERR(c, vk->pos, "RP1316", "value '%s' is listed twice", val);
+            if (strcmp(x->values[j], val) == 0) ERR(c, vk->pos, "RP1316", "value '{}' is listed twice", proven_arg_cstr(val));
         }
         x->values[x->value_count] = val;
         x->labels[x->value_count] = l ? ir_subst(c, l) : ir_dup(c, val ? val : "");
@@ -228,7 +228,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
         if (code == NULL) continue;
         const rp_tval_t *a = &t->keys[k].val;
         if (a->kind != RP_TV_ARRAY || a->count != x->value_count) {
-            ERR(c, t->keys[k].pos, "RP1316", "%s is an array of strings, one per value", rp_cs(t->keys[k].key));
+            ERR(c, t->keys[k].pos, "RP1316", "{} is an array of strings, one per value", proven_arg_cstr(rp_cs(t->keys[k].key)));
             continue;
         }
         char **ls = rp_mem_alloc(c->alloc, a->count, sizeof *ls);
@@ -238,7 +238,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
         }
         for (size_t j = 0; j < a->count; ++j) {
             if (a->items[j].kind != RP_TV_STRING) {
-                ERR(c, t->keys[k].pos, "RP1316", "%s holds strings", rp_cs(t->keys[k].key));
+                ERR(c, t->keys[k].pos, "RP1316", "{} holds strings", proven_arg_cstr(rp_cs(t->keys[k].key)));
                 ls[j] = ir_dup(c, "");
             } else {
                 ls[j] = ir_subst(c, &a->items[j]);
@@ -247,7 +247,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
         x->labels_by_lang[x->labels_by_lang_count++] = (rp_ir_llabels_t){ RP_V(ir_dup(c, code)), ls };
     }
     if (x->type == RP_DC_RADIO && x->height < 12 * (int)x->value_count)
-        ERR(c, ir_key_pos(t, "height"), "RP1308", "a radio control stacks its buttons: height must be at least 12 per value (%d)", 12 * (int)x->value_count);
+        ERR(c, ir_key_pos(t, "height"), "RP1308", "a radio control stacks its buttons: height must be at least 12 per value ({})", proven_arg_i32(12 * (int)x->value_count));
 }
 
 static const rp_ir_dialog_t *find_dialog(const rp_ir_t *ir, proven_u8str_view_t id) {
@@ -270,7 +270,7 @@ void ir_dialog_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->dialog_count; ++k) {
         const rp_ir_dialog_t *d = &ir->dialogs[k];
         if (ir->ui < RP_UI_MINIMAL) {
-            ERR(c, d->pos, "RP1316", "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\"", rp_cs(d->id));
+            ERR(c, d->pos, "RP1316", "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\"", proven_arg_cstr(rp_cs(d->id)));
             continue;
         }
         if (d->after.ptr == NULL) continue;
@@ -287,28 +287,28 @@ void ir_dialog_checks(ctx_t *c) {
             ++steps;
         }
         if (find_dialog(ir, d->after) == NULL) {
-            ERR(c, d->pos, "RP1315", "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]", rp_cs(d->after),
-                ir->license_shown.ptr ? ", RpLicenseDlg" : "", ir->ui >= RP_UI_INSTALLDIR ? ", RpInstallDirDlg" : "",
-                ir->ui == RP_UI_FEATURES ? ", RpCustomizeDlg" : "");
+            ERR(c, d->pos, "RP1315", "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]", proven_arg_cstr(rp_cs(d->after)),
+                proven_arg_cstr(ir->license_shown.ptr ? ", RpLicenseDlg" : ""), proven_arg_cstr(ir->ui >= RP_UI_INSTALLDIR ? ", RpInstallDirDlg" : ""),
+                proven_arg_cstr(ir->ui == RP_UI_FEATURES ? ", RpCustomizeDlg" : ""));
         } else if (steps > ir->dialog_count) {
-            ERR(c, d->pos, "RP1307", "[dialog.%s] is placed after itself through other dialogs", rp_cs(d->id));
+            ERR(c, d->pos, "RP1307", "[dialog.{}] is placed after itself through other dialogs", proven_arg_cstr(rp_cs(d->id)));
         }
     }
     for (size_t k = 0; k < ir->dialog_control_count; ++k) {
         const rp_ir_dialog_control_t *x = &ir->dialog_controls[k];
-        if (x->dialog.ptr && find_dialog(ir, x->dialog) == NULL) ERR(c, x->pos, "RP1315", "dialog '%s' is not a [dialog.*]", rp_cs(x->dialog));
+        if (x->dialog.ptr && find_dialog(ir, x->dialog) == NULL) ERR(c, x->pos, "RP1315", "dialog '{}' is not a [dialog.*]", proven_arg_cstr(rp_cs(x->dialog)));
         if (x->property.ptr == NULL || x->type == RP_DC_TEXT) continue;
         const rp_ir_property_t *p = find_property(ir, rp_cs(x->property));
         if (x->type == RP_DC_RADIO || x->type == RP_DC_COMBO) {
             bool ok = false;
             for (size_t j = 0; p && p->value.ptr && j < x->value_count; ++j) ok |= x->values[j] && RP_EQ(x->values[j], p->value);
-            if (!ok) ERR(c, x->pos, "RP1315", "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)",
-                         x->type == RP_DC_RADIO ? "radio" : "combo", rp_cs(x->property));
+            if (!ok) ERR(c, x->pos, "RP1315", "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)",
+                         proven_arg_cstr(x->type == RP_DC_RADIO ? "radio" : "combo"), proven_arg_cstr(rp_cs(x->property)));
         }
         for (size_t j = 0; j < k; ++j) {
             const rp_ir_dialog_control_t *y = &ir->dialog_controls[j];
             if (y->property.ptr && RP_EQ(y->property, x->property) && y->type != RP_DC_TEXT)
-                ERR(c, x->pos, "RP1301", "property '%s' already belongs to control '%s'", rp_cs(x->property), rp_cs(y->id));
+                ERR(c, x->pos, "RP1301", "property '{}' already belongs to control '{}'", proven_arg_cstr(rp_cs(x->property)), proven_arg_cstr(rp_cs(y->id)));
         }
     }
     for (size_t k = 0; k < ir->dialog_count; ++k) {
@@ -316,8 +316,8 @@ void ir_dialog_checks(ctx_t *c) {
         for (size_t j = 0; j < ir->dialog_control_count && !any; ++j) any = ir->dialog_controls[j].dialog.ptr && RP_EQ(ir->dialog_controls[j].dialog, ir->dialogs[k].id);
         size_t count = 0;
         for (size_t j = 0; j < ir->dialog_control_count; ++j) count += ir->dialog_controls[j].dialog.ptr && RP_EQ(ir->dialog_controls[j].dialog, ir->dialogs[k].id);
-        if (!any) ERR(c, ir->dialogs[k].pos, "RP1202", "[dialog.%s] has no [dialog-control.*]", rp_cs(ir->dialogs[k].id));
-        else if (count > 64) ERR(c, ir->dialogs[k].pos, "RP1313", "[dialog.%s] has %zu controls; at most 64", rp_cs(ir->dialogs[k].id), count);
+        if (!any) ERR(c, ir->dialogs[k].pos, "RP1202", "[dialog.{}] has no [dialog-control.*]", proven_arg_cstr(rp_cs(ir->dialogs[k].id)));
+        else if (count > 64) ERR(c, ir->dialogs[k].pos, "RP1313", "[dialog.{}] has {} controls; at most 64", proven_arg_cstr(rp_cs(ir->dialogs[k].id)), proven_arg_u64(count));
     }
 }
 
@@ -452,13 +452,13 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
             size_t n = code ? strlen(code) : 0;
             bool ok = code && ir_lang_code_ok(code);
             if (!ok) {
-                ERR(c, lk->pos, "RP1316", "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')", code ? code : "?");
+                ERR(c, lk->pos, "RP1316", "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')", proven_arg_cstr(code ? code : "?"));
             } else if (strcmp(code, "en") == 0) {
                 // English is always there
             } else if (ui_lang_index(ir, code) >= 0) {
-                ERR(c, lk->pos, "RP1301", "language '%s' is listed twice", code);
+                ERR(c, lk->pos, "RP1301", "language '{}' is listed twice", proven_arg_cstr(code));
             } else if (ir->ui_lang_count == RP_UI_LANG_MAX) {
-                ERR(c, lk->pos, "RP1308", "at most %d languages besides English", RP_UI_LANG_MAX - 1);
+                ERR(c, lk->pos, "RP1308", "at most {} languages besides English", proven_arg_i32(RP_UI_LANG_MAX - 1));
             } else {
                 memcpy(ir->ui_langs[ir->ui_lang_count++].code, code, n + 1);
             }
@@ -475,7 +475,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
             if (code == NULL) continue;
             int li = ui_lang_index(ir, code);
             if (li < 0) {
-                ERR(c, key->pos, "RP1316", "'%s': '%s' is not in [ui] languages", rp_cs(key->key), code);
+                ERR(c, key->pos, "RP1316", "'{}': '{}' is not in [ui] languages", proven_arg_cstr(rp_cs(key->key)), proven_arg_cstr(code));
                 continue;
             }
             rp_ir_ui_lang_t *L = &ir->ui_langs[li];
@@ -486,7 +486,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 for (size_t j = 0; j < cnt; ++j) {
                     const rp_tval_t *v = one->kind == RP_TV_ARRAY ? &one->items[j] : one;
                     if (v->kind != RP_TV_INT || v->i < 1 || v->i > 65535) {
-                        ERR(c, key->pos, "RP1308", "%s holds LANGIDs (1..65535), like 1041", rp_cs(key->key));
+                        ERR(c, key->pos, "RP1308", "{} holds LANGIDs (1..65535), like 1041", proven_arg_cstr(rp_cs(key->key)));
                         break;
                     }
                     if (L->langid_count < RP_UI_LANGID_MAX) L->langids[L->langid_count++] = (uint16_t)v->i;
@@ -494,7 +494,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 continue;
             }
             if (key->val.kind != RP_TV_STRING) {
-                ERR(c, key->pos, "RP1306", "'%s' must be a string", rp_cs(key->key));
+                ERR(c, key->pos, "RP1306", "'{}' must be a string", proven_arg_cstr(rp_cs(key->key)));
                 continue;
             }
             char *v = ir_subst(c, &key->val);
@@ -506,7 +506,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                     if ((*p & 0xC0) != 0x80) units += *p >= 0xF0 ? 2 : 1;
                 }
                 if (v && (units == 0 || units > 31 || ir_has_control(v))) {
-                    ERR(c, key->pos, "RP1308", "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)", rp_cs(key->key), units);
+                    ERR(c, key->pos, "RP1308", "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})", proven_arg_cstr(rp_cs(key->key)), proven_arg_u64(units));
                 }
                 L->font = RP_V(v);
             }
@@ -538,8 +538,8 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
         if (L->langid_count == 0 && kl >= 0) {
             for (size_t j = 0; j < 6 && known_langs[kl].ids[j]; ++j) L->langids[L->langid_count++] = known_langs[kl].ids[j];
         }
-        if (L->langid_count == 0) ERR(c, pos, "RP1202", "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)", L->code, L->code);
-        if (L->name.ptr == NULL && kl < 0) ERR(c, pos, "RP1202", "language '%s' needs [ui] name-%s (its name on the language page)", L->code, L->code);
+        if (L->langid_count == 0) ERR(c, pos, "RP1202", "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)", proven_arg_cstr(L->code), proven_arg_cstr(L->code));
+        if (L->name.ptr == NULL && kl < 0) ERR(c, pos, "RP1202", "language '{}' needs [ui] name-{} (its name on the language page)", proven_arg_cstr(L->code), proven_arg_cstr(L->code));
         if (L->name.ptr == NULL && kl >= 0) L->name = RP_V(ir_dup(c, known_langs[kl].name));
         if (L->font.ptr == NULL) L->font = RP_V(ir_dup(c, kl >= 0 ? known_langs[kl].font : "Segoe UI"));
         // A license shown as text names its face in RTF, which takes no face name it cannot spell in ASCII.
@@ -548,8 +548,8 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
             char key[16];
             (void)proven_fmt_to(key, sizeof key, "font-{}", proven_arg_cstr(L->code));
             rp_srcdiag_add(c->d, uit ? ir_key_pos(uit, key) : pos, "RP1319", true,
-                           "%s '%s': the license text needs the face's English name, so it shows in the language's own face; "
-                           "write the English name (like \"Malgun Gothic\") to use this face there too", key, rp_cs(L->font));
+                           "{} '{}': the license text needs the face's English name, so it shows in the language's own face; "
+                           "write the English name (like \"Malgun Gothic\") to use this face there too", proven_arg_cstr(key), proven_arg_cstr(rp_cs(L->font)));
         }
         // English is built in; another language has its texts in its pack, or the source writes them.
         if (strcmp(L->code, "en") != 0) {
@@ -575,8 +575,8 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 }
                 if (!have && missing++ == 0) first = id;
             }
-            if (missing) ERR(c, pos, "RP1202", "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s",
-                             L->code, missing, first, L->code, L->code);
+            if (missing) ERR(c, pos, "RP1202", "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}",
+                             proven_arg_cstr(L->code), proven_arg_u64(missing), proven_arg_cstr(first), proven_arg_cstr(L->code), proven_arg_cstr(L->code));
         }
     }
     // RFC-0028: past one column the page shows a region's languages in one column of its own.
@@ -585,14 +585,14 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
             size_t n = 0;
             for (size_t i = 0; i < ir->ui_lang_count; ++i) n += ir->ui_langs[i].group == g;
             if (n > RP_UI_LANG_LIST)
-                ERR(c, lk ? lk->pos : (rp_pos_t){ 0 }, "RP1308", "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)",
-                    g, n, RP_UI_LANG_LIST);
+                ERR(c, lk ? lk->pos : (rp_pos_t){ 0 }, "RP1308", "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)",
+                    proven_arg_i32(g), proven_arg_u64(n), proven_arg_i32(RP_UI_LANG_LIST));
         }
     }
     // text-xx / title-xx / labels-xx name languages of the dialogs.
 #define LANG_OK(code, pos)                                                                                             \
     do {                                                                                                               \
-        if (ui_lang_index(ir, rp_cs(RP_V(code))) < 0) ERR(c, (pos), "RP1316", "language '%s' is not in [ui] languages", rp_cs(RP_V(code))); \
+        if (ui_lang_index(ir, rp_cs(RP_V(code))) < 0) ERR(c, (pos), "RP1316", "language '{}' is not in [ui] languages", proven_arg_cstr(rp_cs(RP_V(code)))); \
     } while (0)
     for (size_t u = 0; u < ir->ui_text_count; ++u) {
         for (size_t w = 0; w < ir->ui_texts[u].by_lang_count; ++w) LANG_OK(ir->ui_texts[u].by_lang[w].lang, ir->ui_texts[u].pos);

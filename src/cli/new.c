@@ -96,15 +96,15 @@ static int fixed_starter(const char *name, const char *ext) {
     (void)proven_fmt_to(path, sizeof path, "{}{}", proven_arg_cstr(name), proven_arg_cstr(ext));
     proven_err_t err = rp_pal_write_file_new(proven_heap_allocator(), path, (const uint8_t *)text, (size_t)len);
     if (err == PROVEN_ERR_BUSY) {
-        rp_diag_error(RP_DIAG_OUTPUT, "'%s' already exists; it is left as it is", path);
+        rp_diag_error(RP_DIAG_OUTPUT, "'{}' already exists; it is left as it is", proven_arg_cstr(path));
         return RP_EXIT_IO;
     }
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", path);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(path));
         return RP_EXIT_IO;
     }
     char line[200];
-    rp_lang_format(line, sizeof line, "wrote %s\n", path);
+    rp_lang_format(line, sizeof line, "wrote {}\n", proven_arg_cstr(path));
     return rp_pal_puts(RP_OUT_STDOUT, line) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
 }
 
@@ -433,7 +433,7 @@ static int interview(ans_t *a, const char *stem) {
     if ((rc = rpn_ask(a, TR_N("Version"), "1.0.0", a->version, sizeof a->version, rpn_check_version))) return rc;
     if ((rc = rpn_ask(a, TR_N("Folder with the files to install"), "dist", a->dist, sizeof a->dist, rpn_check_dist))) return rc;
     char line[1400];
-    rp_lang_format(line, sizeof line, "  %zu files and %zu folders there\n", a->scan.files.n, a->scan.dirs.n);
+    rp_lang_format(line, sizeof line, "  {} files and {} folders there\n", proven_arg_u64(a->scan.files.n), proven_arg_u64(a->scan.dirs.n));
     (void)rp_pal_puts(RP_OUT_STDERR, line);
     default_main(a, d, sizeof d);
     if ((rc = rpn_ask(a, TR_N("Main program, for shortcuts (- for none)"), d, a->main, sizeof a->main, rpn_check_main))) return rc;
@@ -749,7 +749,7 @@ int rp_cmd_new(int argc, char **argv) {
         char path[160];
         (void)proven_fmt_to(path, sizeof path, "{}{}", proven_arg_cstr(name), proven_arg_cstr(a->ext));
         if (!rpn_name_problem(name) && rp_pal_stat(proven_heap_allocator(), path, &size) != RP_FS_NONE) {
-            rp_diag_error(RP_DIAG_OUTPUT, "'%s' exists already; change it with `rubrapack edit %s`", path, path);
+            rp_diag_error(RP_DIAG_OUTPUT, "'{}' exists already; change it with `rubrapack edit {}`", proven_arg_cstr(path), proven_arg_cstr(path));
             rc = RP_EXIT_IO;
         }
     }
@@ -760,7 +760,7 @@ int rp_cmd_new(int argc, char **argv) {
         rc = usage();
     }
     if (rc == RP_EXIT_OK && name && rpn_name_problem(name)) {
-        rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "the name %s", rpn_name_problem(name));
+        rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "the name {}", proven_arg_cstr(rpn_name_problem(name)));
         rc = RP_EXIT_USAGE;
     }
     if (rc == RP_EXIT_OK && interactive && options) {
@@ -810,7 +810,7 @@ int rp_cmd_new(int argc, char **argv) {
             }
             const char *why = chk[k].check(a, f);
             if (why) {
-                rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "%s '%s': %s", chk[k].what, f, why);
+                rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "{} '{}': {}", proven_arg_cstr(chk[k].what), proven_arg_cstr(f), proven_arg_cstr(why));
                 rc = RP_EXIT_USAGE;
             }
         }
@@ -827,14 +827,14 @@ int rp_cmd_new(int argc, char **argv) {
     if (rc == RP_EXIT_OK) {
         proven_err_t err = rp_pal_write_file_new(proven_heap_allocator(), path, text, len);
         if (err != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_OUTPUT, err == PROVEN_ERR_BUSY ? "'%s' already exists; it is left as it is" : "cannot write '%s'", path);
+            rp_diag_error(RP_DIAG_OUTPUT, err == PROVEN_ERR_BUSY ? "'{}' already exists; it is left as it is" : "cannot write '{}'", proven_arg_cstr(path));
             rc = RP_EXIT_IO;
         }
     }
     rp_mem_free(proven_heap_allocator(), text);
     if (rc == RP_EXIT_OK) {
         char line[240];
-        rp_lang_format(line, sizeof line, "wrote %s\n", path);
+        rp_lang_format(line, sizeof line, "wrote {}\n", proven_arg_cstr(path));
         if (rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK) rc = RP_EXIT_IO;
         if (interactive) print_command(a);
         char *lint_argv[] = { argv[0], "lint", path, NULL };

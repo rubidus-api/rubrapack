@@ -80,22 +80,22 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         const rp_ttable_t *t = &doc->tables[k];
         if (!ir_in_list(rp_cs(t->kind), all_kinds)) {
             const char *hint = ir_suggest(rp_cs(t->kind), all_kinds);
-            if (hint) ERR(&c, t->pos, "RP1201", "unknown table [%s%s%s] (did you mean [%s]?)", rp_cs(t->kind), t->id.ptr ? "." : "", t->id.ptr ? rp_cs(t->id) : "", hint);
-            else ERR(&c, t->pos, "RP1201", "unknown table [%s%s%s]", rp_cs(t->kind), t->id.ptr ? "." : "", t->id.ptr ? rp_cs(t->id) : "");
+            if (hint) ERR(&c, t->pos, "RP1201", "unknown table [{}{}{}] (did you mean [{}]?)", proven_arg_cstr(rp_cs(t->kind)), proven_arg_cstr(t->id.ptr ? "." : ""), proven_arg_cstr(t->id.ptr ? rp_cs(t->id) : ""), proven_arg_cstr(hint));
+            else ERR(&c, t->pos, "RP1201", "unknown table [{}{}{}]", proven_arg_cstr(rp_cs(t->kind)), proven_arg_cstr(t->id.ptr ? "." : ""), proven_arg_cstr(t->id.ptr ? rp_cs(t->id) : ""));
             continue;
         }
         if (ir_in_list(rp_cs(t->kind), later_kinds)) {
-            ERR(&c, t->pos, "RP1901", "[%s%s] is not supported yet (planned for %s)", rp_cs(t->kind), t->id.ptr ? ".*" : "",
-                phase_of(rp_cs(t->kind)));
+            ERR(&c, t->pos, "RP1901", "[{}{}] is not supported yet (planned for {})", proven_arg_cstr(rp_cs(t->kind)), proven_arg_cstr(t->id.ptr ? ".*" : ""),
+                proven_arg_cstr(phase_of(rp_cs(t->kind))));
             continue;
         }
         bool top = ir_in_list(rp_cs(t->kind), top_kinds);
         if (top && t->id.ptr) {
-            ERR(&c, t->pos, "RP1201", "[%s] takes no ID: write [%s]", rp_cs(t->kind), rp_cs(t->kind));
+            ERR(&c, t->pos, "RP1201", "[{}] takes no ID: write [{}]", proven_arg_cstr(rp_cs(t->kind)), proven_arg_cstr(rp_cs(t->kind)));
             continue;
         }
         if (!top && t->id.ptr == NULL) {
-            ERR(&c, t->pos, "RP1201", "[%s] needs an ID: write [%s.ID]", rp_cs(t->kind), rp_cs(t->kind));
+            ERR(&c, t->pos, "RP1201", "[{}] needs an ID: write [{}.ID]", proven_arg_cstr(rp_cs(t->kind)), proven_arg_cstr(rp_cs(t->kind)));
             continue;
         }
         if (RP_EQ(t->kind, "package") || RP_EQ(t->kind, "module")) {
@@ -171,12 +171,12 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     if (c.define) {
         for (size_t k = 0; k < c.define->count; ++k) {
             const rp_tkey_t *key = &c.define->keys[k];
-            if (!ir_valid_id(rp_cs(key->key), 64)) ERR(&c, key->pos, "RP1401", "'%s' is not a valid variable name", rp_cs(key->key));
-            else if (ir_windows_name(rp_cs(key->key))) ERR(&c, key->pos, "RP1404", "'%s' is a Windows name; give the variable another name", rp_cs(key->key));
+            if (!ir_valid_id(rp_cs(key->key), 64)) ERR(&c, key->pos, "RP1401", "'{}' is not a valid variable name", proven_arg_cstr(rp_cs(key->key)));
+            else if (ir_windows_name(rp_cs(key->key))) ERR(&c, key->pos, "RP1404", "'{}' is a Windows name; give the variable another name", proven_arg_cstr(rp_cs(key->key)));
             for (size_t j = 0; j < doc->count; ++j) {
                 const rp_ttable_t *dt = &doc->tables[j];
                 if (dt->id.ptr && RP_EQ(dt->kind, "dir") && RP_EQ(dt->id, key->key)) {
-                    ERR(&c, key->pos, "RP1404", "'%s' is also a dir ID; give the variable another name", rp_cs(key->key));
+                    ERR(&c, key->pos, "RP1404", "'{}' is also a dir ID; give the variable another name", proven_arg_cstr(rp_cs(key->key)));
                 }
             }
             if (key->val.kind != RP_TV_STRING) ERR(&c, key->pos, "RP1306", "[define] values must be strings");
@@ -184,8 +184,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     }
     for (size_t k = 0; k < opt->define_count; ++k) {
         if (ir_windows_name(rp_cs(opt->defines[k].name))) {
-            ERR(&c, ((rp_pos_t){ 1, 1 }), "RP1404", "-D %s: '%s' is a Windows name; give the variable another name",
-                rp_cs(opt->defines[k].name), rp_cs(opt->defines[k].name));
+            ERR(&c, ((rp_pos_t){ 1, 1 }), "RP1404", "-D {}: '{}' is a Windows name; give the variable another name",
+                proven_arg_cstr(rp_cs(opt->defines[k].name)), proven_arg_cstr(rp_cs(opt->defines[k].name)));
         }
     }
     if (package == NULL) {
@@ -200,7 +200,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         for (size_t k = 0; k < doc->count; ++k) {
             const rp_ttable_t *t = &doc->tables[k];
             if (ir_in_list(rp_cs(t->kind), all_kinds) && !ir_in_list(rp_cs(t->kind), module_ok)) {
-                ERR(&c, t->pos, "RP1201", "[%s%s] cannot go into a merge module; the package that merges it has it", rp_cs(t->kind), t->id.ptr ? ".*" : "");
+                ERR(&c, t->pos, "RP1201", "[{}{}] cannot go into a merge module; the package that merges it has it", proven_arg_cstr(rp_cs(t->kind)), proven_arg_cstr(t->id.ptr ? ".*" : ""));
             }
         }
     } else {
@@ -209,7 +209,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     if (arp) ir_parse_arp(&c, arp);
     if (naction > 50) {         // the Undo pairs fill 3400..3499 (RFC-0003 2)
         rp_pos_t top = { 1, 1 };
-        ERR(&c, top, "RP1313", "at most 50 [action.*] tables (this file has %zu)", naction);
+        ERR(&c, top, "RP1313", "at most 50 [action.*] tables (this file has {})", proven_arg_u64(naction));
     }
 
     ir->features = rp_mem_alloc(alloc, nfeat + 1, sizeof *ir->features);
@@ -447,20 +447,20 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         for (size_t k = 0; k < doc->count; ++k) {
             const rp_ttable_t *t = &doc->tables[k];
             if (t->id.ptr && t->id.size > 35 && !RP_EQ(t->kind, "define")) {
-                ERR(&c, t->pos, "RP1301", "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)",
-                    rp_cs(t->kind), rp_cs(t->id));
+                ERR(&c, t->pos, "RP1301", "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)",
+                    proven_arg_cstr(rp_cs(t->kind)), proven_arg_cstr(rp_cs(t->id)));
             }
         }
         for (size_t k = 0; k < ir->dir_count; ++k) {
-            if (ir->dirs[k].guard) ERR(&c, ir->dirs[k].pos, "RP1316", "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry", rp_cs(ir->dirs[k].id));
+            if (ir->dirs[k].guard) ERR(&c, ir->dirs[k].pos, "RP1316", "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry", proven_arg_cstr(rp_cs(ir->dirs[k].id)));
         }
         for (size_t k = 0; k < ir->remove_count; ++k) {
-            if (ir->removes[k].recursive) ERR(&c, ir->removes[k].pos, "RP1316", "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry", rp_cs(ir->removes[k].id));
+            if (ir->removes[k].recursive) ERR(&c, ir->removes[k].pos, "RP1316", "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry", proven_arg_cstr(rp_cs(ir->removes[k].id)));
         }
         for (size_t k = 0; k < ir->registry_count; ++k) {
-            if (ir->registries[k].purge) ERR(&c, ir->registries[k].pos, "RP1316", "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry", rp_cs(ir->registries[k].id));
+            if (ir->registries[k].purge) ERR(&c, ir->registries[k].pos, "RP1316", "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry", proven_arg_cstr(rp_cs(ir->registries[k].id)));
             if (ir->registries[k].type == RP_REG_QWORD) {
-                ERR(&c, ir->registries[k].pos, "RP1316", "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry", rp_cs(ir->registries[k].id));
+                ERR(&c, ir->registries[k].pos, "RP1316", "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry", proven_arg_cstr(rp_cs(ir->registries[k].id)));
             }
         }
     }

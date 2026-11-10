@@ -11,15 +11,17 @@
 // lang/ beside the source, lang/ beside the program) comes first, so it adds a language or replaces
 // a built-in one.
 //
-// A command-line translation is not a printf format: it names the English text's conversions by
-// number, {1} for the first, and may put them in another order ("{2} 의 {1}"); {-2} says that the
+// A command-line text is a proven format ("cannot read {}: {}", its `{}` the values), and that is
+// the key of its translation. A translation names the English text's values by number, {1} for
+// the first, and may put them in another order ("{2} 의 {1}"); {-2} says that the
 // second has no place in this language (a plural "s"); {{ is a brace. So a wrong pack can leave a
 // value out, but never read one that is not there.
 
-#include <stdarg.h>
 #include <stddef.h>
 
 #include "rubrapack/diag.h"
+
+#include "proven/fmt.h"
 
 // One entry of a pack.
 typedef struct {
@@ -62,11 +64,14 @@ const char *rp_tr(const char *en);
 #define TR(s)   rp_tr(s)
 #define TR_N(s) s
 
-// As vsnprintf / snprintf with the English format, in the chosen language. Returns the length the
-// whole text has (it is cut to `cap`, at a byte: the caller trims a partial character).
-int rp_lang_vformat(char *out, size_t cap, const char *en_fmt, va_list ap);
-[[gnu::format(RP_PRINTF_FORMAT, 3, 4)]]
-int rp_lang_format(char *out, size_t cap, const char *en_fmt, ...);
+
+// As proven_fmt_to with the English proven format, in the chosen language: the translation's {1}
+// .. {n} are the format's values in order, each rendered with its own placeholder. `args` is
+// proven's array (args[0] empty), `nargs` its length. Returns the length the whole text has.
+// It is cut to `cap` at a byte (the caller trims a partial character). rp_lang_format(out, cap,
+// "{} files", proven_arg_u64(n)) is the call.
+int rp_lang_format_a(char *out, size_t cap, const char *en_fmt, const proven_arg_t *args, size_t nargs);
+#define rp_lang_format(out, cap, fmt, ...) rp_lang_format_a(out, cap, fmt, RP_ARGS(__VA_ARGS__))
 
 // The packs built into the program (nob embeds resources/lang/*.po).
 typedef struct {

@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Segoe UI\n"
 "X-Rubrapack-Group: 8\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, párbeszédpanelek {6}{7}\n  1 név, gyártó, verzió, architektúra           2 telepítési mappa, kinek települ\n  3 párbeszédpanelek, licenc, nyelvek           4 választható részek\n  5 parancsikonok                               6 fájlok: a programmappához igazítás\n  7 bármely kulcs                               v nézet   l lint   s mentés   q kilépés\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\nAz ilyen kódú üzenetek (a * egy nevet vagy értéket jelöl):\n"
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nAz eredmények az stdout-ra, a diagnosztika az stderr-re kerül.\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\nTeendő: {1}.\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} már nincs meg, de egy parancsikon megnyitja: előbb módosítsa a parancsikonokat (5)\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  ott {1} fájl és {2} mappa van\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7, v, l, s vagy q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  hozzáadva: [dir.{1}] és [files.{2}]\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  hozzáadva: [file.{1}]\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint: lásd a fenti problémákat (az ott megnevezett fájl ellenőrz�
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  a [ui] languages többi nyelve megmarad; a listát a 7-tel módosíthatja (bármely kulcs)\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  eltávolítva: [file.{1}]\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  eltávolítva: [files.{1}]{2}\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  ez nem fér bele a TOML részhalmazba; semmi sem változott\n"
 msgid "  that was not readable text; again, please\n"
 msgstr "  ez nem olvasható szöveg volt; kérem, még egyszer\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  a programmappa '{1}': {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - Windows Installer (.msi) és MSIX (.msix) csomagokat készít\n\nhasz
 msgid " and its dir"
 msgstr " és a dir-je"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}) mögött nincs környezeti változó, ezért kibontható érték nem tartalmazhatja; használjon karakterlánc-értéket (telepítéskor töltődik ki)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) egy {2}: kezdhet útvonalat, vagy állhat egy értékért, amelyet a Windows Installer tölt ki (beállításjegyzék, környezet, INI, argumentumok, üzenetek), de itt nem"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) nem olyan mappa, amelyből útvonal indulhat (dir-azonosító, vagy ProgramFiles, LOCALAPPDATA, ProgramData ... - lásd a kézikönyv Paths részét){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  szerkezet:    {2}\n  kivonat:      {3}\n  aláírás:      {4}\n  lánc:         {5}{6}{7}\n  visszavonás:  nincs ellenőrizve\n  időbélyeg:    {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2}: a változó nincs beállítva"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' nem vezérlője ennek a párbeszédpanelnek"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' nincs benne ebben: {3}"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}': {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': a licencszövegnek a betűtípus angol neve kell, ezért a nyelv saját betűtípusával jelenik meg; írja be az angol nevet (például \"Malgun Gothic\"), hogy ott is ezt a betűtípust használja"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "a(z) {1} = '{2}' mappa kell legyen"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "{1}-összetevő, de a csomag platformja {2}"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} nem tartozik ide: kind = \"{2}\""
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} nem tartozik ide: kind = \"firewall\""
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} LANGID-értékeket tartalmaz (1..65535), például 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} karakterláncokat tartalmaz"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "a(z) {1} {2}–{3} karakter hosszú"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} a \"Kulcs=Érték\" szövegek listája"
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "a(z) {1} szövegek listája, például [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} egy 1-31 karakteres betűtípusnév, például \"Segoe UI\" (kapott: {2})"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} egy MSI-feltétel lezárt idézőjelekkel és kiegyensúlyozott zárójelekkel"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} karakterláncok tömbje, értékenként egy"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} MSI-csomagokhoz való: az msiexec nem távolít el MSIX-et"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} már nincs meg. Eltávolítja a(z) [file.{2}] táblát?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} hosszabb 240 karakternél"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} új. Hozzáadja?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} nem beállításjegyzék-formátumú GUID"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} nem olyan kód, amelyet ez a rubrapack használ{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} értéke \"file:<ID>\" kell legyen, amely e csomag egy [file.*] tábláját nevezi meg"
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "a(z) {1} értéke {2}–{3} betű, számjegy, '.' vagy '-' lehet, és nem kezdődhet '.' karakterrel (kapott: '{4}')"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1} csak GUID lehet"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1} egy GUID kell legyen, például {12345678-...} (kapott: '{2}')"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "a(z) {1} http:// vagy https:// cím kell legyen (kapott '{2}')"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1} https://, http:// vagy file:// cím, vagy \\\\server\\share útvonal kell legyen (kapott: '{2}')"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1} nem egyezhet az upgrade-code értékkel (architektúránként egy frissítési család)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} a Windows {2}. vagy újabb buildjét igényli: állítsa be: [msix] min-version = \"10.0.{3}.0\""
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} igényli a resources/bin/rubrapack_ca-{2}.dll fájlt, amely nélkül ez a rubrapack készült"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}, TSA nincs ellenőrizve (adja meg a --tsa-trust kapcsolót)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}, TSA megbízható"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}, TSA nem megbízható - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} már nincs meg vagy üres. Eltávolítja a(z) [files.{3}] és [dir.{4}] táblát?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ új mappa. Hozzáadja?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1}: {2} hiba{-3}, {4} figyelmeztetés{-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1}: {2} hiba{-3}, {4} figyelmeztetés{-5} (ehhez képest: {6})\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1}: {2} fájl, {3} bájt\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1}: {2} fájl, {3} hiba, 0 figyelmeztetés\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1}: további {2} diagnosztika nem látható\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1}: a(z) '{2}' nem program (.exe)"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1}: a(z) '{2}' nem a rubrapack által elhelyezett szabványos művelet"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1}: a(z) '{2}' fájl nem [file.*] ebben a csomagban"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1}: a(z) '{2}' fájl nem program (.exe)"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "a '$(' nincs lezárva (a '$(' szöveghez írjon '$$(' alakot)"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' már létezik; változatlanul marad"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' már létezik; törölje, vagy készítse egy másik mappába"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}' már rendelkezik {2}-kezelővel ([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}' már rendelkezik engedélyekkel"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' és '{2}' ugyanaz az útvonal a csomagban"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' a Windowshoz vagy a böngészőkhöz tartozik"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "'{1}' nem olvasható '{2}' alapján: {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' nem fér bele a TOML részhalmazba; semmi sem lett mentve"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' már létezik"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' már létezik; módosítsa ezzel: `rubrapack edit {2}`"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' létezik, és nem üres mappa; bontsa ki egy újba"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' ide kerül: {2}; vagy msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}' összegzőadat-adatfolyama olvashatatlan"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' nem tartalmaz Directory, Component, File és Media táblát, amelyből kibontható volna"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "'{1}' nem tartalmazza a(z) '{2}' beágyazott átalakítást"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}' nem tartalmaz olvasható összegzőadatokat"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}' nem tartalmaz '{2}' átalakítást"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' UTF-16 kódolású: az edit csak UTF-8 forrásokat módosít (előbb mentse UTF-8-ként)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' egy Windows-név; adjon más nevet a változónak"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' egy [chain]: telepítőprogramot készít, -o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' a beépített keret vezérlője; válasszon másik azonosítót"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' a számítógép mappája; egy {2} csomag nem írhat oda"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' egy egyesítési modul: inkább [merge.ID] segítségével egyesítse"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' olyan név, amelyet az MSIX formátum magának tart fenn"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' szimbolikus hivatkozás; a hivatkozásokat nem követi"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' egyben [property.*] is"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' egyben dir-azonosító is; adjon más nevet a változónak"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' a 0x{2} géphez készült, nem e csomag arch értékéhez; állítsa be az any-arch = true értéket, ha ez a szándék"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' se nem PE-fájl (.exe, .dll), se nem MSI-csomag, se nem MSIX-csomag vagy -köteg, se nem cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' se nem PE-fájl, se nem MSI-csomag, se nem MSIX-csomag vagy -köteg, se nem cabinet"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' se nem ismert mappa, se nem dir-azonosító (ismert mappák: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' sem MSIX-csomag, sem csomagcsalád neve (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' nem olyan cabinet, amelyet a rubrapack olvasni tud (stored vagy MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' nem diagnosztikai kód (RP és négy számjegy, például RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' nem program (.exe)"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' nem szabályos fájl"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' nem rubrapack telepítőprogram{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' nem érvényes azonosító (betűk, számjegyek és '_', nem kezdődhet számjeggyel, legfeljebb {2})"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' nem érvényes MSI-adatbázis: {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' nem érvényes MSIX-csomag: {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' nem érvényes csomag: {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' nem érvényes forrás (a TOML részhalmaz); előbb javítsa kézzel"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' nem érvényes átalakítás: {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' nem érvényes változónév"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' foglalt, nem használható azonosítóként"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' egy dir neve: dir-t csak beállításjegyzék- vagy dir-keresés tölthet ki"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' programfájlnak (PE) tűnik, de a fejlécei vagy erőforrásai sérültek"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}' csak karakterlánc lehet"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}' csak egész szám lehet"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}' értéke {2} és {3} között kell legyen"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}' csak true vagy false lehet"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' nem lehet üres"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' nem nevez meg átalakítást (8. összegzőtulajdonság): nem javítócsomag"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' mappával kezdődik: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}': {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}': a(z) {2} '{3}' ezt tartalmazza: {4}; semmi sem lett kibontva"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}': {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}': {2} bejegyzés, több a(z) {3} korlátnál (--limit-entries); semmi sem lett kibontva"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}': '{2}' és '{3}' Windowson ugyanaz az útvonal lenne; semmi sem lett kibontva"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}': '{2}' nincs a [ui] languages között"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}': egy tábla nem olvasható"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}': egy tábla olvashatatlan"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}': egy MSIX minden fájlját telepíti (when); használja a msi-only = true értéket"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}': egy MSIX minden fájlját eltávolítja (keep); használja a msi-only = true értéket"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}': a(z) '{2}' cabinet sérült, vagy nem stored/MSZIP"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}': a(z) '{2}' cabinetnév nem egyszerű fájlnév"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}': a(z) '{2}' tömörített fájlhoz ({3}. sorszám) nem tartozik cabinet"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}': a(z) '{2}' könyvtár szülője, '{3}', nem létezik"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}': a(z) '{2}' könyvtár saját őse, vagy túl mélyen van beágyazva"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}': a(z) '{2}' fájl nem egyezik az MsiFileHash értékével"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}': a(z) '{2}' fájlnak nincs összetevője vagy könyvtára"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}': a(z) '{2}' fájl {3} bájt, a File tábla szerint {4}"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}': a(z) '{2}' fájl nincs a(z) '{3}' cabinetben"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}': a külső cabinetjeit nem fedi le az aláírás (--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}': a mappája nem vezet ismert helyre"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}': több mint {2} bájt írandó (--limit-bytes); semmi sem lett kibontva"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}': nincs --timestamp: az aláírás érvényessége a tanúsítvány lejártával megszűnik"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}': a(z) '{2}' csomag nem egyezik a SHA-256 értékével"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}': a(z) '{2}' cabinet-adatfolyam nincs meg"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}': a jegyzékben nincs {2} {3}"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}': a jegyzék megnevezi: '{2}', de az nincs a csomagban"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}': időbélyeg innen: {2}: {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}': a(z) '{2}' átalakítás nem olvasható '{3}' alapján: {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' a csomag saját nyelve ({2}); ezt a szöveget utótag nélkül adja meg"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "a 'version' nem fogad el argumentumot"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "a --allow-unsigned-cabs .msi fájlokhoz való"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "--arch köteghez: x64, x86 és arm64 listája, mindegyik egyszer (kapott: '{1}')"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "a --dist egy új mappát nevez meg a forrás mellett (útvonal nélkül)
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "a --flat .msixbundle kimenethez való (csomagjai mellé íródnak)"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "a --jobs 1 és 64 közötti számot fogad el (kapott: '{1}')"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "a --key legfeljebb {1} külső cabinetet ír alá; növelje a cab-max-size értékét"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "a --key-store egy Windows-tanúsítványtároló; máshol használjon ku
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "a --key-store a tanúsítvány SHA-1 ujjlenyomatát fogadja (40 hexadecimális számjegy)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1}: nincs ilyen nyelv (beépítettek: {2}; másikhoz a nyelvi csomagja kell, {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "A --lang (vagy RUBRAPACK_LANG) választja ki e szövegek nyelvét: {1}, vagy egy nyelvi csomaggal rendelkező nyelv.\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "a --lang nyelvet igényel, például en vagy ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "a --languages párbeszédpaneleket igényel: adja meg a --ui kapcsolót is"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "a --msix-compress deflate vagy store értéket fogad (kapott: '{1}')"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1}: a változó nincs beállítva"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "a --patch-code nagybetűs, kapcsos zárójeles GUID-t fogad: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1}: a változó nincs beállítva"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "a --previous két .msi csomagot hasonlít össze"
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots: az operációs rendszer főtanúsítványai nem olvashatók"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "a --target {1} nem egyezik a(z) '{2}' kimenettel"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "a --target {1} nincs megvalósítva (msi vagy msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "a --target msi vagy msix értéket fogad (kapott: '{1}')"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "a --winget [winget] táblát igényel: identifier, installer-url, licens
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "a --winget egy fájlban kéri a csomagot: a winget egyet tölt le, így nem lehet cab = \"external\""
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "a -D {1} kétszer van megadva"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1}: '{2}' egy Windows-név; adjon más nevet a változónak"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "a -D NÉV=ÉRTÉK alakot igényel (kapott: '{1}')"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "a -i minden választ megkérdez; adja meg vagy a -i kapcsolót, vagy a b
 msgid "; its range is "
 msgstr "; a tartománya "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "az ActionProperty '{1}' nincs a SecureCustomProperties között"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Mappanév a Program Files alatt"
 msgid "Folder with the files to install"
 msgstr "A telepítendő fájlokat tartalmazó mappa"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "A(z) '{1}' azonosító már foglalt ({2}. sor); az azonosítóknak minden táblában különbözniük kell"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "Kinek telepít (machine, user, dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "Kulcs tábla.kulcs alakban (package.version, dir.INSTALLDIR.path, ...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "a(z) '{1}' KeyPath egy másik összetevőhöz tartozik"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "a(z) '{1}' KeyPath nincs a File táblában"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "a(z) '{1}' KeyPath nincs a Registry táblában"
 
 msgid "Korean dialogs as well as English?"
 msgstr "Koreai párbeszédpanelek is az angolok mellett?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "a LastSequence {1} kisebb egy alacsonyabb DiskId értékénél"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX: mire van szüksége egy MSIX-csomagnak, és mit nem tartalmazhat"
 msgid "Main program, for shortcuts (- for none)"
 msgstr "Főprogram a parancsikonokhoz (- ha nincs)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "Kézikönyv: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "Termék neve"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "a ProductCode és az UpgradeCode ugyanaz a GUID"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "a ProductVersion {1} az első három mezőjében nem nagyobb az előző {2} értéknél: a Windows Installer nem frissít"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Program, amelyet a parancsikonok megnyitnak (- ha nincs parancsikon)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1}: nincs ilyen nyelv (beépítettek: {2}; másikhoz a nyelvi csomagja kell, {3}.po)"
 
 msgid "Reference, "
 msgstr "Referencia, "
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "a(z) {1}. sorszámot egyetlen Media sor sem fedi le (utolsó: {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "a(z) {1}. sorszámot egy másik fájl használja"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "A megírandó forrásfájl"
 msgid "Source format"
 msgstr "Forrásformátum"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "a Source mezőnek egy File sort kell megneveznie a(z) {1} típushoz"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "A TOML részhalmaz"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "az UTF-16 big-endian fájlok nem támogatottak; mentse UTF-8-ként"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "az UpgradeCode {1} eltér az előző verzióétól ({2}): ez a csomag nem váltja fel"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "Verziók és frissítések"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "a Windows Installer legfeljebb 255.255.65535(.65535) értéket enged"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "a Windows nem mondta meg, mi van telepítve ehhez: '{1}'"
 
 msgid "Windows name"
 msgstr "Windows-név"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] igényli ezt: '{4}'"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] nem kerülhet egyesítési modulba; az egyesítő csomag tartalmazza"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] még nem támogatott (tervezve: {3})"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] nem kerülhet MSIX-be; adja hozzá a msi-only = true értéket, hogy az MSIX nélküle készüljön"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] nem kerülhet MSIX-be; adja hozzá a msi-only = true értéket, hogy az MSIX nélküle készüljön"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "A(z) [{1}.{2}] a felhasználó AppData vagy LocalAppData mappájában van: a minden felhasználónak telepített dual csomag csak a telepítő felhasználó profiljába teszi"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: egyesítési modulban az azonosító legfeljebb 35 karakter (a modul GUID-ja hozzáadódik)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] azonosítót igényel: írja [{2}.ID] alakban"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] nem fogad azonosítót: írja [{2}] alakban"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "a [Content_Types].xml nem az utolsó bejegyzés (nem a rubrapack vagy a 
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "a [[...]] táblatömbök nem támogatottak; minden elemnek adjon saját [kind.ID] táblát"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] egyszer kerül elhelyezésre: before, after vagy sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] a do és az undo értéket is igényli (az undo egy sikertelen do-t is visszavon)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] entry-t igényel: a meghívandó DLL-függvényt"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] run = \"file:<ID>\" értéket igényel: a program, amelyet a do és az undo futtat"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "az [action.{1}] a csomag egy fájlját futtatja az InstallFinalize előtt, amikor egy első telepítésnél az még nincs meg (Windows Installer 1721-es vagy 1723-as hiba): tegye az InstallFinalize után, vagy legyen deferred"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] egy dolgot futtat: run (exe), dll (telepített DLL) vagy binary (a csomag DLL-je); vagy do és undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}]: a(z) {2} egyetlen műveletre való, nem do/undo párra"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}]: a telepített fájlt futtató halasztott műveletnek az InstallFiles után kell lennie (sequence > 4000)"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}]: az azonnali művelet a telepítő felhasználóként fut; az as a többi fázishoz való"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}]: az args egy programé; a DLL data-t kap"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}]: a check do/undo párral jár"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}]: a data halasztott, commit vagy rollback művelethez való (az azonnali a tulajdonságokat olvassa)"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}]: az entry egy DLL függvénye; a run args-ot vesz"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX esetén az args csak egyszerű szöveg lehet (telepítéskor kitöltött [...] nélkül)"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}]: MSIX-ben a fájltípus alkalmazást nyit meg: a target csak [msix-app.*] végrehajtható fájl lehet"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] kétszer szerepel"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "a [chain-package] azonosítót igényel: írja [chain-package.ID] alakban"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}]: az app-id és a typelib csak az MSI-be kerül; az MSIX nélkülük regisztrálja az osztályt"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}]: az args programhoz tartozik; a DLL-t betölti, nem indítja"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}]: a surrogate a dllhostban futtat DLL-t; '{2}' egy program"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}]: a threading DLL-hez való; a program maga állítja be az apartmentjét"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}]: a typelib-version és a typelib-file a typelib értéket igényli"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] ide kerül: {2}; vagy msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}]: a forrása csak a csomagba kerülő fájl lehet"
 
 msgid "[define] values must be strings"
 msgstr "a [define] értékei csak karakterláncok lehetnek"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] igényli ezt: '{2}'"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "a(z) [dialog-control.{1}] image értéket igényel"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] igényli ezt: 'property'"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] igényli ezt: 'text'"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] igényli ezt: 'values'"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}] {2} vezérlőt tartalmaz; legfeljebb 64"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}] nem tartalmaz [dialog-control.*] táblát"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] más párbeszédpaneleken át önmaga után kerül"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] ezt igényli: ui = \"minimal\", \"installdir\" vagy \"features\""
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}]: '{2}' egy Windows-név; adjon a dir-nek másik azonosítót"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}]: a guard a rubrapack segéd-DLL-jét igényli, amelyet egyesítési modul nem tartalmaz"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] egy szolgáltatást igényel"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}]: egy MSIX minden változóját beállítja (when); használja a msi-only = true értéket"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: az értéke olyan helyet nevez meg, amelyet MSIX nem adhat (csomagon kívüli, nem Windows-mappa, vagy telepítéskori rész); használja a msi-only = true értéket"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}]: external-location = true mellett a csomag a program egyetlen fájlját sem tartalmazza, így a rubrapack indítóját sem; vagy msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] már a saját programja mappájában van; az isolate-for máshová telepített megosztott DLL-hez való"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "A(z) [file.{1}] a felhasználói profilban van, és van component-guid értéke: a kulcsútvonal a fájl marad, holott a Windows szabályai ott HKCU-értéket kívánnak (ICE38); hagyja el a component-guid értéket, hogy ilyet kapjon"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}]: {2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: a(z) '{2}' nem .NET-szerelvény (nincs Assembly sort tartalmazó CLI-fejléce)"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}]: egy .NET-szerelvény maga hordozza a jegyzékét; a manifest Win32-szerelvényhez való"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}]: egy Win32-szerelvénynek kell a manifest = \"file:<ID>\", a jegyzékfájlja"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: a megosztott .NET-szerelvény a GAC-ba kerül, amely csak erős névvel rendelkezőt fogad el; írja alá, vagy adja meg: assembly-for = \"file:<program>\""
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: egy megosztott Win32-szerelvény olyan katalógussal kerül a WinSxS-be, amelyet a jegyzék publicKeyToken értéke által megnevezett kulcs írt alá; készítse a --key kapcsolóval (vagy privát szerelvényhez adja meg: assembly-for = \"file:<program>\")"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: a megosztott Win32-szerelvény '{2}' jegyzéke megnevezi az aláíróját: publicKeyToken az assemblyIdentity elemben (annak a --key kulcsnak a tokenje, amellyel készül)"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: az assembly-for és a manifest az assembly = \"dotnet\" vagy \"win32\" mellé tartozik"
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}]: a(z) '{2}' jegyzékben nincs name és version értékkel rendelkező assemblyIdentity"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: a(z) '{2}' jegyzéknek ugyanabban a dir-ben és feature-ben (ugyanazzal a when-nel) kell lennie: a kettő egy összetevő"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}]: a jegyzék publicKeyToken értéke \"{2}\", de a --key kulcs tokenje \"{3}\""
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: a(z) '{2}' jegyzék egy másik szerelvényé, vagy maga is szerelvény"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}]: a Fájlkezelő DLL-ből tölti be a(z) {2}-kezelőt; a [com.{3}] program"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}]: a Windows a tulajdonságkezelőket csak gépenként olvassa; a csomagnak scope = \"machine\" kell"
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}]: az előnézet-kezelő a Windows prevhost folyamatában fut; hagyja ki az app-id és surrogate értéket a [com.{2}] táblából"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}]: az MSIX csak miniatűr- és előnézet-kezelőt tartalmaz (egy csomagolt tulajdonságkezelő nem adott értéket a Fájlkezelőnek); a msi-only = true az MSI-nek megtartja"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}]: az MSIX-fájltípus egy alkalmazáshoz tartozik; adjon hozzá egy [msix-app.*] táblát"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}]: a(z) {2} osztály nem e csomag [com.*] táblája (a kezelő DLL-je szolgálja ki)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}]: MSIX-ben a kezelők minden típusukon osztoznak, vagy egyiken sem (egy típus egy fájltípus-társításban van)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}]: MSIX-ben az osztálya surrogate-ben fut; a [com.{2}] threading = \"sta\" értéke üzenethurkot ad az ablakának (threading = {3} mellett az előnézet üres maradhat)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}]: MSIX-ben a típusai mind egy [assoc] fájltípusban vannak, vagy egyikben sem"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}]: az osztálya msi-only ([com.{2}]); az MSIX-nek nem lenne hozzá kiszolgálója"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}]: a types fájltípusok listája, például [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] ide kerül: {2}; vagy msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] igényli ezt: 'value'"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] egy szolgáltatást igényel: állítsa be a 'feature' értéket itt vagy a dir-jén"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}]: egy MSIX minden INI-bejegyzését megírja (when); használja a msi-only = true értéket"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}]: az értékében van egy rész, amelyet a Windows Installer telepítéskor tölt ki ([...]); az MSIX a fájlt készítéskor írja meg"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] igényli az 'on' értéket: hol látszik az elem, például [\".txt\"] vagy \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] igényli a 'target' értéket (az indított programot), vagy parent = \"{2}\" értékű elemeket (almenü)"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] igényli a 'target' értéket: az elem által indított programot"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}]: a Windows 11 menüje csak betűkből és számjegyekből álló ID-t fogad el ('_' nem lehet): nevezze át, vagy windows11 = false"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: az almenü nem indít semmit: hagyja ki az 'args' értéket"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}]: az almenü eleme ott látszik, ahol az almenü: hagyja ki az 'on' értéket"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: az args egy része telepítéskor töltődik ki a Windows Installer által ([...]); az MSIX csak rögzített szöveget tartalmaz"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}]: a hide-when értéke \"HKCU\\\\key\\\\value\" vagy \"HKLM\\\\...\", a Windows 11 menü egy almenün kívüli elemén"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}]: a hide-when olyan értéket nevez meg, amelyet ez a csomag maga ír ([registry.{2}]): az elem sosem jelenne meg"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: a programja nincs az MSIX-ben (msi-only?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: az értékei nem kerülhetnek a csomag beállításjegyzékébe"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: az list egy része telepítéskor töltődik ki a Windows Installer által ([...]); az MSIX csak rögzített szöveget tartalmaz"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}]: a list a(z) {2} helyett áll, ha az elérési utak nem férnek el egy parancssorban: kell multi = \"one\", {3} az args-ban és {4} (a listafájl) a list-ben"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}]: on = \"{2}\": nincs [assoc.{3}]"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}]: az on egy fájltípus vagy azok listája, például [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}]: a(z) '{2}' parent nem [menu.*]"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}]: a(z) '{2}' parentnek almenünek kell lennie: target és saját parent nélküli [menu.*]"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] ide kerül: {2}; vagy msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] egy szolgáltatást igényel: állítsa be a 'feature' értéket itt vagy a dir-jén"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}]: '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; vagy msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] feature-t igényel (vagy with = \"file:<ID>\")"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}]: a feature saját összetevővel jár, nem a with-tel"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: a new-name egy fájlt nevez meg; a name helyettesítő karaktereket tartalmaz"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}]: a megosztási célnak types, formats vagy mindkettő kell"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}]: az automatikus lejátszás kezelőjének content-events, device-events vagy mindkettő kell"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: az args csak egyszerű szöveg lehet (telepítéskor kitöltött [...] nélkül)"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}]: a device-events mellé class kell (a program IHWEventHandler COM-osztálya)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}]: a file értéke csak {2} lehet"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}]: a file csomagba kerülő fájlt kell megnevezzen"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}]: a file csomagba kerülő programot kell megnevezzen"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: a types fájltípusok listája, például [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': a Windows csak betűket és számjegyeket fogad el"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "a [msix-psf] nem fér össze sem az external-location = true, sem az [en
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "a [msix-psf] a PSF indítójával indítja az alkalmazásokat: [msix-app.ID] kell hozzá"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf]: a(z) '{1}' config nem nevezi meg a(z) '{2}' alkalmazást az \"applications\" részben"
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf]: a files mappában nincs '{1}' (az indító)"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}]: a(z) '{2}' fájl nem DLL"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] egyszer nevezi meg az illesztőprogramját: driver (egy [odbc-driver]) vagy driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] driver-name esetén with = \"file:<ID>\" kell: az összetevő, amellyel települ"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}]: a gépenkénti csomag a géphez regisztrálja az adatforrásokat"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] egy példányt nevez meg: msix (publisher-rel) vagy upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}]: az msix a csomag identitásneve (3–50 betű, számjegy, '.' vagy '-'), és kell hozzá publisher (\"CN=...\"), ahogy a jegyzéke tartalmazza"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}]: a másik példányt az előzetes ellenőrzés keresi: kell preflight = true"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}]: az upgrade-code e csomag sajátja (az frissítés, nem másik példány)"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] igényli, hogy a dir-jének legyen szolgáltatása"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}]: MSIX esetén az args csak egyszerű szöveg lehet (telepítéskor kitöltött [...] nélkül)"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}]: MSIX-ben egy séma alkalmazást nyit meg: a target csak [msix-app.*] végrehajtható fájl lehet"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] igényli a 'value' értéket (vagy remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}]: a HKCR nem ér ki az MSIX-ből; használjon [assoc.*], [protocol.*], [com.*] vagy [handler.*] táblát, vagy msi-only = true értéket"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: a qword érték a rubrapack segéd-DLL-jét igényli, amelyet egyesítési modul nem tartalmaz"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}]: az MSIX csak a(z) {2}\\Software alatti értékeket tartalmaz"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}]: az MSIX nem távolít el értékeket, és nem is hagyja hátra őket (remove, keep); használja a msi-only = true értéket"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}]: egy MSIX minden értékét megírja (when); használja a msi-only = true értéket"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}]: az értékében van egy rész, amelyet a Windows Installer telepítéskor tölt ki ([...]); az MSIX csak rögzített értékeket tartalmaz"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: az on = \"uninstall\" a rubrapack segéd-DLL-jét igényli, amelyet egyesítési modul nem tartalmaz"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: a kulcs- vagy értéknév nem kerülhet beállításjegyzék-kaptárba"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}]: a users = \"all\" a számítógépre telepítő csomagban on = \"uninstall\" melletti root = \"HKCU\" beállításhoz való"
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] egy szolgáltatást igényel: állítsa be a 'feature' értéket itt vagy a dir-jén"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}]: a recursive = true nem való a(z) {2} alatti mappához"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: a recursive = true a rubrapack segéd-DLL-jét igényli, amelyet egyesítési modul nem tartalmaz"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}]: a users = \"all\" a számítógépre telepítő csomagban AppData vagy LocalAppData alatti mappa recursive = true beállításához való"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX esetén az args csak egyszerű szöveg lehet (telepítéskor kitöltött [...] nélkül)"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}]: a file csomagba kerülő programot kell megnevezzen"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] a(z) '{2}' szolgáltatást hirdeti, amelynél advertise = \"disallow\""
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}]: az advertise nem kombinálható a when-nel"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}]: az MSIX-nek csak az asztalon és a Start menüben van parancsikonja{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}]: az MSIX-parancsikonnak nincs working-dir értéke"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}]: az MSIX-parancsikon mindig megvan (a when MSI-hez való)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: az MSIX-parancsikon az alkalmazása emblémáját mutatja; az icon MSI-hez való"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}]: egy hirdetett parancsikon MSI-hez való (az MSIX a teljes csomagot telepíti)"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}]: egy hirdetett parancsikonhoz ikon kell"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: MSIX esetén az args csak egyszerű szöveg lehet (telepítéskor kitöltött [...] nélkül)"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}]: MSIX-ben a parancsikon alkalmazást indít: a target csak [msix-app.*] végrehajtható fájl lehet"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}]: az MSIX Start menü-bejegyzése az alkalmazása, amely nem fogad args értéket"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: egyetlen párbeszédpanel-szövegnek sincs ilyen azonosítója"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "a(z) [ui] embedded MSI-hez való; egy MSIX-nek nincs saját telepítőfe
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "a(z) [ui] a [package] ui = \"basic\" vagy más párbeszédkészletét igényli (vagy embedded = \"....dll\")"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "a(z) \\{1} escape-szekvencia nem Unicode skalárérték"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "csomag `lint` vizsgálata: párbeszédpanelek, kódlap, szövegnormaliz�
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX-csomag vagy -köteg `lint` vizsgálata"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "egy {1} vezérlőnek nincs property értéke"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "egy {1} vezérlőnek nincs szövege; tegyen mellé szövegvezérlőt"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "egy {1} vezérlőhöz [property.{2}] kell, alapértékként az egyik értékével (a csendes telepítés ezt használja)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "egy {1} csomag nem írhat a HKLM-be; használja a HKMU-t"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "az útvonal egyik tanúsítványának olyan kritikus bővítménye van, 
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "az útvonal egyik tanúsítványát nem CA tanúsítvány írta alá"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "a lánc csak [chain], [chain-package.ID] és [define] táblát tartalmaz, [{1}] táblát nem; a csomagok a saját forrásukból készülnek"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "a lánc legfeljebb {1} csomagot tartalmaz"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "a lánchoz legalább egy [chain-package.ID] kell"
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "olyan karakter, amelyet a Windows nem enged névben (/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "egy tárolóban legfeljebb {1} csomagcsalád lehet"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "olyan funkció, amelyet ez a rubrapack nem nyújt (vagy amely nélkül k
 msgid "a file larger than allowed"
 msgstr "a megengedettnél nagyobb fájl"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "a(z) '{1}' alatti egyik fájlnév nem érvényes Unicode, ezért nem csomagolható"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "egy fájl összetevő- vagy könyvtárlánca megszakadt"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "a betűtípus az őt megnevező [font.*] táblán át kerül az MSIX-be"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "a keretrendszer-csomagnak nincsenek saját alkalmazásai, képességei vagy függőségei ({1})"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "egy kaptárcella átnyúlik a blokkján"
 msgid "a hive version or type rubrapack does not read"
 msgstr "olyan kaptárverzió vagy -típus, amelyet a rubrapack nem olvas"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "egy ismert mappa maga ('{1}') nem kaphat engedélyeket"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "a felhasználónévvel vagy jelszóval rendelkező proxy nem támogatott
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "a qword érték egész szám, vagy \"0x\" és 1-16 hexadecimális számjegy"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "a választógomb-vezérlő egymás alá teszi a gombjait: a magasság értékenként legalább 12 legyen ({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "foglalt eszköznév"
 msgid "a rollback action cannot be asynchronous"
 msgstr "visszaállítási művelet nem lehet aszinkron"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "a séma egy kisbetű, majd kisbetűk, számjegyek, '+', '-' vagy '.' (kapott: '{1}')"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "egy szakasz a fájlon kívül van"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "a szolgáltatás neve nem tartalmazhat '/' vagy '\\' jelet (legfeljebb 256 karakter)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "a telepítő .exe [chain] táblát tartalmazó forrásból készül; '{1}' csomagot készít (.msi, .msix)"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "a verzió 3 vagy 4 ponttal elválasztott szám, például 1.0.0"
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "az account értéke LocalSystem, LocalService vagy NetworkService lehet"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "a(z) '{1}' művelet már definiálva van"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "a művelet nem szabványos, és nincs a CustomAction táblában"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "az action értéke \"warn\" vagy \"refuse\" lehet (kapott: '{1}')"
 
 msgid "adds too many tables"
 msgstr "túl sok táblát ad hozzá"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "az advertise értéke \"allow\" vagy \"disallow\" lehet ('{1}' érkezett)"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "az after = '{1}' nem e párbeszédkészlet lapja (RpWelcomeDlg{2}{3}{4}), és nem is [dialog.*]"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "az alias ide tartozik: kind = \"alias\""
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "az alias csak .exe végű fájlnév lehet: betűk, számjegyek, '.', '_', '-' (kapott: '{1}')"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "INI szakasz nem tartalmazhat ']' jelet, kulcs pedig '=' jelet"
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "MSIX nem helyezhet fájlokat az ideiglenes mappába"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "egy alkalmazásnak egy aliasa van (a [msix-extension.{1}] már az)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "egy alkalmazásnak egy megosztási célja van (a [msix-extension.{1}] már az)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "a választható vagy módosítócsomag nem deklarál képességeket és 
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "egy x86 csomag csak a 32 bites beállításjegyzék-nézetbe ír"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "a(z) '{1}' alkalmazás nem [msix-app.*]"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "az appinstaller-uri és a package-uri együtt jár: hol lesz az .appinstaller fájl és a csomag"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "az arch értéke \"x64\", \"arm64\" vagy \"x86\" lehet (kapott: '{1}')"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "az arch értéke \"x64\", \"x86\" vagy \"arm64\" lehet (a telepítőprogram saját)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "a(z) {1}. argumentum nem érvényes UTF-8 ({2}. bájt)"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "a(z) {1}. argumentum nem érvényes Unicode ({2}. UTF-16 egység)"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "a tömbökön belüli tömbök nem támogatottak"
 msgid "arrays must hold only strings or only integers"
 msgstr "a tömbök csak karakterláncokat vagy csak egész számokat tartalmazhatnak"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "az as értéke \"system\" vagy \"user\" lehet (kapott: '{1}')"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "az assembly csak \"dotnet\" vagy \"win32\" lehet"
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "az angolon kívül legfeljebb {1} nyelv"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "legfeljebb 100 [msix-app.*] tábla"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "legfeljebb 50 [action.*] tábla (ebben a fájlban {1} van)"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "a banner csak .bmp fájl lehet (a Windows Installer csak BMP-t jelenít 
 msgid "build a package from a source file"
 msgstr "csomag készítése forrásfájlból"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "a(z) {1} {2} forrásból való készítéséhez saját frissítési család kell: adja hozzá a(z) {3} = \"{...}\" sort a [package] táblához"
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "a cab értéke \"embed\" vagy \"external\" lehet"
 msgid "cannot be read"
 msgstr "nem olvasható"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "a csomagok nem köthetők kötegbe: {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "'{1}' és '{2}' nem hasonlítható össze"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "'{1}' nem hozható létre"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "'{1}' nem hozható létre{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "'{1}' nem található; hozzon létre egyet ezzel: `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "alapértelmezett embléma nem készíthető"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "nem készíthető javítócsomag '{1}' és '{2}' között"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "nem készíthető átalakítás '{1}' és '{2}' között"
 
 msgid "cannot open the certificate store"
 msgstr "a tanúsítványtároló nem nyitható meg"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "'{1}' nem olvasható"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "'{1}' nem olvasható ({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "a(z) '{1}' csomag nem olvasható"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "a(z) '{1}' forrásfájl nem olvasható"
 
 msgid "cannot read that folder"
 msgstr "az a mappa nem olvasható"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "a(z) '{2}' {1}-fájl nem olvasható"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "a(z) '{1}' PIN-fájl nem olvasható"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "a(z) '{2}' melletti '{1}' cabinet nem olvasható"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "a(z) '{1}' tanúsítványfájl nem olvasható"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "a(z) '{1}' tanúsítványai nem olvashatók"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "a(z) '{1}' tanúsítványai nem olvashatók: {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "a(z) '{1}' kulcsfájl nem olvasható"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "a(z) '{1}' jelszófájl nem olvasható"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "a(z) '{2}' melletti tömörítetlen '{1}' fájl nem olvasható"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "{1} nem írható"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "'{1}' nem írható"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "'{1}' nem írható ki az ellenőrzéshez"
 
 msgid "cannot write resources.pri"
 msgstr "a resources.pri nem írható"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "a menüfájlok nem írhatók a(z) '{1}' mellé"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "a(z) {1} erőforráscsomagja nem írható"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "a capabilities nevek tömbje, például [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "a(z) '{1}' képességet a rubrapack nem ismeri (a kézikönyv felsorolja őket)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "a(z) '{1}' képesség a Windows 17763-as vagy újabb buildjét igényli"
 
 msgid "carriage return without a line feed"
 msgstr "kocsivissza soremelés nélkül"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "'{1}' tanúsítványfájl: {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "ellenőrizze a forrásútvonalakat (a forrásfájlhoz képest); szándé
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "ellenőrizze a helyesírást (az üzenet a legközelebbi nevet javasolja) és a tábla kulcsait"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "a(z) {1} osztályt már a [com.{2}] szolgálja ki"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "a(z) {1} osztály a [msix-extension.{2}] táblában is szerepel"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "a class egy GUID kell legyen, például {12345678-...} (kapott: '{1}')"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "a close-programs hatástalan, ha preflight = false"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "a close-programs értéke \"ask\", \"always\" vagy \"never\" lehet (kapott: '{1}')"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "a(z) {1} oszlop rossz fajta értéket tartalmaz"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "a(z) {1} oszlop nem érvényes UTF-8"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "a(z) {1} oszlop nem lehet null"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "{1} oszlop: a(z) {2} az oszlop tartományán kívül esik"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "{1} oszlop: {2} UTF-16 egység, az oszlopba {3} fér"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "{1} oszlop: {2} karakter, az oszlopba {3} fér"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "a(z) '{1}' parancs még nincs megvalósítva"
 
 msgid "command-line"
 msgstr "parancssor"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "a(z) {1} {2} összetevő 32 és 64 bit között váltott: az összetevőszabályok új GUID-t kívánnak"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "a(z) {1} {2} összetevő eltűnt (erőforrásai az előző verzióval együtt törlődnek)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "a(z) {1} {2} összetevő kulcsútvonala most {3} a(z) {4} helyett: az összetevőszabályok új GUID-t kívánnak"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "a condition lezáratlan idézőjelet vagy kiegyensúlyozatlan zárójele
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "a condition hosszabb 240 karakternél (a rubrapack hozzáadja: \"Installed OR ( )\")"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "a config \"Név=érték\" karakterláncokat tartalmaz (kapott: '{1}')"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "vezérlőkaraktert tartalmaz"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "tartalmazza a következők egyikét: < > : \" / \\ | ? *"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "a content-type médiatípus, például \"image/png\" (kapott: '{1}')"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "a default-when 1-nél nagyobb level értéket igényel (az 1-es szintű 
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "definiálja a változót ([define] vagy -D NÉV=érték), vagy írjon $$ jelet a szó szerinti $ helyett"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "a(z) '{1}' párbeszédpanel nem [dialog.*]"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "az 'Rp'-vel kezdődő párbeszédpanel-azonosítók (és a FilesInUse) a rubrapack sajátjai"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "a(z) '{1}' dir önmagában van (útvonalhurok)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "a(z) '{1}' dir se nem dir-azonosító, se nem Programs, Desktop, StartMenu vagy Startup"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "a(z) '{1}' dir nem dir-azonosító"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "a(z) '{1}' dir nincs definiálva"
 
 msgid "dir ID"
 msgstr "dir-azonosító"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "a direction értéke \"in\" vagy \"out\" lehet (kapott: '{1}')"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "a do/undo argumentumok hosszabbak 255 karakternél"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "a pontozott kulcsok nem támogatottak; tegye a kulcsot saját táblába"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "a(z) '{1}' illesztőprogram nem [odbc-driver.*]"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "szóközre vagy pontra végződik"
 msgid "error"
 msgstr "hiba"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "az executable = \"{1}\" csomagba kerülő [file.*] táblát kell megnevezzen"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "a táblanév lezárásához ']' várható"
 msgid "expected a key, a [table] or a comment"
 msgstr "kulcs, [tábla] vagy megjegyzés várható"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "a(z) '{1}' kiterjesztéshez már tartozik program ([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "az extension '.' és kisbetűk, számjegyek, '_' vagy '-' lehet (kapott: '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "az external-location = true Windows 19041-es vagy újabb buildet igénye
 msgid "extra-files has no effect with preflight = false"
 msgstr "az extra-files hatástalan, ha preflight = false"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "az extra-files értéke \"ask\", \"keep\" vagy \"delete\" lehet (kapott: '{1}')"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "a(z) {1} szolgáltatás eltűnt: a telepítések, amelyekben megvolt, elveszítik a tartalmát"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "a(z) '{1}' szolgáltatás saját őse"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "a(z) '{1}' szolgáltatás nincs definiálva"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "a(z) '{1}' szülő szolgáltatás nincs definiálva"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "a(z) '{1}' fájl már futtatja a(z) '{2}' szolgáltatást"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "a(z) '{1}' fájl már betűtípusként van regisztrálva"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "a(z) '{1}' fájl nem [file.*] ebben a csomagban"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "a(z) '{1}' fájlt magába a Fonts mappába kell telepíteni (egy path = \"Fonts\" értékű [dir.*])"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "a(z) '{1}' fájl szolgáltatást igényel: állítsa be a 'feature' értéket itt vagy a dir-jén"
 
 msgid "file must be \"file:<ID>\""
 msgstr "a file értéke csak \"file:<ID>\" lehet"
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "a fájlnév {1} UTF-16 egység; a 8.3-as rövid nevével együtt az MSI legfeljebb {2} egységet fogad"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "a file-system-virtualization és registry-virtualization = false a Windows 18362-es vagy újabb buildjét igényli: állítsa be: [msix] min-version = \"10.0.18362.0\""
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file: a(z) '{1}' nem [file.*] ebben a csomagban"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file: a(z) '{1}' csak .exe vagy .dll formában szolgálhat ki COM-osztályokat"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "javítsa az üzenetben megnevezett értéket; az azonosítók betűk, sz
 msgid "floating-point numbers are not supported"
 msgstr "a lebegőpontos számok nem támogatottak"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "a(z) '{1}' mappa szolgáltatást igényel: állítsa be a 'feature' értéket itt vagy a dir-jén"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "a mappanév {1} UTF-16 egység; a 8.3-as rövid nevével együtt az MSI legfeljebb {2} egységet fogad"
 
 msgid "follow-parent needs a parent"
 msgstr "a follow-parent parent értéket igényel"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "a betűtípusokhoz scope = \"machine\" kell (ez {1})"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "a(z) {1} format újabb rubrapacket igényel (ez a(z) {2} formatot olvassa)"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "a format egész szám: format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "adja meg a --key, --pkcs11 és --key-store egyikét"
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "adja meg a programmappa almappáit vesszővel elválasztva, vagy - ha nincs"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "a(z) '{1}' glob egyetlen fájlra sem illeszkedik"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "a(z) '{1}' glob illeszkedik a(z) '{2}' kimeneti fájlra"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "ASCII-n kívüli szöveget tartalmaz a 65001-től (UTF-8) eltérő kódl
 msgid "icon must be an .ico file"
 msgstr "az icon csak .ico fájl lehet"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon: a(z) '{1}' fájl nem [file.*] ebben a csomagban"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "az id egy GUID kell legyen, például {12345678-1234-1234-1234-123456789ABC}: a modul saját, minden verzióban megtartva"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "az identifier a winget Publisher.Package azonosítója: 2–8 rész, egyenként 1–32 karakter, szóköz és \\ / : * ? \" < > | nélkül (kapott '{1}')"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "az identity-name 3-50 karakter lehet az A-Z, a-z, 0-9, '.' és '-' közül (kapott: '{1}')"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "a beágyazott (inline) táblák nem támogatottak; használjon [kind.ID]
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "az installed megkérdezi a Windowst, mi van telepítve; csak Windowson fut"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "ugyanarra az útvonalra települ, mint a(z) {1}. sor (a Windows a nevekben nem különbözteti meg a kis- és nagybetűt{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "belső hiba: egy beépített párbeszédpanel tabulátorsorrendje hibás
 msgid "internal: a module table has no _Validation rule"
 msgstr "belső: egy modultáblának nincs _Validation szabálya"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "belső: nincs _Validation szabály a(z) {1} egyik oszlopához"
 
 msgid "invalid"
 msgstr "érvénytelen"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "érvénytelen - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "nem érvényes MSIX-csomag"
 msgid "is not valid UTF-8"
 msgstr "nem érvényes UTF-8"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for: a(z) '{1}' nem program (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "tartsa meg a frissítési kódot, növelje a verziót, tartsa meg a megmaradó fájlok összetevőkódjait"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "a(z) '{1}' kulcs kétszer van beállítva ebben a táblában (először a(z) {2}. sorban)"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "a(z) '{1}' kulcs nem kezdődhet és nem végződhet '\\' jellel, és nem tartalmazhat üres részt"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "a(z) '{1}' kulcs táblán kívül van; csak a 'format' állhat az első tábla előtt"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "'{1}' kulcsfájl: {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "a kind értéke \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" vagy \"autoplay\" lehet (kapott: '{1}')"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "a kind értéke \"preview\", \"thumbnail\" vagy \"property\" lehet (kapott: '{1}')"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "a kind értéke registry, file, dir vagy component lehet"
 msgid "labels is an array of strings, one per value"
 msgstr "a labels karakterláncok tömbje, értékenként egy"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "a(z) '{1}' nyelvnek nincs nyelvi csomagja (lang/{2}.po a forrás mellett, vagy RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "a(z) '{1}' nyelv kétszer szerepel"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "a(z) '{1}' nyelv nincs a [ui] languages között"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "a(z) '{1}' nyelvből {2} szöveg hiányzik, az első: {3}: adja hozzá őket a nyelvi csomagjához (lang/{4}.po), vagy adja meg: [ui-text.ID] text-{5}"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "a(z) '{1}' nyelvhez [ui] langid-{2} kell (a LANGID-jai az automatikus választáshoz)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "a(z) '{1}' nyelvhez [ui] name-{2} kell (a neve a nyelvválasztó lapon)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "a language értéke \"neutral\", \"en-US\" vagy \"ko-KR\" lehet"
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" önállóan áll, nem tömbben: az összes beépített nyelvet felveszi"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "a languages olyan kódokat tartalmaz, mint \"ko\" vagy \"zh_TW\" (2 vagy 3 kisbetű, továbbá _ és egy régió két nagybetűje) (kapott: '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "a launcher a PSF indítójának fájlneve a files mappában, például \
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "a license csak .txt, .md (egyszerű szövegként jelenik meg) vagy .rtf fájl lehet"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint: {1} {2}. sor: a(z) {3} oszlop nem NFC alakú ({4} sor{-5}); a build --nfc NFC alakra hozza a mappa-, fájl- és parancsikonneveket"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint: {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint: {1}. kódlap, nem 65001: a szöveget nem ellenőrzi UTF-8-ként, a szélességeket csak ASCII-re"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint: lásd a fenti problémákat\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "azon kulcsok listázása, amelyekkel egy token vagy a Windows tanúsítványtárolója aláírhat"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "a(z) '{1}' embléma és a .scale-100 változata is megvan: tartson meg egyet"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "a(z) '{1}' embléma {2} méretezésen {3}x{4} képpont; {5}x{6} kell legyen"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "a(z) '{1}' embléma {2} méretezésen nem PNG-fájl"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "a(z) '{1}' logó {2}x{3} képpontos; egy fájltípus logójának négyzetesnek kell lennie"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "a(z) '{1}' embléma {2}x{3} képpont; {4}x{5} kell legyen"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "a(z) '{1}' embléma nem PNG-fájl"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "a(z) '{1}' embléma nem található (.scale-100 ... .scale-400 változatként sem)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "'{1}' embléma: a méretezési változatokkal bíró emblémához kiterjesztéses ASCII fájlnév kell"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "a logo 8 bites RGB vagy RGBA .png legyen, nem váltottsoros, oldalanként legfeljebb 1024 képpont"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "a main-package a fő csomag identitásneve (kapott: '{1}')"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "nem tartalmazhat vezérlőkaraktert, sem / \\ : * ? \" < > | $ jelet"
 msgid "may not start with a space or end with a space or a dot"
 msgstr "nem kezdődhet szóközzel, és nem végződhet szóközre vagy pontra"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "a(z) '{1}' egyesítési modul nem található"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "3-nál több átirányítás"
 msgid "more than 96 sections"
 msgstr "96-nál több szakasz"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "egynél több forrásfájl ('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "egynél több token van jelen: nevezzen meg egyet a --token-label kapcso
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "a multi értéke \"each\", \"one\" vagy \"single\" lehet (kapott: '{1}')"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "1-64 bájt legyen"
 msgid "name contains a control character"
 msgstr "a név vezérlőkaraktert tartalmaz"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "a name egy csomag identitásneve (kapott: '{1}')"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "olyan mappát nevez meg, amely nincs a Directory táblájában"
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "a new msix még nincs megvalósítva: készítsen MSI-forrást, és adja hozzá a [msix] táblát (lásd a kézikönyvet)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "nincs 'format = {1}' sor: a rubrapack 0.18-as vagy régebbi formátumú forrás, amelyet ez a verzió nem olvas (az útvonalak most $(ProgramFiles) vagy $(INSTALLDIR) elemmel kezdődnek); lásd a kézikönyv Source format részét"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "nincs kiszolgálónév, vagy 255 bájtnál hosszabb"
 msgid "no string pool: not a transform"
 msgstr "nincs karakterlánc-készlet: nem átalakítás"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "nincs '{1}' tábla ebben: '{2}'"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "az oktális és bináris számok nem támogatottak; használjon decimál
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "az on = \"uninstall\" a HKLM, HKCU és HKMU számára való (az osztályok az [assoc.*], [com.*] és hasonló táblákhoz tartoznak)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "az on = \"uninstall\" a kulcsot mindenestül törli: a(z) '{1}' nem egy termék saját kulcsa a Software alatt"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "az on = \"uninstall\" eltávolításkor a teljes kulcsot törli; nem fogad '{1}' értéket"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "az on értéke \"install\" vagy \"uninstall\" lehet"
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "az on értéke \"install\", \"uninstall\" vagy \"both\" lehet"
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on: mindegyik egy fájltípus ('.' és kisbetűk, számjegyek, '_' vagy '-'), \"*\" (minden fájl), \"folder\", \"background\" (a mappa üres része), \"drive\" vagy \"assoc:<ID>\" (kapott: '{1}')"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "csak a radio, combo és listbox vezérlők fogadnak el values értéket"
 msgid "out of memory"
 msgstr "elfogyott a memória"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "'{1}' kimenet: a rubrapack .msi, .msm, .msix, .msixbundle, .msixupload fájlt és lánc telepítő .exe-jét írja"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "a(z) '{1}' csomag {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "a(z) '{1}' csomag nem található"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "a parent egy másik termék upgrade-code értéke legyen, ne e csomagé"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "a parent a fő termék upgrade-code értéke legyen, egy GUID, például {12345678-1234-1234-1234-123456789ABC}"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "a path Windows-mappával kezdődjön (például $(ProgramFiles) vagy $(S
 msgid "paths"
 msgstr "útvonalak"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "a perceived-type értéke \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" vagy \"application\" lehet (kapott: '{1}')"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "az engedélyekhez scope = \"machine\" kell (ez {1})"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "a phase értéke \"immediate\", \"deferred\", \"commit\" vagy \"rollback\" lehet (kapott: '{1}')"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "a ports egy port vagy tartomány legyen, például \"8000-8100\", 1-65535 között (kapott: '{1}')"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "e súgó vagy egy parancs használatának kiírása"
 msgid "product-code must be a GUID"
 msgstr "a product-code csak GUID lehet"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "a profile értéke \"all\", \"domain\", \"private\" vagy \"public\" lehet (kapott: '{1}')"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "a(z) '{1}' prog-id már a [com.{2}] táblához tartozik"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "a(z) '{1}' prog-id az [assoc.{2}] táblához is tartozik: egy fájltípusnak és egy COM-osztálynak két név kell"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "a(z) '{1}' prog-id az [assoc.{2}] táblában is szerepel más description, target, icon vagy args értékkel"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "a(z) '{1}' prog-id a(z) [assoc.{2}] táblában is szerepel, más logo-val"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "a prog-id betűkből, számjegyekből, '.', '_' vagy '-' jelből álljon, ne kezdődjön számjeggyel, legfeljebb 39 (kapott: '{1}')"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "a properties a Windows Installer-csomagokhoz való; egy MSIX nem fogad el ilyet"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "a(z) '{1}' tulajdonság már a(z) '{2}' vezérlőhöz tartozik"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "a(z) '{1}' tulajdonságnak egy dir vagy szolgáltatás neve van"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "a(z) '{1}' tulajdonság már definiálva van ({2}. sor)"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "a(z) '{1}' tulajdonságot már keresik ({2}. sor)"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "a(z) '{1}' tulajdonságot a rubrapack vagy a telepítő állítja be, itt nem definiálható"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "a(z) '{1}' tulajdonság saját nyilvános név legyen (nagybetűs)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "a(z) '{1}' tulajdonság nyilvános név legyen: nagybetűk, számjegyek és '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "a protocol értéke \"tcp\" vagy \"udp\" lehet (kapott: '{1}')"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "a public-folder a csomag egy mappája kell legyen, például \"Public\" (kapott: '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "a recursive = true sosem fut, ha egy frissítés távolítja el ezt a ve
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "a recursive = true a mappát mindenestül törli; nem fogad 'name' értéket"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "a refuse-upgrade-below {1} nagyobb e csomag {2} verziójánál"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "a refuse-upgrade-below '{1}' csak verzió lehet, például 1.2.3"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "a refuse-upgrade-message a refuse-upgrade-below értéket igényli"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "a nyelvoldal {1}. régiójában {2} nyelv van, legfeljebb {3} lehet (a csomagok X-Rubrapack-Group fejléce)"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "a registration értéke \"machine\" vagy \"user\" lehet (kapott: '{1}')"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "a(z) '{1}' beállításjegyzék-elem értéket töröl; nincs mit védenie"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "a(z) '{1}' beállításjegyzék-érték szolgáltatást igényel"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "a remove-addons a takarító feladatot igényli: törölje a cleanup = f
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "a replaces legfeljebb 16 frissítési kódot tartalmaz"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "a replaces frissítési kódokat tartalmaz, GUID-okat, például {12345678-1234-1234-1234-123456789ABC} (kapott: '{1}')"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "a replaces frissítési kódok tömbje, például [\"{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "a replaces kétszer sorolja fel ezt: {1}"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "a replaces megnevezi ezt: {1}, amely e csomag saját upgrade-code értéke vagy a parentje"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "hiányzik a kötelező {1} tulajdonság"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "a visszaállítási ikerpárnak a(z) {1} előtt kell jönnie ({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "a root értéke HKLM, HKCR vagy HKCU lehet"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "a root értéke HKLM, HKCU, HKCR vagy HKMU lehet (kapott: '{1}')"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new: néhány kérdés alapján készül a forrás (az Enter a
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "futtassa: `rubrapack help <parancs>`; ellenőrizze az útvonalakat, és hogy a kimeneti mappa létezik-e"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run: '{1}' (0x{2} gép) nem futhat e csomag gépein"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run: '{1}' nem program (.exe)"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run: a(z) '{1}' fájl nem [file.*] ebben a csomagban"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "mentse a forrást UTF-8-ként (vagy BOM-os UTF-16-ként), LF vagy CRLF s
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "megmondja, hogy ezen a Windowson telepítve van-e az adott frissítési kódú termék vagy az adott család alkalmazáscsomagja"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "a(z) '{1}' sémához már tartozik program ([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "a scope értéke \"machine\", \"user\" vagy \"dual\" lehet"
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "az sddl SDDL karakterlánc legyen, például \"D:PAI(A;OICI;FA;;;BA)\""
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "a(z) '{1}' keresési tulajdonság saját nyilvános név legyen (nagybetűs)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "lásd az üzenetet; a rubrapackkel való újraépítés a legtöbbet kijavítja"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "a(z) {1}. sorszám nem a(z) {2} ({3}) után van"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "olyan művelet mellé sorol egy műveletet, amelyet sem a csomag, sem a modul nem futtat"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "a(z) '{1}' szolgáltatásnév már foglalt"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "a szolgáltatásokhoz scope = \"machine\" kell (ez {1})"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "a parancsikon neve {1} UTF-16 egység; a 8.3-as rövid nevével együtt az MSI legfeljebb {2} egységet fogad"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "megmutatja, miben tér el két csomag: táblák, sorok, cellák és öss
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "PE-fájl, MSI-csomag, MSIX-csomag vagy -köteg aláírása"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "aláírva: {1}\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "a(z) '{1}' forrás egy könyvtár; sok fájlhoz használjon [files.ID] táblát"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "a(z) '{1}' forrás szimbolikus hivatkozás; a hivatkozásokat nem követi"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "a(z) '{1}' forrás nem szabályos fájl"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "a(z) '{1}' forrásfájl megváltozott a csomag készítése közben"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "a(z) '{1}' forrásfájl nagyobb 2 GiB-nál"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "a(z) '{1}' forrásfájl nem található"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "a source értéke csak \"file:<ID>\" lehet"
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "a source csak .msi, .msix, .msixbundle vagy .msp csomag lehet"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "a(z) '{1}' forrásútvonal a forrásfájlhoz képest relatív legyen"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "a forrásútvonalak '/' jelet használnak, nem '\\\\' jelet (kapott: '{1}')"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source: a(z) '{1}' fájl nem [file.*] ebben a csomagban"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "a summary-name csak ASCII lehet (az összegzőadatok csak ASCII-t tartal
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "a symbols .pdb-fájlok listája, például [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "a(z) {1} tábla {2}"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "a(z) '{1}' tábla olvashatatlan"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "a(z) [{1}{2}{3}] tábla kétszer van definiálva (először a(z) {4}. sorban)"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "a tags legfeljebb 16 keresőszó listája, például [\"editor\", \"text
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "nem fogad konfigurációt (nincs ModuleConfiguration táblája)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "a(z) '{1}' cél nem létezik"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "a target értéke \"dir:<ID>\", \"file:<ID>\" vagy \"registry:<ID>\" leh
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "a target értéke \"file:<ID>\" kell legyen, amely e csomag egy [file.*] tábláját nevezi meg"
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "a(z) '{1}' célnév {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target: a(z) '{1}' fájl nem [file.*] ebben a csomagban"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "a(z) '{1}' task-id-t már a [msix-extension.{2}] használja"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "az UTF-16 fájl nem érvényes UTF-16"
 msgid "the ZIP central directory lies outside the file"
 msgstr "a ZIP központi könyvtára a fájlon kívül van"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "a(z) '{1}' alkalmazásazonosítóból Application Id lesz: csak betűk és számjegyek, nem kezdődhet számjeggyel"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "a beágyazott cabinetek miatt a csomag 2 GiB vagy nagyobb, amit a Window
 msgid "the entry is not in the central directory"
 msgstr "a bejegyzés nincs a központi könyvtárban"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "a(z) '{1}' hiba-párbeszédpanelhez egy {3} nevű {2} vezérlő kell (2835-ös hiba)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "a(z) '{1}' végrehajtható fájl csak .exe lehet"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "a jegyzékben nincs Identity Publisher"
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "a jegyzék Identity eleme nem olvasható a csomag teljes nevéhez"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "a(z) {1} egyesítési modul"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "a(z) {1} név"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "a(z) {1} csomagcsalád kétszer szerepel a tárolóban"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "a csomag tartalma nem egyezik az aláírásával (az aláírás után me
 msgid "the package's directory cannot be read"
 msgstr "a csomag könyvtára nem olvasható"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "a csomag fájlneve nem tartalmazhat idézőjelet vagy százalékjelet: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "a válasz nagyobb 4 MiB-nál"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "a válasz a chunked-tól eltérő átviteli kódolást használ"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "ugyanez a feltétel már szerepel ({1}. sor)"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "a forrásfájl kódolása"
 msgid "the system random source failed"
 msgstr "a rendszer véletlenforrása meghibásodott"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "a tabulátorsorrend (Control_Next) nem egyetlen kör a(z) {1} vezérlőjén át a Control_First-től (a Windows Installer 2809-es vagy 2810-es hibával áll le)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "ez a rubrapack a menürésze nélkül készült: a [menu.*] elemek nem j
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "ez a rubrapack a telepítőprogram nélkül készült (nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "a threading értéke \"sta\", \"mta\", \"both\" vagy \"neutral\" lehet (kapott: '{1}')"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "túl sok honosított szöveg és emblémaméretezés a resources.pri sz�
 msgid "too many packages in the bundle"
 msgstr "túl sok csomag a kötegben"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "a(z) '{2}' '{1}' átalakítása nem olvasható: {3}"
 
 msgid "trusted"
 msgstr "megbízható"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "két művelet osztozik a(z) {1} sequence-en ({2} és {3}); adjon egy [action]-nek másik sequence-et, before-t vagy after-t"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "két azonos nevű csomag egy kötegben"
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "két azonos ResourceId értékű erőforráscsomag egy kötegben"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "a type értéke string, expand, dword, qword, binary vagy multi lehet (kapott: '{1}')"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "a type értéke text, checkbox, edit, radio, combo, listbox vagy bitmap lehet ('{1}' érkezett)"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file: a(z) '{1}' nem [file.*] ebben a csomagban"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "a typelib-version major.minor alakú hexadecimális számjegyekkel, például \"1.0\" (kapott: '{1}')"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "a types és a verb ide tartozik: kind = \"context-menu\""
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types: mindegyik \".ext\" vagy \"*\" (minden fájl)"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types: mindegyik '.' és kisbetűk, számjegyek, '_' vagy '-' (kapott: '{1}')"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "az ui = \"{1}\" lehetővé teszi a(z) '{2}' dir mappájának kiválasztását, de az nem létezik (állítsa be a [ui] install-dir értéket)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "az ui = \"features\" kiválasztható [feature.*] táblákat igényel"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "az ui értéke none, basic, minimal, installdir vagy features lehet (kapott: '{1}')"
 
 msgid "unexpected text after the value"
 msgstr "váratlan szöveg az érték után"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "ismeretlen parancs: '{1}' (lásd: 'rubrapack help')"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "ismeretlen escape-szekvencia: \\{1} (fordított perjeles szöveghez használjon '...' alakot)"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "ismeretlen inspect kapcsoló (használjon táblanevet, --summary, --files vagy --streams kapcsolót)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "ismeretlen kulcs: '{1}' itt: [{2}{3}{4}]"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "ismeretlen kulcs: '{1}' itt: [{2}{3}{4}] (erre gondolt: '{5}'?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "ismeretlen vagy hiányos {1} kapcsoló: '{2}'"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "ismeretlen tábla: [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "ismeretlen tábla: [{1}{2}{3}] (erre gondolt: [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "csomag kibontása új könyvtárba, úgy elrendezve, ahogy települ"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "nem támogatott - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "az update-* kulcsokhoz appinstaller-uri és package-uri kell"
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "az upgrade = false az on = \"uninstall\" vagy \"both\" értékhez való (a telepítés sosem egy frissítés eltávolítása)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "az upgrade-code egy GUID kell legyen, például {12345678-1234-1234-1234-123456789ABC}"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "használat: rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "használat: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "használjon teljes rubrapack buildet vagy más módot"
 msgid "used by more than one component"
 msgstr "egynél több összetevő használja"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "a users értéke \"all\" lehet (kapott: '{1}')"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "a(z) '{1}' érték kétszer szerepel"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "a values 1-32 karakterláncból álló tömb"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "értékek: azonosítók, GUID-ok, verziók, tartományon kívüli számok, nem létező dolgokra mutató hivatkozások"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "a(z) '{1}' változó nincs definiálva ([define] vagy -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "a(z) '{1}' változónév nem tartalmazhat '=' jelet, és nem kezdődhet ezekkel: = + - ! *"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "változók"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "változók: érték nélküli $(NÉV), lezáratlan $(, Windows-név vagy dir-azonosító ott, ahol nem állhat"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "a(z) '{1}' verzió a.b.c vagy a.b.c.d alakú legyen"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "a(z) '{1}' verzió a.b.c vagy a.b.c.d alakú legyen, ahol a, b <= 255 és c, d <= 65535"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "mit jelent egy diagnosztikai kód, mely üzenetek hordozzák, mit kell t
 msgid "with must be \"file:<ID>\""
 msgstr "a with értéke csak \"file:<ID>\" lehet"
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with: a(z) '{1}' fájl nem [file.*] ebben a csomagban"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "--pkcs11 nélkül a `keys list` a Windows tanúsítványtárolóját mutatja"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "a(z) '{1}' working-dir nem dir-azonosító"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "írja a táblát vagy értéket a kézikönyvben mutatott egyszerű mód
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "írja az értéket '[~]' nélkül; a mode = \"append\" vagy \"prepend\" hozzáadja"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "megírva: {1}\n"
 
 msgid "x + width must be at most 370 (the page width)"

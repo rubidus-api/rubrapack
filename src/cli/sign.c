@@ -78,14 +78,14 @@ static int read_secret(proven_allocator_t heap, const char *env, const char *fil
     if (env) {
         char *v = rp_pal_getenv(heap, env);
         if (v == NULL) {
-            rp_diag_error(RP_DIAG_SIGN, "%s %s: the variable is not set", what, env);
+            rp_diag_error(RP_DIAG_SIGN, "{} {}: the variable is not set", proven_arg_cstr(what), proven_arg_cstr(env));
             return RP_EXIT_USAGE;
         }
         *out = (uint8_t *)v;
         *len = strlen(v);
     } else if (file) {
         if (rp_pal_read_file(heap, file, 4096, out, len) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_INPUT, "cannot read the %s file '%s'", what, file);
+            rp_diag_error(RP_DIAG_INPUT, "cannot read the {} file '{}'", proven_arg_cstr(what), proven_arg_cstr(file));
             return RP_EXIT_IO;
         }
         if (*len && (*out)[*len - 1] == '\n') --*len;
@@ -112,7 +112,7 @@ static int load_external(proven_allocator_t heap, const rp_sign_args_t *a, rp_ke
         err = rp_ncrypt_open(heap, a->key_store, a->machine_store, kf, &why);
     }
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_SIGN, "%s: %s", a->pkcs11 ? "PKCS#11 token" : "certificate store", why ? why : "cannot use the key");
+        rp_diag_error(RP_DIAG_SIGN, "{}: {}", proven_arg_cstr(a->pkcs11 ? "PKCS#11 token" : "certificate store"), proven_arg_cstr(why ? why : "cannot use the key"));
         return err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : err == PROVEN_ERR_UNSUPPORTED ? RP_EXIT_USAGE : RP_EXIT_SIGN;
     }
     if (kf->cert_count == 0 && a->cert == NULL) {
@@ -124,14 +124,14 @@ static int load_external(proven_allocator_t heap, const rp_sign_args_t *a, rp_ke
         uint8_t *data = NULL;
         size_t len = 0;
         if (rp_pal_read_file(heap, a->cert, MAX_KEY, &data, &len) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificate file '%s'", a->cert);
+            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificate file '{}'", proven_arg_cstr(a->cert));
             rp_keyfile_free(kf);
             return RP_EXIT_IO;
         }
         err = rp_keyfile_add_certs(kf, data, len, &why);
         rp_mem_free(heap, data);
         if (err != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_SIGN, "certificate file '%s': %s", a->cert, why ? why : "unreadable");
+            rp_diag_error(RP_DIAG_SIGN, "certificate file '{}': {}", proven_arg_cstr(a->cert), proven_arg_cstr(why ? why : "unreadable"));
             rp_keyfile_free(kf);
             return RP_EXIT_SIGN;
         }
@@ -151,14 +151,14 @@ static int load_key(proven_allocator_t heap, const char *key, const char *cert, 
     if (pass_env) {
         char *v = rp_pal_getenv(heap, pass_env);
         if (v == NULL) {
-            rp_diag_error(RP_DIAG_SIGN, "--pass-env %s: the variable is not set", pass_env);
+            rp_diag_error(RP_DIAG_SIGN, "--pass-env {}: the variable is not set", proven_arg_cstr(pass_env));
             return RP_EXIT_USAGE;
         }
         pass = (uint8_t *)v;
         pass_len = strlen(v);
     } else if (pass_file) {
         if (rp_pal_read_file(heap, pass_file, 4096, &pass, &pass_len) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_INPUT, "cannot read the password file '%s'", pass_file);
+            rp_diag_error(RP_DIAG_INPUT, "cannot read the password file '{}'", proven_arg_cstr(pass_file));
             return RP_EXIT_IO;
         }
         if (pass_len && pass[pass_len - 1] == '\n') --pass_len;     // one closing line break
@@ -169,12 +169,12 @@ static int load_key(proven_allocator_t heap, const char *key, const char *cert, 
     int rc = RP_EXIT_OK;
     const char *why = NULL;
     if (rp_pal_read_file(heap, key, MAX_KEY, &data, &len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read the key file '%s'", key);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read the key file '{}'", proven_arg_cstr(key));
         rc = RP_EXIT_IO;
     } else {
         proven_err_t err = rp_keyfile_load(heap, data, len, pass, pass_len, kf, &why);
         if (err != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_SIGN, "key file '%s': %s", key, why ? why : "unreadable");
+            rp_diag_error(RP_DIAG_SIGN, "key file '{}': {}", proven_arg_cstr(key), proven_arg_cstr(why ? why : "unreadable"));
             rc = err == PROVEN_ERR_PERMISSION ? RP_EXIT_SIGN : err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : RP_EXIT_SIGN;
         }
         rp_wipe(data, len);
@@ -186,11 +186,11 @@ static int load_key(proven_allocator_t heap, const char *key, const char *cert, 
     }
     if (rc == RP_EXIT_OK && cert) {
         if (rp_pal_read_file(heap, cert, MAX_KEY, &data, &len) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificate file '%s'", cert);
+            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificate file '{}'", proven_arg_cstr(cert));
             rc = RP_EXIT_IO;
         } else {
             if (rp_keyfile_add_certs(kf, data, len, &why) != PROVEN_OK) {
-                rp_diag_error(RP_DIAG_SIGN, "certificate file '%s': %s", cert, why ? why : "unreadable");
+                rp_diag_error(RP_DIAG_SIGN, "certificate file '{}': {}", proven_arg_cstr(cert), proven_arg_cstr(why ? why : "unreadable"));
                 rc = RP_EXIT_SIGN;
             }
             rp_mem_free(heap, data);
@@ -209,13 +209,13 @@ static int load_anchors(proven_allocator_t heap, const char *const *paths, size_
         size_t dn;
         const char *why;
         if (rp_pal_read_file(heap, paths[i], MAX_KEY, &d, &dn) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificates in '%s'", paths[i]);
+            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificates in '{}'", proven_arg_cstr(paths[i]));
             return RP_EXIT_IO;
         }
         proven_err_t err = rp_keyfile_add_certs(kf, d, dn, &why);
         rp_mem_free(heap, d);
         if (err != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificates in '%s': %s", paths[i], why ? why : "unreadable");
+            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificates in '{}': {}", proven_arg_cstr(paths[i]), proven_arg_cstr(why ? why : "unreadable"));
             return RP_EXIT_IO;
         }
     }
@@ -250,7 +250,7 @@ int rp_sign_cert(const rp_sign_args_t *a, uint8_t **der, size_t *len) {
     *len = 0;
     const char *problem = key_options_problem(a);
     if (problem) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", problem);
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "{}", proven_arg_cstr(problem));
         return RP_EXIT_USAGE;
     }
     rp_keyfile_t kf;
@@ -259,7 +259,7 @@ int rp_sign_cert(const rp_sign_args_t *a, uint8_t **der, size_t *len) {
     int leaf;
     const char *why = NULL;
     if (!rp_sign_check_key(&kf, (int64_t)(proven_time_now() / 1000000000), &leaf, &why)) {
-        rp_diag_error(RP_DIAG_SIGN, "%s", why ? why : "the key cannot sign");
+        rp_diag_error(RP_DIAG_SIGN, "{}", proven_arg_cstr(why ? why : "the key cannot sign"));
         rc = RP_EXIT_SIGN;
     } else if ((*der = rp_mem_alloc(heap, kf.cert_len[leaf] + 1, 1)) == NULL) {
         rc = RP_EXIT_IO;
@@ -295,7 +295,7 @@ static int sign_with(const rp_sign_args_t *a, const char *label, const uint8_t *
     proven_allocator_t heap = proven_heap_allocator();
     bool pe = !sxs && is_pe(data, len), cfb = !sxs && is_cfb(data, len), zip = !sxs && is_zip(data, len), cab = !sxs && is_cab(data, len);
     if (!sxs && !pe && !cfb && !zip && !cab) {
-        rp_diag_error(RP_DIAG_SIGN, "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet", label);
+        rp_diag_error(RP_DIAG_SIGN, "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet", proven_arg_cstr(label));
         return RP_EXIT_USAGE;
     }
     // Three trusts, never mixed (RFC-0008 T2): the key's own chain, the TSA's (--tsa-trust), and
@@ -309,7 +309,7 @@ static int sign_with(const rp_sign_args_t *a, const char *label, const uint8_t *
     rp_keyfile_t kf;
     const char *problem = key_options_problem(a);
     if (rc == RP_EXIT_OK && problem) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", problem);
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "{}", proven_arg_cstr(problem));
         rc = RP_EXIT_USAGE;
     }
     if (rc == RP_EXIT_OK) rc = a->key ? load_key(heap, a->key, a->cert, a->pass_env, a->pass_file, &kf) : load_external(heap, a, &kf);
@@ -340,18 +340,18 @@ static int sign_with(const rp_sign_args_t *a, const char *label, const uint8_t *
     if (err != PROVEN_OK) {
         // A timestamp failure fails the signing (RFC-0008 1.4): the server, its answer, or its time.
         if (a->timestamp && (tsa.failed || tsa.gen_time)) {
-            rp_diag_error(RP_DIAG_SIGN, "'%s': timestamp from %s: %s", label, a->timestamp, why ? why : "failed");
+            rp_diag_error(RP_DIAG_SIGN, "'{}': timestamp from {}: {}", proven_arg_cstr(label), proven_arg_cstr(a->timestamp), proven_arg_cstr(why ? why : "failed"));
             return RP_EXIT_NET;
         }
-        rp_diag_error(RP_DIAG_SIGN, "'%s': %s", label, why ? why : "cannot sign");
+        rp_diag_error(RP_DIAG_SIGN, "'{}': {}", proven_arg_cstr(label), proven_arg_cstr(why ? why : "cannot sign"));
         return err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : RP_EXIT_SIGN;
     }
-    if (external && !a->cabs_signed) rp_diag_warning(RP_DIAG_SIGN, "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)", label);
+    if (external && !a->cabs_signed) rp_diag_warning(RP_DIAG_SIGN, "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)", proven_arg_cstr(label));
     // Once a run: build --key signs each external cabinet and then the .msi with the same options.
     static bool told_timestamp;
     if (!a->timestamp && !told_timestamp) {
         told_timestamp = true;
-        rp_diag_warning(RP_DIAG_SIGN, "'%s': no --timestamp: the signature stops being valid when the certificate expires", a->output ? a->output : label);
+        rp_diag_warning(RP_DIAG_SIGN, "'{}': no --timestamp: the signature stops being valid when the certificate expires", proven_arg_cstr(a->output ? a->output : label));
     }
     return RP_EXIT_OK;
 }
@@ -398,7 +398,7 @@ int rp_cmd_sign(int argc, char **argv) {
     uint8_t *data = NULL, *signed_data = NULL;
     size_t len = 0, signed_len = 0;
     if (rp_pal_read_file(heap, file, MAX_INPUT, &data, &len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", file);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(file));
         return RP_EXIT_IO;
     }
     int rc = rp_sign_bytes(&a, file, data, len, &signed_data, &signed_len);
@@ -409,11 +409,11 @@ int rp_cmd_sign(int argc, char **argv) {
     proven_err_t err = rp_pal_write_file_atomic(heap, target, signed_data, signed_len);
     rp_mem_free(heap, signed_data);
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", target);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(target));
         return RP_EXIT_IO;
     }
     char line[1200];
-    rp_lang_format(line, sizeof line, "signed %s\n", target);
+    rp_lang_format(line, sizeof line, "signed {}\n", proven_arg_cstr(target));
     return rp_pal_puts(RP_OUT_STDOUT, line) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
 }
 
@@ -477,12 +477,12 @@ int rp_cmd_verify(int argc, char **argv) {
     if (rc == RP_EXIT_OK) rc = load_anchors(heap, tsa_trust, ntsa, &tsa_anchors, &ta);
     if (rc != RP_EXIT_OK) goto done;
     if (rp_pal_read_file(heap, file, MAX_INPUT, &data, &len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", file);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(file));
         rc = RP_EXIT_IO;
         goto done;
     }
     if (!is_pe(data, len) && !is_cfb(data, len) && !is_zip(data, len) && !is_cab(data, len)) {
-        rp_diag_error(RP_DIAG_VERIFY, "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet", file);
+        rp_diag_error(RP_DIAG_VERIFY, "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet", proven_arg_cstr(file));
         rc = RP_EXIT_USAGE;
         goto done;
     }
@@ -505,28 +505,28 @@ int rp_cmd_verify(int argc, char **argv) {
     } else if (r.ts_bad) {
         ts_ok = false;
         ts_why = TR_N("the unsigned attributes are malformed or hold more than one timestamp");
-        rp_lang_format(ts_line, sizeof ts_line, "invalid - %s", ts_why);
+        rp_lang_format(ts_line, sizeof ts_line, "invalid - {}", proven_arg_cstr(ts_why));
     } else if (r.ts_legacy) {
         ts_ok = false;
         ts_why = TR_N("an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check");
-        rp_lang_format(ts_line, sizeof ts_line, "unsupported - %s", ts_why);
+        rp_lang_format(ts_line, sizeof ts_line, "unsupported - {}", proven_arg_cstr(ts_why));
     } else if (r.ts_token.n == 0) {
         (void)proven_fmt_to(ts_line, sizeof ts_line, "{}", proven_arg_cstr(TR("not-present")));
     } else {
         rp_tsp_token_t t;
         if (!rp_tsp_token(r.ts_token.p, r.ts_token.n, r.sig.p, r.sig.n, NULL, &t, &ts_why)) {
             ts_ok = false;
-            rp_lang_format(ts_line, sizeof ts_line, "invalid - %s", ts_why);
+            rp_lang_format(ts_line, sizeof ts_line, "invalid - {}", proven_arg_cstr(ts_why));
         } else {
             rp_iso_time(t.gen_time, when);
             if (ntsa == 0) {
-                rp_lang_format(ts_line, sizeof ts_line, "%s, TSA not-checked (give --tsa-trust)", when);
+                rp_lang_format(ts_line, sizeof ts_line, "{}, TSA not-checked (give --tsa-trust)", proven_arg_cstr(when));
             } else if (rp_chain_trusted_for(t.tsa_cert, t.certs, ta, tsa_anchors.cert_count, t.gen_time, RP_PURPOSE_TIMESTAMP, &ts_why)) {
-                rp_lang_format(ts_line, sizeof ts_line, "%s, TSA trusted", when);
+                rp_lang_format(ts_line, sizeof ts_line, "{}, TSA trusted", proven_arg_cstr(when));
                 at = t.gen_time;
             } else {
                 ts_ok = false;
-                rp_lang_format(ts_line, sizeof ts_line, "%s, TSA untrusted - %s", when, ts_why);
+                rp_lang_format(ts_line, sizeof ts_line, "{}, TSA untrusted - {}", proven_arg_cstr(when), proven_arg_cstr(ts_why));
             }
         }
     }
@@ -541,17 +541,17 @@ int rp_cmd_verify(int argc, char **argv) {
     }
     char out[2048];
     rp_lang_format(out, sizeof out,
-             "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n",
-             file, r.parsed ? "ok" : TR("invalid"), r.parsed ? (r.digest_ok ? "ok" : TR("mismatch")) : "-",
-             r.parsed ? (r.attrs_ok && r.signature_ok ? "ok" : TR("invalid")) : "-", rp_tr(chain), chain_why ? " - " : "", chain_why ? rp_tr(chain_why) : "",
-             ts_line);
+             "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n",
+             proven_arg_cstr(file), proven_arg_cstr(r.parsed ? "ok" : TR("invalid")), proven_arg_cstr(r.parsed ? (r.digest_ok ? "ok" : TR("mismatch")) : "-"),
+             proven_arg_cstr(r.parsed ? (r.attrs_ok && r.signature_ok ? "ok" : TR("invalid")) : "-"), proven_arg_cstr(rp_tr(chain)), proven_arg_cstr(chain_why ? " - " : ""), proven_arg_cstr(chain_why ? rp_tr(chain_why) : ""),
+             proven_arg_cstr(ts_line));
     bool sig_ok = r.parsed && r.digest_ok && r.attrs_ok && r.signature_ok;
     bool ok = sig_ok && ts_ok && trusted;
     if (!ok) {
         const char *reason = !sig_ok ? (why ? why : TR("the signature does not verify"))
                            : !ts_ok ? ts_why
                            : nanchors ? (chain_why ? chain_why : TR("untrusted")) : TR("no --trust given: the signature verifies but nothing says whom to trust");
-        rp_diag_error(RP_DIAG_VERIFY, "'%s': %s%s", file, !sig_ok || ts_ok ? "" : TR("timestamp: "), reason);
+        rp_diag_error(RP_DIAG_VERIFY, "'{}': {}{}", proven_arg_cstr(file), proven_arg_cstr(!sig_ok || ts_ok ? "" : TR("timestamp: ")), proven_arg_cstr(reason));
     }
     rc = rp_pal_puts(RP_OUT_STDOUT, out) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
     if (!ok) rc = RP_EXIT_SIGN;

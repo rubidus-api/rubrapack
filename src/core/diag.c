@@ -5,7 +5,6 @@
 #include "rubrapack/lang.h"
 #include "rubrapack/str.h"
 
-#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -87,13 +86,13 @@ void rp_diag_json_end(const char *path, int rc) {
     (void)rp_pal_puts(RP_OUT_STDOUT, json.len ? "\n]}\n" : "]}\n");
 }
 
-static void emit(const char *kind, const char *code, const char *fmt, va_list ap) {
+static void emit(const char *kind, const char *code, const char *fmt, const proven_arg_t *args, size_t nargs) {
     char msg[1024];
-    int n = rp_lang_vformat(msg, sizeof msg, fmt, ap);
+    int n = rp_lang_format_a(msg, sizeof msg, fmt, args, nargs);
     if (n < 0) {
         msg[0] = '\0';
     } else if ((size_t)n >= sizeof msg) {
-        // vsnprintf cut the text at a byte. If the last character lost bytes, drop it whole.
+        // The text was cut at a byte. If the last character lost bytes, drop it whole.
         size_t len = sizeof msg - 1;
         size_t p = len;
         while (p > 0 && ((unsigned char)msg[p - 1] & 0xC0u) == 0x80u) --p;
@@ -115,16 +114,10 @@ static void emit(const char *kind, const char *code, const char *fmt, va_list ap
     (void)rp_pal_write(RP_OUT_STDERR, (const uint8_t *)line, len);
 }
 
-void rp_diag_error(const char *code, const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    emit("error", code, fmt, ap);
-    va_end(ap);
+void rp_diag_error_a(const char *code, const char *fmt, const proven_arg_t *args, size_t nargs) {
+    emit("error", code, fmt, args, nargs);
 }
 
-void rp_diag_warning(const char *code, const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    emit("warning", code, fmt, ap);
-    va_end(ap);
+void rp_diag_warning_a(const char *code, const char *fmt, const proven_arg_t *args, size_t nargs) {
+    emit("warning", code, fmt, args, nargs);
 }

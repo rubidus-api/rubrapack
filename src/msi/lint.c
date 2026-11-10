@@ -11,7 +11,6 @@
 #include "rubrapack/suminfo.h"
 #include "rubrapack/text.h"
 
-#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -86,13 +85,11 @@ static void row_name(const rp_msi_wtable_t *t, size_t row, char *out, size_t cap
     }
 }
 
-[[gnu::format(RP_PRINTF_FORMAT, 5, 6)]]
-static void finding(lint_t *l, const char *code, const rp_msi_wtable_t *t, size_t row, const char *fmt, ...) {
+// A finding: a proven format and its values (diag.h's RP_ARGS), in the command line's language.
+#define finding(l, code, t, row, fmt, ...) finding_a(l, code, t, row, fmt, RP_ARGS(__VA_ARGS__))
+static void finding_a(lint_t *l, const char *code, const rp_msi_wtable_t *t, size_t row, const char *fmt, const proven_arg_t *args, size_t nargs) {
     char what[200], where[200] = "";
-    va_list ap;
-    va_start(ap, fmt);
-    rp_lang_vformat(what, sizeof what, fmt, ap);         // in the command line's language
-    va_end(ap);
+    (void)rp_lang_format_a(what, sizeof what, fmt, args, nargs);          // in the command line's language
     if (t && row != SIZE_MAX) {
         char name[160];
         row_name(t, row, name, sizeof name);
@@ -101,7 +98,7 @@ static void finding(lint_t *l, const char *code, const rp_msi_wtable_t *t, size_
         (void)proven_fmt_to(where, sizeof where, "{}: ", proven_arg_cstr(t->name));
     }
     bool warning = l->opts.foreign && !l->opts.strict && !breaking(code);
-    rp_srcdiag_add(l->diags, nopos(), code, warning, TR_N("lint: %s%s"), where, what);
+    rp_srcdiag_add(l->diags, nopos(), code, warning, TR_N("lint: {}{}"), proven_arg_cstr(where), proven_arg_cstr(what));
     if (!warning) ++l->errors;
 }
 
@@ -177,7 +174,7 @@ static void index_build(lint_t *l, const rp_msi_wtable_t *t, index_t *x, const c
     for (size_t row = 0; row < t->row_count; ++row) {
         for (size_t k = 0; k < x->nkeys && k < 32; ++k) cells[k] = cell(t, row, k);
         if (index_find(x, cells) != SIZE_MAX) {
-            finding(l, code, t, row, "%s", what);
+            finding(l, code, t, row, "{}", proven_arg_cstr(what));
             continue;
         }
         size_t s = (size_t)hash_cells(cells, x->nkeys) & (x->cap - 1);
@@ -207,8 +204,8 @@ static void lint_nfc(lint_t *l, const rp_msi_wtable_t *t) {
         if (count) {
             char name[160];
             row_name(t, first, name, sizeof name);
-            rp_srcdiag_add(l->diags, nopos(), "RP2105", true, "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts "
-                           "folder, file and shortcut names in NFC", t->name, name, col->name, count, count == 1 ? "" : "s");
+            rp_srcdiag_add(l->diags, nopos(), "RP2105", true, "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts "
+                           "folder, file and shortcut names in NFC", proven_arg_cstr(t->name), proven_arg_cstr(name), proven_arg_cstr(col->name), proven_arg_u64(count), proven_arg_cstr(count == 1 ? "" : "s"));
         }
     }
 }
@@ -222,30 +219,30 @@ static void lint_cells(lint_t *l, const rp_msi_wtable_t *t) {
             bool binary = string && !(col->type & RP_MSI_COL_NONBINARY);
             unsigned width = col->type & RP_MSI_COL_WIDTH;
             if (is_null(v)) {
-                if (!(col->type & RP_MSI_COL_NULLABLE)) finding(l, "RP2002", t, row, "column %s may not be null", col->name);
+                if (!(col->type & RP_MSI_COL_NULLABLE)) finding(l, "RP2002", t, row, "column {} may not be null", proven_arg_cstr(col->name));
                 continue;
             }
             uint8_t want = binary ? RP_MSI_BINARY : string ? RP_MSI_STR : RP_MSI_INT;
             if (v->kind != want) {
-                finding(l, "RP2001", t, row, "column %s holds the wrong kind of value", col->name);
+                finding(l, "RP2001", t, row, "column {} holds the wrong kind of value", proven_arg_cstr(col->name));
                 continue;
             }
             if (want == RP_MSI_INT) {
                 bool ok = width == 2 ? v->i >= -32767 && v->i <= 32767 : v->i != INT32_MIN;
-                if (!ok) finding(l, "RP2004", t, row, "column %s: %ld is outside the column's range", col->name, (long)v->i);
+                if (!ok) finding(l, "RP2004", t, row, "column {}: {} is outside the column's range", proven_arg_cstr(col->name), proven_arg_i64((long)v->i));
             } else if (want == RP_MSI_STR && !l->utf8) {
                 // Another code page: the bytes are not UTF-8; only an ASCII string can be measured.
                 bool ascii = true;
                 for (size_t i = 0; i < v->len; ++i) ascii &= v->bytes[i] < 0x80;
                 if (ascii && width && v->len > width) {
-                    finding(l, "RP2003", t, row, "column %s: %zu characters, the column holds %u", col->name, v->len, width);
+                    finding(l, "RP2003", t, row, "column {}: {} characters, the column holds {}", proven_arg_cstr(col->name), proven_arg_u64(v->len), proven_arg_u32(width));
                 }
             } else if (want == RP_MSI_STR) {
                 rp_text_result_t r = rp_utf8_to_utf16(v->bytes, v->len, NULL, 0);
                 if (r.err != PROVEN_OK) {
-                    finding(l, "RP2005", t, row, "column %s is not valid UTF-8", col->name);
+                    finding(l, "RP2005", t, row, "column {} is not valid UTF-8", proven_arg_cstr(col->name));
                 } else if (width && r.units > width) {
-                    finding(l, "RP2003", t, row, "column %s: %zu UTF-16 units, the column holds %u", col->name, r.units, width);
+                    finding(l, "RP2003", t, row, "column {}: {} UTF-16 units, the column holds {}", proven_arg_cstr(col->name), proven_arg_u64(r.units), proven_arg_u32(width));
                 }
             }
         }
@@ -303,8 +300,7 @@ static void lint_foreign_keys(lint_t *l, named_index_t *ix, size_t nix) {
             // A Directory row naming itself as parent is the root (TARGETDIR); msi.dll accepts both.
             if (t == table(l, "Directory") && c == column(t, "Directory_Parent") && cell_eq(v, cell(t, row, 0))) continue;
             if (target == NULL || index_find1(target, v) == SIZE_MAX) {
-                finding(l, "RP2007", t, row, "%s '%.*s' is not in %s", foreign_keys[f].column, (int)v->len,
-                        (const char *)v->bytes, foreign_keys[f].target);
+                finding(l, "RP2007", t, row, "{} '{}' is not in {}", proven_arg_cstr(foreign_keys[f].column), proven_arg_cstr_n((const char *)v->bytes, (size_t)((int)v->len)), proven_arg_cstr(foreign_keys[f].target));
             }
         }
     }
@@ -332,12 +328,12 @@ static void lint_properties(lint_t *l, const index_t *props) {
     static const char *const required[] = { "ProductCode", "ProductName", "ProductVersion", "Manufacturer", "ProductLanguage" };
     for (size_t i = 0; i < sizeof required / sizeof required[0]; ++i) {
         const rp_msi_cell_t *v = property(props, required[i]);
-        if (v == NULL || is_null(v)) finding(l, "RP2010", t, SIZE_MAX, "required property %s is missing", required[i]);
+        if (v == NULL || is_null(v)) finding(l, "RP2010", t, SIZE_MAX, "required property {} is missing", proven_arg_cstr(required[i]));
     }
     static const char *const guids[] = { "ProductCode", "UpgradeCode" };
     for (size_t i = 0; i < 2; ++i) {
         const rp_msi_cell_t *v = property(props, guids[i]);
-        if (v && !is_null(v) && !is_guid(v)) finding(l, "RP2008", t, SIZE_MAX, "%s is not a GUID in registry format", guids[i]);
+        if (v && !is_null(v) && !is_guid(v)) finding(l, "RP2008", t, SIZE_MAX, "{} is not a GUID in registry format", proven_arg_cstr(guids[i]));
     }
     const rp_msi_cell_t *pc = property(props, "ProductCode"), *uc = property(props, "UpgradeCode");
     if (pc && uc && cell_eq(pc, uc)) finding(l, "RP2008", t, SIZE_MAX, "ProductCode and UpgradeCode are the same GUID");
@@ -380,18 +376,18 @@ static void lint_components(lint_t *l, const index_t *files, const index_t *regs
             size_t rrow = regs ? index_find1(regs, v) : SIZE_MAX;
             size_t rcomp = rt ? column(rt, "Component_") : SIZE_MAX;
             if (rrow == SIZE_MAX || rcomp == SIZE_MAX) {
-                finding(l, "RP2014", t, row, "KeyPath '%.*s' is not in Registry", (int)v->len, (const char *)v->bytes);
+                finding(l, "RP2014", t, row, "KeyPath '{}' is not in Registry", proven_arg_cstr_n((const char *)v->bytes, (size_t)((int)v->len)));
             } else if (!cell_eq(cell(rt, rrow, rcomp), cell(t, row, 0))) {
-                finding(l, "RP2014", t, row, "KeyPath '%.*s' belongs to another component", (int)v->len, (const char *)v->bytes);
+                finding(l, "RP2014", t, row, "KeyPath '{}' belongs to another component", proven_arg_cstr_n((const char *)v->bytes, (size_t)((int)v->len)));
             }
             continue;
         }
         if (is_null(v) || (flags & 0x20)) continue;             // folder or ODBC key path
         size_t frow = files ? index_find1(files, v) : SIZE_MAX;
         if (frow == SIZE_MAX || fcomp == SIZE_MAX) {
-            finding(l, "RP2014", t, row, "KeyPath '%.*s' is not in File", (int)v->len, (const char *)v->bytes);
+            finding(l, "RP2014", t, row, "KeyPath '{}' is not in File", proven_arg_cstr_n((const char *)v->bytes, (size_t)((int)v->len)));
         } else if (!cell_eq(cell(ft, frow, fcomp), cell(t, row, 0))) {
-            finding(l, "RP2014", t, row, "KeyPath '%.*s' belongs to another component", (int)v->len, (const char *)v->bytes);
+            finding(l, "RP2014", t, row, "KeyPath '{}' belongs to another component", proven_arg_cstr_n((const char *)v->bytes, (size_t)((int)v->len)));
         }
     }
 }
@@ -414,7 +410,7 @@ static void lint_media(lint_t *l) {
         if (s > max_last) max_last = s;
         for (size_t q = 0; q < mt->row_count; ++q) {
             if (cell(mt, q, disk)->i < d && cell(mt, q, last)->i > s) {
-                finding(l, "RP2011", mt, r, "LastSequence %ld is below that of a lower DiskId", (long)s);
+                finding(l, "RP2011", mt, r, "LastSequence {} is below that of a lower DiskId", proven_arg_i64((long)s));
                 break;
             }
         }
@@ -430,9 +426,9 @@ static void lint_media(lint_t *l) {
         const rp_msi_cell_t *v = cell(ft, row, seq);
         if (v->kind != RP_MSI_INT) continue;
         if (v->i < 1 || v->i > max_last) {
-            finding(l, "RP2011", ft, row, "Sequence %ld is not covered by any Media row (last %ld)", (long)v->i, (long)max_last);
+            finding(l, "RP2011", ft, row, "Sequence {} is not covered by any Media row (last {})", proven_arg_i64((long)v->i), proven_arg_i64((long)max_last));
         } else if (seen[v->i]++) {
-            finding(l, "RP2011", ft, row, "Sequence %ld is used by another file", (long)v->i);
+            finding(l, "RP2011", ft, row, "Sequence {} is used by another file", proven_arg_i64((long)v->i));
         }
     }
     rp_mem_free(l->alloc, seen);
@@ -499,7 +495,7 @@ static void lint_sequence(lint_t *l, const char *name, const index_t *cas, const
         if (a == SIZE_MAX || b == SIZE_MAX) continue;
         const rp_msi_cell_t *sa = cell(t, a, seq), *sb = cell(t, b, seq);
         if (sa->kind == RP_MSI_INT && sb->kind == RP_MSI_INT && sa->i >= sb->i) {
-            finding(l, "RP2012", t, b, "sequence %ld is not after %s (%ld)", (long)sb->i, order[i][0], (long)sa->i);
+            finding(l, "RP2012", t, b, "sequence {} is not after {} ({})", proven_arg_i64((long)sb->i), proven_arg_cstr(order[i][0]), proven_arg_i64((long)sa->i));
         }
     }
 }
@@ -528,8 +524,8 @@ static void lint_platform(lint_t *l) {
         // A 32-bit component in a 64-bit package is legal (32-bit registry view, RFC-0001 9.2);
         // a 64-bit component cannot be installed by a 32-bit package.
         if (comp64 && !is64) {
-            finding(l, "RP2013", t, row, "%s component, but the package platform is %.*s", comp64 ? "64-bit" : "32-bit",
-                    (int)n, (const char *)tmpl->str);
+            finding(l, "RP2013", t, row, "{} component, but the package platform is {}", proven_arg_cstr(comp64 ? "64-bit" : "32-bit"),
+                    proven_arg_cstr_n((const char *)tmpl->str, (size_t)((int)n)));
         }
     }
 }
@@ -561,8 +557,7 @@ static void lint_upgrade(lint_t *l, const index_t *props) {
         for (size_t i = 0; i < p->len; ++i) upper &= !(p->bytes[i] >= 'a' && p->bytes[i] <= 'z');
         if (!upper) finding(l, "RP2015", t, row, "ActionProperty must be a public (upper case) property");
         else if (!list_has(secure, p->bytes, p->len))
-            finding(l, "RP2015", t, row, "ActionProperty '%.*s' is not in SecureCustomProperties", (int)p->len,
-                    (const char *)p->bytes);
+            finding(l, "RP2015", t, row, "ActionProperty '{}' is not in SecureCustomProperties", proven_arg_cstr_n((const char *)p->bytes, (size_t)((int)p->len)));
     }
 }
 
@@ -579,7 +574,7 @@ static void lint_custom_actions(lint_t *l, const index_t *files, const index_t *
         int32_t v = ty->i;
         if ((v & 0x30) == 0x10 && (v & 0x0F) != 0x03 && (v & 0x07) != 0x07) {    // source is a File key (not 19/23)
             if (is_null(src) || files == NULL || index_find1(files, src) == SIZE_MAX) {
-                finding(l, "RP2018", t, row, "Source must name a File row for type %ld", (long)v);
+                finding(l, "RP2018", t, row, "Source must name a File row for type {}", proven_arg_i64((long)v));
             }
         }
         if ((v & 0x100) && (v & 0x80)) finding(l, "RP2017", t, row, "a rollback action cannot be asynchronous");
@@ -616,8 +611,7 @@ static void lint_custom_actions(lint_t *l, const index_t *files, const index_t *
             const rp_msi_cell_t *o = cell(seq, other, act), *on = cell(seq, other, num);
             if (o->kind == RP_MSI_STR && o->len == name->len - sl && memcmp(o->bytes, name->bytes, o->len) == 0 &&
                 on->kind == RP_MSI_INT && on->i <= n->i) {
-                finding(l, "RP2016", seq, row, "rollback twin must come before %.*s (%ld <= %ld)", (int)o->len,
-                        (const char *)o->bytes, (long)on->i, (long)n->i);
+                finding(l, "RP2016", seq, row, "rollback twin must come before {} ({} <= {})", proven_arg_cstr_n((const char *)o->bytes, (size_t)((int)o->len)), proven_arg_i64((long)on->i), proven_arg_i64((long)n->i));
             }
         }
     }
@@ -653,7 +647,7 @@ static void lint_dialogs(lint_t *l) {
             if (cols[k] == SIZE_MAX) continue;
             const rp_msi_cell_t *c = cell(dt, row, cols[k]);
             if (!is_null(c) && control_row(ct, cd, cn, name, c) == SIZE_MAX) {
-                finding(l, "RP2102", dt, row, "%s '%.*s' is not a control of this dialog", what[k], (int)c->len, (const char *)c->bytes);
+                finding(l, "RP2102", dt, row, "{} '{}' is not a control of this dialog", proven_arg_cstr(what[k]), proven_arg_cstr_n((const char *)c->bytes, (size_t)((int)c->len)));
             }
         }
         size_t with_next = 0;
@@ -672,8 +666,8 @@ static void lint_dialogs(lint_t *l) {
             closed = cell_str_eq(cur, cell(dt, row, first));
         }
         if (!closed || steps != with_next) {
-            finding(l, "RP2101", dt, row, "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First "
-                    "(Windows Installer stops with error 2809 or 2810)", with_next);
+            finding(l, "RP2101", dt, row, "the tab order (Control_Next) is not one cycle through its {} controls from Control_First "
+                    "(Windows Installer stops with error 2809 or 2810)", proven_arg_u64(with_next));
         }
     }
     // FilesInUse lists the programs in a ListBox filled from the ListBox table.
@@ -694,8 +688,7 @@ static void lint_dialogs(lint_t *l) {
             rp_msi_cell_t nm = { .kind = RP_MSI_STR, .bytes = (const uint8_t *)need[k][0], .len = strlen(need[k][0]) };
             size_t r = control_row(ct, cd, cn, ed, &nm);
             if (r == SIZE_MAX || !str_is(cell(ct, r, ctype), need[k][1])) {
-                finding(l, "RP2104", pt, row, "the error dialog '%.*s' needs a %s control named %s (error 2835)", (int)ed->len,
-                        (const char *)ed->bytes, need[k][1], need[k][0]);
+                finding(l, "RP2104", pt, row, "the error dialog '{}' needs a {} control named {} (error 2835)", proven_arg_cstr_n((const char *)ed->bytes, (size_t)((int)ed->len)), proven_arg_cstr(need[k][1]), proven_arg_cstr(need[k][0]));
             }
         }
     }
@@ -711,8 +704,8 @@ proven_err_t rp_msi_lint_opts(proven_allocator_t alloc, const rp_msi_wdb_t *db, 
     if (db == NULL || diags == NULL || opts == NULL) return PROVEN_ERR_INVALID_ARG;
     lint_t l = { .alloc = alloc, .db = db, .diags = diags, .opts = *opts, .utf8 = db->codepage == 65001 };
     if (!l.utf8) {
-        rp_srcdiag_add(diags, nopos(), "RP2100", true, "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII",
-                       (unsigned)db->codepage);
+        rp_srcdiag_add(diags, nopos(), "RP2100", true, "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII",
+                       proven_arg_u32((unsigned)db->codepage));
     }
     for (size_t i = 0; i < db->table_count; ++i) lint_cells(&l, &db->tables[i]);
     for (size_t i = 0; l.utf8 && i < db->table_count; ++i) lint_nfc(&l, &db->tables[i]);

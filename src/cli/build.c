@@ -34,7 +34,7 @@ static bool write_appinstaller(proven_allocator_t heap, const char *out, const u
     const char *dot = strrchr(out, '.');
     (void)proven_fmt_to(path, sizeof path, "{}.appinstaller", proven_arg_cstr_n(out, (int)(dot ? (size_t)(dot - out) : strlen(out))));
     if (rp_pal_write_file_atomic(heap, path, data, len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", path);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(path));
         return false;
     }
     return true;
@@ -56,7 +56,7 @@ static int menu_files(proven_allocator_t heap, const rp_tdoc_t *doc, rp_ir_optio
         if (RP_EQ(ir->files[k].id, ir->menu_exe)) exe_name = rp_cs(ir->files[k].name);
     }
     if (part_len < 2 || exe_name == NULL) {
-        rp_srcdiag_add(d, (rp_pos_t){ 1, 1 }, "RP1317", true, "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu");
+        rp_srcdiag_add(d, ((rp_pos_t){ 1, 1 }), "RP1317", true, "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu");
         return RP_EXIT_OK;
     }
     // Signed with --key when the source names the certificate's subject ([msix] publisher);
@@ -82,7 +82,7 @@ static int menu_files(proven_allocator_t heap, const rp_tdoc_t *doc, rp_ir_optio
     if (!msix) (void)proven_fmt_to(pkg_path, cap, "{}.rp-menu-pkg.tmp", proven_arg_cstr(out));
     if (rc == RP_EXIT_OK && (rp_pal_write_file_atomic(heap, dll, part, part_len) != PROVEN_OK ||
                              (!msix && rp_pal_write_file_atomic(heap, pkg_path, pkg, pkg_len) != PROVEN_OK))) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write the menu files beside '%s'", out);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write the menu files beside '{}'", proven_arg_cstr(out));
         rc = RP_EXIT_IO;
     }
     rp_mem_free(heap, pkg);
@@ -103,11 +103,11 @@ static int build_chain(proven_allocator_t heap, const rp_tdoc_t *doc, const char
                        const char *arch, bool chain_out, bool lint, const rp_sign_args_t *sign, const char *out, const char *src,
                        rp_srcdiags_t *d) {
     if (!rp_chain_is(doc)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)", src);
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)", proven_arg_cstr(src));
         return RP_EXIT_USAGE;
     }
     if (!chain_out && !lint) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'%s' is a [chain]: it builds a setup program, -o setup.exe", src);
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'{}' is a [chain]: it builds a setup program, -o setup.exe", proven_arg_cstr(src));
         return RP_EXIT_USAGE;
     }
     rp_ir_options_t opt = { .source_dir = RP_V(dir), .defines = defines, .define_count = ndef, .arch = RP_V(arch) };
@@ -130,7 +130,7 @@ static int build_chain(proven_allocator_t heap, const rp_tdoc_t *doc, const char
         exe_len = signed_len;
     }
     if (rc == RP_EXIT_OK && !lint && rp_pal_write_file_atomic(heap, out, exe, exe_len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(out));
         rc = RP_EXIT_IO;
     }
     rp_mem_free(heap, exe);
@@ -215,12 +215,12 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
                 base = base ? base + 1 : path;
                 for (size_t j = 0; j < np && err == PROVEN_OK; ++j) {
                     if (!rp_ascii_ieq(pdb[j].file_name, base)) continue;
-                    rp_diag_error(RP_DIAG_OUTPUT, "'%s' and '%s' are the same path in the package", pdb[j].file_name, base);
+                    rp_diag_error(RP_DIAG_OUTPUT, "'{}' and '{}' are the same path in the package", proven_arg_cstr(pdb[j].file_name), proven_arg_cstr(base));
                     err = PROVEN_ERR_INVALID_ARG;
                 }
                 size_t pl = 0;
                 if (err == PROVEN_OK && rp_pal_read_file(heap, path, (size_t)1 << 32, &pdb_data[np], &pl) != PROVEN_OK) {
-                    rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", path);
+                    rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(path));
                     err = PROVEN_ERR_IO;
                 }
                 if (err == PROVEN_OK) {
@@ -300,12 +300,12 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
             if (err != PROVEN_OK) why = "the upload file is too large";
         }
         if (err != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_OUTPUT, "cannot bundle the packages: %s", why ? why : "out of memory");
+            rp_diag_error(RP_DIAG_OUTPUT, "cannot bundle the packages: {}", proven_arg_cstr(why ? why : "out of memory"));
             rc = RP_EXIT_IO;
         } else if (rc != RP_EXIT_OK) {
             // rp_sign_bytes said why
         } else if (rp_pal_write_file_atomic(heap, out, b, bl) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+            rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(out));
             rc = RP_EXIT_IO;
         } else if (!write_appinstaller(heap, out, ai, ai_len)) {
             rc = RP_EXIT_IO;
@@ -320,7 +320,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
 #endif
             (void)proven_fmt_to(path, sizeof path, "{}{}", proven_arg_cstr_n(out, slash ? (int)(slash - out + 1) : 0), proven_arg_cstr(parts[i].file_name));
             if (rp_pal_write_file_atomic(heap, path, parts[i].data, parts[i].len) != PROVEN_OK) {
-                rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", path);
+                rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(path));
                 rc = RP_EXIT_IO;
             }
         }
@@ -364,7 +364,7 @@ static void outfile_drop(void *ctx, uint8_t *data) {
 // --winget (RFC-0031 B28): the source must have a [winget] table, and the package must be one file.
 static bool winget_from(proven_allocator_t heap, const rp_ir_t *ir, rp_winget_t *wg, rp_srcdiags_t *d) {
     if (!ir->has_winget) {
-        rp_srcdiag_add(d, (rp_pos_t){ 1, 1 }, "RP1202", false, "--winget needs a [winget] table: identifier, installer-url, license, short-description");
+        rp_srcdiag_add(d, ((rp_pos_t){ 1, 1 }), "RP1202", false, "--winget needs a [winget] table: identifier, installer-url, license, short-description");
         return false;
     }
     if (ir->cab_external) {
@@ -413,7 +413,7 @@ static int sxs_catalogs(proven_allocator_t heap, rp_ir_t *ir, const rp_sign_args
         }
         if (m == NULL) continue;                // refused by the checks
         if (!rp_sign_wanted(sign)) {
-            rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)", rp_cs(f->id));
+            rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)", proven_arg_cstr(rp_cs(f->id)));
             rc = RP_EXIT_SOURCE;
             break;
         }
@@ -422,7 +422,7 @@ static int sxs_catalogs(proven_allocator_t heap, rp_ir_t *ir, const rp_sign_args
             rc = rp_sign_cert(sign, &cert, &cert_len);
             if (rc != RP_EXIT_OK) break;
             if (!rp_sxs_token(cert, cert_len, token, &why)) {
-                rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: %s", rp_cs(f->id), why);
+                rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.{}]: {}", proven_arg_cstr(rp_cs(f->id)), proven_arg_cstr(why));
                 rc = RP_EXIT_SIGN;
                 break;
             }
@@ -432,14 +432,14 @@ static int sxs_catalogs(proven_allocator_t heap, rp_ir_t *ir, const rp_sign_args
             if (strcmp(f->asm_names[k][0], "publicKeyToken") == 0) named = f->asm_names[k][1];
         }
         if (named == NULL || !rp_ascii_ieq(named, token)) {
-            rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\"", rp_cs(f->id), named ? named : "", token);
+            rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\"", proven_arg_cstr(rp_cs(f->id)), proven_arg_cstr(named ? named : ""), proven_arg_cstr(token));
             rc = RP_EXIT_SOURCE;
             break;
         }
         uint8_t *man = NULL, *cat = NULL;
         size_t ml = 0, cl = 0;
         if (rp_pal_read_file(heap, rp_cs(m->source_path), 1u << 20, &man, &ml) != PROVEN_OK) {
-            rp_srcdiag_add(d, m->pos, "RP1509", false, "cannot read source file '%s'", rp_cs(m->source));
+            rp_srcdiag_add(d, m->pos, "RP1509", false, "cannot read source file '{}'", proven_arg_cstr(rp_cs(m->source)));
             rc = RP_EXIT_IO;
             break;
         }
@@ -486,7 +486,7 @@ static int run(int argc, char **argv, bool lint) {
         }
         if (lint && strcmp(a, "--target") == 0 && next) {        // RFC-0013 B2: which format the source is for
             if (strcmp(next, "msix") != 0 && strcmp(next, "msi") != 0) {
-                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--target takes msi or msix (got '%s')", next);
+                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--target takes msi or msix (got '{}')", proven_arg_cstr(next));
                 goto done;
             }
             lint_msix = strcmp(next, "msix") == 0;
@@ -501,13 +501,13 @@ static int run(int argc, char **argv, bool lint) {
         } else if (strcmp(a, "-D") == 0 && next) {
             const char *eq = strchr(next, '=');
             if (eq == NULL || eq == next || ndef == MAX_DEFINES) {
-                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "-D needs NAME=VALUE (got '%s')", next);
+                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "-D needs NAME=VALUE (got '{}')", proven_arg_cstr(next));
                 goto done;
             }
             size_t nl = (size_t)(eq - next);
             for (size_t k = 0; k < ndef; ++k) {
                 if (defines[k].name.size == nl && memcmp(defines[k].name.ptr, next, nl) == 0) {
-                    rp_diag_error("RP1402", "-D %.*s is given twice", (int)nl, next);
+                    rp_diag_error("RP1402", "-D {} is given twice", proven_arg_cstr_n(next, (size_t)((int)nl)));
                     goto done;
                 }
             }
@@ -531,7 +531,7 @@ static int run(int argc, char **argv, bool lint) {
             const char *end = next;
             int64_t v = 0;
             if (!rp_read_i64(next, &end, &v) || *end || v < 1 || v > 64) {
-                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--jobs takes a number from 1 to 64 (got '%s')", next);
+                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--jobs takes a number from 1 to 64 (got '{}')", proven_arg_cstr(next));
                 goto done;
             }
             jobs = (size_t)v;
@@ -563,7 +563,7 @@ static int run(int argc, char **argv, bool lint) {
             ++i;
         } else if (!lint && strcmp(a, "--msix-compress") == 0 && next) {
             if (strcmp(next, "store") != 0 && strcmp(next, "deflate") != 0) {
-                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--msix-compress takes deflate or store (got '%s')", next);
+                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--msix-compress takes deflate or store (got '{}')", proven_arg_cstr(next));
                 goto done;
             }
             msix_opt.store = strcmp(next, "store") == 0;
@@ -571,18 +571,18 @@ static int run(int argc, char **argv, bool lint) {
             ++i;
         } else if (strcmp(a, "--target") == 0 && next) {
             if (strcmp(next, "msi") != 0 && strcmp(next, "msix") != 0) {
-                rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "--target %s is not implemented (msi or msix)", next);
+                rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "--target {} is not implemented (msi or msix)", proven_arg_cstr(next));
                 goto done;
             }
             target = next;
             ++i;
         } else if (a[0] == '-' && a[1] != '\0') {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "unknown or incomplete %s option '%s'", lint ? "lint" : "build", a);
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "unknown or incomplete {} option '{}'", proven_arg_cstr(lint ? "lint" : "build"), proven_arg_cstr(a));
             goto done;
         } else if (src == NULL) {
             src = a;
         } else {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "more than one source file ('%s')", a);
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "more than one source file ('{}')", proven_arg_cstr(a));
             goto done;
         }
     }
@@ -608,7 +608,7 @@ static int run(int argc, char **argv, bool lint) {
     bool chain_out = !lint && rp_ascii_ends_with_ci(out, ".exe");       // a setup program for a [chain] (RFC-0016 3)
     bool msm_out = !lint && rp_ascii_ends_with_ci(out, ".msm");          // a merge module, from a [module] source (RFC-0017)
     if (!lint && !msix && !chain_out && !msm_out && !rp_ascii_ends_with_ci(out, ".msi")) {
-        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe", out);
+        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe", proven_arg_cstr(out));
         goto done;
     }
     // A bundle takes a list of architectures (RFC-0010 P8b-2); everything else one.
@@ -624,7 +624,7 @@ static int run(int argc, char **argv, bool lint) {
         bool dup = false;
         for (size_t k = 0; k < narch; ++k) dup |= strlen(arch_list[k]) == n && memcmp(arch_list[k], p, n) == 0;
         if (narch == 3 || n == 0 || n >= sizeof arch_list[0] || dup) {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')", arch);
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')", proven_arg_cstr(arch));
             goto done;
         }
         memcpy(arch_list[narch], p, n);
@@ -632,7 +632,7 @@ static int run(int argc, char **argv, bool lint) {
         p = comma ? comma + 1 : p + n;
     }
     if (target && strcmp(target, msix ? "msix" : "msi") != 0) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--target %s does not match the output '%s'", target, out);
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--target {} does not match the output '{}'", proven_arg_cstr(target), proven_arg_cstr(out));
         goto done;
     }
     if (msix_opt.winget && (chain_out || msm_out || rp_ascii_ends_with_ci(out, ".msixupload"))) {
@@ -666,7 +666,7 @@ static int run(int argc, char **argv, bool lint) {
         size_t text_len = 0;
         proven_err_t err = rp_pal_read_file(heap, src, MAX_SOURCE, &text, &text_len);
         if (err != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_INPUT, "cannot read '%s' (%s)", src, err == PROVEN_ERR_NOT_FOUND ? "not found" : "read error");
+            rp_diag_error(RP_DIAG_INPUT, "cannot read '{}' ({})", proven_arg_cstr(src), proven_arg_cstr(err == PROVEN_ERR_NOT_FOUND ? "not found" : "read error"));
             rc = RP_EXIT_IO;
             goto done;
         }
@@ -713,7 +713,7 @@ static int run(int argc, char **argv, bool lint) {
             }
             rp_toml_free(&doc);
             if (err == PROVEN_OK && !lint && ir.module != msm_out) {
-                rp_srcdiag_add(&d, (rp_pos_t){ 1, 1 }, "RP1201", false,
+                rp_srcdiag_add(&d, ((rp_pos_t){ 1, 1 }), "RP1201", false,
                                ir.module ? TR_N("a [module] source builds a merge module: -o <name>.msm")
                                          : TR_N("a .msm output is a merge module, built from a source with [module] instead of [package]"));
                 rp_ir_free(&ir);
@@ -740,7 +740,7 @@ static int run(int argc, char **argv, bool lint) {
             }
             if (err == PROVEN_OK && sign_rc == RP_EXIT_OK && !lint) {
                 err = rp_pal_write_file_atomic(heap, out, pkg, pkg_len);
-                if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+                if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(out));
                 else if (!write_appinstaller(heap, out, ai, ai_len)) err = PROVEN_ERR_IO;
             }
             rp_mem_free(heap, ai);
@@ -796,7 +796,7 @@ static int run(int argc, char **argv, bool lint) {
             rp_build_file_t *cabs = NULL;
             size_t ncabs = 0;
             err = rp_msi_from_ir(heap, &ir, &bopt, &limits, &msi, &msi_len, &cabs, &ncabs, &d);
-            if (err != PROVEN_OK && of.failed) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);     // said nothing else
+            if (err != PROVEN_OK && of.failed) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(out));     // said nothing else
             rp_ir_free(&ir);
             rp_mem_free(heap, cert);
             rp_cab_signer_free(heap, &signer);
@@ -830,20 +830,20 @@ static int run(int argc, char **argv, bool lint) {
                 (void)proven_fmt_to(cabpath, sizeof cabpath, "{}{}", proven_arg_cstr_n(out, (int)outdir), proven_arg_cstr(cabs[i].name));
                 uint64_t size = 0;
                 if (rp_pal_stat(heap, cabpath, &size) != RP_FS_NONE) {
-                    rp_diag_error(RP_DIAG_OUTPUT, "'%s' already exists; remove it or build into another folder", cabpath);
+                    rp_diag_error(RP_DIAG_OUTPUT, "'{}' already exists; remove it or build into another folder", proven_arg_cstr(cabpath));
                     err = PROVEN_ERR_IO;
                 }
             }
             for (size_t i = 0; !lint && err == PROVEN_OK && i < ncabs; ++i) {
                 (void)proven_fmt_to(cabpath, sizeof cabpath, "{}{}", proven_arg_cstr_n(out, (int)outdir), proven_arg_cstr(cabs[i].name));
                 err = rp_pal_write_file_atomic(heap, cabpath, cabs[i].data, cabs[i].len);
-                if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", cabpath);
+                if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(cabpath));
             }
             if (!lint && err == PROVEN_OK) {
                 if (of.om) err = rp_pal_outmap_commit(heap, of.om);  // the mapped file becomes the package
                 else err = rp_pal_write_file_atomic(heap, out, msi, msi_len);
                 of.om = NULL;
-                if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+                if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(out));
             }
             rp_pal_outmap_discard(heap, of.om);
             rp_build_files_free(heap, cabs, ncabs);

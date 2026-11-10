@@ -174,7 +174,7 @@ static int msix_facts(proven_allocator_t alloc, const uint8_t *data, size_t len,
     int rc = RP_EXIT_OK;
     char name[256] = "", publisher[8400] = "";
     if (rp_msix_open(alloc, data, len, lim, &files, &nf, &man, &ml, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid MSIX package: %s", path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid MSIX package: {}", proven_arg_cstr(path), proven_arg_cstr(why ? why : "unreadable"));
         rc = RP_EXIT_IO;
     } else {
         const char *m = (const char *)man;
@@ -238,7 +238,7 @@ static bool write_one(proven_allocator_t alloc, const char *dir, const char *id,
     char path[2400];
     (void)proven_fmt_to(path, sizeof path, "{}/{}{}.yaml", proven_arg_cstr(dir), proven_arg_cstr(id), proven_arg_cstr(suffix));
     if (b->err != PROVEN_OK || rp_pal_write_file_atomic(alloc, path, b->data, b->len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", path);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(path));
         return false;
     }
     return true;
@@ -340,7 +340,7 @@ int rp_winget_write(proven_allocator_t alloc, const rp_winget_t *w, const char *
     uint8_t *data = NULL;
     size_t len = 0;
     if (rp_pal_read_file(alloc, pkg, (size_t)lim.max_output, &data, &len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", pkg);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(pkg));
         return RP_EXIT_IO;
     }
     facts_t f = { 0 };
@@ -351,7 +351,7 @@ int rp_winget_write(proven_allocator_t alloc, const rp_winget_t *w, const char *
     if (rc != RP_EXIT_OK) return rc;
     uint64_t size = 0;
     if (rp_pal_stat(alloc, dir, &size) == RP_FS_NONE && rp_pal_mkdir_new(alloc, dir) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", dir);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(dir));
         return RP_EXIT_IO;
     }
     rp_buf_t b = rp_buf_new(alloc, 1u << 20);

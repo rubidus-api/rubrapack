@@ -88,12 +88,12 @@ static bool reserved_id(const char *s) {
 
 bool ir_check_id(ctx_t *c, const rp_ttable_t *t, size_t max) {
     if (!ir_valid_id(rp_cs(t->id), max)) {
-        ERR(c, t->pos, "RP1301", "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)",
-            rp_cs(t->id), max);
+        ERR(c, t->pos, "RP1301", "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})",
+            proven_arg_cstr(rp_cs(t->id)), proven_arg_u64(max));
         return false;
     }
     if (reserved_id(rp_cs(t->id))) {
-        ERR(c, t->pos, "RP1302", "'%s' is reserved and cannot be used as an ID", rp_cs(t->id));
+        ERR(c, t->pos, "RP1302", "'{}' is reserved and cannot be used as an ID", proven_arg_cstr(rp_cs(t->id)));
         return false;
     }
     return true;
@@ -135,9 +135,9 @@ void ir_check_keys_lang(ctx_t *c, const rp_ttable_t *t, const char *const *allow
         if (!known) {
             const char *hint = ir_suggest(rp_cs(t->keys[k].key), allowed);
             // Two whole messages, not a hint glued on: a glued phrase stays English in a pack.
-            if (hint) ERR(c, t->keys[k].pos, "RP1201", "unknown key '%s' in [%s%s%s] (did you mean '%s'?)", rp_cs(t->keys[k].key), rp_cs(t->kind),
-                          t->id.ptr ? "." : "", t->id.ptr ? rp_cs(t->id) : "", hint);
-            else ERR(c, t->keys[k].pos, "RP1201", "unknown key '%s' in [%s%s%s]", rp_cs(t->keys[k].key), rp_cs(t->kind), t->id.ptr ? "." : "", t->id.ptr ? rp_cs(t->id) : "");
+            if (hint) ERR(c, t->keys[k].pos, "RP1201", "unknown key '{}' in [{}{}{}] (did you mean '{}'?)", proven_arg_cstr(rp_cs(t->keys[k].key)), proven_arg_cstr(rp_cs(t->kind)),
+                          proven_arg_cstr(t->id.ptr ? "." : ""), proven_arg_cstr(t->id.ptr ? rp_cs(t->id) : ""), proven_arg_cstr(hint));
+            else ERR(c, t->keys[k].pos, "RP1201", "unknown key '{}' in [{}{}{}]", proven_arg_cstr(rp_cs(t->keys[k].key)), proven_arg_cstr(rp_cs(t->kind)), proven_arg_cstr(t->id.ptr ? "." : ""), proven_arg_cstr(t->id.ptr ? rp_cs(t->id) : ""));
         }
     }
 }
@@ -310,8 +310,8 @@ char *ir_subst(ctx_t *c, const rp_tval_t *v) {
             const winname_t *w = winname(name);
             bool dir = w == NULL && is_dir_id(c, name);
             if ((w || dir) && c->fmt == IR_FMT_NONE) {
-                ERR(c, v->pos, "RP1404", "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in "
-                    "(registry, environment, INI, arguments, messages), not here", name, dir ? TR_N("dir ID") : TR_N("Windows name"));
+                ERR(c, v->pos, "RP1404", "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in "
+                    "(registry, environment, INI, arguments, messages), not here", proven_arg_cstr(name), proven_arg_cstr(dir ? TR_N("dir ID") : TR_N("Windows name")));
                 ok = false;
                 break;
             }
@@ -323,8 +323,8 @@ char *ir_subst(ctx_t *c, const rp_tval_t *v) {
                 folder = true;
             } else if (w && c->fmt == IR_FMT_RUNTIME) {
                 if (!w->env) {
-                    ERR(c, v->pos, "RP1404", "$(%s) has no environment variable, so an expandable value cannot hold it; "
-                        "use a string value (filled in at install time)", w->name);
+                    ERR(c, v->pos, "RP1404", "$({}) has no environment variable, so an expandable value cannot hold it; "
+                        "use a string value (filled in at install time)", proven_arg_cstr(w->name));
                     ok = false;
                     break;
                 }
@@ -340,7 +340,7 @@ char *ir_subst(ctx_t *c, const rp_tval_t *v) {
             } else {
                 char hint[64];
                 name_hint(name, hint, sizeof hint);
-                ERR(c, v->pos, "RP1403", "variable '%s' is not defined ([define] or -D %s=...)%s", name, name, hint);
+                ERR(c, v->pos, "RP1403", "variable '{}' is not defined ([define] or -D {}=...){}", proven_arg_cstr(name), proven_arg_cstr(name), proven_arg_cstr(hint));
                 ok = false;
                 break;
             }
@@ -385,7 +385,7 @@ char *ir_get_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool required
     char name[128];
     size_t next = len >= 2 && s[0] == '$' && s[1] == '(' ? read_name(s, len, 0, name, sizeof name) : 0;
     if (next == 0 || (next < len && s[next] != '/')) {
-        ERR(c, k->pos, "RP1308", "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\"", key);
+        ERR(c, k->pos, "RP1308", "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\"", proven_arg_cstr(key));
         return NULL;
     }
     const char *base = NULL;
@@ -396,8 +396,8 @@ char *ir_get_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool required
     if (base == NULL) {
         char hint[64];
         name_hint(name, hint, sizeof hint);
-        ERR(c, k->pos, "RP1308", "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, "
-            "ProgramData ... - see the manual's Paths)%s", name, hint);
+        ERR(c, k->pos, "RP1308", "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, "
+            "ProgramData ... - see the manual's Paths){}", proven_arg_cstr(name), proven_arg_cstr(hint));
         return NULL;
     }
     rp_tval_t rest = k->val;
@@ -416,17 +416,17 @@ char *ir_get_str(ctx_t *c, const rp_ttable_t *t, const char *key, bool required,
     if (present) *present = k != NULL;
     if (k == NULL) {
         if (required) {
-            ERR(c, t->pos, "RP1202", "[%s%s%s] needs '%s'", rp_cs(t->kind), t->id.ptr ? "." : "", t->id.ptr ? rp_cs(t->id) : "", key);
+            ERR(c, t->pos, "RP1202", "[{}{}{}] needs '{}'", proven_arg_cstr(rp_cs(t->kind)), proven_arg_cstr(t->id.ptr ? "." : ""), proven_arg_cstr(t->id.ptr ? rp_cs(t->id) : ""), proven_arg_cstr(key));
         }
         return NULL;
     }
     if (k->val.kind != RP_TV_STRING) {
-        ERR(c, k->pos, "RP1306", "'%s' must be a string", key);
+        ERR(c, k->pos, "RP1306", "'{}' must be a string", proven_arg_cstr(key));
         return NULL;
     }
     char *s = ir_subst(c, &k->val);
     if (s && s[0] == '\0' && required) {
-        ERR(c, k->pos, "RP1305", "'%s' must not be empty", key);
+        ERR(c, k->pos, "RP1305", "'{}' must not be empty", proven_arg_cstr(key));
         rp_mem_free(c->alloc, s);
         return NULL;
     }
@@ -449,7 +449,7 @@ void ir_get_ltexts(ctx_t *c, const rp_ttable_t *t, const char *base, rp_ir_ltext
         const char *code = ir_lang_of_key(rp_cs(t->keys[k].key), base);
         if (code == NULL) continue;
         if (t->keys[k].val.kind != RP_TV_STRING) {
-            ERR(c, t->keys[k].pos, "RP1306", "'%s' must be a string", rp_cs(t->keys[k].key));
+            ERR(c, t->keys[k].pos, "RP1306", "'{}' must be a string", proven_arg_cstr(rp_cs(t->keys[k].key)));
             continue;
         }
         (*out)[*count] = (rp_ir_ltext_t){ RP_V(ir_dup(c, code)), RP_V(ir_subst(c, &t->keys[k].val))};
@@ -461,7 +461,7 @@ bool ir_get_bool(ctx_t *c, const rp_ttable_t *t, const char *key, bool dflt) {
     const rp_tkey_t *k = ir_find_key(t, key);
     if (k == NULL) return dflt;
     if (k->val.kind != RP_TV_BOOL) {
-        ERR(c, k->pos, "RP1306", "'%s' must be true or false", key);
+        ERR(c, k->pos, "RP1306", "'{}' must be true or false", proven_arg_cstr(key));
         return dflt;
     }
     return k->val.b;
@@ -471,11 +471,11 @@ int64_t ir_get_int(ctx_t *c, const rp_ttable_t *t, const char *key, int64_t dflt
     const rp_tkey_t *k = ir_find_key(t, key);
     if (k == NULL) return dflt;
     if (k->val.kind != RP_TV_INT) {
-        ERR(c, k->pos, "RP1306", "'%s' must be an integer", key);
+        ERR(c, k->pos, "RP1306", "'{}' must be an integer", proven_arg_cstr(key));
         return dflt;
     }
     if (k->val.i < lo || k->val.i > hi) {
-        ERR(c, k->pos, "RP1308", "'%s' must be between %lld and %lld", key, (long long)lo, (long long)hi);
+        ERR(c, k->pos, "RP1308", "'{}' must be between {} and {}", proven_arg_cstr(key), proven_arg_i64((long long)lo), proven_arg_i64((long long)hi));
         return dflt;
     }
     return k->val.i;
@@ -551,7 +551,7 @@ bool ir_target_name_ok(ctx_t *c, const char *name, rp_pos_t pos) {
         }
     }
     if (why) {
-        ERR(c, pos, "RP1510", "target name '%s' %s", name, why);
+        ERR(c, pos, "RP1510", "target name '{}' {}", proven_arg_cstr(name), proven_arg_cstr(why));
         return false;
     }
     return true;
@@ -606,15 +606,15 @@ void ir_check_format(ctx_t *c) {
     const rp_tkey_t *f = NULL;
     for (size_t k = 0; k < root->count; ++k) {
         if (RP_EQ(root->keys[k].key, "format")) f = &root->keys[k];
-        else ERR(c, root->keys[k].pos, "RP1108", "key '%s' outside a table; only 'format' comes before the first table", rp_cs(root->keys[k].key));
+        else ERR(c, root->keys[k].pos, "RP1108", "key '{}' outside a table; only 'format' comes before the first table", proven_arg_cstr(rp_cs(root->keys[k].key)));
     }
     if (f == NULL) {
-        rp_srcdiag_add(c->d, (rp_pos_t){ 1, 1 }, "RP1108", true,
-                       "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read "
-                       "(paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format", FORMAT);
+        rp_srcdiag_add(c->d, ((rp_pos_t){ 1, 1 }), "RP1108", true,
+                       "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read "
+                       "(paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format", proven_arg_i32(FORMAT));
     } else if (f->val.kind != RP_TV_INT || f->val.i < 1) {
-        ERR(c, f->pos, "RP1108", "format is a whole number: format = %d", FORMAT);
+        ERR(c, f->pos, "RP1108", "format is a whole number: format = {}", proven_arg_i32(FORMAT));
     } else if (f->val.i > FORMAT) {
-        ERR(c, f->pos, "RP1108", "format %lld needs a newer rubrapack (this one reads format %d)", (long long)f->val.i, FORMAT);
+        ERR(c, f->pos, "RP1108", "format {} needs a newer rubrapack (this one reads format {})", proven_arg_i64((long long)f->val.i), proven_arg_i32(FORMAT));
     }
 }

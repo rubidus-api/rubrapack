@@ -57,16 +57,19 @@ static const range_t *range_of(const char *code) {
 
 static void out(const char *s) { (void)rp_pal_puts(RP_OUT_STDOUT, s); }
 
-// A message as the table of codes shows it: the text with "*" for each conversion.
+// A message as the table of codes shows it: the text with "*" for each value - the English
+// proven format's `{}` or `{:spec}`, a translation's {1}.. ({-N}: not shown).
 static void starred(const char *fmt, bool translated, char *o, size_t cap) {
     size_t n = 0;
     for (const char *p = fmt; *p && n + 2 < cap; ++p) {
-        if (!translated && *p == '%' && p[1] == '%') { o[n++] = '%'; ++p; continue; }
-        if (!translated && *p == '%') {
-            while (p[1] && strchr("diouxXscp", p[1]) == NULL) ++p;
-            if (p[1]) ++p;
-            o[n++] = '*';
-            continue;
+        if (!translated && (*p == '{' || *p == '}') && p[1] == *p) { o[n++] = *p; ++p; continue; }
+        if (!translated && *p == '{' && (p[1] == '}' || p[1] == ':')) {
+            const char *q = strchr(p, '}');
+            if (q) {
+                o[n++] = '*';
+                p = q;
+                continue;
+            }
         }
         if (translated && *p == '{' && p[1] == '{') { o[n++] = '{'; ++p; continue; }
         if (translated && *p == '{' && (p[1] == '-' || (p[1] >= '1' && p[1] <= '9'))) {
@@ -122,7 +125,7 @@ int rp_cmd_explain(int argc, char **argv) {
     char code[8];
     if ((a[0] == 'R' || a[0] == 'r') && (a[1] == 'P' || a[1] == 'p')) a += 2;
     if (strlen(a) != 4 || strspn(a, "0123456789") != 4) {
-        rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "'%s' is not a diagnostic code (RP and four digits, like RP1612)", argv[2]);
+        rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "'{}' is not a diagnostic code (RP and four digits, like RP1612)", proven_arg_cstr(argv[2]));
         return RP_EXIT_USAGE;
     }
     (void)proven_fmt_to(code, sizeof code, "RP{}", proven_arg_cstr(a));
@@ -132,7 +135,7 @@ int rp_cmd_explain(int argc, char **argv) {
     }
     const range_t *r = range_of(code);
     if (e == NULL) {
-        rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "%s is not a code this rubrapack uses%s%s", code, r ? TR("; its range is ") : "", r ? rp_tr(r->what) : "");
+        rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "{} is not a code this rubrapack uses{}{}", proven_arg_cstr(code), proven_arg_cstr(r ? TR("; its range is ") : ""), proven_arg_cstr(r ? rp_tr(r->what) : ""));
         return RP_EXIT_USAGE;
     }
     char line[1024];
@@ -147,13 +150,13 @@ int rp_cmd_explain(int argc, char **argv) {
         }
     }
     if (r) {
-        rp_lang_format(line, sizeof line, "\nWhat to do: %s.\n", rp_tr(r->todo));
+        rp_lang_format(line, sizeof line, "\nWhat to do: {}.\n", proven_arg_cstr(rp_tr(r->todo)));
         out(line);
         if (r->anchor[0]) {
             bool page = strstr(r->anchor, ".html") != NULL;     // a tutorial chapter, or a section of the reference
             // The address is part of the text: a language's pack names its own manual (and anchors).
-            rp_lang_format(line, sizeof line, "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n", page ? "" : TR("Reference, "),
-                           rp_tr(r->section), page ? "" : "reference.html#", page ? r->anchor : rp_tr(r->anchor));
+            rp_lang_format(line, sizeof line, "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n", proven_arg_cstr(page ? "" : TR("Reference, ")),
+                           proven_arg_cstr(rp_tr(r->section)), proven_arg_cstr(page ? "" : "reference.html#"), proven_arg_cstr(page ? r->anchor : rp_tr(r->anchor)));
             out(line);
         }
         out(TR("All codes: https://rubidus-api.github.io/rubrapack/en/reference.html#diagnostic-codes\n"));

@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Microsoft YaHei UI\n"
 "X-Rubrapack-Group: 1\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, 对话框 {6}{7}\n  1 名称、制造商、版本、体系结构                 2 安装文件夹、为谁安装\n  3 对话框、许可协议、语言                       4 可选部分\n  5 快捷方式                                     6 文件: 与程序文件夹保持一致\n  7 任意键                                       v 查看   l lint   s 保存   q 退出\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\n使用此代码的消息(* 表示名称或值):\n"
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\n结果输出到 stdout，诊断输出到 stderr。\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\n处理方法: {1}。\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} 已不存在，但有快捷方式打开它: 请先更改快捷方式(5)\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  其中有 {1} 个文件和 {2} 个文件夹\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7、v、l、s 或 q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  已添加 [dir.{1}] 和 [files.{2}]\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  已添加 [file.{1}]\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint: 请查看上面的问题(其中列出的文件是检查用的副
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  [ui] languages 中的其他语言保持不变；请用 7(任意键)更改该列表\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  已删除 [file.{1}]\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  已删除 [files.{1}]{2}\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  这不符合 TOML 子集；没有做任何更改\n"
 msgid "  that was not readable text; again, please\n"
 msgstr "  这不是可读的文本；请再输入一次\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  程序文件夹 '{1}': {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - 构建 Windows Installer (.msi) 和 MSIX (.msix) 安装包\n\n用法:
 msgid " and its dir"
 msgstr " 及其 dir"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}) 没有对应的环境变量，因此可展开的值不能包含它；请使用字符串值(安装时填入)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) 是 {2}: 它可以作为路径开头，或代替 Windows Installer 填入的值(注册表、环境变量、INI、参数、消息)，但不能用在这里"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) 不是可作为路径起点的文件夹(dir ID，或 ProgramFiles、LOCALAPPDATA、ProgramData ... - 参见手册的 Paths){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  结构:     {2}\n  摘要:     {3}\n  签名:     {4}\n  证书链:   {5}{6}{7}\n  吊销检查: 未检查\n  时间戳:   {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2}: 未设置该变量"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' 不是此对话框的控件"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' 不在 {3} 中"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}': {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': 许可协议文本需要字体的英文名称，因此会以该语言的默认字体显示；若要在此也使用此字体，请写英文名称(如 \"Malgun Gothic\")"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "{1} = '{2}' 必须是文件夹"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "{1} 组件，但安装包的平台是 {2}"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} 不属于 kind = \"{2}\""
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} 不属于 kind = \"firewall\""
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} 应为 LANGID(1..65535)，如 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} 应为字符串"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "{1} 长度为 {2} 到 {3} 个字符"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} 是 \"Key=Value\" 文本的列表"
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "{1} 是文本列表，例如 [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} 是 1 到 31 个字符的字体名称，如 \"Segoe UI\"(实际为 {2})"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} 是引号闭合、括号配对的 MSI 条件"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} 是字符串数组，每个值一个"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} 用于 MSI 安装包: MSIX 不会由 msiexec 删除"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} 已不存在。删除 [file.{2}] 吗?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} 超过 240 个字符"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} 是新的。添加吗?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} 不是注册表格式的 GUID"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} 不是此 rubrapack 使用的代码{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} 必须是指向此安装包中 [file.*] 的 \"file:<ID>\""
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "{1} 必须由 {2} 到 {3} 个字母、数字、'.' 或 '-' 组成，且不能以 '.' 开头(实际为 '{4}')"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1} 必须是 GUID"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1} 必须是形如 {12345678-...} 的 GUID(实际为 '{2}')"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "{1} 必须是 http:// 或 https:// 地址（收到 '{2}'）"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1} 必须是 https://、http:// 或 file:// 地址，或 \\\\server\\share 路径(实际为 '{2}')"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1} 必须与 upgrade-code 不同(每种体系结构一个升级系列)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} 需要 Windows 内部版本 {2} 或更高版本: 请设置 [msix] min-version = \"10.0.{3}.0\""
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} 需要 resources/bin/rubrapack_ca-{2}.dll，但此 rubrapack 构建时未包含它"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}，TSA 未检查(请指定 --tsa-trust)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}，TSA 受信任"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}，TSA 不受信任 - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} 已不存在或为空。删除 [files.{3}] 和 [dir.{4}] 吗?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ 是新文件夹。添加吗?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1}: {2} 个错误{-3}，{4} 个警告{-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1}: {2} 个错误{-3}，{4} 个警告{-5}(对照 {6})\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1}: {2} 个文件，{3} 字节\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1}: {2} 个文件，{3} 个错误，0 个警告\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1}: 另有 {2} 条诊断未显示\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1}：'{2}' 不是程序（.exe）"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1}：'{2}' 不是 rubrapack 放置的标准操作"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1}: 文件 '{2}' 不是此安装包的 [file.*]"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1}: 文件 '{2}' 不是程序(.exe)"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "'$(' 未闭合(文本 '$(' 请写作 '$$(')"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' 已存在；保持不变"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' 已存在；请删除它或构建到其他文件夹"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}' 已有 {2} 处理程序([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}' 已有权限"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' 和 '{2}' 在安装包中是同一路径"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' 属于 Windows 或浏览器"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "无法对照 '{2}' 读取 '{1}': {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' 不符合 TOML 子集；没有保存任何内容"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' 已存在"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' 已存在；请用 `rubrapack edit {2}` 修改"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' 已存在且不是空目录；请解压到新目录"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' 应放在 {2}；或设置 msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}' 的摘要信息流无法读取"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' 没有可供解压的 Directory、Component、File 和 Media 表"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "'{1}' 没有嵌入的转换 '{2}'"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}' 没有可读的摘要信息"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}' 没有转换 '{2}'"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' 是 UTF-16: edit 只修改 UTF-8 源文件(请先另存为 UTF-8)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' 是 Windows 的名称；请给变量另取名称"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' 是 [chain]: 它构建安装程序，-o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' 是内置框架的控件；请选择其他 ID"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' 是计算机级文件夹；{2} 安装包不能写入该位置"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' 是合并模块: 请改用 [merge.ID] 合并"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' 是 MSIX 格式保留的名称"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' 是符号链接；不跟随链接"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' 也是 [property.*]"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' 也是 dir ID；请给变量另取名称"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' 是为机器 0x{2} 构建的，不是为此安装包的 arch；如果确是有意，请设置 any-arch = true"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' 既不是 PE 文件(.exe、.dll)，也不是 MSI 安装包、MSIX 包、捆绑包或 cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' 既不是 PE 文件，也不是 MSI 安装包、MSIX 包、捆绑包或 cabinet"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' 既不是已知文件夹，也不是 dir ID(已知文件夹: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' 既不是 MSIX 包，也不是包系列名称 (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' 不是 rubrapack 能读取的 cabinet(stored 或 MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' 不是诊断代码(RP 加四位数字，如 RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' 不是程序(.exe)"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' 不是普通文件"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' 不是 rubrapack 安装程序{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' 不是有效的 ID(字母、数字和 '_'，不以数字开头，最多 {2} 个)"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' 不是有效的 MSI 数据库: {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' 不是有效的 MSIX 包: {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' 不是有效的安装包: {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' 不是有效的源文件(TOML 子集)；请先手动修正"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' 不是有效的转换: {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' 不是有效的变量名"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' 是保留字，不能用作 ID"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' 是 dir 的名称: 只有注册表搜索或 dir 搜索才能填充 dir"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' 看起来是程序文件(PE)，但其头或资源已损坏"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}' 必须是字符串"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}' 必须是整数"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}' 必须在 {2} 到 {3} 之间"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}' 必须是 true 或 false"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' 不能为空"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' 未指定任何转换(摘要属性 8): 不是补丁"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' 应以文件夹开头: \"$(ProgramFiles)/Example\"、\"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}': {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}': {2} '{3}' 含有 {4}；没有解压任何内容"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}': {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}': 有 {2} 个条目，超过上限 {3}(--limit-entries)；没有解压任何内容"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}': '{2}' 和 '{3}' 在 Windows 上是同一路径；没有解压任何内容"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}': '{2}' 不在 [ui] languages 中"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}': 无法读取某个表"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}': 某个表不可读"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}': MSIX 会安装其所有文件(when)；请使用 msi-only = true"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}': MSIX 会删除其所有文件(keep)；请使用 msi-only = true"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}': cabinet '{2}' 已损坏，或不是 stored/MSZIP"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}': cabinet 名称 '{2}' 不是普通文件名"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}': 压缩文件 '{2}'(序号 {3})没有 cabinet"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}': 目录 '{2}' 的父目录 '{3}' 不存在"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}': 目录 '{2}' 是它自己的祖先，或嵌套太深"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}': 文件 '{2}' 与其 MsiFileHash 不符"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}': 文件 '{2}' 没有组件或目录"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}': 文件 '{2}' 为 {3} 字节，File 表中为 {4}"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}': 文件 '{2}' 不在 cabinet '{3}' 中"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}': 其外部 cabinet 不在签名范围内(--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}': 其文件夹没有通向已知位置"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}': 需写入超过 {2} 字节(--limit-bytes)；没有解压任何内容"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}': 没有 --timestamp: 证书过期后签名即失效"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}': 安装包 '{2}' 与其 SHA-256 不符"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}': cabinet 流 '{2}' 不存在"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}': 清单中没有 {2} {3}"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}': 清单指定了 '{2}'，但它不在安装包中"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}': 来自 {2} 的时间戳: {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}': 无法对照 '{3}' 读取转换 '{2}': {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' 是安装包自己的语言({2})；请不带后缀给出该文本"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "'version' 不接受参数"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "--allow-unsigned-cabs 用于 .msi"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "捆绑包的 --arch: x64、x86 和 arm64 的列表，每个一次(实际为 '{1}')"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "--dist 指定源文件旁边的新文件夹(不带路径)"
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "--flat 用于 .msixbundle 输出（其包写在它旁边）"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "--jobs 接受 1 到 64 的数字(实际为 '{1}')"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "--key 最多为 {1} 个外部 cabinet 签名；请调大 cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "--key-store 是 Windows 证书存储；其他系统请使用密钥文件
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store 接受证书的 SHA-1 指纹(40 位十六进制数字)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1}: 没有该语言(内置：{2}；其他语言需要语言包 {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "--lang(或 RUBRAPACK_LANG)选择这些文字的语言: {1}，或有语言包的语言。\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "--lang 需要一种语言，如 en 或 ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "--languages 需要对话框: 请同时指定 --ui"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "--msix-compress 接受 deflate 或 store(实际为 '{1}')"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1}: 未设置该变量"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "--patch-code 接受带花括号的大写 GUID: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1}: 未设置该变量"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "--previous 比较两个 .msi 安装包"
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots: 无法读取操作系统的根证书"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "--target {1} 与输出 '{2}' 不符"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "--target {1} 尚未实现(msi 或 msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "--target 接受 msi 或 msix(实际为 '{1}')"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "--winget 需要 [winget] 表：identifier, installer-url, license, short
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "--winget 需要包是一个文件：winget 下载一个文件，因此不能 cab = \"external\""
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "-D {1} 给出了两次"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1}: '{2}' 是 Windows 的名称；请给变量另取名称"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "-D 需要 NAME=VALUE(实际为 '{1}')"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "-i 会询问每个答案；请只给出 -i 或选项之一"
 msgid "; its range is "
 msgstr "；其范围是 "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "ActionProperty '{1}' 不在 SecureCustomProperties 中"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Program Files 下的文件夹名称"
 msgid "Folder with the files to install"
 msgstr "要安装的文件所在的文件夹"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "ID '{1}' 已被使用(第 {2} 行)；所有表中的 ID 必须互不相同"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "安装对象(machine、user、dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "table.key 形式的键(package.version、dir.INSTALLDIR.path、...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "KeyPath '{1}' 属于另一个组件"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "KeyPath '{1}' 不在 File 中"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "KeyPath '{1}' 不在 Registry 中"
 
 msgid "Korean dialogs as well as English?"
 msgstr "除英语外还要韩语对话框吗?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "LastSequence {1} 低于较小 DiskId 的值"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX: MSIX 包需要什么，以及不能包含什么"
 msgid "Main program, for shortcuts (- for none)"
 msgstr "快捷方式的主程序(无则为 -)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "手册: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "产品名称"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "ProductCode 和 UpgradeCode 是同一个 GUID"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} 的前三个字段不高于之前的 {2}: Windows Installer 不会升级"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "快捷方式打开的程序(不建快捷方式则为 -)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1}: 没有该语言(内置：{2}；其他语言需要语言包 {3}.po)"
 
 msgid "Reference, "
 msgstr "参考，"
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "序号 {1} 不在任何 Media 行的范围内(最后为 {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "序号 {1} 已被另一个文件使用"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "要写入的源文件"
 msgid "Source format"
 msgstr "源文件格式"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "Source 必须指向类型 {1} 的 File 行"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "TOML 子集"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "不支持 UTF-16 大端文件；请另存为 UTF-8"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "UpgradeCode {1} 与旧版本的 {2} 不同: 此安装包不会替换它"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "版本与升级"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer 最多允许 255.255.65535(.65535)"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "Windows 没有说明 '{1}' 安装了什么"
 
 msgid "Windows name"
 msgstr "Windows 名称"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] 需要 '{4}'"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] 不能放入合并模块；由合并它的安装包持有"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] 尚不支持(计划在 {3})"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] 不能放入 MSIX；添加 msi-only = true 可在不含它的情况下构建 MSIX"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] 不能放入 MSIX；添加 msi-only = true 可在不含它的情况下构建 MSIX"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "[{1}.{2}] 位于用户的 AppData 或 LocalAppData 中：dual 包为所有用户安装时，只会放入执行安装的用户的配置文件"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: 合并模块中的 ID 最多 35 个字符(会附加模块的 GUID)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] 需要 ID: 请写 [{2}.ID]"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] 不接受 ID: 请写 [{2}]"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "[Content_Types].xml 不是最后一个条目(不是 rubrapack 或 Window
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "不支持 [[...]] 表数组；请为每一项单独写 [kind.ID]"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] 只放置一次：before、after 或 sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] 需要 do 和 undo(undo 也会回滚失败的 do)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] 需要 entry：要调用的 DLL 函数"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] 需要 run = \"file:<ID>\"：do 和 undo 运行的程序"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "[action.{1}] 在 InstallFinalize 之前运行此包的文件，而首次安装时该文件尚不存在（Windows Installer 错误 1721 或 1723）：请将其放在 InstallFinalize 之后，或改为 deferred"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] 运行一件事：run（exe）、dll（已安装的 DLL）或 binary（包中的 DLL）；或 do 和 undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}]: {2} 用于单个操作，而不是 do/undo 对"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}]: 运行已安装文件的延迟操作必须在 InstallFiles 之后（sequence > 4000）"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}]: 立即操作以安装用户身份运行；as 用于其他 phase"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}]: args 是程序的；DLL 取 data"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}]: check 与 do/undo 对一起使用"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}]: data 用于 deferred、commit 或 rollback 操作（立即操作读取属性）"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}]: entry 是 DLL 的函数；run 取 args"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX 的 args 必须是纯文本(不能有安装时填入的 [...])"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}]: 在 MSIX 中由应用程序打开文件类型: target 必须是 [msix-app.*] 的可执行文件"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] 出现了两次"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "[chain-package] 需要 ID: 请写 [chain-package.ID]"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}]: app-id 和 typelib 只写入 MSI；MSIX 不带它们注册类"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}]: args 是程序用的；DLL 是被加载而不是被启动"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}]: surrogate 在 dllhost 中运行 DLL；'{2}' 是程序"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}]: threading 用于 DLL；程序自行设置其单元"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}]: typelib-version 和 typelib-file 需要 typelib"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] 应放在 {2}；或设置 msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}]: 其来源必须是会放入安装包的文件"
 
 msgid "[define] values must be strings"
 msgstr "[define] 的值必须是字符串"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] 需要 '{2}'"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "[dialog-control.{1}] 需要 image"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] 需要 'property'"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] 需要 'text'"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] 需要 'values'"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}] 有 {2} 个控件；最多 64 个"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}] 没有 [dialog-control.*]"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] 通过其他对话框被放在了它自己之后"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] 需要 ui = \"minimal\"、\"installdir\" 或 \"features\""
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}]: '{2}' 是 Windows 的名称；请给 dir 另取 ID"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}]: guard 需要 rubrapack 的辅助 DLL，而合并模块不包含它"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] 需要一个功能"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}]: MSIX 会设置其所有变量(when)；请使用 msi-only = true"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: 其值指向 MSIX 无法提供的位置(不是 Windows 文件夹的包外文件夹，或安装时才确定的部分)；请使用 msi-only = true"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}]：使用 external-location = true 时，包中不含程序的任何文件，因此也没有 rubrapack 的启动器；或者 msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] 已在它自己程序的文件夹中；isolate-for 用于安装在别处的共享 DLL"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] 位于用户配置文件中且指定了 component-guid：其键路径仍为该文件，而 Windows 规则要求此处使用 HKCU 值 (ICE38)；去掉 component-guid 即可获得"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}]：{2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]：'{2}' 不是 .NET 程序集（没有带 Assembly 行的 CLI 头）"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}]：.NET 程序集自身带有清单；manifest 用于 Win32 程序集"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}]：Win32 程序集需要 manifest = \"file:<ID>\"，即它的清单文件"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]：共享 .NET 程序集进入 GAC，而 GAC 只接受强名称程序集；请为它签名，或给出 assembly-for = \"file:<程序>\""
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]：共享 Win32 程序集随一个由清单中 publicKeyToken 所指密钥签名的编录进入 WinSxS；请用 --key 构建（或为私有程序集指定 assembly-for = \"file:<程序>\"）"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]：共享 Win32 程序集的清单 '{2}' 须指明签名者：assemblyIdentity 中的 publicKeyToken（构建所用 --key 的令牌）"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]：assembly-for 和 manifest 要与 assembly = \"dotnet\" 或 \"win32\" 一起使用"
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}]：清单 '{2}' 没有带 name 和 version 的 assemblyIdentity"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]：清单 '{2}' 必须位于相同的 dir 和 feature（并具有相同的 when）：两者是同一个组件"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}]：清单的 publicKeyToken 为 \"{2}\"，但 --key 的令牌为 \"{3}\""
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}]：清单 '{2}' 属于另一个程序集，或本身就是程序集"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}]: 资源管理器从 DLL 加载 {2} 处理程序；[com.{3}] 是程序"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}]: Windows 只按计算机读取属性处理程序；安装包需要 scope = \"machine\""
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}]: 预览处理程序在 Windows 的 prevhost 中运行；请从 [com.{2}] 中去掉 app-id 和 surrogate"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}]: MSIX 只包含缩略图和预览处理程序(打包的属性处理程序未向资源管理器提供任何值)；msi-only = true 可将其保留给 MSI"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}]: MSIX 文件类型属于某个应用程序；请添加 [msix-app.*]"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}]: 类 {2} 不是此安装包的 [com.*](由处理程序的 DLL 提供)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}]: 在 MSIX 中，处理程序要么共享全部类型，要么都不共享(一个类型只属于一个文件类型关联)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}]: 在 MSIX 中其类在代理中运行；[com.{2}] 中的 threading = \"sta\" 让其窗口有消息循环(threading = {3} 时预览可能保持空白)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}]: 在 MSIX 中其类型要么全部在同一个 [assoc] 文件类型中，要么都不在"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}]: 其类是 msi-only([com.{2}])；MSIX 将没有它的服务器"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}]: types 是文件类型列表，如 [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] 应放在 {2}；或设置 msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] 需要 'value'"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] 需要一个功能: 请在此处或其 dir 上设置 'feature'"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}]: MSIX 会写入其所有 INI 项(when)；请使用 msi-only = true"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}]: 其值含有 Windows Installer 在安装时填入的部分([...])；MSIX 在构建时写入该文件"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] 需要 'on': 显示该项的位置，如 [\".txt\"] 或 \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] 需要 'target'(它启动的程序)，或带 parent = \"{2}\" 的项(子菜单)"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] 需要 'target': 该项启动的程序"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}]: Windows 11 菜单的 ID 只能是字母和数字（不能有 '_'）：请改名，或设 windows11 = false"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: 子菜单不启动任何程序: 请去掉 'args'"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}]: 子菜单的项显示在其子菜单显示的位置: 请去掉 'on'"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args 含有 Windows Installer 在安装时填入的部分([...])；MSIX 只能包含固定文本"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}]: hide-when 为 \"HKCU\\\\key\\\\value\" 或 \"HKLM\\\\...\"，用于不在子菜单中的 Windows 11 菜单项"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}]: hide-when 指向本包自己写入的值（[registry.{2}]）：该项将永远不显示"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: 其程序不在 MSIX 中(msi-only?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: 其值不能放入安装包的注册表"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: list 含有 Windows Installer 在安装时填入的部分([...])；MSIX 只能包含固定文本"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}]: 路径放不进命令行时，list 代替 {2}：需要 multi = \"one\"、args 中的 {3} 和 list 中的 {4}（列表文件）"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}]: on = \"{2}\": 没有 [assoc.{3}]"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}]: on 是一个文件类型或其列表，如 [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}]: parent '{2}' 不是 [menu.*]"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}]: parent '{2}' 必须是子菜单: 没有 target 也没有自己的 parent 的 [menu.*]"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] 应放在 {2}；或设置 msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] 需要一个功能: 请在此处或其 dir 上设置 'feature'"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}]: '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}；或设置 msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] 需要 feature（或 with = \"file:<ID>\"）"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}]: feature 与自己的组件一起使用，而不是与 with 一起"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name 指定一个文件；name 含有通配符"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}]: 共享目标需要 types、formats 或两者"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}]: 自动播放处理程序需要 content-events、device-events 或两者"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args 必须是纯文本(不能有安装时填入的 [...])"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}]: device-events 需要 class(程序的 IHWEventHandler COM 类)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}]: file 必须是 {2}"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}]: file 必须指向会放入安装包的文件"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}]: file 必须指向会放入安装包的程序"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types 是文件类型列表，如 [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows 只接受字母和数字"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "[msix-psf] 不能与 external-location = true 或 [env.*]（rubrapack �
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "[msix-psf] 通过 PSF 启动器启动应用程序：需要一个 [msix-app.ID]"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf]：config '{1}' 的 \"applications\" 中没有应用程序 '{2}'"
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf]：files 中没有 '{1}'（启动器）"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}]: 文件 '{2}' 不是 DLL"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] 只指定一个驱动程序：driver（一个 [odbc-driver]）或 driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] 用 driver-name 时需要 with = \"file:<ID>\"：随它一起安装的组件"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}]: 按计算机安装的包为计算机注册数据源"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] 指明一份副本：msix（带 publisher）或 upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}]: msix 是包的标识名（3 到 50 个字母、数字、'.' 或 '-'），并需要 publisher（\"CN=...\"），均与其清单一致"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}]: 由预检查查找另一份副本：需要 preflight = true"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}]: upgrade-code 是本包自己的（那是升级，不是另一份副本）"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] 需要其 dir 有一个功能"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}]: MSIX 的 args 必须是纯文本(不能有安装时填入的 [...])"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}]: 在 MSIX 中协议打开应用程序: target 必须是 [msix-app.*] 的可执行文件"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] 需要 'value'(或 remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}]: HKCR 不会到达 MSIX 之外；请使用 [assoc.*]、[protocol.*]、[com.*] 或 [handler.*]，或 msi-only = true"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: qword 值需要 rubrapack 的辅助 DLL，而合并模块不包含它"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}]: MSIX 只能包含 {2}\\Software 下的值"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}]: MSIX 既不删除值也不保留值(remove、keep)；请使用 msi-only = true"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}]: MSIX 会写入其所有值(when)；请使用 msi-only = true"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}]: 其值含有 Windows Installer 在安装时填入的部分([...])；MSIX 只能包含固定值"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: on = \"uninstall\" 需要 rubrapack 的辅助 DLL，而合并模块不包含它"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: 该键名或值名不能放入注册表配置单元"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}]: users = \"all\" 用于按计算机安装的包中带 on = \"uninstall\" 的 root = \"HKCU\""
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] 需要一个功能: 请在此处或其 dir 上设置 'feature'"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}]: recursive = true 不适用于 {2} 下的文件夹"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true 需要 rubrapack 的辅助 DLL，而合并模块不包含它"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}]: users = \"all\" 用于按计算机安装的包中 AppData 或 LocalAppData 里文件夹的 recursive = true"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX 的 args 必须是纯文本(不能有安装时填入的 [...])"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file 必须指向会放入安装包的程序"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] 公告功能 '{2}'，但该功能是 advertise = \"disallow\""
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}]：advertise 不与 when 一起使用"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}]: MSIX 只在桌面和“开始”菜单中有快捷方式{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}]: MSIX 快捷方式没有 working-dir"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}]: MSIX 快捷方式始终存在(when 用于 MSI)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX 快捷方式显示其应用程序的徽标；icon 用于 MSI"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}]：公告快捷方式用于 MSI（MSIX 安装整个包）"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}]：公告快捷方式需要一个图标"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: MSIX 的 args 必须是纯文本(不能有安装时填入的 [...])"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}]: 在 MSIX 中快捷方式启动应用程序: target 必须是 [msix-app.*] 的可执行文件"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}]: MSIX 的“开始”菜单项就是其应用程序，不接受 args"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: 没有此 ID 的对话框文本"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "[ui] embedded 用于 MSI；MSIX 没有自己的安装程序 UI"
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "[ui] 需要 [package] 中的 ui = \"basic\" 或另一个对话框集（或 embedded = \"....dll\"）"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "\\{1} 转义不是 Unicode 标量值"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "安装包的 `lint`: 对话框、代码页、文本规范化"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX 包或捆绑包的 `lint`"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "{1} 控件没有 property"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "{1} 控件没有文本；请在旁边放一个文本控件"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "{1} 控件需要 [property.{2}]，以其某个值作为默认值(静默安装会使用它)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "{1} 安装包不能写入 HKLM；请使用 HKMU"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "路径中的某个证书含有 rubrapack 无法理解的关键扩展"
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "路径中的某个证书由非 CA 证书签名"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "链只包含 [chain]、[chain-package.ID] 和 [define]，不能有 [{1}]；各安装包由其自己的源文件构建"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "链最多包含 {1} 个安装包"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "链至少需要一个 [chain-package.ID]"
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "Windows 不允许在名称中使用的字符(/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "一个容器最多容纳 {1} 个包系列"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "此 rubrapack 不提供(或构建时未包含)的功能"
 msgid "a file larger than allowed"
 msgstr "超过允许大小的文件"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "'{1}' 下的某个文件名不是有效的 Unicode，无法打包"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "文件的组件或目录链已损坏"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "字体通过指定它的 [font.*] 放入 MSIX"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "框架包没有自己的应用程序、功能或依赖项（{1}）"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "配置单元的单元格跨越了其 bin"
 msgid "a hive version or type rubrapack does not read"
 msgstr "rubrapack 无法读取的配置单元版本或类型"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "已知文件夹本身('{1}')不能设置权限"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "不支持带用户名或密码的代理"
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "qword 值是整数，或 \"0x\" 加 1 到 16 位十六进制数字"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "单选控件将按钮纵向排列: height 每个值至少 12({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "保留的设备名"
 msgid "a rollback action cannot be asynchronous"
 msgstr "回滚操作不能是异步的"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "协议名以小写字母开头，后跟小写字母、数字、'+'、'-' 或 '.'(实际为 '{1}')"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "某个节位于文件之外"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "服务名不能包含 '/' 或 '\\'(最多 256 个字符)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "安装 .exe 由带 [chain] 的源文件构建；'{1}' 构建的是安装包(.msi、.msix)"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "版本是用点分隔的 3 或 4 个数字，如 1.0.0"
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "account 必须是 LocalSystem、LocalService 或 NetworkService"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "操作 '{1}' 已定义"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "该操作既不是标准操作，也不在 CustomAction 中"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "action 必须是 \"warn\" 或 \"refuse\"（得到 '{1}'）"
 
 msgid "adds too many tables"
 msgstr "添加的表过多"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "advertise 必须是 \"allow\" 或 \"disallow\"（得到 '{1}'）"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "after = '{1}' 既不是此对话框集的页面(RpWelcomeDlg{2}{3}{4})，也不是 [dialog.*]"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "alias 属于 kind = \"alias\""
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "alias 必须是以 .exe 结尾的文件名: 字母、数字、'.'、'_'、'-'(实际为 '{1}')"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "INI 节不能包含 ']'，键不能包含 '='"
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "MSIX 不能在临时文件夹中放置文件"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "一个应用程序只有一个 alias([msix-extension.{1}] 已是)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "一个应用程序只有一个共享目标([msix-extension.{1}] 已是该目标)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "可选包或修改包不声明功能和虚拟化设置: 适用其主包�
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "x86 安装包只写入 32 位注册表视图"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "应用 '{1}' 不是 [msix-app.*]"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "appinstaller-uri 和 package-uri 须一起使用: .appinstaller 文件和安装包将放在何处"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "arch 必须是 \"x64\"、\"arm64\" 或 \"x86\"(实际为 '{1}')"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "arch 必须是 \"x64\"、\"x86\" 或 \"arm64\"(安装程序自身的)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "参数 {1} 不是有效的 UTF-8(字节 {2})"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "参数 {1} 不是有效的 Unicode(UTF-16 单元 {2})"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "不支持数组嵌套数组"
 msgid "arrays must hold only strings or only integers"
 msgstr "数组只能包含字符串或只能包含整数"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "as 必须是 \"system\" 或 \"user\"（得到 '{1}'）"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "assembly 必须是 \"dotnet\" 或 \"win32\""
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "除英语外最多 {1} 种语言"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "最多 100 个 [msix-app.*] 表"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "最多 50 个 [action.*] 表(此文件有 {1} 个)"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "banner 必须是 .bmp 文件(Windows Installer 只显示 BMP)"
 msgid "build a package from a source file"
 msgstr "从源文件构建安装包"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "从 {2} 源文件构建 {1} 需要其自己的升级系列: 请在 [package] 中添加 {3} = \"{...}\""
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "cab 必须是 \"embed\" 或 \"external\""
 msgid "cannot be read"
 msgstr "无法读取"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "无法将安装包打成捆绑包: {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "无法比较 '{1}' 和 '{2}'"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "无法创建 '{1}'"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "无法创建 '{1}'{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "找不到 '{1}'；请用 `rubrapack new {2}` 创建"
 
 msgid "cannot make a default logo"
 msgstr "无法生成默认徽标"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "无法从 '{1}' 到 '{2}' 生成补丁"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "无法从 '{1}' 到 '{2}' 生成转换"
 
 msgid "cannot open the certificate store"
 msgstr "无法打开证书存储"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "无法读取 '{1}'"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "无法读取 '{1}'({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "无法读取安装包 '{1}'"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "无法读取源文件 '{1}'"
 
 msgid "cannot read that folder"
 msgstr "无法读取该文件夹"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "无法读取 {1} 文件 '{2}'"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "无法读取 PIN 文件 '{1}'"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "无法读取 '{2}' 旁边的 cabinet '{1}'"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "无法读取证书文件 '{1}'"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "无法读取 '{1}' 中的证书"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "无法读取 '{1}' 中的证书: {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "无法读取密钥文件 '{1}'"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "无法读取密码文件 '{1}'"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "无法读取 '{2}' 旁边的未压缩文件 '{1}'"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "无法写入 {1}"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "无法写入 '{1}'"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "无法写入 '{1}' 以进行检查"
 
 msgid "cannot write resources.pri"
 msgstr "无法写入 resources.pri"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "无法在 '{1}' 旁边写入菜单文件"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "无法写入 {1} 的资源包"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "capabilities 是名称数组，如 [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "功能 '{1}' 不是 rubrapack 知道的(手册中有列表)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "功能 '{1}' 需要 Windows 内部版本 17763 或更高版本"
 
 msgid "carriage return without a line feed"
 msgstr "没有换行符的回车符"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "证书文件 '{1}': {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "请检查源路径(相对于源文件)；若有意使用其他体系结�
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "请检查拼写(消息会提示最接近的名称)和表的键"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "类 {1} 已由 [com.{2}] 提供"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "类 {1} 也在 [msix-extension.{2}] 中"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "class 必须是形如 {12345678-...} 的 GUID(实际为 '{1}')"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "preflight = false 时 close-programs 不起作用"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "close-programs 必须是 \"ask\"、\"always\" 或 \"never\"(实际为 '{1}')"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "列 {1} 的值类型错误"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "列 {1} 不是有效的 UTF-8"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "列 {1} 不能为 null"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "列 {1}: {2} 超出该列的范围"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "列 {1}: {2} 个 UTF-16 单元，该列最多容纳 {3}"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "列 {1}: {2} 个字符，该列最多容纳 {3}"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "命令 '{1}' 尚未实现"
 
 msgid "command-line"
 msgstr "命令行"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "组件 {1} {2} 在 32 位和 64 位之间发生了变化: 按组件规则需要新 GUID"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "组件 {1} {2} 已不存在(其资源随旧版本一起删除)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "组件 {1} {2} 的键路径现在是 {3} 而不是 {4}: 按组件规则需要新 GUID"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "条件中有未闭合的引号或不配对的括号"
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "条件超过 240 个字符(rubrapack 会添加 \"Installed OR ( )\")"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "config 包含 \"Name=value\" 字符串(实际为 '{1}')"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "包含控制字符"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "包含 < > : \" / \\ | ? * 之一"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "content-type 是媒体类型，如 \"image/png\"(实际为 '{1}')"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "default-when 需要大于 1 的 level(level 1 的功能本来就默认�
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "请定义该变量([define] 或 -D NAME=value)，或写 $$ 表示字面的 $"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "对话框 '{1}' 不是 [dialog.*]"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "以 'Rp' 开头的对话框 ID(以及 FilesInUse)属于 rubrapack 自身"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "dir '{1}' 位于其自身之内(路径循环)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "dir '{1}' 既不是 dir ID，也不是 Programs、Desktop、StartMenu 或 Startup"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "dir '{1}' 不是 dir ID"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "dir '{1}' 未定义"
 
 msgid "dir ID"
 msgstr "dir ID"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "direction 必须是 \"in\" 或 \"out\"(实际为 '{1}')"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "do/undo 参数超过 255 个字符"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "不支持带点的键；请将该键放到它自己的表中"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "驱动程序 '{1}' 不是 [odbc-driver.*]"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "以空格或点结尾"
 msgid "error"
 msgstr "错误"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "executable = \"{1}\" 必须指向会放入安装包的 [file.*]"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "需要 ']' 来闭合表名"
 msgid "expected a key, a [table] or a comment"
 msgstr "应为键、[table] 或注释"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "扩展名 '{1}' 已有程序([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "extension 必须是 '.' 加小写字母、数字、'_' 或 '-'(实际为 '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "external-location = true 需要 Windows 内部版本 19041 或更高：�
 msgid "extra-files has no effect with preflight = false"
 msgstr "preflight = false 时 extra-files 不起作用"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "extra-files 必须是 \"ask\"、\"keep\" 或 \"delete\"(实际为 '{1}')"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "功能 {1} 已不存在: 装有它的安装会失去其中的内容"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "功能 '{1}' 是其自身的祖先"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "功能 '{1}' 未定义"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "功能的父项 '{1}' 未定义"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "文件 '{1}' 已运行服务 '{2}'"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "文件 '{1}' 已注册为字体"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "文件 '{1}' 不是此安装包的 [file.*]"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "文件 '{1}' 必须安装在 Fonts 文件夹本身中(path = \"Fonts\" 的 [dir.*])"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "文件 '{1}' 需要一个功能: 请在此处或其 dir 上设置 'feature'"
 
 msgid "file must be \"file:<ID>\""
 msgstr "file 必须是 \"file:<ID>\""
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "文件名为 {1} 个 UTF-16 单元；加上其 8.3 短名称，MSI 最多容纳 {2}"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "file-system-virtualization 和 registry-virtualization = false 需要 Windows 内部版本 18362 或更高版本: 请设置 [msix] min-version = \"10.0.18362.0\""
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file: '{1}' 不是此安装包的 [file.*]"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' 只有作为 .exe 或 .dll 才能提供 COM 类"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "请修正消息指出的值；ID 由字母、数字和 '_' 组成，在�
 msgid "floating-point numbers are not supported"
 msgstr "不支持浮点数"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "文件夹 '{1}' 需要一个功能: 请在此处或其 dir 上设置 'feature'"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "文件夹名为 {1} 个 UTF-16 单元；加上其 8.3 短名称，MSI 最多容纳 {2}"
 
 msgid "follow-parent needs a parent"
 msgstr "follow-parent 需要 parent"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "字体需要 scope = \"machine\"(当前为 {1})"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "format {1} 需要更新的 rubrapack(此版本读取 format {2})"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "format 是整数: format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "请给出 --key、--pkcs11 和 --key-store 之一"
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "请给出程序文件夹的子文件夹，用逗号分隔；无则为 -"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "glob '{1}' 不匹配任何文件"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "glob '{1}' 匹配了输出文件 '{2}'"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "在 65001(UTF-8)以外的代码页中含有非 ASCII 文本"
 msgid "icon must be an .ico file"
 msgstr "icon 必须是 .ico 文件"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon: 文件 '{1}' 不是此安装包的 [file.*]"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "id 必须是形如 {12345678-1234-1234-1234-123456789ABC} 的 GUID: 模块自己的，在每个版本中保持不变"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "identifier 是 winget 的 Publisher.Package：2 到 8 个部分，每部分 1 到 32 个字符，不含空格和 \\ / : * ? \" < > |（收到 '{1}'）"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "identity-name 必须是由 A-Z、a-z、0-9、'.' 和 '-' 组成的 3 到 50 个字符(实际为 '{1}')"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "不支持内联表；请使用 [kind.ID] 表"
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "installed 向 Windows 询问已安装的内容；它只在 Windows 上运行"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "安装到与第 {1} 行相同的路径(Windows 名称不区分大小写{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "内部错误: 某个内置对话框的 Tab 顺序已损坏；请报告"
 msgid "internal: a module table has no _Validation rule"
 msgstr "内部: 某个模块表没有 _Validation 规则"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "内部: {1} 的某列没有 _Validation 规则"
 
 msgid "invalid"
 msgstr "无效"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "无效 - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "不是有效的 MSIX 包"
 msgid "is not valid UTF-8"
 msgstr "不是有效的 UTF-8"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for: '{1}' 不是程序（.exe）"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "保持升级代码不变，提高版本号，保留仍存在文件的组件代码"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "键 '{1}' 在此表中设置了两次(第一次在第 {2} 行)"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "键 '{1}' 不能以 '\\' 开头或结尾，也不能含有空的部分"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "键 '{1}' 位于表之外；只有 'format' 能在第一个表之前"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "密钥文件 '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "kind 必须是 \"alias\"、\"startup-task\"、\"firewall\"、\"com-server\"、\"toast\"、\"context-menu\"、\"app-extension\"、\"app-extension-host\"、\"app-service\"、\"share-target\" 或 \"autoplay\"(实际为 '{1}')"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "kind 必须是 \"preview\"、\"thumbnail\" 或 \"property\"(实际为 '{1}')"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "kind 必须是 registry、file、dir 或 component"
 msgid "labels is an array of strings, one per value"
 msgstr "labels 是字符串数组，每个值一个"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "语言 '{1}' 没有语言包(源文件旁的 lang/{2}.po，或 RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "语言 '{1}' 列出了两次"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "语言 '{1}' 不在 [ui] languages 中"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "语言 '{1}' 缺少 {2} 条文本，第一条是 {3}: 请添加到其语言包(lang/{4}.po)，或给出 [ui-text.ID] text-{5}"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "语言 '{1}' 需要 [ui] langid-{2}(其 LANGID，用于自动选择)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "语言 '{1}' 需要 [ui] name-{2}(在语言页面上显示的名称)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "language 必须是 \"neutral\"、\"en-US\" 或 \"ko-KR\""
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" 应单独写，不能放在数组中：它会加入所有内置语言"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "languages 包含形如 \"ko\" 或 \"zh_TW\" 的代码(2 或 3 个小写字母，可再加 _ 和地区的两个大写字母)(实际为 '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "launcher 是 files 中 PSF 启动器的文件名，例如 \"PsfLauncher6
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license 必须是 .txt、.md(以纯文本显示)或 .rtf 文件"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint: {1} 行 {2}: 列 {3} 不是 NFC({4} 行{-5})；build --nfc 会将文件夹、文件和快捷方式名称转为 NFC"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint: {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint: 代码页 {1} 不是 65001: 不按 UTF-8 检查文本，宽度只检查 ASCII"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint: 请查看上面的问题\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "列出令牌或 Windows 证书存储可用于签名的密钥"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "徽标 '{1}' 和其 .scale-100 变体同时存在: 请保留一个"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "徽标 '{1}' 在缩放 {2} 下为 {3}x{4} 像素；必须是 {5}x{6}"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "徽标 '{1}' 在缩放 {2} 下不是 PNG 文件"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "徽标 '{1}' 为 {2}x{3} 像素；文件类型的徽标必须是正方形"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "徽标 '{1}' 为 {2}x{3} 像素；必须是 {4}x{5}"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "徽标 '{1}' 不是 PNG 文件"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "找不到徽标 '{1}'(也没有 .scale-100 ... .scale-400 变体)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "徽标 '{1}': 带缩放变体的徽标需要带扩展名的 ASCII 文件名"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "logo 必须是 8 位 RGB 或 RGBA、非隔行、每边不超过 1024 像素的 .png"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "main-package 是主包的标识名称(实际为 '{1}')"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "不能包含控制字符或 / \\ : * ? \" < > | $"
 msgid "may not start with a space or end with a space or a dot"
 msgstr "不能以空格开头，也不能以空格或点结尾"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "找不到合并模块 '{1}'"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "重定向超过 3 次"
 msgid "more than 96 sections"
 msgstr "节超过 96 个"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "源文件不止一个('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "存在多个令牌: 请用 --token-label 指定一个"
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "multi 必须是 \"each\"、\"one\" 或 \"single\"(实际为 '{1}')"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "必须是 1 到 64 字节"
 msgid "name contains a control character"
 msgstr "名称包含控制字符"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "name 是包的标识名称(实际为 '{1}')"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "指向其 Directory 表中没有的文件夹"
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "new msix 尚未实现: 请创建 MSI 源文件并添加 [msix](参见手册)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "没有 'format = {1}' 行: 这是 rubrapack 0.18 或更早格式的源文件，此版本无法读取(现在路径以 $(ProgramFiles) 或 $(INSTALLDIR) 开头)；参见手册的 Source format"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "没有服务器名称，或超过 255 字节"
 msgid "no string pool: not a transform"
 msgstr "没有字符串池: 不是转换"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "'{2}' 中没有表 '{1}'"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "不支持八进制和二进制数；请使用十进制或 0x"
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "on = \"uninstall\" 用于 HKLM、HKCU 和 HKMU(类由 [assoc.*]、[com.*] 等处理)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "on = \"uninstall\" 会删除键及其下所有内容: '{1}' 不是 Software 下产品自己的键"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "on = \"uninstall\" 在删除时删除整个键；不接受 '{1}'"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "on 必须是 \"install\" 或 \"uninstall\""
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "on 必须是 \"install\"、\"uninstall\" 或 \"both\""
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on: 每项是文件类型('.' 加小写字母、数字、'_' 或 '-')、\"*\"(所有文件)、\"folder\"、\"background\"(文件夹的空白处)、\"drive\" 或 \"assoc:<ID>\"(实际为 '{1}')"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "只有 radio、combo 和 listbox 控件接受 values"
 msgid "out of memory"
 msgstr "内存不足"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "输出 '{1}': rubrapack 写出 .msi、.msm、.msix、.msixbundle、.msixupload 以及链的安装 .exe"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "安装包 '{1}' {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "找不到安装包 '{1}'"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "parent 必须是另一个产品的 upgrade-code，而不是此安装包自己的"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "parent 必须是主产品的 upgrade-code，即形如 {12345678-1234-1234-1234-123456789ABC} 的 GUID"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "path 必须以 Windows 文件夹开头(如 $(ProgramFiles) 或 $(System)
 msgid "paths"
 msgstr "路径"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "perceived-type 必须是 \"image\"、\"text\"、\"audio\"、\"video\"、\"compressed\"、\"document\"、\"system\" 或 \"application\"(实际为 '{1}')"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "权限需要 scope = \"machine\"(当前为 {1})"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "phase 必须是 \"immediate\"、\"deferred\"、\"commit\" 或 \"rollback\"（得到 '{1}'）"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "ports 必须是 1-65535 内的端口或范围，如 \"8000-8100\"(实际为 '{1}')"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "输出此帮助，或某个命令的用法"
 msgid "product-code must be a GUID"
 msgstr "product-code 必须是 GUID"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "profile 必须是 \"all\"、\"domain\"、\"private\" 或 \"public\"(实际为 '{1}')"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "prog-id '{1}' 已属于 [com.{2}]"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "prog-id '{1}' 也属于 [assoc.{2}]: 文件类型和 COM 类需要两个名称"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "prog-id '{1}' 也在 [assoc.{2}] 中，但 description、target、icon 或 args 不同"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "prog-id '{1}' 也在 [assoc.{2}] 中，但 logo 不同"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "prog-id 必须由字母、数字、'.'、'_' 或 '-' 组成，不以数字开头，最多 39 个(实际为 '{1}')"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "properties 用于 Windows Installer 安装包；MSIX 不接受"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "属性 '{1}' 已属于控件 '{2}'"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "属性 '{1}' 与某个 dir 或功能同名"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "属性 '{1}' 已定义(第 {2} 行)"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "属性 '{1}' 已被搜索(第 {2} 行)"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "属性 '{1}' 由 rubrapack 或安装程序设置，不能在此定义"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "属性 '{1}' 必须是你自己的公共名称(大写)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "属性 '{1}' 必须是公共名称: 大写字母、数字和 '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "protocol 必须是 \"tcp\" 或 \"udp\"(实际为 '{1}')"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "public-folder 必须是包中的文件夹，例如 \"Public\"(实际为 '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "升级删除此版本时 recursive = true 从不运行；不接受 'upgr
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "recursive = true 会删除文件夹及其全部内容；不接受 'name'"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "refuse-upgrade-below {1} 高于此安装包的版本 {2}"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "refuse-upgrade-below '{1}' 必须是形如 1.2.3 的版本"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message 需要 refuse-upgrade-below"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "语言页面的区域 {1} 有 {2} 种语言，最多 {3} 种（语言包的 X-Rubrapack-Group）"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "registration 必须是 \"machine\" 或 \"user\"（得到 '{1}'）"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "registry '{1}' 删除一个值；没有需要保护的内容"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "注册表值 '{1}' 需要一个功能"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "remove-addons 需要清理任务: 请去掉 cleanup = false"
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "replaces 最多包含 16 个升级代码"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "replaces 包含升级代码，即形如 {12345678-1234-1234-1234-123456789ABC} 的 GUID(实际为 '{1}')"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "replaces 是升级代码数组，如 [\"{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "replaces 中 {1} 列出了两次"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "replaces 指定了 {1}，它是此安装包自己的 upgrade-code 或其 parent"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "缺少必需属性 {1}"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "回滚孪生操作必须位于 {1} 之前({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "root 必须是 HKLM、HKCR 或 HKCU"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "root 必须是 HKLM、HKCU、HKCR 或 HKMU(实际为 '{1}')"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new: 回答几个问题即可生成源文件(按 Enter 采用 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "请运行 `rubrapack help <command>`；检查路径以及输出文件夹是否存在"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run: '{1}'(机器 0x{2})无法在此安装包的机器上运行"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run: '{1}' 不是程序(.exe)"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run: 文件 '{1}' 不是此安装包的 [file.*]"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "请将源文件保存为 UTF-8(或带 BOM 的 UTF-16)，行尾为 LF 或
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "说明此 Windows 是否安装了该升级代码的产品或该系列的应用包"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "协议 '{1}' 已有程序([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "scope 必须是 \"machine\"、\"user\" 或 \"dual\""
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "sddl 必须是 SDDL 字符串，如 \"D:PAI(A;OICI;FA;;;BA)\""
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "搜索属性 '{1}' 必须是你自己的公共名称(大写)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "请查看消息；用 rubrapack 重新构建可修复其中大多数"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "序号 {1} 不在 {2}({3})之后"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "将某个操作排在包和模块都不运行的操作旁边"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "服务名 '{1}' 已被使用"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "服务需要 scope = \"machine\"(当前为 {1})"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "快捷方式名称为 {1} 个 UTF-16 单元；加上其 8.3 短名称，MSI 最多容纳 {2}"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "显示两个包之间的不同：表、行、单元格和摘要"
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "为 PE 文件、MSI 安装包、MSIX 包或捆绑包签名"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "已签名 {1}\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "源 '{1}' 是目录；多个文件请使用 [files.ID]"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "源 '{1}' 是符号链接；不跟随链接"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "源 '{1}' 不是普通文件"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "构建安装包期间源文件 '{1}' 发生了变化"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "源文件 '{1}' 大于 2 GiB"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "找不到源文件 '{1}'"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "source 必须是 \"file:<ID>\""
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "source 必须是 .msi、.msix、.msixbundle 或 .msp 包"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "源路径 '{1}' 必须相对于源文件"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "源路径使用 '/'，而不是 '\\\\'(实际为 '{1}')"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source: 文件 '{1}' 不是此安装包的 [file.*]"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "summary-name 必须是 ASCII(摘要信息只能包含 ASCII)"
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "symbols 是 .pdb 文件的列表，例如 [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "表 {1} {2}"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "表 '{1}' 不可读"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "表 [{1}{2}{3}] 定义了两次(第一次在第 {4} 行)"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "tags 是最多 16 个搜索词的列表，例如 [\"editor\", \"text\"]"
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "不接受配置(没有 ModuleConfiguration)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "目标 '{1}' 不存在"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "target 必须是 \"dir:<ID>\"、\"file:<ID>\" 或 \"registry:<ID>\""
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "target 必须是指向此安装包中 [file.*] 的 \"file:<ID>\""
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "目标名称 '{1}' {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target: 文件 '{1}' 不是此安装包的 [file.*]"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "task-id '{1}' 已被 [msix-extension.{2}] 使用"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "该 UTF-16 文件不是有效的 UTF-16"
 msgid "the ZIP central directory lies outside the file"
 msgstr "ZIP 中央目录位于文件之外"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "应用程序 ID '{1}' 会成为 Application Id: 只能有字母和数字，不以数字开头"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "嵌入的 cabinet 使安装包达到 2 GiB 或以上，Windows Installer
 msgid "the entry is not in the central directory"
 msgstr "该条目不在中央目录中"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "错误对话框 '{1}' 需要名为 {3} 的 {2} 控件(错误 2835)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "可执行文件 '{1}' 必须是 .exe"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "清单中没有 Identity Publisher"
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "无法读取清单的 Identity 以得到包全名"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "合并模块 {1}"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "名称 {1}"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "包系列 {1} 在容器中出现了两次"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "安装包的内容与其签名不符(签名后被更改)"
 msgid "the package's directory cannot be read"
 msgstr "无法读取安装包的目录"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "包的文件名不能包含引号或百分号：'{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "响应大于 4 MiB"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "响应使用了 chunked 以外的传输编码"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "已要求相同的条件(第 {1} 行)"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "源文件的编码"
 msgid "the system random source failed"
 msgstr "系统随机数源失败"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "Tab 顺序(Control_Next)不是从 Control_First 开始遍历其 {1} 个控件的一个循环(Windows Installer 会以错误 2809 或 2810 停止)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "此 rubrapack 构建时未包含菜单部件: [menu.*] 项不会出现�
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "此 rubrapack 构建时未包含安装程序(nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "threading 必须是 \"sta\"、\"mta\"、\"both\" 或 \"neutral\"(实际为 '{1}')"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "resources.pri 中的本地化文本和徽标缩放过多"
 msgid "too many packages in the bundle"
 msgstr "捆绑包中的包过多"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "无法读取 '{2}' 中的转换 '{1}'：{3}"
 
 msgid "trusted"
 msgstr "受信任"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "两个操作共用 sequence {1}（{2} 和 {3}）；请给某个 [action] 另一个 sequence 或 before、after"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "捆绑包中有两个同名的包"
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "捆绑包中有两个 ResourceId 相同的资源包"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "type 必须是 string、expand、dword、qword、binary 或 multi(实际为 '{1}')"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "type 必须是 text、checkbox、edit、radio、combo、listbox 或 bitmap（得到 '{1}'）"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' 不是此安装包的 [file.*]"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "typelib-version 是十六进制的 major.minor，如 \"1.0\"(实际为 '{1}')"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "types 和 verb 属于 kind = \"context-menu\""
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types: 每项是 \".ext\" 或 \"*\"(所有文件)"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types: 每项是 '.' 加小写字母、数字、'_' 或 '-'(实际为 '{1}')"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "ui = \"{1}\" 让用户选择 dir '{2}' 的文件夹，但该 dir 不存在(请设置 [ui] install-dir)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "ui = \"features\" 需要可供选择的 [feature.*] 表"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "ui 必须是 none、basic、minimal、installdir 或 features(实际为 '{1}')"
 
 msgid "unexpected text after the value"
 msgstr "值后面有意外的文本"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "未知命令 '{1}'(参见 'rubrapack help')"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "未知的转义 \\{1}(含反斜杠的文本请用 '...')"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "未知的 inspect 选项(请使用表名、--summary、--files 或 --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "[{2}{3}{4}] 中的未知键 '{1}'"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "[{2}{3}{4}] 中的未知键 '{1}' (您是否想输入 '{5}'?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "未知或不完整的 {1} 选项 '{2}'"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "未知的表 [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "未知的表 [{1}{2}{3}] (您是否想输入 [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "将安装包解压到新目录，按安装后的布局排列"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "不支持 - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "update-* 键需要 appinstaller-uri 和 package-uri"
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "upgrade = false 用于 on = \"uninstall\" 或 \"both\"(安装永远不是升级所做的删除)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "upgrade-code 必须是形如 {12345678-1234-1234-1234-123456789ABC} 的 GUID"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "用法: rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "用法: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "请使用完整的 rubrapack 构建或其他方式"
 msgid "used by more than one component"
 msgstr "被多个组件使用"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "users 必须是 \"all\"(实际为 '{1}')"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "值 '{1}' 列出了两次"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "values 是 1 到 32 个字符串的数组"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "值: ID、GUID、版本、超出范围的数字、对不存在之物的引用"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "变量 '{1}' 未定义([define] 或 -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "变量名 '{1}' 不能包含 '='，也不能以 = + - ! * 开头"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "变量"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "变量: 没有值的 $(NAME)、未闭合的 $(、在不能出现的位置使用 Windows 名称或 dir ID"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "版本 '{1}' 必须是 a.b.c 或 a.b.c.d"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "版本 '{1}' 必须是 a.b.c 或 a.b.c.d，且 a、b <= 255，c、d <= 65535"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "诊断代码的含义、使用它的消息、处理方法，以及手册
 msgid "with must be \"file:<ID>\""
 msgstr "with 必须是 \"file:<ID>\""
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with: 文件 '{1}' 不是此安装包的 [file.*]"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "没有 --pkcs11 时，`keys list` 显示 Windows 证书存储"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "working-dir '{1}' 不是 dir ID"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "请按手册所示的普通方式写出表或值"
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "请不带 '[~]' 写出值；mode = \"append\" 或 \"prepend\" 会添加它"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "已写入 {1}\n"
 
 msgid "x + width must be at most 370 (the page width)"

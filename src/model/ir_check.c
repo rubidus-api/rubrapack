@@ -120,13 +120,13 @@ static bool program_ok(ctx_t *c, const char *id, rp_pos_t pos, const char *what)
     if (id == NULL) return false;
     const rp_ir_file_t *f = file_by_id(c->ir, RP_V(id));
     if (f == NULL) {
-        ERR(c, pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", what, id);
+        ERR(c, pos, "RP1315", "{}: file '{}' is not a [file.*] of this package", proven_arg_cstr(what), proven_arg_cstr(id));
         return false;
     }
     const char *n = f->name.ptr ? rp_cs(f->name) : "";
     size_t l = strlen(n);
     if (l < 4 || (strcmp(n + l - 4, ".exe") != 0 && strcmp(n + l - 4, ".EXE") != 0)) {
-        ERR(c, pos, "RP1316", "%s: file '%s' is not a program (.exe)", what, id);
+        ERR(c, pos, "RP1316", "{}: file '{}' is not a program (.exe)", proven_arg_cstr(what), proven_arg_cstr(id));
         return false;
     }
     return true;
@@ -234,7 +234,7 @@ void ir_menu_files(ctx_t *c) {
         f->msi_only = i == 1;
         f->feature = RP_V(feature ? ir_dup(c, feature) : NULL);
         f->pos = pos;
-        if (rp_pal_stat(c->alloc, rp_cs(f->source_path), &f->size) != RP_FS_FILE) ERR(c, pos, "RP1508", "'%s' is not a regular file", rp_cs(f->source));
+        if (rp_pal_stat(c->alloc, rp_cs(f->source_path), &f->size) != RP_FS_FILE) ERR(c, pos, "RP1508", "'{}' is not a regular file", proven_arg_cstr(rp_cs(f->source)));
     }
     rp_mem_free(c->alloc, dir);
     rp_mem_free(c->alloc, feature);
@@ -335,31 +335,31 @@ static void menu_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->menu_count; ++k) {
         rp_ir_menu_t *x = &ir->menus[k];
         const rp_ir_menu_t *up = menu_by_id(ir, rp_cs(x->parent));
-        if (x->parent.ptr && up == NULL) ERR(c, x->pos, "RP1307", "[menu.%s]: parent '%s' is not a [menu.*]", rp_cs(x->id), rp_cs(x->parent));
+        if (x->parent.ptr && up == NULL) ERR(c, x->pos, "RP1307", "[menu.{}]: parent '{}' is not a [menu.*]", proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(rp_cs(x->parent)));
         if (up && (up->target_file.ptr || up->parent.ptr)) {
-            ERR(c, x->pos, "RP1316", "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own",
-                rp_cs(x->id), rp_cs(x->parent));
+            ERR(c, x->pos, "RP1316", "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own",
+                proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(rp_cs(x->parent)));
         }
-        if (x->parent.ptr && x->on_count) ERR(c, x->pos, "RP1316", "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out", rp_cs(x->id));
-        if (!x->parent.ptr && x->on_count == 0) ERR(c, x->pos, "RP1202", "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\"", rp_cs(x->id));
+        if (x->parent.ptr && x->on_count) ERR(c, x->pos, "RP1316", "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out", proven_arg_cstr(rp_cs(x->id)));
+        if (!x->parent.ptr && x->on_count == 0) ERR(c, x->pos, "RP1202", "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\"", proven_arg_cstr(rp_cs(x->id)));
         // The ID is the verb's Id in a package manifest, which Windows takes as letters and digits only.
         bool alnum = true;
         for (const char *q = rp_cs(x->id); *q; ++q) alnum &= (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
         if (!x->parent.ptr && x->windows11 && !alnum) {
-            ERR(c, x->pos, "RP1316", "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false", rp_cs(x->id));
+            ERR(c, x->pos, "RP1316", "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false", proven_arg_cstr(rp_cs(x->id)));
         }
         // list: the paths in a file when they do not fit a command line - for one run with %*.
         if (x->list.ptr && (x->target_file.ptr == NULL || x->multi != RP_MENU_ONE || x->args.ptr == NULL || strstr(rp_cs(x->args), "%*") == NULL ||
                         strstr(rp_cs(x->list), "%L") == NULL)) {
-            ERR(c, x->pos, "RP1316", "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list",
-                rp_cs(x->id), "%*", "%*", "%L");
+            ERR(c, x->pos, "RP1316", "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list",
+                proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr("%*"), proven_arg_cstr("%*"), proven_arg_cstr("%L"));
         }
         // hide-when: a registry value whose presence hides the Windows 11 item.
         if (x->hide_when.ptr) {
             const char *h = rp_cs(x->hide_when), *last = strrchr(h, '\\');
             bool root = strncmp(h, "HKCU\\", 5) == 0 || strncmp(h, "HKLM\\", 5) == 0;
             if (!root || last == NULL || last <= h + 5 || last[1] == 0 || strstr(h, "\\\\") || x->parent.ptr || !x->windows11) {
-                ERR(c, x->pos, "RP1316", "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu", rp_cs(x->id));
+                ERR(c, x->pos, "RP1316", "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu", proven_arg_cstr(rp_cs(x->id)));
             } else {
                 // A value this package writes itself would hide the item for good.
                 for (size_t r = 0; r < ir->registry_count; ++r) {
@@ -371,26 +371,26 @@ static void menu_checks(ctx_t *c) {
                     bool same = k && ir_ascii_casecmp(rp_cs(g->key), k) == 0 && ir_ascii_casecmp(rp_cs(g->name), last + 1) == 0;
                     rp_mem_free(c->alloc, k);
                     if (same)
-                        ERR(c, x->pos, "RP1316", "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show", rp_cs(x->id), rp_cs(g->id));
+                        ERR(c, x->pos, "RP1316", "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show", proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(rp_cs(g->id)));
                 }
             }
         }
         if (x->target_file.ptr) {
             program_ok(c, rp_cs(x->target_file), x->pos, "target");
-            if (x->icon_file.ptr && file_by_id(ir, x->icon_file) == NULL) ERR(c, x->pos, "RP1315", "icon: file '%s' is not a [file.*] of this package", rp_cs(x->icon_file));
+            if (x->icon_file.ptr && file_by_id(ir, x->icon_file) == NULL) ERR(c, x->pos, "RP1315", "icon: file '{}' is not a [file.*] of this package", proven_arg_cstr(rp_cs(x->icon_file)));
             if (x->args.ptr == NULL) x->args = RP_V(ir_dup(c, "\"%1\""));
         } else {
             size_t kids = 0;
             for (size_t j = 0; j < ir->menu_count; ++j) kids += ir->menus[j].parent.ptr && RP_EQ(ir->menus[j].parent, x->id);
-            if (x->parent.ptr) ERR(c, x->pos, "RP1202", "[menu.%s] needs 'target': the program the item starts", rp_cs(x->id));
-            else if (kids == 0) ERR(c, x->pos, "RP1202", "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)", rp_cs(x->id), rp_cs(x->id));
-            if (x->args.ptr) ERR(c, x->pos, "RP1316", "[menu.%s]: a sub-menu starts nothing: leave 'args' out", rp_cs(x->id));
+            if (x->parent.ptr) ERR(c, x->pos, "RP1202", "[menu.{}] needs 'target': the program the item starts", proven_arg_cstr(rp_cs(x->id)));
+            else if (kids == 0) ERR(c, x->pos, "RP1202", "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)", proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(rp_cs(x->id)));
+            if (x->args.ptr) ERR(c, x->pos, "RP1316", "[menu.{}]: a sub-menu starts nothing: leave 'args' out", proven_arg_cstr(rp_cs(x->id)));
         }
         for (size_t j = 0; j < x->on_count; ++j) {
             if (x->on[j] == NULL || strncmp(x->on[j], "assoc:", 6) != 0) continue;
             bool found = false;
             for (size_t a = 0; a < ir->assoc_count; ++a) found |= RP_EQ(ir->assocs[a].id, x->on[j] + 6);
-            if (!found) ERR(c, x->pos, "RP1307", "[menu.%s]: on = \"%s\": there is no [assoc.%s]", rp_cs(x->id), x->on[j], x->on[j] + 6);
+            if (!found) ERR(c, x->pos, "RP1307", "[menu.{}]: on = \"{}\": there is no [assoc.{}]", proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(x->on[j]), proven_arg_cstr(x->on[j] + 6));
         }
         // The Windows 11 class of a top-level item: the same in every version of the product.
         if (!x->parent.ptr && ir->upgrade_code.ptr) {
@@ -588,26 +588,26 @@ void ir_class_checks(ctx_t *c) {
     // [other-copy.*]: the preflight looks; this product's own upgrade code is its own upgrade.
     for (size_t k = 0; k < ir->other_count; ++k) {
         const rp_ir_other_t *x = &ir->others[k];
-        if (ir->no_preflight) ERR(c, x->pos, "RP1316", "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true", rp_cs(x->id));
+        if (ir->no_preflight) ERR(c, x->pos, "RP1316", "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true", proven_arg_cstr(rp_cs(x->id)));
         if (x->upgrade_code.ptr && ir->upgrade_code.ptr && RP_EQ(x->upgrade_code, ir->upgrade_code))
-            ERR(c, x->pos, "RP1316", "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)", rp_cs(x->id));
+            ERR(c, x->pos, "RP1316", "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)", proven_arg_cstr(rp_cs(x->id)));
     }
     if (ir->ui_launch_file.ptr) program_ok(c, rp_cs(ir->ui_launch_file), (rp_pos_t){ 1, 1 }, "[ui] launch");
     for (size_t k = 0; k < ir->assoc_count; ++k) {
         rp_ir_assoc_t *x = &ir->assocs[k];
         program_ok(c, rp_cs(x->target_file), x->pos, "target");
-        if (x->icon_file.ptr && file_by_id(ir, x->icon_file) == NULL) ERR(c, x->pos, "RP1315", "icon: file '%s' is not a [file.*] of this package", rp_cs(x->icon_file));
+        if (x->icon_file.ptr && file_by_id(ir, x->icon_file) == NULL) ERR(c, x->pos, "RP1315", "icon: file '{}' is not a [file.*] of this package", proven_arg_cstr(rp_cs(x->icon_file)));
         for (size_t j = 0; j < k; ++j) {
             const rp_ir_assoc_t *y = &ir->assocs[j];
             if (x->extension.ptr && y->extension.ptr && RP_EQ(x->extension, y->extension)) {
-                ERR(c, x->pos, "RP1301", "extension '%s' already has a program ([assoc.%s])", rp_cs(x->extension), rp_cs(y->id));
+                ERR(c, x->pos, "RP1301", "extension '{}' already has a program ([assoc.{}])", proven_arg_cstr(rp_cs(x->extension)), proven_arg_cstr(rp_cs(y->id)));
             }
             if (x->prog_id.ptr && y->prog_id.ptr && RP_EQ(x->prog_id, y->prog_id) &&
                 (ir_cmp_str(x->description, y->description) != 0 || ir_cmp_str(x->target_file, y->target_file) != 0 ||
                  ir_cmp_str(x->icon_file, y->icon_file) != 0 || ir_cmp_str(x->args, y->args) != 0)) {
-                ERR(c, x->pos, "RP1316", "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args", rp_cs(x->prog_id), rp_cs(y->id));
+                ERR(c, x->pos, "RP1316", "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args", proven_arg_cstr(rp_cs(x->prog_id)), proven_arg_cstr(rp_cs(y->id)));
             } else if (x->prog_id.ptr && y->prog_id.ptr && RP_EQ(x->prog_id, y->prog_id) && ir_cmp_str(x->logo, y->logo) != 0) {
-                ERR(c, x->pos, "RP1316", "prog-id '%s' is also in [assoc.%s] with another logo", rp_cs(x->prog_id), rp_cs(y->id));
+                ERR(c, x->pos, "RP1316", "prog-id '{}' is also in [assoc.{}] with another logo", proven_arg_cstr(rp_cs(x->prog_id)), proven_arg_cstr(rp_cs(y->id)));
             }
         }
     }
@@ -616,7 +616,7 @@ void ir_class_checks(ctx_t *c) {
         program_ok(c, rp_cs(x->target_file), x->pos, "target");
         for (size_t j = 0; j < k; ++j) {
             if (x->name.ptr && ir->protocols[j].name.ptr && RP_EQ(x->name, ir->protocols[j].name)) {
-                ERR(c, x->pos, "RP1301", "scheme '%s' already has a program ([protocol.%s])", rp_cs(x->name), rp_cs(ir->protocols[j].id));
+                ERR(c, x->pos, "RP1301", "scheme '{}' already has a program ([protocol.{}])", proven_arg_cstr(rp_cs(x->name)), proven_arg_cstr(rp_cs(ir->protocols[j].id)));
             }
         }
     }
@@ -624,17 +624,17 @@ void ir_class_checks(ctx_t *c) {
         rp_ir_msix_ext_t *x = &ir->msix_exts[k];
         bool found = x->app.ptr == NULL;
         for (size_t j = 0; !found && j < ir->msix_app_count; ++j) found = RP_EQ(ir->msix_apps[j].id, x->app);
-        if (!found) ERR(c, x->pos, "RP1315", "app '%s' is not an [msix-app.*]", rp_cs(x->app));
+        if (!found) ERR(c, x->pos, "RP1315", "app '{}' is not an [msix-app.*]", proven_arg_cstr(rp_cs(x->app)));
         for (size_t j = 0; j < k; ++j) {
             const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
             if (x->kind == RP_MSIX_EXT_ALIAS && y->kind == RP_MSIX_EXT_ALIAS && ir_cmp_str(x->app, y->app) == 0) {
-                ERR(c, x->pos, "RP1301", "an application has one alias ([msix-extension.%s] is one already)", rp_cs(y->id));
+                ERR(c, x->pos, "RP1301", "an application has one alias ([msix-extension.{}] is one already)", proven_arg_cstr(rp_cs(y->id)));
             }
             if (x->kind == RP_MSIX_EXT_SHARE_TARGET && y->kind == RP_MSIX_EXT_SHARE_TARGET && ir_cmp_str(x->app, y->app) == 0) {
-                ERR(c, x->pos, "RP1301", "an application has one share target ([msix-extension.%s] is one already)", rp_cs(y->id));
+                ERR(c, x->pos, "RP1301", "an application has one share target ([msix-extension.{}] is one already)", proven_arg_cstr(rp_cs(y->id)));
             }
             if (x->kind == RP_MSIX_EXT_STARTUP && y->kind == RP_MSIX_EXT_STARTUP && RP_EQ(x->task_id, y->task_id)) {
-                ERR(c, x->pos, "RP1301", "task-id '%s' is already used by [msix-extension.%s]", rp_cs(x->task_id), rp_cs(y->id));
+                ERR(c, x->pos, "RP1301", "task-id '{}' is already used by [msix-extension.{}]", proven_arg_cstr(rp_cs(x->task_id)), proven_arg_cstr(rp_cs(y->id)));
             }
         }
     }
@@ -646,27 +646,27 @@ void ir_class_checks(ctx_t *c) {
         size_t l = strlen(n);
         bool exe = l >= 4 && (strcmp(n + l - 4, ".exe") == 0 || strcmp(n + l - 4, ".EXE") == 0);
         bool dll = l >= 4 && (strcmp(n + l - 4, ".dll") == 0 || strcmp(n + l - 4, ".DLL") == 0);
-        if (x->file.ptr && f == NULL) ERR(c, x->pos, "RP1315", "file: '%s' is not a [file.*] of this package", rp_cs(x->file));
-        else if (f && !exe && !dll) ERR(c, x->pos, "RP1316", "file: '%s' serves COM classes only as an .exe or a .dll", rp_cs(x->file));
+        if (x->file.ptr && f == NULL) ERR(c, x->pos, "RP1315", "file: '{}' is not a [file.*] of this package", proven_arg_cstr(rp_cs(x->file)));
+        else if (f && !exe && !dll) ERR(c, x->pos, "RP1316", "file: '{}' serves COM classes only as an .exe or a .dll", proven_arg_cstr(rp_cs(x->file)));
         x->exe = exe;
-        if (exe && x->threading.ptr) ERR(c, x->pos, "RP1316", "[com.%s]: threading is for a DLL; a program sets its own apartment", rp_cs(x->id));
-        if (exe && x->surrogate) ERR(c, x->pos, "RP1316", "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program", rp_cs(x->id), rp_cs(x->file));
-        if (dll && x->args.ptr) ERR(c, x->pos, "RP1316", "[com.%s]: args are a program's; a DLL is loaded, not started", rp_cs(x->id));
+        if (exe && x->threading.ptr) ERR(c, x->pos, "RP1316", "[com.{}]: threading is for a DLL; a program sets its own apartment", proven_arg_cstr(rp_cs(x->id)));
+        if (exe && x->surrogate) ERR(c, x->pos, "RP1316", "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program", proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(rp_cs(x->file)));
+        if (dll && x->args.ptr) ERR(c, x->pos, "RP1316", "[com.{}]: args are a program's; a DLL is loaded, not started", proven_arg_cstr(rp_cs(x->id)));
         if (x->typelib_file.ptr && file_by_id(ir, x->typelib_file) == NULL) {
-            ERR(c, x->pos, "RP1315", "typelib-file: '%s' is not a [file.*] of this package", rp_cs(x->typelib_file));
+            ERR(c, x->pos, "RP1315", "typelib-file: '{}' is not a [file.*] of this package", proven_arg_cstr(rp_cs(x->typelib_file)));
         }
         for (size_t j = 0; j < k; ++j) {
             const rp_ir_com_t *y = &ir->coms[j];
-            if (x->clsid.ptr && y->clsid.ptr && RP_EQ(x->clsid, y->clsid)) ERR(c, x->pos, "RP1301", "class %s is already served by [com.%s]", rp_cs(x->clsid), rp_cs(y->id));
-            if (x->prog_id.ptr && y->prog_id.ptr && RP_EQ(x->prog_id, y->prog_id)) ERR(c, x->pos, "RP1301", "prog-id '%s' is already [com.%s]'s", rp_cs(x->prog_id), rp_cs(y->id));
+            if (x->clsid.ptr && y->clsid.ptr && RP_EQ(x->clsid, y->clsid)) ERR(c, x->pos, "RP1301", "class {} is already served by [com.{}]", proven_arg_cstr(rp_cs(x->clsid)), proven_arg_cstr(rp_cs(y->id)));
+            if (x->prog_id.ptr && y->prog_id.ptr && RP_EQ(x->prog_id, y->prog_id)) ERR(c, x->pos, "RP1301", "prog-id '{}' is already [com.{}]'s", proven_arg_cstr(rp_cs(x->prog_id)), proven_arg_cstr(rp_cs(y->id)));
         }
         for (size_t j = 0; j < ir->msix_ext_count; ++j) {
             const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
-            if (x->clsid.ptr && y->clsid.ptr && RP_EQ(x->clsid, y->clsid)) ERR(c, x->pos, "RP1301", "class %s is also in [msix-extension.%s]", rp_cs(x->clsid), rp_cs(y->id));
+            if (x->clsid.ptr && y->clsid.ptr && RP_EQ(x->clsid, y->clsid)) ERR(c, x->pos, "RP1301", "class {} is also in [msix-extension.{}]", proven_arg_cstr(rp_cs(x->clsid)), proven_arg_cstr(rp_cs(y->id)));
         }
         for (size_t j = 0; x->prog_id.ptr && j < ir->assoc_count; ++j) {
             if (ir->assocs[j].prog_id.ptr && RP_EQ(ir->assocs[j].prog_id, x->prog_id)) {
-                ERR(c, x->pos, "RP1301", "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names", rp_cs(x->prog_id), rp_cs(ir->assocs[j].id));
+                ERR(c, x->pos, "RP1301", "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names", proven_arg_cstr(rp_cs(x->prog_id)), proven_arg_cstr(rp_cs(ir->assocs[j].id)));
             }
         }
     }
@@ -676,14 +676,14 @@ void ir_class_checks(ctx_t *c) {
         const rp_ir_com_t *cm = com_by_class(ir, rp_cs(x->clsid));
         static const char *const kinds[] = { "preview", "thumbnail", "property" };
         if (x->clsid.ptr && cm == NULL) {
-            ERR(c, x->pos, "RP1315", "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)", rp_cs(x->id), rp_cs(x->clsid));
+            ERR(c, x->pos, "RP1315", "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)", proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(rp_cs(x->clsid)));
         } else if (cm && cm->exe) {
-            ERR(c, x->pos, "RP1316", "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program", rp_cs(x->id), kinds[x->kind], rp_cs(cm->id));
+            ERR(c, x->pos, "RP1316", "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program", proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(kinds[x->kind]), proven_arg_cstr(rp_cs(cm->id)));
         } else if (cm && x->kind == RP_HANDLER_PREVIEW && (cm->app_id.ptr || cm->surrogate)) {
-            ERR(c, x->pos, "RP1316", "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]", rp_cs(x->id), rp_cs(cm->id));
+            ERR(c, x->pos, "RP1316", "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]", proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(rp_cs(cm->id)));
         }
         if (x->kind == RP_HANDLER_PROPERTY && ir->scope != 0) {
-            ERR(c, x->pos, "RP1316", "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\"", rp_cs(x->id));
+            ERR(c, x->pos, "RP1316", "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\"", proven_arg_cstr(rp_cs(x->id)));
         }
         for (size_t j = 0; j < k; ++j) {
             const rp_ir_handler_t *y = &ir->handlers[j];
@@ -691,7 +691,7 @@ void ir_class_checks(ctx_t *c) {
             for (size_t a = 0; a < x->type_count; ++a) {
                 for (size_t b = 0; b < y->type_count; ++b) {
                     if (x->types[a] && y->types[b] && strcmp(x->types[a], y->types[b]) == 0) {
-                        ERR(c, x->pos, "RP1301", "'%s' already has a %s handler ([handler.%s])", x->types[a], kinds[x->kind], rp_cs(y->id));
+                        ERR(c, x->pos, "RP1301", "'{}' already has a {} handler ([handler.{}])", proven_arg_cstr(x->types[a]), proven_arg_cstr(kinds[x->kind]), proven_arg_cstr(rp_cs(y->id)));
                     }
                 }
             }
@@ -953,8 +953,8 @@ void ir_cross_checks(ctx_t *c) {
         ndup = equal_pairs(c, idv, m, &dups);
     }
     for (size_t k = 0; k < ndup; ++k) {
-        ERR(c, ids[dups[k].b].pos, "RP1301", "ID '%s' is already used (line %u); IDs must differ across all tables",
-            ids[dups[k].b].id, (unsigned)ids[dups[k].a].pos.line);
+        ERR(c, ids[dups[k].b].pos, "RP1301", "ID '{}' is already used (line {}); IDs must differ across all tables",
+            proven_arg_cstr(ids[dups[k].b].id), proven_arg_u32((unsigned)ids[dups[k].a].pos.line));
     }
     rp_mem_free(c->alloc, dups);
     rp_mem_free(c->alloc, idv);
@@ -966,11 +966,11 @@ void ir_cross_checks(ctx_t *c) {
         size_t steps = 0;
         for (const rp_ir_feature_t *p = f; p && p->parent.ptr; p = find_feature(ir, p->parent)) {
             if (!find_feature(ir, p->parent)) {
-                ERR(c, p->pos, "RP1307", "feature parent '%s' is not defined", rp_cs(p->parent));
+                ERR(c, p->pos, "RP1307", "feature parent '{}' is not defined", proven_arg_cstr(rp_cs(p->parent)));
                 break;
             }
             if (++steps > ir->feature_count) {
-                ERR(c, f->pos, "RP1303", "feature '%s' is its own ancestor", rp_cs(f->id));
+                ERR(c, f->pos, "RP1303", "feature '{}' is its own ancestor", proven_arg_cstr(rp_cs(f->id)));
                 break;
             }
         }
@@ -987,15 +987,15 @@ void ir_cross_checks(ctx_t *c) {
         dir_paths[k] = NULL;
         if (d->parts == NULL) continue;
         if (d->parent.ptr && !rp_ir_find_dir(ir, d->parent)) {
-            ERR(c, d->pos, "RP1307", "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, "
+            ERR(c, d->pos, "RP1307", "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, "
                 "ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, "
-                "Windows, System, Fonts, Temp)", rp_cs(d->parent));
+                "Windows, System, Fonts, Temp)", proven_arg_cstr(rp_cs(d->parent)));
             continue;
         }
         dir_paths[k] = dir_full_path(c, d, 0);
-        if (dir_paths[k] == NULL && d->parent.ptr) ERR(c, d->pos, "RP1303", "dir '%s' is inside itself (path loop)", rp_cs(d->id));
+        if (dir_paths[k] == NULL && d->parent.ptr) ERR(c, d->pos, "RP1303", "dir '{}' is inside itself (path loop)", proven_arg_cstr(rp_cs(d->id)));
         if (d->feature.ptr && !find_feature(ir, d->feature)) {
-            ERR(c, d->pos, "RP1307", "feature '%s' is not defined", rp_cs(d->feature));
+            ERR(c, d->pos, "RP1307", "feature '{}' is not defined", proven_arg_cstr(rp_cs(d->feature)));
         }
     }
 
@@ -1016,15 +1016,15 @@ void ir_cross_checks(ctx_t *c) {
         rp_ir_file_t *f = &ir->files[k];
         const rp_ir_dir_t *d = f->dir.ptr ? rp_ir_find_dir(ir, f->dir) : NULL;
         if (f->dir.ptr && d == NULL) {
-            ERR(c, f->pos, "RP1307", "dir '%s' is not defined", rp_cs(f->dir));
+            ERR(c, f->pos, "RP1307", "dir '{}' is not defined", proven_arg_cstr(rp_cs(f->dir)));
             continue;
         }
         if (f->feature.ptr && !find_feature(ir, f->feature)) {
-            ERR(c, f->pos, "RP1307", "feature '%s' is not defined", rp_cs(f->feature));
+            ERR(c, f->pos, "RP1307", "feature '{}' is not defined", proven_arg_cstr(rp_cs(f->feature)));
         } else if (f->feature.ptr == NULL) {
             if (d && d->feature.ptr) f->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
             else if (!declared) f->feature = RP_V(ir_dup(c, "Main"));
-            else ERR(c, f->pos, "RP1202", "file '%s' needs a feature: set 'feature' here or on its dir", rp_cs(f->id));
+            else ERR(c, f->pos, "RP1202", "file '{}' needs a feature: set 'feature' here or on its dir", proven_arg_cstr(rp_cs(f->id)));
         }
         if (d && f->name.ptr && folded) {
             size_t di = (size_t)(d - ir->dirs);
@@ -1053,8 +1053,8 @@ void ir_cross_checks(ctx_t *c) {
                     f->pe_is_dll = pi.is_dll;
                 }
                 if (pe_err != PROVEN_OK) {
-                    ERR(c, f->pos, "RP1513", "'%s' looks like a program file (PE) but its headers or resources are damaged",
-                        rp_cs(f->source));
+                    ERR(c, f->pos, "RP1513", "'{}' looks like a program file (PE) but its headers or resources are damaged",
+                        proven_arg_cstr(rp_cs(f->source)));
                 } else if (pi.is_pe && !f->any_arch) {
                     uint16_t want = ir->arch == RP_ARCH_X64 ? RP_PE_AMD64 : ir->arch == RP_ARCH_ARM64 ? RP_PE_ARM64 : RP_PE_I386;
                     // A .NET assembly built for any CPU (MSIL) says i386 in its header and runs on every
@@ -1063,8 +1063,8 @@ void ir_cross_checks(ctx_t *c) {
                     bool msil = rp_pe_assembly(data, len, &asm_info) == PROVEN_OK && asm_info.is_assembly && strcmp(asm_info.arch, "MSIL") == 0;
                     if (pi.machine != want && !msil) {
                         ERR(c, f->pos, "RP1512",
-                            "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended",
-                            rp_cs(f->source), pi.machine);
+                            "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended",
+                            proven_arg_cstr(rp_cs(f->source)), proven_arg_u32(pi.machine));
                     }
                 }
                 rp_mem_free(c->alloc, data);
@@ -1075,15 +1075,15 @@ void ir_cross_checks(ctx_t *c) {
         rp_ir_folder_t *f = &ir->folders[k];
         const rp_ir_dir_t *d = f->dir.ptr ? rp_ir_find_dir(ir, f->dir) : NULL;
         if (f->dir.ptr && d == NULL) {
-            ERR(c, f->pos, "RP1307", "dir '%s' is not defined", rp_cs(f->dir));
+            ERR(c, f->pos, "RP1307", "dir '{}' is not defined", proven_arg_cstr(rp_cs(f->dir)));
             continue;
         }
         if (f->feature.ptr && !find_feature(ir, f->feature)) {
-            ERR(c, f->pos, "RP1307", "feature '%s' is not defined", rp_cs(f->feature));
+            ERR(c, f->pos, "RP1307", "feature '{}' is not defined", proven_arg_cstr(rp_cs(f->feature)));
         } else if (f->feature.ptr == NULL) {
             if (d && d->feature.ptr) f->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
             else if (!declared) f->feature = RP_V(ir_dup(c, "Main"));
-            else ERR(c, f->pos, "RP1202", "folder '%s' needs a feature: set 'feature' here or on its dir", rp_cs(f->id));
+            else ERR(c, f->pos, "RP1202", "folder '{}' needs a feature: set 'feature' here or on its dir", proven_arg_cstr(rp_cs(f->id)));
         }
         if (d && f->name.ptr && folded) {
             size_t di = (size_t)(d - ir->dirs);
@@ -1104,11 +1104,11 @@ void ir_cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->property_count; ++k) {
         const rp_ir_property_t *p = &ir->properties[k];
         if (rp_ir_find_dir(ir, p->id) || find_feature(ir, p->id)) {
-            ERR(c, p->pos, "RP1310", "property '%s' has the name of a dir or feature", rp_cs(p->id));
+            ERR(c, p->pos, "RP1310", "property '{}' has the name of a dir or feature", proven_arg_cstr(rp_cs(p->id)));
         }
         for (size_t j = 0; j < k; ++j) {
             if (RP_EQ(ir->properties[j].id, p->id)) {
-                ERR(c, p->pos, "RP1301", "property '%s' is already defined (line %u)", rp_cs(p->id), (unsigned)ir->properties[j].pos.line);
+                ERR(c, p->pos, "RP1301", "property '{}' is already defined (line {})", proven_arg_cstr(rp_cs(p->id)), proven_arg_u32((unsigned)ir->properties[j].pos.line));
             }
         }
     }
@@ -1116,21 +1116,21 @@ void ir_cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->registry_count; ++k) {
         rp_ir_registry_t *r = &ir->registries[k];
         if (r->users_all && (!r->purge || r->root != RP_ROOT_HKCU || ir->scope != 0)) {      // RFC-0030
-            ERR(c, r->pos, "RP1316", "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package", rp_cs(r->id));
+            ERR(c, r->pos, "RP1316", "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package", proven_arg_cstr(rp_cs(r->id)));
         }
         if (r->with_file.ptr) {
             bool found = false;
             for (size_t j = 0; j < ir->file_count; ++j) found |= RP_EQ(ir->files[j].id, r->with_file);
-            if (!found) ERR(c, r->pos, "RP1315", "with: file '%s' is not a [file.*] of this package", rp_cs(r->with_file));
+            if (!found) ERR(c, r->pos, "RP1315", "with: file '{}' is not a [file.*] of this package", proven_arg_cstr(rp_cs(r->with_file)));
             if (r->view32 != (ir->arch == RP_ARCH_X86)) {
                 // a component has one bitness: a 32-bit view value cannot share a 64-bit file's component
                 if (r->view32) ERR(c, r->pos, "RP1316", "view = \"32\" cannot go 'with' a file of a 64-bit package");
             }
         } else if (r->feature.ptr && !find_feature(ir, r->feature)) {
-            ERR(c, r->pos, "RP1307", "feature '%s' is not defined", rp_cs(r->feature));
+            ERR(c, r->pos, "RP1307", "feature '{}' is not defined", proven_arg_cstr(rp_cs(r->feature)));
         } else if (r->feature.ptr == NULL) {
             if (!declared) r->feature = RP_V(ir_dup(c, "Main"));
-            else ERR(c, r->pos, "RP1202", "registry value '%s' needs a feature", rp_cs(r->id));
+            else ERR(c, r->pos, "RP1202", "registry value '{}' needs a feature", proven_arg_cstr(rp_cs(r->id)));
         }
     }
     // Removals and copies: folders and files exist; a removal's feature resolves like a file's.
@@ -1138,7 +1138,7 @@ void ir_cross_checks(ctx_t *c) {
         rp_ir_remove_t *r = &ir->removes[k];
         const rp_ir_dir_t *d = r->dir.ptr ? rp_ir_find_dir(ir, r->dir) : NULL;
         if (r->dir.ptr && d == NULL) {
-            ERR(c, r->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(r->dir));
+            ERR(c, r->pos, "RP1315", "dir '{}' is not a dir ID", proven_arg_cstr(rp_cs(r->dir)));
             continue;
         }
         if (r->recursive && d) {
@@ -1151,20 +1151,20 @@ void ir_cross_checks(ctx_t *c) {
             }
             const char *b = rp_cs(top->base);
             if (b && (strcmp(b, "Windows") == 0 || strcmp(b, "System") == 0 || strcmp(b, "Fonts") == 0 || strcmp(b, "Temp") == 0)) {
-                ERR(c, r->pos, "RP1316", "[remove.%s]: recursive = true is not for a folder below %s", rp_cs(r->id), b);
+                ERR(c, r->pos, "RP1316", "[remove.{}]: recursive = true is not for a folder below {}", proven_arg_cstr(rp_cs(r->id)), proven_arg_cstr(b));
             }
         }
         // RFC-0030: every user's same folder - a folder of the profile's data, wiped as a whole, by a
         // per-machine removal (it runs as an administrator; a per-user product is each user's own).
         if (r->users_all && (!r->recursive || !d || !profile_base(ir, rp_cs(r->dir), true) || ir->scope != 0)) {
-            ERR(c, r->pos, "RP1316", "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package", rp_cs(r->id));
+            ERR(c, r->pos, "RP1316", "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package", proven_arg_cstr(rp_cs(r->id)));
         }
         if (r->feature.ptr && !find_feature(ir, r->feature)) {
-            ERR(c, r->pos, "RP1307", "feature '%s' is not defined", rp_cs(r->feature));
+            ERR(c, r->pos, "RP1307", "feature '{}' is not defined", proven_arg_cstr(rp_cs(r->feature)));
         } else if (r->feature.ptr == NULL) {
             if (d && d->feature.ptr) r->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
             else if (!declared) r->feature = RP_V(ir_dup(c, "Main"));
-            else ERR(c, r->pos, "RP1202", "[remove.%s] needs a feature: set 'feature' here or on its dir", rp_cs(r->id));
+            else ERR(c, r->pos, "RP1202", "[remove.{}] needs a feature: set 'feature' here or on its dir", proven_arg_cstr(rp_cs(r->id)));
         }
     }
     // The user's profile (RFC-0029): a component there is keyed by an HKCU value, which a GUID the
@@ -1173,8 +1173,8 @@ void ir_cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->file_count; ++k) {
         const rp_ir_file_t *f = &ir->files[k];
         if (f->component_guid.ptr && profile_base(ir, rp_cs(f->dir), false)) {
-            rp_srcdiag_add(c->d, f->pos, "RP1320", true, "[file.%s] is in the user's profile and has component-guid: its key path stays the file, "
-                           "where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one", rp_cs(f->id));
+            rp_srcdiag_add(c->d, f->pos, "RP1320", true, "[file.{}] is in the user's profile and has component-guid: its key path stays the file, "
+                           "where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one", proven_arg_cstr(rp_cs(f->id)));
         }
     }
     if (ir->scope == 2) {
@@ -1190,24 +1190,24 @@ void ir_cross_checks(ctx_t *c) {
             if (profile_base(ir, rp_cs(ir->inis[k].dir), true)) { what = "ini"; id = rp_cs(ir->inis[k].id); pos = ir->inis[k].pos; }
         }
         if (what) {
-            rp_srcdiag_add(c->d, pos, "RP1320", true, "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users "
-                           "puts it in the installing user's profile only", what, id);
+            rp_srcdiag_add(c->d, pos, "RP1320", true, "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users "
+                           "puts it in the installing user's profile only", proven_arg_cstr(what), proven_arg_cstr(id));
         }
     }
     // Scope (RFC-0004 H3): what needs a per-machine installation.
     if (ir->scope != 0) {
         static const char *const scopes[] = { "machine", "user", "dual" };
         const char *sc = scopes[ir->scope];
-        for (size_t k = 0; k < ir->service_count; ++k) ERR(c, ir->services[k].pos, "RP1316", "services need scope = \"machine\" (this is %s)", sc);
-        for (size_t k = 0; k < ir->font_count; ++k) ERR(c, ir->fonts[k].pos, "RP1316", "fonts need scope = \"machine\" (this is %s)", sc);
-        for (size_t k = 0; k < ir->permission_count; ++k) ERR(c, ir->permissions[k].pos, "RP1316", "permissions need scope = \"machine\" (this is %s)", sc);
+        for (size_t k = 0; k < ir->service_count; ++k) ERR(c, ir->services[k].pos, "RP1316", "services need scope = \"machine\" (this is {})", proven_arg_cstr(sc));
+        for (size_t k = 0; k < ir->font_count; ++k) ERR(c, ir->fonts[k].pos, "RP1316", "fonts need scope = \"machine\" (this is {})", proven_arg_cstr(sc));
+        for (size_t k = 0; k < ir->permission_count; ++k) ERR(c, ir->permissions[k].pos, "RP1316", "permissions need scope = \"machine\" (this is {})", proven_arg_cstr(sc));
         if (ir->scope == 2) {
             for (size_t k = 0; k < ir->env_count; ++k) ERR(c, ir->envs[k].pos, "RP1316", "a dual package cannot choose between a user and a system variable");
         }
         for (size_t k = 0; k < ir->dir_count; ++k) {
             const char *b = rp_cs(ir->dirs[k].base);
             if (b && (strcmp(b, "Windows") == 0 || strcmp(b, "System") == 0 || strcmp(b, "Fonts") == 0 || strcmp(b, "CommonAppData") == 0)) {
-                ERR(c, ir->dirs[k].pos, "RP1316", "'%s' is a machine folder; a %s package cannot write there", b, sc);
+                ERR(c, ir->dirs[k].pos, "RP1316", "'{}' is a machine folder; a {} package cannot write there", proven_arg_cstr(b), proven_arg_cstr(sc));
             }
         }
     }
@@ -1216,8 +1216,8 @@ void ir_cross_checks(ctx_t *c) {
         const char *d = ir->ui_install_dir.ptr ? rp_cs(ir->ui_install_dir) : "INSTALLDIR";
         if (!rp_ir_find_dir(ir, RP_V(d))) {
             rp_pos_t top = { 1, 1 };
-            ERR(c, top, "RP1315", "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)",
-                ir->ui == 3 ? "installdir" : "features", d);
+            ERR(c, top, "RP1315", "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)",
+                proven_arg_cstr(ir->ui == 3 ? "installdir" : "features"), proven_arg_cstr(d));
         }
     }
     if (ir->ui == 4) {
@@ -1236,23 +1236,23 @@ void ir_cross_checks(ctx_t *c) {
         if (x->kind == 0) {
             const rp_ir_dir_t *d = rp_ir_find_dir(ir, x->target);
             found = d != NULL;
-            if (d && d->part_count == 0) ERR(c, x->pos, "RP1316", "a known folder itself ('%s') cannot get permissions", rp_cs(x->target));
+            if (d && d->part_count == 0) ERR(c, x->pos, "RP1316", "a known folder itself ('{}') cannot get permissions", proven_arg_cstr(rp_cs(x->target)));
             if (d) x->feature = RP_V(ir_dup(c, d->feature.ptr ? rp_cs(d->feature) : declared ? NULL : "Main"));
-            if (d && x->feature.ptr == NULL) ERR(c, x->pos, "RP1202", "[permission.%s] needs its dir to have a feature", rp_cs(x->id));
+            if (d && x->feature.ptr == NULL) ERR(c, x->pos, "RP1202", "[permission.{}] needs its dir to have a feature", proven_arg_cstr(rp_cs(x->id)));
         } else if (x->kind == 1) {
             for (size_t j = 0; j < ir->file_count; ++j) found |= RP_EQ(ir->files[j].id, x->target);
         } else {
             for (size_t j = 0; j < ir->registry_count; ++j) {
                 if (RP_EQ(ir->registries[j].id, x->target)) {
                     found = true;
-                    if (ir->registries[j].remove) ERR(c, x->pos, "RP1316", "registry '%s' removes a value; it has nothing to protect", rp_cs(x->target));
+                    if (ir->registries[j].remove) ERR(c, x->pos, "RP1316", "registry '{}' removes a value; it has nothing to protect", proven_arg_cstr(rp_cs(x->target)));
                 }
             }
         }
-        if (!found) ERR(c, x->pos, "RP1315", "target '%s' does not exist", rp_cs(x->target));
+        if (!found) ERR(c, x->pos, "RP1315", "target '{}' does not exist", proven_arg_cstr(rp_cs(x->target)));
         for (size_t j = 0; j < k; ++j) {
             if (ir->permissions[j].kind == x->kind && ir->permissions[j].target.ptr && RP_EQ(ir->permissions[j].target, x->target)) {
-                ERR(c, x->pos, "RP1301", "'%s' already has permissions", rp_cs(x->target));
+                ERR(c, x->pos, "RP1301", "'{}' already has permissions", proven_arg_cstr(rp_cs(x->target)));
             }
         }
     }
@@ -1265,13 +1265,13 @@ void ir_cross_checks(ctx_t *c) {
         }
         const rp_ir_dir_t *d = f && f->dir.ptr ? rp_ir_find_dir(ir, f->dir) : NULL;
         if (x->file.ptr && f == NULL) {
-            ERR(c, x->pos, "RP1315", "file '%s' is not a [file.*] of this package", rp_cs(x->file));
+            ERR(c, x->pos, "RP1315", "file '{}' is not a [file.*] of this package", proven_arg_cstr(rp_cs(x->file)));
         } else if (f && !(d && d->part_count == 0 && d->base.ptr && RP_EQ(d->base, "Fonts"))) {
-            ERR(c, x->pos, "RP1316", "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")", rp_cs(x->file));
+            ERR(c, x->pos, "RP1316", "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")", proven_arg_cstr(rp_cs(x->file)));
         }
         for (size_t j = 0; j < k; ++j) {
             if (x->file.ptr && ir->fonts[j].file.ptr && RP_EQ(ir->fonts[j].file, x->file)) {
-                ERR(c, x->pos, "RP1301", "file '%s' is already registered as a font", rp_cs(x->file));
+                ERR(c, x->pos, "RP1301", "file '{}' is already registered as a font", proven_arg_cstr(rp_cs(x->file)));
             }
         }
     }
@@ -1283,16 +1283,16 @@ void ir_cross_checks(ctx_t *c) {
             if (RP_EQ(ir->files[j].id, x->file)) f = &ir->files[j];
         }
         if (x->file.ptr && f == NULL) {
-            ERR(c, x->pos, "RP1315", "file '%s' is not a [file.*] of this package", rp_cs(x->file));
+            ERR(c, x->pos, "RP1315", "file '{}' is not a [file.*] of this package", proven_arg_cstr(rp_cs(x->file)));
         } else if (f && (f->pe_machine == 0 || f->pe_is_dll)) {
-            ERR(c, x->pos, "RP1315", "'%s' is not a program (.exe)", rp_cs(f->source));
+            ERR(c, x->pos, "RP1315", "'{}' is not a program (.exe)", proven_arg_cstr(rp_cs(f->source.ptr ? f->source : f->id)));
         }
         for (size_t j = 0; j < k; ++j) {
             if (x->file.ptr && ir->services[j].file.ptr && RP_EQ(ir->services[j].file, x->file)) {
-                ERR(c, x->pos, "RP1316", "file '%s' already runs service '%s'", rp_cs(x->file), rp_cs(ir->services[j].id));
+                ERR(c, x->pos, "RP1316", "file '{}' already runs service '{}'", proven_arg_cstr(rp_cs(x->file)), proven_arg_cstr(rp_cs(ir->services[j].id)));
             }
             if (x->name.ptr && ir->services[j].name.ptr && ir_ascii_casecmp(rp_cs(ir->services[j].name), rp_cs(x->name)) == 0) {
-                ERR(c, x->pos, "RP1301", "service name '%s' is already used", rp_cs(x->name));
+                ERR(c, x->pos, "RP1301", "service name '{}' is already used", proven_arg_cstr(rp_cs(x->name)));
             }
         }
     }
@@ -1301,7 +1301,7 @@ void ir_cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->require_count; ++k) {
         for (size_t j = 0; j < k; ++j) {
             if (ir->requires[k].condition.ptr && ir->requires[j].condition.ptr && RP_EQ(ir->requires[k].condition, ir->requires[j].condition)) {
-                ERR(c, ir->requires[k].pos, "RP1301", "the same condition is already required (line %u)", (unsigned)ir->requires[j].pos.line);
+                ERR(c, ir->requires[k].pos, "RP1301", "the same condition is already required (line {})", proven_arg_u32((unsigned)ir->requires[j].pos.line));
             }
         }
     }
@@ -1310,17 +1310,17 @@ void ir_cross_checks(ctx_t *c) {
         if (x->property.ptr == NULL) continue;
         for (size_t j = 0; j < k; ++j) {
             if (ir->searches[j].property.ptr && RP_EQ(ir->searches[j].property, x->property)) {
-                ERR(c, x->pos, "RP1301", "property '%s' is already searched (line %u)", rp_cs(x->property), (unsigned)ir->searches[j].pos.line);
+                ERR(c, x->pos, "RP1301", "property '{}' is already searched (line {})", proven_arg_cstr(rp_cs(x->property)), proven_arg_u32((unsigned)ir->searches[j].pos.line));
             }
         }
         for (size_t j = 0; j < ir->property_count; ++j) {
-            if (RP_EQ(ir->properties[j].id, x->property)) ERR(c, x->pos, "RP1310", "'%s' is also a [property.*]", rp_cs(x->property));
+            if (RP_EQ(ir->properties[j].id, x->property)) ERR(c, x->pos, "RP1310", "'{}' is also a [property.*]", proven_arg_cstr(rp_cs(x->property)));
         }
         // A search may give a dir its default (RFC-0012 V5): a folder from the registry or from a
         // folder search, never a file's path.
         if (rp_ir_find_dir(ir, x->property)) {
             if (x->kind != RP_SEARCH_REGISTRY && x->kind != RP_SEARCH_DIR) {
-                ERR(c, x->pos, "RP1310", "'%s' is the name of a dir: only a registry or dir search can fill a dir", rp_cs(x->property));
+                ERR(c, x->pos, "RP1310", "'{}' is the name of a dir: only a registry or dir search can fill a dir", proven_arg_cstr(rp_cs(x->property)));
             } else {
                 ir->searches[k].fills_dir = true;
             }
@@ -1330,56 +1330,56 @@ void ir_cross_checks(ctx_t *c) {
         rp_ir_ini_t *x = &ir->inis[k];
         const rp_ir_dir_t *d = x->dir.ptr ? rp_ir_find_dir(ir, x->dir) : NULL;
         if (x->dir.ptr && d == NULL) {
-            ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->dir));
+            ERR(c, x->pos, "RP1315", "dir '{}' is not a dir ID", proven_arg_cstr(rp_cs(x->dir)));
             continue;
         }
         if (x->feature.ptr && !find_feature(ir, x->feature)) {
-            ERR(c, x->pos, "RP1307", "feature '%s' is not defined", rp_cs(x->feature));
+            ERR(c, x->pos, "RP1307", "feature '{}' is not defined", proven_arg_cstr(rp_cs(x->feature)));
         } else if (x->feature.ptr == NULL) {
             if (d && d->feature.ptr) x->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
             else if (!declared) x->feature = RP_V(ir_dup(c, "Main"));
-            else ERR(c, x->pos, "RP1202", "[ini.%s] needs a feature: set 'feature' here or on its dir", rp_cs(x->id));
+            else ERR(c, x->pos, "RP1202", "[ini.{}] needs a feature: set 'feature' here or on its dir", proven_arg_cstr(rp_cs(x->id)));
         }
     }
     for (size_t k = 0; k < ir->merge_count; ++k) {
         rp_ir_merge_t *x = &ir->merges[k];
-        if (x->dir.ptr && rp_ir_find_dir(ir, x->dir) == NULL) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->dir));
+        if (x->dir.ptr && rp_ir_find_dir(ir, x->dir) == NULL) ERR(c, x->pos, "RP1315", "dir '{}' is not a dir ID", proven_arg_cstr(rp_cs(x->dir)));
         const rp_ir_dir_t *d = x->dir.ptr ? rp_ir_find_dir(ir, x->dir) : NULL;
         if (x->feature.ptr && !find_feature(ir, x->feature)) {
-            ERR(c, x->pos, "RP1307", "feature '%s' is not defined", rp_cs(x->feature));
+            ERR(c, x->pos, "RP1307", "feature '{}' is not defined", proven_arg_cstr(rp_cs(x->feature)));
         } else if (x->feature.ptr == NULL) {
             if (d && d->feature.ptr) x->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
             else if (!declared) x->feature = RP_V(ir_dup(c, "Main"));
-            else ERR(c, x->pos, "RP1202", "[merge.%s] needs a feature: set 'feature' here or on its dir", rp_cs(x->id));
+            else ERR(c, x->pos, "RP1202", "[merge.{}] needs a feature: set 'feature' here or on its dir", proven_arg_cstr(rp_cs(x->id)));
         }
     }
     for (size_t k = 0; k < ir->env_count; ++k) {
         rp_ir_env_t *e = &ir->envs[k];
         if (e->feature.ptr && !find_feature(ir, e->feature)) {
-            ERR(c, e->pos, "RP1307", "feature '%s' is not defined", rp_cs(e->feature));
+            ERR(c, e->pos, "RP1307", "feature '{}' is not defined", proven_arg_cstr(rp_cs(e->feature)));
         } else if (e->feature.ptr == NULL) {
             if (!declared) e->feature = RP_V(ir_dup(c, "Main"));
-            else ERR(c, e->pos, "RP1202", "[env.%s] needs a feature", rp_cs(e->id));
+            else ERR(c, e->pos, "RP1202", "[env.{}] needs a feature", proven_arg_cstr(rp_cs(e->id)));
         }
     }
     for (size_t k = 0; k < ir->copy_count; ++k) {
         const rp_ir_copy_t *cp = &ir->copies[k];
         bool found = false;
         for (size_t j = 0; cp->source_file.ptr && j < ir->file_count; ++j) found |= RP_EQ(ir->files[j].id, cp->source_file);
-        if (cp->source_file.ptr && !found) ERR(c, cp->pos, "RP1315", "source: file '%s' is not a [file.*] of this package", rp_cs(cp->source_file));
-        if (cp->dir.ptr && !rp_ir_find_dir(ir, cp->dir)) ERR(c, cp->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(cp->dir));
+        if (cp->source_file.ptr && !found) ERR(c, cp->pos, "RP1315", "source: file '{}' is not a [file.*] of this package", proven_arg_cstr(rp_cs(cp->source_file)));
+        if (cp->dir.ptr && !rp_ir_find_dir(ir, cp->dir)) ERR(c, cp->pos, "RP1315", "dir '{}' is not a dir ID", proven_arg_cstr(rp_cs(cp->dir)));
     }
     // Shortcuts: target file and folders exist.
     for (size_t k = 0; k < ir->shortcut_count; ++k) {
         const rp_ir_shortcut_t *sc = &ir->shortcuts[k];
         bool found = false;
         for (size_t j = 0; sc->target_file.ptr && j < ir->file_count; ++j) found |= RP_EQ(ir->files[j].id, sc->target_file);
-        if (sc->target_file.ptr && !found) ERR(c, sc->pos, "RP1315", "target: file '%s' is not a [file.*] of this package", rp_cs(sc->target_file));
+        if (sc->target_file.ptr && !found) ERR(c, sc->pos, "RP1315", "target: file '{}' is not a [file.*] of this package", proven_arg_cstr(rp_cs(sc->target_file)));
         if (sc->dir.ptr && !ir_shortcut_folder(rp_cs(sc->dir)) && !rp_ir_find_dir(ir, sc->dir)) {
-            ERR(c, sc->pos, "RP1315", "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup", rp_cs(sc->dir));
+            ERR(c, sc->pos, "RP1315", "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup", proven_arg_cstr(rp_cs(sc->dir)));
         }
         if (sc->working_dir.ptr && !rp_ir_find_dir(ir, sc->working_dir)) {
-            ERR(c, sc->pos, "RP1315", "working-dir '%s' is not a dir ID", rp_cs(sc->working_dir));
+            ERR(c, sc->pos, "RP1315", "working-dir '{}' is not a dir ID", proven_arg_cstr(rp_cs(sc->working_dir)));
         }
     }
     ir_more_pe_checks(c);
@@ -1392,19 +1392,19 @@ void ir_cross_checks(ctx_t *c) {
             if (RP_EQ(ir->files[j].id, a->run_file)) f = &ir->files[j];
         }
         if (f == NULL) {
-            ERR(c, a->pos, "RP1311", "run: file '%s' is not a [file.*] of this package", rp_cs(a->run_file));
+            ERR(c, a->pos, "RP1311", "run: file '{}' is not a [file.*] of this package", proven_arg_cstr(rp_cs(a->run_file)));
             continue;
         }
         bool runs = f->pe_machine == RP_PE_I386 ||
                     (f->pe_machine == RP_PE_AMD64 && ir->arch != RP_ARCH_X86) ||
                     (f->pe_machine == RP_PE_ARM64 && ir->arch == RP_ARCH_ARM64);
         if (f->pe_machine == 0 || f->pe_is_dll) {
-            ERR(c, a->pos, "RP1311", "run: '%s' is not a program (.exe)", rp_cs(f->source.ptr ? f->source : f->id));
+            ERR(c, a->pos, "RP1311", "run: '{}' is not a program (.exe)", proven_arg_cstr(rp_cs(f->source.ptr ? f->source : f->id)));
         } else if (!runs) {
-            ERR(c, a->pos, "RP1311", "run: '%s' (machine 0x%04X) cannot run on this package's machines", rp_cs(f->source), f->pe_machine);
+            ERR(c, a->pos, "RP1311", "run: '{}' (machine 0x{:04X}) cannot run on this package's machines", proven_arg_cstr(rp_cs(f->source)), proven_arg_u32(f->pe_machine));
         }
         for (size_t j = 0; j < k; ++j) {
-            if (RP_EQ(ir->actions[j].id, a->id)) ERR(c, a->pos, "RP1301", "action '%s' is already defined", rp_cs(a->id));
+            if (RP_EQ(ir->actions[j].id, a->id)) ERR(c, a->pos, "RP1301", "action '{}' is already defined", proven_arg_cstr(rp_cs(a->id)));
         }
     }
     ir_action_checks(c);
@@ -1412,8 +1412,8 @@ void ir_cross_checks(ctx_t *c) {
     dup_t *same = NULL;
     size_t nsame = folded ? equal_pairs(c, (const char *const *)folded, nf, &same) : 0;
     for (size_t k = 0; k < nsame; ++k) {
-        ERR(c, where[same[k].b], "RP1511", "installs to the same path as line %u (Windows ignores case in names%s)",
-            (unsigned)where[same[k].a].line, c->opt->nfc ? "; --nfc made their Unicode forms the same" : "");
+        ERR(c, where[same[k].b], "RP1511", "installs to the same path as line {} (Windows ignores case in names{})",
+            proven_arg_u32((unsigned)where[same[k].a].line), proven_arg_cstr(c->opt->nfc ? "; --nfc made their Unicode forms the same" : ""));
     }
     rp_mem_free(c->alloc, same);
     for (size_t a = 0; folded && a < nf; ++a) rp_mem_free(c->alloc, folded[a]);

@@ -60,14 +60,14 @@ int rp_cmd_keys(int argc, char **argv) {
         if (a.pin_env) {
             char *v = rp_pal_getenv(heap, a.pin_env);
             if (v == NULL) {
-                rp_diag_error(RP_DIAG_SIGN, "--pin-env %s: the variable is not set", a.pin_env);
+                rp_diag_error(RP_DIAG_SIGN, "--pin-env {}: the variable is not set", proven_arg_cstr(a.pin_env));
                 return RP_EXIT_USAGE;
             }
             pin = (uint8_t *)v;
             pin_len = strlen(v);
         } else if (a.pin_file) {
             if (rp_pal_read_file(heap, a.pin_file, 4096, &pin, &pin_len) != PROVEN_OK) {
-                rp_diag_error(RP_DIAG_INPUT, "cannot read the PIN file '%s'", a.pin_file);
+                rp_diag_error(RP_DIAG_INPUT, "cannot read the PIN file '{}'", proven_arg_cstr(a.pin_file));
                 return RP_EXIT_IO;
             }
             while (pin_len && (pin[pin_len - 1] == '\n' || pin[pin_len - 1] == '\r')) --pin_len;
@@ -81,7 +81,7 @@ int rp_cmd_keys(int argc, char **argv) {
         err = rp_ncrypt_list(heap, show, &l, &why);
     }
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_SIGN, "%s", why ? why : "cannot list the keys");
+        rp_diag_error(RP_DIAG_SIGN, "{}", proven_arg_cstr(why ? why : "cannot list the keys"));
         return err == PROVEN_ERR_UNSUPPORTED ? RP_EXIT_USAGE : err == PROVEN_ERR_PERMISSION ? RP_EXIT_SIGN : RP_EXIT_IO;
     }
     if (l.count == 0 && l.rc == RP_EXIT_OK) l.rc = rp_pal_puts(RP_OUT_STDOUT, TR("no keys\n")) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;

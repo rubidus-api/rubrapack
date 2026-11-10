@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Segoe UI\n"
 "X-Rubrapack-Group: 7\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialogbokse {6}{7}\n  1 navn, producent, version, arkitektur        2 installationsmappe, hvem den installeres for\n  3 dialogbokse, licens, sprog                  4 valgfrie dele\n  5 genveje                                     6 filer: tilpas til programmappen\n  7 vilkårlig nøgle                             v vis   l lint   s gem   q afslut\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\nMeddelelser med denne kode (* står for et navn eller en værdi):\n"
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nResultater går til stdout, diagnostik til stderr.\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\nHvad du skal gøre: {1}.\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} findes ikke længere, men en genvej åbner den: ret genvejene (5) først\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  der er {1} filer og {2} mapper\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7, v, l, s eller q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  tilføjede [dir.{1}] og [files.{2}]\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  tilføjede [file.{1}]\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint: se problemerne ovenfor (filen, der nævnes dér, er en kontrolko
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  andre sprog i [ui] languages bevares; ret listen med 7 (vilkårlig nøgle)\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  fjernede [file.{1}]\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  fjernede [files.{1}]{2}\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  det passer ikke i TOML-delmængden; intet blev ændret\n"
 msgid "  that was not readable text; again, please\n"
 msgstr "  det var ikke læsbar tekst; prøv igen\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  programmappen '{1}': {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - bygger Windows Installer- (.msi) og MSIX-pakker (.msix)\n\nbrug: rubr
 msgid " and its dir"
 msgstr " og dens dir"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}) har ingen miljøvariabel, så en udvidelig værdi kan ikke indeholde den; brug en strengværdi (udfyldes ved installationen)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) er en {2}: den kan indlede en sti eller stå for en værdi, som Windows Installer udfylder (registreringsdatabase, miljø, INI, argumenter, meddelelser), men ikke her"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) er ikke en mappe, som en sti kan begynde fra (et dir-ID, eller ProgramFiles, LOCALAPPDATA, ProgramData ... - se Paths i manualen){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  struktur:     {2}\n  digest:       {3}\n  signatur:     {4}\n  kæde:         {5}{6}{7}\n  tilbagekald.: ikke kontrolleret\n  tidsstempel:  {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2}: variablen er ikke sat"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' er ikke et kontrolelement i denne dialogboks"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' er ikke i {3}"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}': {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': licensteksten skal bruge skrifttypens engelske navn og vises derfor i sprogets egen skrifttype; skriv det engelske navn (f.eks. \"Malgun Gothic\") for også at bruge skrifttypen dér"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "{1} = '{2}' skal være en mappe"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "{1}-komponent, men pakkens platform er {2}"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} hører ikke til kind = \"{2}\""
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} hører ikke til kind = \"firewall\""
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} indeholder LANGID'er (1..65535), f.eks. 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} indeholder strenge"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "{1} er {2} til {3} tegn lang"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} er en liste med \"Nøgle=Værdi\"-tekster"
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "{1} er en liste af tekster, f.eks. [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} er et skrifttypenavn på 1 til 31 tegn, f.eks. \"Segoe UI\" (fik {2})"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} er en MSI-betingelse med lukkede anførselstegn og afbalancerede parenteser"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} er en matrix af strenge, én pr. værdi"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} gælder MSI-pakker: en MSIX fjernes ikke af msiexec"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} findes ikke længere. Fjern [file.{2}]?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} er længere end 240 tegn"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} er ny. Tilføj den?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} er ikke et GUID i registreringsdatabaseformat"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} er ikke en kode, som denne rubrapack bruger{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} skal være \"file:<ID>\", der navngiver en [file.*] i denne pakke"
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "{1} skal være {2} til {3} bogstaver, cifre, '.' eller '-' og må ikke starte med '.' (fik '{4}')"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1} skal være et GUID"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1} skal være et GUID som {12345678-...} (fik '{2}')"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "{1} skal være en http://- eller https://-adresse (fik '{2}')"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1} skal være en https://-, http://- eller file://-adresse eller en \\\\server\\share-sti (fik '{2}')"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1} skal være forskellig fra upgrade-code (én opgraderingsfamilie pr. arkitektur)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} kræver Windows-build {2} eller nyere: angiv [msix] min-version = \"10.0.{3}.0\""
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} kræver resources/bin/rubrapack_ca-{2}.dll, som denne rubrapack blev bygget uden"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}, TSA ikke kontrolleret (angiv --tsa-trust)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}, TSA betroet"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}, TSA ikke betroet - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} findes ikke længere eller er tom. Fjern [files.{3}] og [dir.{4}]?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ er en ny mappe. Tilføj den?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1}: {2} fejl{-3}, {4} advarsel/advarsler{-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1}: {2} fejl{-3}, {4} advarsel/advarsler{-5} (i forhold til {6})\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1}: {2} filer, {3} byte\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1}: {2} filer, {3} fejl, 0 advarsler\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1}: yderligere {2} diagnoser vises ikke\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1}: '{2}' er ikke et program (.exe)"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' er ikke en standardhandling, som rubrapack placerer"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1}: filen '{2}' er ikke en [file.*] i denne pakke"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1}: filen '{2}' er ikke et program (.exe)"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "'$(' er ikke lukket (skriv '$$(' for teksten '$(')"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' findes allerede; den forbliver, som den er"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' findes allerede; fjern den, eller byg i en anden mappe"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}' har allerede en {2}-handler ([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}' har allerede tilladelser"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' og '{2}' er den samme sti i pakken"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' tilhører Windows eller browserne"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "'{1}' kan ikke læses i forhold til '{2}': {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' passer ikke i TOML-delmængden; intet blev gemt"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' findes allerede"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' findes allerede; ret den med `rubrapack edit {2}`"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' findes og er ikke en tom mappe; udpak til en ny"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' havner i {2}; eller msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}' har en ulæselig strøm med oversigtsoplysninger"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' har ingen Directory-, Component-, File- og Media-tabeller at udpakke fra"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "'{1}' har ingen integreret transformation '{2}'"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}' har ingen læselige oversigtsoplysninger"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}' har ingen transformation '{2}'"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' er UTF-16: edit ændrer kun UTF-8-kilder (gem den som UTF-8 først)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' er et Windows-navn; giv variablen et andet navn"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' er en [chain]: den bygger et installationsprogram, -o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' er et kontrolelement i den indbyggede ramme; vælg et andet ID"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' er en computermappe; en {2}-pakke kan ikke skrive der"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' er et fletningsmodul: flet det med [merge.ID] i stedet"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' er et navn, som MSIX-formatet forbeholder sig selv"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' er et symbolsk link; links følges ikke"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' er også en [property.*]"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' er også et dir-ID; giv variablen et andet navn"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' er bygget til maskine 0x{2}, ikke til denne pakkes arch; angiv any-arch = true, hvis det er meningen"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' er hverken en PE-fil (.exe, .dll), en MSI-pakke, en MSIX-pakke eller -samling eller en cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' er hverken en PE-fil, en MSI-pakke, en MSIX-pakke eller -samling eller en cabinet"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' er hverken en kendt mappe eller et dir-ID (kendte mapper: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' er hverken en MSIX-pakke eller et pakkefamilienavn (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' er ikke en cabinet, som rubrapack kan læse (stored eller MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' er ikke en diagnosekode (RP og fire cifre, f.eks. RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' er ikke et program (.exe)"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' er ikke en almindelig fil"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' er ikke et installationsprogram fra rubrapack{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' er ikke et gyldigt ID (bogstaver, cifre og '_', begynder ikke med et ciffer, højst {2})"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' er ikke en gyldig MSI-database: {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' er ikke en gyldig MSIX-pakke: {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' er ikke en gyldig pakke: {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' er ikke en gyldig kilde (TOML-delmængden); ret den i hånden først"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' er ikke en gyldig transformation: {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' er ikke et gyldigt variabelnavn"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' er reserveret og kan ikke bruges som ID"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' er navnet på en dir: kun en registreringsdatabase- eller dir-søgning kan udfylde en dir"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' ligner en programfil (PE), men dens headere eller ressourcer er beskadigede"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}' skal være en streng"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}' skal være et heltal"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}' skal være mellem {2} og {3}"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}' skal være true eller false"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' må ikke være tom"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' navngiver ingen transformationer (oversigtsegenskab 8): ikke en patch"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' begynder med en mappe: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}': {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}': {2} '{3}' har {4}; intet blev udpakket"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}': {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}': {2} poster, flere end grænsen {3} (--limit-entries); intet blev udpakket"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}': '{2}' og '{3}' ville være den samme sti i Windows; intet blev udpakket"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}': '{2}' er ikke i [ui] languages"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}': en tabel kan ikke læses"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}': en tabel er ulæselig"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}': en MSIX installerer alle sine filer (when); brug msi-only = true"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}': en MSIX fjerner alle sine filer (keep); brug msi-only = true"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}': cabinet '{2}' er beskadiget eller ikke stored/MSZIP"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}': cabinetnavnet '{2}' er ikke et simpelt filnavn"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}': komprimeret fil '{2}' (sekvens {3}) har ingen cabinet"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}': mappen '{2}' har en overordnet '{3}', som ikke findes"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}': mappen '{2}' er sin egen forfader eller indlejret for dybt"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}': filen '{2}' passer ikke med sin MsiFileHash"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}': filen '{2}' har ingen komponent eller mappe"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}': filen '{2}' er {3} byte, File-tabellen siger {4}"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}': filen '{2}' er ikke i cabinet '{3}'"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}': dens eksterne cabinets er ikke dækket af signaturen (--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}': dens mappe fører ikke til en kendt placering"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}': mere end {2} byte at skrive (--limit-bytes); intet blev udpakket"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}': ingen --timestamp: signaturen holder op med at være gyldig, når certifikatet udløber"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}': pakken '{2}' passer ikke med sin SHA-256"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}': cabinetstrømmen '{2}' findes ikke"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}': manifestet har ingen {2} {3}"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}': manifestet nævner '{2}', som ikke er i pakken"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}': tidsstempel fra {2}: {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}': transformationen '{2}' kan ikke læses i forhold til '{3}': {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' er pakkens eget sprog ({2}); angiv den tekst uden suffikset"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "'version' tager ingen argumenter"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "--allow-unsigned-cabs gælder .msi"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "--arch for en samling: en liste med x64, x86 og arm64, hver én gang (fik '{1}')"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "--dist navngiver en ny mappe ved siden af kilden (ingen sti)"
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "--flat er til et .msixbundle-output (dets pakker skrives ved siden af)"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "--jobs tager et tal fra 1 til 64 (fik '{1}')"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "--key signerer højst {1} eksterne cabinets; hæv cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "--key-store er et Windows-certifikatlager; brug andre steder en nøglefi
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store tager certifikatets SHA-1-aftryk (40 hexadecimale cifre)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1}: intet sådant sprog (indbyggede: {2}; et andet kræver sin sprogpakke, {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "--lang (eller RUBRAPACK_LANG) vælger sproget for disse tekster: {1}, eller et sprog med en sprogpakke.\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "--lang kræver et sprog, f.eks. en eller ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "--languages kræver dialogbokse: angiv også --ui"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "--msix-compress tager deflate eller store (fik '{1}')"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1}: variablen er ikke sat"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "--patch-code tager et GUID med store bogstaver og klammer: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1}: variablen er ikke sat"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "--previous sammenligner to .msi-pakker"
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots: operativsystemets rodcertifikater kan ikke læses"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "--target {1} passer ikke til outputtet '{2}'"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "--target {1} er ikke implementeret (msi eller msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "--target tager msi eller msix (fik '{1}')"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "--winget kræver en [winget]-tabel: identifier, installer-url, license, 
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "--winget kræver pakken i én fil: winget henter én, så ikke cab = \"external\""
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "-D {1} er angivet to gange"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1}: '{2}' er et Windows-navn; giv variablen et andet navn"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "-D kræver NAVN=VÆRDI (fik '{1}')"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "-i spørger om hvert svar; angiv enten -i eller indstillingerne"
 msgid "; its range is "
 msgstr "; dets interval er "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "ActionProperty '{1}' er ikke i SecureCustomProperties"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Mappenavn under Program Files"
 msgid "Folder with the files to install"
 msgstr "Mappe med filerne, der skal installeres"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "ID '{1}' er allerede brugt (linje {2}); ID'er skal være forskellige på tværs af alle tabeller"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "Installer for (machine, user, dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "Nøgle som tabel.nøgle (package.version, dir.INSTALLDIR.path, ...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "KeyPath '{1}' tilhører en anden komponent"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "KeyPath '{1}' er ikke i File"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "KeyPath '{1}' er ikke i Registry"
 
 msgid "Korean dialogs as well as English?"
 msgstr "Koreanske dialogbokse ud over engelske?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "LastSequence {1} er lavere end for et lavere DiskId"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX: hvad en MSIX-pakke har brug for, og hvad den ikke kan indeholde"
 msgid "Main program, for shortcuts (- for none)"
 msgstr "Hovedprogram, til genveje (- for intet)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "Manual: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "Produktnavn"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "ProductCode og UpgradeCode er det samme GUID"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} er ikke højere end den forrige {2} i de første tre felter: Windows Installer opgraderer ikke"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Program, som genvejene åbner (- for ingen genveje)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1}: intet sådant sprog (indbyggede: {2}; et andet kræver sin sprogpakke, {3}.po)"
 
 msgid "Reference, "
 msgstr "Reference, "
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "Sekvens {1} er ikke dækket af nogen Media-række (sidste {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "Sekvens {1} bruges af en anden fil"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "Kildefil, der skal skrives"
 msgid "Source format"
 msgstr "Kildeformat"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "Source skal navngive en File-række for type {1}"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "TOML-delmængden"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "UTF-16 big-endian-filer understøttes ikke; gem som UTF-8"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "UpgradeCode {1} er forskellig fra den forrige versions {2}: denne pakke erstatter den ikke"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "Versioner og opgraderinger"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer tillader højst 255.255.65535(.65535)"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "Windows sagde ikke, hvad der er installeret for '{1}'"
 
 msgid "Windows name"
 msgstr "Windows-navn"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] kræver '{4}'"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] kan ikke indgå i et fletningsmodul; pakken, der fletter det, har det"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] understøttes ikke endnu (planlagt til {3})"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] kan ikke indgå i en MSIX; tilføj msi-only = true for at bygge MSIX'en uden den"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] kan ikke indgå i en MSIX; tilføj msi-only = true for at bygge MSIX'en uden den"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "[{1}.{2}] ligger i brugerens AppData eller LocalAppData: en dual-pakke, der installeres for alle brugere, lægger den kun i profilen hos den bruger, der installerer"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: et ID i et fletningsmodul har højst 35 tegn (modulets GUID føjes til)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] kræver et ID: skriv [{2}.ID]"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] tager intet ID: skriv [{2}]"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "[Content_Types].xml er ikke den sidste post (ikke en pakke, som rubrapac
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]]-matricer af tabeller understøttes ikke; giv hvert element sit eget [kind.ID]"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] placeres én gang: before, after eller sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] kræver både do og undo (undo ruller også en mislykket do tilbage)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] kræver entry: DLL-funktionen, der skal kaldes"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] kræver run = \"file:<ID>\": programmet, som do og undo kører"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "[action.{1}] kører en fil fra denne pakke før InstallFinalize, hvor en første installation endnu ikke har den (Windows Installer-fejl 1721 eller 1723): placer handlingen efter InstallFinalize, eller gør den deferred"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] kører én ting: run (en exe), dll (en installeret DLL) eller binary (en DLL i pakken); eller do og undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}]: {2} er til én handling, ikke til et do/undo-par"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}]: en udskudt handling, der kører en installeret fil, skal komme efter InstallFiles (sequence > 4000)"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}]: en øjeblikkelig handling kører som den bruger, der installerer; as er til de andre faser"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}]: args hører til et program; en DLL får data"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}]: check hører til et do/undo-par"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}]: data er til en udskudt, commit- eller rollback-handling (en øjeblikkelig læser egenskaber)"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}]: entry er en DLL's funktion; run tager args"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: args til en MSIX skal være ren tekst (ingen [...], der udfyldes ved installationen)"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}]: i en MSIX åbner en filtype et program: target skal være en eksekverbar fil i en [msix-app.*]"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] findes to gange"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "[chain-package] kræver et ID: skriv [chain-package.ID]"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}]: app-id og typelib skrives kun til MSI'en; MSIX'en registrerer klassen uden dem"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}]: args hører til et program; en DLL indlæses, den startes ikke"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}]: surrogate kører en DLL i dllhost; '{2}' er et program"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}]: threading gælder en DLL; et program vælger sin egen apartment"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}]: typelib-version og typelib-file kræver typelib"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] havner i {2}; eller msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}]: kilden skal være en fil, der indgår i pakken"
 
 msgid "[define] values must be strings"
 msgstr "[define]-værdier skal være strenge"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] kræver '{2}'"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "[dialog-control.{1}] kræver image"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] kræver 'property'"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] kræver 'text'"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] kræver 'values'"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}] har {2} kontrolelementer; højst 64"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}] har ingen [dialog-control.*]"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] placeres efter sig selv via andre dialogbokse"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] kræver ui = \"minimal\", \"installdir\" eller \"features\""
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}]: '{2}' er et Windows-navn; giv dir'en et andet ID"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}]: guard kræver rubrapacks hjælpe-DLL, som et fletningsmodul ikke indeholder"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] kræver en funktion"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}]: en MSIX sætter alle sine variabler (when); brug msi-only = true"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: værdien navngiver et sted, som en MSIX ikke kan give (en mappe uden for pakken, som ikke er en Windows-mappe, eller en del fra installationstidspunktet); brug msi-only = true"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}]: med external-location = true indeholder pakken ingen af programmets filer, altså heller ikke rubrapacks starter; eller msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] er allerede i sit programs mappe; isolate-for er til en delt DLL installeret et andet sted"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] ligger i brugerprofilen og har component-guid: nøglestien forbliver filen, hvor Windows' regler vil have en HKCU-værdi (ICE38); udelad component-guid for at få en"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}]: {2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' er ikke en .NET-assembly (ingen CLI-header med en Assembly-række)"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}]: en .NET-assembly bærer selv sit manifest; manifest er til en Win32-assembly"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}]: en Win32-assembly skal have manifest = \"file:<ID>\", sin manifestfil"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: en delt .NET-assembly kommer i GAC'en, som kun tager assemblies med stærkt navn; signer den eller angiv assembly-for = \"file:<program>\""
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: en delt Win32-assembly kommer i WinSxS med et katalog signeret med den nøgle, manifestets publicKeyToken angiver; byg med --key (eller angiv assembly-for = \"file:<program>\" for en privat)"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: manifestet '{2}' for en delt Win32-assembly angiver underskriveren: publicKeyToken i assemblyIdentity (tokenet for den --key, den bygges med)"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for og manifest hører til assembly = \"dotnet\" eller \"win32\""
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}]: dets manifest '{2}' har ingen assemblyIdentity med name og version"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: dets manifest '{2}' skal være i samme dir og feature (og under samme when): de to er én komponent"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}]: manifestet angiver publicKeyToken \"{2}\", men --key-nøglens token er \"{3}\""
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifestet '{2}' tilhører en anden assembly eller er selv en assembly"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}]: Stifinder indlæser en {2}-handler fra en DLL; [com.{3}] er et program"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}]: Windows læser egenskabshandlere kun pr. computer; pakken kræver scope = \"machine\""
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}]: en eksempelhandler kører i Windows' prevhost; udelad app-id og surrogate i [com.{2}]"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}]: en MSIX indeholder kun miniature- og eksempelhandlere (en pakket egenskabshandler gav Stifinder ingen værdier); msi-only = true beholder den til MSI'en"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}]: en MSIX-filtype tilhører et program; tilføj en [msix-app.*]"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}]: klassen {2} er ikke en [com.*] i denne pakke (handlerens DLL betjener den)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}]: i en MSIX deler handlere alle deres typer eller ingen (en type er i én filtypetilknytning)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}]: i en MSIX kører dens klasse i en surrogate; threading = \"sta\" i [com.{2}] giver dens vindue en meddelelsesløkke (med threading = {3} kan eksemplet forblive tomt)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}]: i en MSIX er alle dens typer i én [assoc]-filtype eller i ingen"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}]: dens klasse er msi-only ([com.{2}]); MSIX'en ville ikke have nogen server til den"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}]: types er en liste med filtyper, f.eks. [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] havner i {2}; eller msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] kræver 'value'"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] kræver en funktion: angiv 'feature' her eller på dens dir"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}]: en MSIX skriver alle sine INI-poster (when); brug msi-only = true"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}]: værdien har en del, som Windows Installer udfylder ved installationen ([...]); en MSIX skriver filen, når den bygges"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] kræver 'on': hvor elementet vises, f.eks. [\".txt\"] eller \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] kræver 'target' (programmet, det starter) eller elementer med parent = \"{2}\" (en undermenu)"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] kræver 'target': programmet, som elementet starter"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}]: Windows 11-menuen tager kun et ID af bogstaver og cifre (ingen '_'): omdøb det, eller brug windows11 = false"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: en undermenu starter intet: udelad 'args'"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}]: et element i en undermenu vises, hvor undermenuen vises: udelad 'on'"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args har en del, som Windows Installer udfylder ved installationen ([...]); en MSIX indeholder kun fast tekst"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}]: hide-when er \"HKCU\\\\key\\\\value\" eller \"HKLM\\\\...\", på et punkt i Windows 11-menuen, der ikke er i en undermenu"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}]: hide-when nævner en værdi, som pakken selv skriver ([registry.{2}]): punktet ville aldrig blive vist"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: dens program er ikke i MSIX'en (msi-only?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: dens værdier kan ikke indgå i pakkens registreringsdatabase"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: list har en del, som Windows Installer udfylder ved installationen ([...]); en MSIX indeholder kun fast tekst"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}]: list står for {2}, når stierne ikke kan være på en kommandolinje: kræver multi = \"one\", {3} i args og {4} (listefilen) i list"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}]: on = \"{2}\": der er ingen [assoc.{3}]"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}]: on er en filtype eller en liste af dem, f.eks. [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}]: parent '{2}' er ikke en [menu.*]"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}]: parent '{2}' skal være en undermenu: en [menu.*] uden target og uden egen parent"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] havner i {2}; eller msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] kræver en funktion: angiv 'feature' her eller på dens dir"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}]: '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; eller msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] kræver feature (eller with = \"file:<ID>\")"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}]: feature hører til en egen komponent, ikke til with"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name angiver én fil; name har jokertegn"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}]: et delingsmål kræver types, formats eller begge"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}]: en automatisk afspilningshandler kræver content-events, device-events eller begge"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args skal være ren tekst (ingen [...], der udfyldes ved installationen)"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}]: device-events kræver class (programmets IHWEventHandler-COM-klasse)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}]: file skal være {2}"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}]: file skal navngive en fil, der indgår i pakken"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}]: file skal navngive et program, der indgår i pakken"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types er en liste med filtyper, f.eks. [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows tager kun bogstaver og cifre"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "[msix-psf] går hverken sammen med external-location = true eller [env.*
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "[msix-psf] starter programmerne gennem PSF-starteren: det kræver et [msix-app.ID]"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf]: config '{1}' nævner ikke programmet '{2}' i sine \"applications\""
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf]: files har ingen '{1}' (starteren)"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}]: filen '{2}' er ikke en DLL"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] angiver sin driver én gang: driver (en [odbc-driver]) eller driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] med driver-name kræver with = \"file:<ID>\": komponenten den installeres med"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}]: en pakke pr. computer registrerer datakilder for computeren"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] nævner én kopi: msix (med publisher) eller upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}]: msix er pakkens identitetsnavn (3 til 50 bogstaver, cifre, '.' eller '-') og kræver publisher (\"CN=...\"), som manifestet har dem"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}]: forhåndstjekket leder efter den anden kopi: kræver preflight = true"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}]: upgrade-code er pakkens egen (det er en opgradering, ikke en anden kopi)"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] kræver, at dens dir har en funktion"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}]: args til en MSIX skal være ren tekst (ingen [...], der udfyldes ved installationen)"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}]: i en MSIX åbner et skema et program: target skal være en eksekverbar fil i en [msix-app.*]"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] kræver 'value' (eller remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}]: HKCR rækker ikke uden for en MSIX; brug [assoc.*], [protocol.*], [com.*] eller [handler.*] eller msi-only = true"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: en qword-værdi kræver rubrapacks hjælpe-DLL, som et fletningsmodul ikke indeholder"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}]: en MSIX indeholder kun værdier under {2}\\Software"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}]: en MSIX hverken fjerner værdier eller efterlader dem (remove, keep); brug msi-only = true"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}]: en MSIX skriver alle sine værdier (when); brug msi-only = true"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}]: værdien har en del, som Windows Installer udfylder ved installationen ([...]); en MSIX indeholder kun faste værdier"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: on = \"uninstall\" kræver rubrapacks hjælpe-DLL, som et fletningsmodul ikke indeholder"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: nøgle- eller værdinavnet kan ikke indgå i en registreringsdatafil"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}]: users = \"all\" gælder root = \"HKCU\" med on = \"uninstall\", i en pakke til computeren"
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] kræver en funktion: angiv 'feature' her eller på dens dir"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}]: recursive = true gælder ikke en mappe under {2}"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true kræver rubrapacks hjælpe-DLL, som et fletningsmodul ikke indeholder"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}]: users = \"all\" gælder recursive = true på en mappe i AppData eller LocalAppData, i en pakke til computeren"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args til en MSIX skal være ren tekst (ingen [...], der udfyldes ved installationen)"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file skal navngive et program, der indgår i pakken"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] annoncerer funktionen '{2}', som har advertise = \"disallow\""
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}]: advertise kombineres ikke med when"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}]: en MSIX har kun genveje på skrivebordet og i menuen Start{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}]: en MSIX-genvej har ingen working-dir"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}]: en MSIX-genvej er der altid (when gælder en MSI)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: en MSIX-genvej viser sit programs logo; icon gælder en MSI"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}]: en annonceret genvej er til en MSI (en MSIX installerer hele pakken)"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}]: en annonceret genvej kræver et ikon"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args til en MSIX skal være ren tekst (ingen [...], der udfyldes ved installationen)"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}]: i en MSIX starter en genvej et program: target skal være en eksekverbar fil i en [msix-app.*]"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}]: posten i menuen Start for en MSIX er dens program, som ikke tager args"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: ingen dialogtekst har dette ID"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "[ui] embedded er til en MSI; en MSIX har ikke sin egen installations-UI"
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "[ui] kræver ui = \"basic\" eller et andet dialogsæt i [package] (eller embedded = \"....dll\")"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "escapesekvensen \\{1} er ikke en Unicode-skalarværdi"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "`lint` af en pakke: dialogbokse, tegntabel, tekstnormalisering"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` af en MSIX-pakke eller -samling"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "et {1}-kontrolelement har ingen property"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "et {1}-kontrolelement har ingen tekst; sæt et tekstkontrolelement ved siden af"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "et {1}-kontrolelement kræver [property.{2}] med en af sine værdier som standard (en lydløs installation bruger den)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "en {1}-pakke kan ikke skrive til HKLM; brug HKMU"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "et certifikat i stien har en kritisk udvidelse, som rubrapack ikke forst
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "et certifikat i stien er signeret af et certifikat, der ikke er en CA"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "en kæde indeholder kun [chain], [chain-package.ID] og [define], ikke [{1}]; pakkerne bygges fra deres egne kilder"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "en kæde indeholder højst {1} pakker"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "en kæde kræver mindst én [chain-package.ID]"
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "et tegn, som Windows ikke tillader i et navn (/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "en container rummer højst {1} pakkefamilier"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "en funktion, som denne rubrapack ikke tilbyder (eller blev bygget uden)"
 msgid "a file larger than allowed"
 msgstr "en fil større end tilladt"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "et filnavn under '{1}' er ikke gyldig Unicode og kan ikke pakkes"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "en fils komponent- eller mappekæde er brudt"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "en skrifttype indgår i en MSIX via en [font.*], der navngiver den"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "en frameworkpakke har ingen egne programmer, funktioner eller afhængigheder ({1})"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "en hive-celle krydser sin bin"
 msgid "a hive version or type rubrapack does not read"
 msgstr "en hive-version eller -type, som rubrapack ikke læser"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "en kendt mappe selv ('{1}') kan ikke få tilladelser"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "en proxy med brugernavn eller adgangskode understøttes ikke"
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "en qword-værdi er et heltal eller \"0x\" og 1 til 16 hexadecimale cifre"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "et alternativknapkontrolelement stabler sine knapper: højden skal være mindst 12 pr. værdi ({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "et reserveret enhedsnavn"
 msgid "a rollback action cannot be asynchronous"
 msgstr "en tilbagerulningshandling kan ikke være asynkron"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "et skema er et lille bogstav efterfulgt af små bogstaver, cifre, '+', '-' eller '.' (fik '{1}')"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "en sektion ligger uden for filen"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "et tjenestenavn må ikke indeholde '/' eller '\\' (højst 256 tegn)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "en setup-.exe bygges fra en kilde med [chain]; '{1}' bygger en pakke (.msi, .msix)"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "en version er 3 eller 4 tal med punktummer, f.eks. 1.0.0"
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "account skal være LocalSystem, LocalService eller NetworkService"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "handlingen '{1}' er allerede defineret"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "handlingen er hverken en standardhandling eller i CustomAction"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "action skal være \"warn\" eller \"refuse\" (fik '{1}')"
 
 msgid "adds too many tables"
 msgstr "tilføjer for mange tabeller"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "advertise skal være \"allow\" eller \"disallow\" (fik '{1}')"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "after = '{1}' er hverken en side i dette dialogsæt (RpWelcomeDlg{2}{3}{4}) eller en [dialog.*]"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "alias hører til kind = \"alias\""
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "alias skal være et filnavn, der ender på .exe: bogstaver, cifre, '.', '_', '-' (fik '{1}')"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "en INI-sektion må ikke indeholde ']', og en nøgle må ikke indeholde '
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "en MSIX kan ikke placere filer i den midlertidige mappe"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "et program har ét alias ([msix-extension.{1}] er allerede ét)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "et program har ét delingsmål ([msix-extension.{1}] er det allerede)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "en valgfri pakke eller ændringspakke erklærer ingen funktioner og inge
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "en x86-pakke skriver kun 32-bit-visningen af registreringsdatabasen"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "appen '{1}' er ikke en [msix-app.*]"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "appinstaller-uri og package-uri hører sammen: hvor .appinstaller-filen og pakken vil ligge"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "arch skal være \"x64\", \"arm64\" eller \"x86\" (fik '{1}')"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "arch skal være \"x64\", \"x86\" eller \"arm64\" (installationsprogrammets egen)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "argument {1} er ikke gyldig UTF-8 (byte {2})"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "argument {1} er ikke gyldig Unicode (UTF-16-enhed {2})"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "matricer i matricer understøttes ikke"
 msgid "arrays must hold only strings or only integers"
 msgstr "matricer må kun indeholde strenge eller kun heltal"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "as skal være \"system\" eller \"user\" (fik '{1}')"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "assembly skal være \"dotnet\" eller \"win32\""
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "højst {1} sprog ud over engelsk"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "højst 100 [msix-app.*]-tabeller"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "højst 50 [action.*]-tabeller (denne fil har {1})"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "banner skal være en .bmp-fil (Windows Installer viser kun BMP)"
 msgid "build a package from a source file"
 msgstr "byg en pakke fra en kildefil"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "at bygge {1} fra en {2}-kilde kræver sin egen opgraderingsfamilie: tilføj {3} = \"{...}\" til [package]"
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "cab skal være \"embed\" eller \"external\""
 msgid "cannot be read"
 msgstr "kan ikke læses"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "kan ikke samle pakkerne: {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "kan ikke sammenligne '{1}' og '{2}'"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "kan ikke oprette '{1}'"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "kan ikke oprette '{1}'{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "kan ikke finde '{1}'; opret en med `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "kan ikke lave et standardlogo"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "kan ikke lave en patch fra '{1}' til '{2}'"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "kan ikke lave en transformation fra '{1}' til '{2}'"
 
 msgid "cannot open the certificate store"
 msgstr "kan ikke åbne certifikatlageret"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "kan ikke læse '{1}'"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "kan ikke læse '{1}' ({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "kan ikke læse pakken '{1}'"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "kan ikke læse kildefilen '{1}'"
 
 msgid "cannot read that folder"
 msgstr "kan ikke læse den mappe"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "kan ikke læse {1}-filen '{2}'"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "kan ikke læse pinkodefilen '{1}'"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "kan ikke læse cabinet '{1}' ved siden af '{2}'"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "kan ikke læse certifikatfilen '{1}'"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "kan ikke læse certifikaterne i '{1}'"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "kan ikke læse certifikaterne i '{1}': {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "kan ikke læse nøglefilen '{1}'"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "kan ikke læse adgangskodefilen '{1}'"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "kan ikke læse den ukomprimerede fil '{1}' ved siden af '{2}'"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "kan ikke skrive {1}"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "kan ikke skrive '{1}'"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "kan ikke skrive '{1}' for at kontrollere den"
 
 msgid "cannot write resources.pri"
 msgstr "kan ikke skrive resources.pri"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "kan ikke skrive menufilerne ved siden af '{1}'"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "kan ikke skrive ressourcepakken for {1}"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "capabilities er en matrix af navne, f.eks. [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "funktionen '{1}' er ikke en, rubrapack kender (manualen viser dem)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "funktionen '{1}' kræver Windows-build 17763 eller nyere"
 
 msgid "carriage return without a line feed"
 msgstr "vognretur uden linjeskift"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "certifikatfilen '{1}': {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "kontrollér kildestierne (relative til kildefilen); angiv any-arch = tru
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "kontrollér stavningen (meddelelsen foreslår det nærmeste navn) og tabellens nøgler"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "klassen {1} betjenes allerede af [com.{2}]"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "klassen {1} er også i [msix-extension.{2}]"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "class skal være et GUID som {12345678-...} (fik '{1}')"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "close-programs har ingen virkning med preflight = false"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "close-programs skal være \"ask\", \"always\" eller \"never\" (fik '{1}')"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "kolonnen {1} indeholder den forkerte slags værdi"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "kolonnen {1} er ikke gyldig UTF-8"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "kolonnen {1} må ikke være null"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "kolonnen {1}: {2} ligger uden for kolonnens interval"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "kolonnen {1}: {2} UTF-16-enheder, kolonnen rummer {3}"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "kolonnen {1}: {2} tegn, kolonnen rummer {3}"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "kommandoen '{1}' er ikke implementeret endnu"
 
 msgid "command-line"
 msgstr "kommandolinje"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "komponenten {1} {2} har skiftet mellem 32 og 64 bit: komponentreglerne kræver et nyt GUID"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "komponenten {1} {2} findes ikke længere (dens ressourcer fjernes med den forrige version)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "komponenten {1} {2} har nu nøglestien {3} i stedet for {4}: komponentreglerne kræver et nyt GUID"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "condition har et ulukket anførselstegn eller ubalancerede parenteser"
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "condition er længere end 240 tegn (rubrapack tilføjer \"Installed OR ( )\")"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "config indeholder \"Navn=værdi\"-strenge (fik '{1}')"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "indeholder et kontroltegn"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "indeholder et af < > : \" / \\ | ? *"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "content-type er en medietype, f.eks. \"image/png\" (fik '{1}')"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "default-when kræver level over 1 (en funktion på level 1 installeres a
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "definér variablen ([define] eller -D NAVN=værdi), eller skriv $$ for et bogstaveligt $"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "dialogboksen '{1}' er ikke en [dialog.*]"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "dialog-ID'er, der begynder med 'Rp' (og FilesInUse), er rubrapacks egne"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "dir '{1}' ligger i sig selv (stiløkke)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "dir '{1}' er hverken et dir-ID eller Programs, Desktop, StartMenu eller Startup"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "dir '{1}' er ikke et dir-ID"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "dir '{1}' er ikke defineret"
 
 msgid "dir ID"
 msgstr "dir-id"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "direction skal være \"in\" eller \"out\" (fik '{1}')"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "do/undo-argumenterne er længere end 255 tegn"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "nøgler med punktum understøttes ikke; sæt nøglen i sin egen tabel"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "driveren '{1}' er ikke en [odbc-driver.*]"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "ender med et mellemrum eller et punktum"
 msgid "error"
 msgstr "fejl"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "executable = \"{1}\" skal navngive en [file.*], der indgår i pakken"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "']' forventet for at lukke tabelnavnet"
 msgid "expected a key, a [table] or a comment"
 msgstr "en nøgle, en [tabel] eller en kommentar forventet"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "filtypenavnet '{1}' har allerede et program ([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "extension skal være '.' og små bogstaver, cifre, '_' eller '-' (fik '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "external-location = true kræver Windows build 19041 eller nyere: angiv 
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files har ingen virkning med preflight = false"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "extra-files skal være \"ask\", \"keep\" eller \"delete\" (fik '{1}')"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "funktionen {1} findes ikke længere: installationer, der havde den, mister det, den indeholdt"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "funktionen '{1}' er sin egen forfader"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "funktionen '{1}' er ikke defineret"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "den overordnede funktion '{1}' er ikke defineret"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "filen '{1}' kører allerede tjenesten '{2}'"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "filen '{1}' er allerede registreret som skrifttype"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "filen '{1}' er ikke en [file.*] i denne pakke"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "filen '{1}' skal installeres i selve Fonts-mappen (en [dir.*] med path = \"Fonts\")"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "filen '{1}' kræver en funktion: angiv 'feature' her eller på dens dir"
 
 msgid "file must be \"file:<ID>\""
 msgstr "file skal være \"file:<ID>\""
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "filnavnet er {1} UTF-16-enheder; med sit korte 8.3-navn rummer MSI højst {2}"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "file-system-virtualization og registry-virtualization = false kræver Windows-build 18362 eller nyere: angiv [msix] min-version = \"10.0.18362.0\""
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file: '{1}' er ikke en [file.*] i denne pakke"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' betjener kun COM-klasser som .exe eller .dll"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "ret værdien, meddelelsen nævner; ID'er er bogstaver, cifre og '_' og e
 msgid "floating-point numbers are not supported"
 msgstr "flydende kommatal understøttes ikke"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "mappen '{1}' kræver en funktion: angiv 'feature' her eller på dens dir"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "mappenavnet er {1} UTF-16-enheder; med sit korte 8.3-navn rummer MSI højst {2}"
 
 msgid "follow-parent needs a parent"
 msgstr "follow-parent kræver en parent"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "skrifttyper kræver scope = \"machine\" (denne er {1})"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "format {1} kræver en nyere rubrapack (denne læser format {2})"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "format er et heltal: format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "angiv én af --key, --pkcs11 og --key-store"
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "angiv undermapper til programmappen adskilt af kommaer, eller - for ingen"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "glob '{1}' matcher ingen fil"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "glob '{1}' matcher outputfilen '{2}'"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "har tekst uden for ASCII i en anden tegntabel end 65001 (UTF-8)"
 msgid "icon must be an .ico file"
 msgstr "icon skal være en .ico-fil"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon: filen '{1}' er ikke en [file.*] i denne pakke"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "id skal være et GUID som {12345678-1234-1234-1234-123456789ABC}: modulets eget, bevaret i hver version"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "identifier er wingets Publisher.Package: 2 til 8 dele på 1 til 32 tegn, uden mellemrum eller \\ / : * ? \" < > | (fik '{1}')"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "identity-name skal være 3 til 50 tegn af A-Z, a-z, 0-9, '.' og '-' (fik '{1}')"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "indlejrede tabeller understøttes ikke; brug en [kind.ID]-tabel"
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "installed spørger Windows, hvad der er installeret; det kører kun på Windows"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "installeres til den samme sti som linje {1} (Windows ignorerer store og små bogstaver i navne{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "intern fejl: en indbygget dialogboks har en defekt tabulatorrækkefølge
 msgid "internal: a module table has no _Validation rule"
 msgstr "intern: en modultabel har ingen _Validation-regel"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "intern: ingen _Validation-regel for en kolonne i {1}"
 
 msgid "invalid"
 msgstr "ugyldig"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "ugyldig - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "er ikke en gyldig MSIX-pakke"
 msgid "is not valid UTF-8"
 msgstr "er ikke gyldig UTF-8"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for: '{1}' er ikke et program (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "behold opgraderingskoden, hæv versionen, behold komponentkoderne for filer, der bliver"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "nøglen '{1}' er sat to gange i denne tabel (først på linje {2})"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "nøglen '{1}' må ikke begynde eller slutte med '\\' eller indeholde en tom del"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "nøglen '{1}' uden for en tabel; kun 'format' kommer før den første tabel"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "nøglefilen '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "kind skal være \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" eller \"autoplay\" (fik '{1}')"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "kind skal være \"preview\", \"thumbnail\" eller \"property\" (fik '{1}')"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "kind skal være registry, file, dir eller component"
 msgid "labels is an array of strings, one per value"
 msgstr "labels er en matrix af strenge, én pr. værdi"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "sproget '{1}' har ingen sprogpakke (lang/{2}.po ved siden af kilden eller RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "sproget '{1}' står to gange på listen"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "sproget '{1}' er ikke i [ui] languages"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "sproget '{1}' mangler {2} tekst(er), den første er {3}: tilføj dem til dets sprogpakke (lang/{4}.po), eller angiv [ui-text.ID] text-{5}"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "sproget '{1}' kræver [ui] langid-{2} (dets LANGID'er til det automatiske valg)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "sproget '{1}' kræver [ui] name-{2} (dets navn på sprogsiden)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "language skal være \"neutral\", \"en-US\" eller \"ko-KR\""
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" står alene, ikke i en matrix: det tager alle indbyggede sprog med"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "languages indeholder koder som \"ko\" eller \"zh_TW\" (2 eller 3 små bogstaver og _ og en regions to store bogstaver) (fik '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "launcher er filnavnet på PSF-starteren i files, f.eks. \"PsfLauncher64.
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license skal være en .txt-, .md- (vist som ren tekst) eller .rtf-fil"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint: {1} række {2}: kolonnen {3} er ikke i NFC ({4} række(r){-5}); build --nfc sætter mappe-, fil- og genvejsnavne i NFC"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint: {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint: tegntabel {1}, ikke 65001: tekst kontrolleres ikke som UTF-8, bredder kun for ASCII"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint: se problemerne ovenfor\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "vis nøglerne, som et token eller Windows-certifikatlageret kan signere med"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "logoet '{1}' og dets .scale-100-variant findes begge: behold ét"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "logoet '{1}' i skala {2} er {3}x{4} pixel; det skal være {5}x{6}"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "logoet '{1}' i skala {2} er ikke en PNG-fil"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "logoet '{1}' er {2}x{3} pixel; en filtypes logo skal være kvadratisk"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "logoet '{1}' er {2}x{3} pixel; det skal være {4}x{5}"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "logoet '{1}' er ikke en PNG-fil"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "logoet '{1}' blev ikke fundet (heller ikke som .scale-100 ... .scale-400-varianter)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logoet '{1}': et logo med skalavarianter kræver et ASCII-filnavn med filtypenavn"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "logo skal være en .png i 8-bit RGB eller RGBA, ikke interlaced, højst 1024 pixel pr. side"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "main-package er hovedpakkens identitetsnavn (fik '{1}')"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "må ikke indeholde kontroltegn eller / \\ : * ? \" < > | $"
 msgid "may not start with a space or end with a space or a dot"
 msgstr "må ikke begynde med et mellemrum eller slutte med et mellemrum eller et punktum"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "fletningsmodulet '{1}' blev ikke fundet"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "flere end 3 omdirigeringer"
 msgid "more than 96 sections"
 msgstr "flere end 96 sektioner"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "mere end én kildefil ('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "der er mere end ét token: navngiv et med --token-label"
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "multi skal være \"each\", \"one\" eller \"single\" (fik '{1}')"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "skal være 1 til 64 byte"
 msgid "name contains a control character"
 msgstr "navnet indeholder et kontroltegn"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "name er en pakkes identitetsnavn (fik '{1}')"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "navngiver en mappe, som dens Directory-tabel ikke har"
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "new msix er ikke implementeret endnu: lav en MSI-kilde, og tilføj [msix] (se manualen)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "ingen linje 'format = {1}': en kilde i formatet fra rubrapack 0.18 eller tidligere, som denne version ikke læser (stier begynder nu med $(ProgramFiles) eller $(INSTALLDIR)); se Source format i manualen"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "intet servernavn, eller et længere end 255 byte"
 msgid "no string pool: not a transform"
 msgstr "ingen strengpulje: ikke en transformation"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "ingen tabel '{1}' i '{2}'"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "oktale og binære tal understøttes ikke; brug decimal eller 0x"
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "on = \"uninstall\" gælder HKLM, HKCU og HKMU (klasser hører til [assoc.*], [com.*] og lignende)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "on = \"uninstall\" fjerner en nøgle med alt under den: '{1}' er ikke et produkts egen nøgle under Software"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "on = \"uninstall\" fjerner hele nøglen ved fjernelsen; den tager ingen '{1}'"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "on skal være \"install\" eller \"uninstall\""
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "on skal være \"install\", \"uninstall\" eller \"both\""
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on: hver er en filtype ('.' og små bogstaver, cifre, '_' eller '-'), \"*\" (hver fil), \"folder\", \"background\" (den tomme del af en mappe), \"drive\" eller \"assoc:<ID>\" (fik '{1}')"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "kun radio-, combo- og listbox-kontrolelementer tager values"
 msgid "out of memory"
 msgstr "hukommelsen er opbrugt"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "output '{1}': rubrapack skriver .msi, .msm, .msix, .msixbundle, .msixupload og en kædes setup-.exe"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "pakken '{1}' {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "pakken '{1}' blev ikke fundet"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "parent skal være et andet produkts upgrade-code, ikke denne pakkes egen"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "parent skal være hovedproduktets upgrade-code, et GUID som {12345678-1234-1234-1234-123456789ABC}"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "path skal begynde med en Windows-mappe (f.eks. $(ProgramFiles) eller $(S
 msgid "paths"
 msgstr "stier"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "perceived-type skal være \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" eller \"application\" (fik '{1}')"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "tilladelser kræver scope = \"machine\" (denne er {1})"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "phase skal være \"immediate\", \"deferred\", \"commit\" eller \"rollback\" (fik '{1}')"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "ports skal være en port eller et interval som \"8000-8100\" inden for 1-65535 (fik '{1}')"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "udskriv denne hjælp eller én kommandos brug"
 msgid "product-code must be a GUID"
 msgstr "product-code skal være et GUID"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "profile skal være \"all\", \"domain\", \"private\" eller \"public\" (fik '{1}')"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "prog-id '{1}' tilhører allerede [com.{2}]"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "prog-id '{1}' tilhører også [assoc.{2}]: en filtype og en COM-klasse kræver to navne"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "prog-id '{1}' er også i [assoc.{2}] med en anden description, target, icon eller args"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "prog-id '{1}' findes også i [assoc.{2}] med et andet logo"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "prog-id skal være bogstaver, cifre, '.', '_' eller '-', ikke begynde med et ciffer, højst 39 (fik '{1}')"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "properties er til Windows Installer-pakker; en MSIX tager ingen"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "egenskaben '{1}' tilhører allerede kontrolelementet '{2}'"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "egenskaben '{1}' har navnet på en dir eller funktion"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "egenskaben '{1}' er allerede defineret (linje {2})"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "egenskaben '{1}' søges allerede (linje {2})"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "egenskaben '{1}' sættes af rubrapack eller installationsprogrammet og kan ikke defineres her"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "egenskaben '{1}' skal være et eget offentligt navn (store bogstaver)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "egenskaben '{1}' skal være et offentligt navn: store bogstaver, cifre og '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "protocol skal være \"tcp\" eller \"udp\" (fik '{1}')"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "public-folder skal være en mappe i pakken, f.eks. \"Public\" (fik '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "recursive = true kører aldrig, når en opgradering fjerner denne versio
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "recursive = true fjerner mappen med alt i den; den tager ingen 'name'"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "refuse-upgrade-below {1} er højere end denne pakkes version {2}"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "refuse-upgrade-below '{1}' skal være en version som 1.2.3"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message kræver refuse-upgrade-below"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "region {1} på sprogsiden har {2} sprog, højst {3} (X-Rubrapack-Group i deres pakker)"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "registration skal være \"machine\" eller \"user\" (fik '{1}')"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "registreringsdatabasen '{1}' fjerner en værdi; den har intet at beskytte"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "registreringsværdien '{1}' kræver en funktion"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "remove-addons kræver oprydningsopgaven: fjern cleanup = false"
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "replaces indeholder højst 16 opgraderingskoder"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "replaces indeholder opgraderingskoder, GUID'er som {12345678-1234-1234-1234-123456789ABC} (fik '{1}')"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "replaces er en matrix af opgraderingskoder, f.eks. [\"{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "replaces angiver {1} to gange"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "replaces navngiver {1}, som er denne pakkes egen upgrade-code eller dens parent"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "den påkrævede egenskab {1} mangler"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "tilbagerulningstvillingen skal komme før {1} ({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "root skal være HKLM, HKCR eller HKCU"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "root skal være HKLM, HKCU, HKCR eller HKMU (fik '{1}')"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new: nogle få spørgsmål laver kilden (Enter tager værdien 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "kør `rubrapack help <kommando>`; kontrollér stierne, og at outputmappen findes"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run: '{1}' (maskine 0x{2}) kan ikke køre på denne pakkes maskiner"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run: '{1}' er ikke et program (.exe)"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run: filen '{1}' er ikke en [file.*] i denne pakke"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "gem kilden som UTF-8 (eller UTF-16 med en BOM) med LF- eller CRLF-linjes
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "fortæller, om denne Windows har et produkt med den opgraderingskode eller en app-pakke fra den familie installeret"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "skemaet '{1}' har allerede et program ([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "scope skal være \"machine\", \"user\" eller \"dual\""
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "sddl skal være en SDDL-streng som \"D:PAI(A;OICI;FA;;;BA)\""
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "søgeegenskaben '{1}' skal være et eget offentligt navn (store bogstaver)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "se meddelelsen; genopbygning med rubrapack retter de fleste"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "sekvens {1} er ikke efter {2} ({3})"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "placerer en handling ved siden af én, som hverken pakken eller modulet kører"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "tjenestenavnet '{1}' er allerede brugt"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "tjenester kræver scope = \"machine\" (denne er {1})"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "genvejsnavnet er {1} UTF-16-enheder; med sit korte 8.3-navn rummer MSI højst {2}"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "vis hvad der er forskelligt mellem to pakker: tabeller, rækker, celler 
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "signér en PE-fil, en MSI-pakke, en MSIX-pakke eller -samling"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "signerede {1}\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "kilden '{1}' er en mappe; brug [files.ID] til mange filer"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "kilden '{1}' er et symbolsk link; links følges ikke"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "kilden '{1}' er ikke en almindelig fil"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "kildefilen '{1}' blev ændret, mens pakken blev bygget"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "kildefilen '{1}' er større end 2 GiB"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "kildefilen '{1}' blev ikke fundet"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "source skal være \"file:<ID>\""
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "source skal være en .msi-, .msix-, .msixbundle- eller .msp-pakke"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "kildestien '{1}' skal være relativ til kildefilen"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "kildestier bruger '/', ikke '\\\\' (fik '{1}')"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source: filen '{1}' er ikke en [file.*] i denne pakke"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "summary-name skal være ASCII (oversigtsoplysninger indeholder kun ASCII
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "symbols er en liste over .pdb-filer, f.eks. [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "tabellen {1} {2}"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "tabellen '{1}' er ulæselig"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "tabellen [{1}{2}{3}] er defineret to gange (først på linje {4})"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "tags er en liste med højst 16 søgeord, f.eks. [\"editor\", \"text\"]"
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "tager ingen konfiguration (det har ingen ModuleConfiguration)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "målet '{1}' findes ikke"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "target skal være \"dir:<ID>\", \"file:<ID>\" eller \"registry:<ID>\""
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "target skal være \"file:<ID>\", der navngiver en [file.*] i denne pakke"
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "målnavnet '{1}' {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target: filen '{1}' er ikke en [file.*] i denne pakke"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "task-id '{1}' bruges allerede af [msix-extension.{2}]"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "UTF-16-filen er ikke gyldig UTF-16"
 msgid "the ZIP central directory lies outside the file"
 msgstr "ZIP-filens centrale mappe ligger uden for filen"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "program-ID'et '{1}' bliver Application Id: kun bogstaver og cifre, begynder ikke med et ciffer"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "de indlejrede cabinets gør pakken 2 GiB eller større, hvilket Windows 
 msgid "the entry is not in the central directory"
 msgstr "posten er ikke i den centrale mappe"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "fejldialogboksen '{1}' kræver et {2}-kontrolelement med navnet {3} (fejl 2835)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "den eksekverbare fil '{1}' skal være en .exe"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "manifestet har ingen Identity Publisher"
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "manifestets Identity kan ikke læses til pakkens fulde navn"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "fletningsmodulet {1}"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "navnet {1}"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "pakkefamilien {1} er i containeren to gange"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "pakkens indhold passer ikke med dens signatur (den blev ændret efter si
 msgid "the package's directory cannot be read"
 msgstr "pakkens mappe kan ikke læses"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "pakkens filnavn må ikke indeholde anførselstegn eller procenttegn: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "svaret er større end 4 MiB"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "svaret bruger en anden overførselskodning end chunked"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "den samme betingelse kræves allerede (linje {1})"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "kildefilens kodning"
 msgid "the system random source failed"
 msgstr "systemets tilfældighedskilde fejlede"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "tabulatorrækkefølgen (Control_Next) er ikke én cyklus gennem dens {1} kontrolelementer fra Control_First (Windows Installer stopper med fejl 2809 eller 2810)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "denne rubrapack blev bygget uden sin menudel: [menu.*]-elementer når ik
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "denne rubrapack blev bygget uden installationsprogrammet (nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "threading skal være \"sta\", \"mta\", \"both\" eller \"neutral\" (fik '{1}')"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "for mange lokaliserede tekster og logoskalaer til resources.pri"
 msgid "too many packages in the bundle"
 msgstr "for mange pakker i samlingen"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "kan ikke læse transformationen '{1}' i '{2}': {3}"
 
 msgid "trusted"
 msgstr "betroet"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "to handlinger deler sequence {1} ({2} og {3}); giv en [action] en anden sequence, before eller after"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "to pakker med samme navn i en samling"
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "to ressourcepakker med samme ResourceId i en samling"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "type skal være string, expand, dword, qword, binary eller multi (fik '{1}')"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "type skal være text, checkbox, edit, radio, combo, listbox eller bitmap (fik '{1}')"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' er ikke en [file.*] i denne pakke"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "typelib-version er major.minor i hexadecimale cifre, f.eks. \"1.0\" (fik '{1}')"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "types og verb hører til kind = \"context-menu\""
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types: hver er \".ext\" eller \"*\" (hver fil)"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types: hver er '.' og små bogstaver, cifre, '_' eller '-' (fik '{1}')"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "ui = \"{1}\" lader brugeren vælge mappen for dir '{2}', som ikke findes (angiv [ui] install-dir)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "ui = \"features\" kræver [feature.*]-tabeller at vælge fra"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "ui skal være none, basic, minimal, installdir eller features (fik '{1}')"
 
 msgid "unexpected text after the value"
 msgstr "uventet tekst efter værdien"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "ukendt kommando '{1}' (se 'rubrapack help')"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "ukendt escapesekvens \\{1} (brug '...' til tekst med omvendte skråstreger)"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "ukendt inspect-indstilling (brug et tabelnavn, --summary, --files eller --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "ukendt nøgle '{1}' i [{2}{3}{4}]"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "ukendt nøgle '{1}' i [{2}{3}{4}] (mente du '{5}'?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "ukendt eller ufuldstændig {1}-indstilling '{2}'"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "ukendt tabel [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "ukendt tabel [{1}{2}{3}] (mente du [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "udpak en pakke i en ny mappe, ordnet som den installeres"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "understøttes ikke - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "update-*-nøgler kræver appinstaller-uri og package-uri"
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "upgrade = false gælder on = \"uninstall\" eller \"both\" (en installation er aldrig en opgraderings fjernelse)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "upgrade-code skal være et GUID som {12345678-1234-1234-1234-123456789ABC}"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "brug: rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "brug: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "brug et fuldt rubrapack-build eller en anden måde"
 msgid "used by more than one component"
 msgstr "bruges af mere end én komponent"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "users skal være \"all\" (fik '{1}')"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "værdien '{1}' står to gange på listen"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "values er en matrix af 1 til 32 strenge"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "værdier: ID'er, GUID'er, versioner, tal uden for interval, henvisninger til ting, der ikke findes"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "variablen '{1}' er ikke defineret ([define] eller -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "variabelnavnet '{1}' må ikke indeholde '=' eller begynde med = + - ! *"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "variabler"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "variabler: $(NAVN) uden værdi, $( ikke lukket, et Windows-navn eller dir-ID, hvor det ikke kan stå"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "versionen '{1}' skal være a.b.c eller a.b.c.d"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "versionen '{1}' skal være a.b.c eller a.b.c.d med a, b <= 255 og c, d <= 65535"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "hvad en diagnosekode betyder, meddelelserne, der bærer den, hvad du ska
 msgid "with must be \"file:<ID>\""
 msgstr "with skal være \"file:<ID>\""
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with: filen '{1}' er ikke en [file.*] i denne pakke"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "uden --pkcs11 viser `keys list` Windows-certifikatlageret"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "working-dir '{1}' er ikke et dir-ID"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "skriv tabellen eller værdien på den enkle måde, manualen viser"
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "skriv værdien uden '[~]'; mode = \"append\" eller \"prepend\" tilføjer den"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "skrev {1}\n"
 
 msgid "x + width must be at most 370 (the page width)"

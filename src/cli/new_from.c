@@ -1555,12 +1555,12 @@ static const uint16_t summary_name[] = { 5, 'S', 'u', 'm', 'm', 'a', 'r', 'y', '
 int rpn_new_from(const char *source, const char *input, const char *dist, const char *publisher) {
     proven_allocator_t heap = proven_heap_allocator();
     if (rp_pal_stat(heap, source, NULL) != RP_FS_NONE) {
-        rp_diag_error(RP_DIAG_OUTPUT, "'%s' exists already", source);
+        rp_diag_error(RP_DIAG_OUTPUT, "'{}' exists already", proven_arg_cstr(source));
         return RP_EXIT_IO;
     }
     size_t il = strlen(input);
     if (il >= 4 && (strcmp(input + il - 4, ".msm") == 0 || strcmp(input + il - 4, ".MSM") == 0)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'%s' is a merge module: merge it with [merge.ID] instead", input);
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'{}' is a merge module: merge it with [merge.ID] instead", proven_arg_cstr(input));
         return RP_EXIT_USAGE;
     }
     // The files first, laid out as `extract` lays them out (and checked as it checks them).
@@ -1571,7 +1571,7 @@ int rpn_new_from(const char *source, const char *input, const char *dist, const 
     uint8_t *data = NULL;
     size_t len = 0;
     if (rp_pal_read_file(heap, input, MAX_INPUT, &data, &len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", input);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(input));
         return RP_EXIT_IO;
     }
     rp_limits_t lim = rp_limits_default();
@@ -1581,12 +1581,12 @@ int rpn_new_from(const char *source, const char *input, const char *dist, const 
     const char *why = NULL;
     rc = RP_EXIT_IO;
     if (rp_cfb_open(&cfb, heap, data, len, &lim, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid package: %s", input, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid package: {}", proven_arg_cstr(input), proven_arg_cstr(why ? why : "unreadable"));
         rp_mem_free(heap, data);
         return RP_EXIT_IO;
     }
     if (rp_msi_open(&msi, heap, &cfb, &lim, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid MSI database: %s", input, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid MSI database: {}", proven_arg_cstr(input), proven_arg_cstr(why ? why : "unreadable"));
         rp_cfb_close(&cfb);
         rp_mem_free(heap, data);
         return RP_EXIT_IO;
@@ -1618,7 +1618,7 @@ int rpn_new_from(const char *source, const char *input, const char *dist, const 
         rp_mem_free(heap, buf);
     }
     if (rp_msi_view(&msi, NULL, 0, &view) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': a table cannot be read", input);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': a table cannot be read", proven_arg_cstr(input));
         rp_msi_close(&msi);
         rp_cfb_close(&cfb);
         rp_mem_free(heap, data);
@@ -1635,7 +1635,7 @@ int rpn_new_from(const char *source, const char *input, const char *dist, const 
     const char *in_base = strrchr(input, '/');
     rc = write_source(&c, &b, in_base ? in_base + 1 : input, dist, dist_rel, base);
     if (rc == RP_EXIT_OK && (b.err != PROVEN_OK || rp_pal_write_file_new(heap, source, b.data, b.len) != PROVEN_OK)) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", source);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(source));
         rc = RP_EXIT_IO;
     }
     if (rc == RP_EXIT_OK) {

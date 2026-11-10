@@ -78,7 +78,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
     ir->version = RP_V(ir_get_str(c, t, "version", true, NULL));
     if (ir->version.ptr && !ir_parse_version(rp_cs(ir->version), ir->version_parts, &ir->version_count)) {
         ERR(c, ir_key_pos(t, "version"), "RP1308",
-            "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535", rp_cs(ir->version));
+            "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535", proven_arg_cstr(rp_cs(ir->version)));
     }
     // Older versions that must be removed by hand first (RFC-0003 section 9, T1): the upgrade is
     // refused and the message names the removal command.
@@ -88,8 +88,8 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
         uint16_t below[4] = { 0 };
         size_t bn = 0;
         if (!ir_parse_version(rp_cs(ir->refuse_below), below, &bn)) {
-            ERR(c, ir_key_pos(t, "refuse-upgrade-below"), "RP1308", "refuse-upgrade-below '%s' must be a version like 1.2.3",
-                rp_cs(ir->refuse_below));
+            ERR(c, ir_key_pos(t, "refuse-upgrade-below"), "RP1308", "refuse-upgrade-below '{}' must be a version like 1.2.3",
+                proven_arg_cstr(rp_cs(ir->refuse_below)));
         } else if (ir->version_count >= 3 && memcmp(below, ir->version_parts, 3 * sizeof below[0]) != 0) {
             bool higher = false;
             for (int k = 0; k < 3; ++k) {
@@ -100,7 +100,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
             }
             if (higher) {
                 ERR(c, ir_key_pos(t, "refuse-upgrade-below"), "RP1314",
-                    "refuse-upgrade-below %s is above this package's version %s", rp_cs(ir->refuse_below), rp_cs(ir->version));
+                    "refuse-upgrade-below {} is above this package's version {}", proven_arg_cstr(rp_cs(ir->refuse_below)), proven_arg_cstr(rp_cs(ir->version)));
             }
         }
     } else if (ir->refuse_message.ptr) {
@@ -115,38 +115,38 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
         if (strcmp(arch, "x64") == 0) ir->arch = RP_ARCH_X64;
         else if (strcmp(arch, "arm64") == 0) ir->arch = RP_ARCH_ARM64;
         else if (strcmp(arch, "x86") == 0) ir->arch = RP_ARCH_X86;
-        else ERR(c, ir_key_pos(t, "arch"), "RP1308", "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')", arch);
+        else ERR(c, ir_key_pos(t, "arch"), "RP1308", "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')", proven_arg_cstr(arch));
     }
     if (home && strcmp(home, "x64") != 0 && strcmp(home, "arm64") != 0 && strcmp(home, "x86") != 0) {
-        ERR(c, ir_key_pos(t, "arch"), "RP1308", "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')", home);
+        ERR(c, ir_key_pos(t, "arch"), "RP1308", "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')", proven_arg_cstr(home));
     }
 
     ir->upgrade_code = RP_V(ir_get_str(c, t, "upgrade-code", true, NULL));
     if (ir->upgrade_code.ptr && !ir_guid_ok(rp_ws(ir->upgrade_code))) {
-        ERR(c, ir_key_pos(t, "upgrade-code"), "RP1308", "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}");
+        ERR(c, ir_key_pos(t, "upgrade-code"), "RP1308", "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}");
     }
     // Each architecture is its own upgrade family: a build for another architecture than the
     // source's own needs upgrade-code-<arch>, so one UpgradeCode never spans two architectures.
     char code_key[32];
     (void)proven_fmt_to(code_key, sizeof code_key, "upgrade-code-{}", proven_arg_cstr(arch ? arch : ""));
     char *own = arch ? ir_get_str(c, t, code_key, false, NULL) : NULL;
-    if (own && !ir_guid_ok(own)) ERR(c, ir_key_pos(t, code_key), "RP1308", "%s must be a GUID", code_key);
+    if (own && !ir_guid_ok(own)) ERR(c, ir_key_pos(t, code_key), "RP1308", "{} must be a GUID", proven_arg_cstr(code_key));
     if (own) {
         if (ir->upgrade_code.ptr && RP_EQ(own, ir->upgrade_code) && home && arch && strcmp(home, arch) != 0) {
-            ERR(c, ir_key_pos(t, code_key), "RP1309", "%s must differ from upgrade-code (one upgrade family per architecture)", code_key);
+            ERR(c, ir_key_pos(t, code_key), "RP1309", "{} must differ from upgrade-code (one upgrade family per architecture)", proven_arg_cstr(code_key));
         }
         rp_mem_free(c->alloc, (void *)(ir->upgrade_code).ptr);
         ir->upgrade_code = RP_V(own);
     } else if (home && arch && strcmp(home, arch) != 0 && !ir_msix_output(c)) {   // an MSIX has no upgrade code
         ERR(c, ir_key_pos(t, "arch"), "RP1309",
-            "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]", arch, home, code_key);
+            "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]", proven_arg_cstr(arch), proven_arg_cstr(home), proven_arg_cstr(code_key));
     }
     for (int k = 0; k < 3; ++k) {       // the others still have to be GUIDs, and distinct
         static const char *const others[] = { "upgrade-code-x64", "upgrade-code-arm64", "upgrade-code-x86" };
         const rp_tkey_t *key = ir_find_key(t, others[k]);
         if (key && key->val.kind == RP_TV_STRING && strcmp(others[k], code_key) != 0) {
             char *g = ir_get_str(c, t, others[k], false, NULL);
-            if (g && !ir_guid_ok(g)) ERR(c, key->pos, "RP1308", "%s must be a GUID", others[k]);
+            if (g && !ir_guid_ok(g)) ERR(c, key->pos, "RP1308", "{} must be a GUID", proven_arg_cstr(others[k]));
             rp_mem_free(c->alloc, g);
         }
     }
@@ -188,7 +188,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
             ui = NULL;
         }
     }
-    if (ui) ERR(c, ir_key_pos(t, "ui"), "RP1316", "ui must be none, basic, minimal, installdir or features (got '%s')", ui);
+    if (ui) ERR(c, ir_key_pos(t, "ui"), "RP1316", "ui must be none, basic, minimal, installdir or features (got '{}')", proven_arg_cstr(ui));
     rp_mem_free(c->alloc, ui);
     ir->license_shown = RP_V(ir_get_str(c, t, "license", false, NULL));      // checked in ir_ui_checks (RFC-0005 K3)
     if (ir_find_key(t, "icon")) ERR(c, ir_key_pos(t, "icon"), "RP1316", "the icon of the installed apps list is [arp] icon = \"app.ico\"");
@@ -208,7 +208,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
         if (strcmp(close, "ask") == 0) ir->close_programs = 0;
         else if (strcmp(close, "always") == 0) ir->close_programs = 1;
         else if (strcmp(close, "never") == 0) ir->close_programs = 2;
-        else ERR(c, ir_key_pos(t, "close-programs"), "RP1316", "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')", close);
+        else ERR(c, ir_key_pos(t, "close-programs"), "RP1316", "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')", proven_arg_cstr(close));
         if (ir->no_preflight) ERR(c, ir_key_pos(t, "close-programs"), "RP1316", "close-programs has no effect with preflight = false");
         rp_mem_free(c->alloc, close);
     }
@@ -219,7 +219,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
         if (strcmp(extra, "ask") == 0) ir->extra_files = 0;
         else if (strcmp(extra, "keep") == 0) ir->extra_files = 1;
         else if (strcmp(extra, "delete") == 0) ir->extra_files = 2;
-        else ERR(c, ir_key_pos(t, "extra-files"), "RP1316", "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')", extra);
+        else ERR(c, ir_key_pos(t, "extra-files"), "RP1316", "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')", proven_arg_cstr(extra));
         if (ir->no_preflight) ERR(c, ir_key_pos(t, "extra-files"), "RP1316", "extra-files has no effect with preflight = false");
         rp_mem_free(c->alloc, extra);
     }
@@ -227,7 +227,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
     // add-ons through its cleanup task. MSI only.
     ir->parent = RP_V(ir_get_str(c, t, "parent", false, NULL));
     if (ir->parent.ptr && !ir_guid_ok(rp_ws(ir->parent))) {
-        ERR(c, ir_key_pos(t, "parent"), "RP1308", "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}");
+        ERR(c, ir_key_pos(t, "parent"), "RP1308", "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}");
     } else if (ir->parent.ptr && ir->upgrade_code.ptr && RP_EQ(ir->parent, ir->upgrade_code)) {
         ERR(c, ir_key_pos(t, "parent"), "RP1309", "parent must be another product's upgrade-code, not this package's own");
     }
@@ -238,28 +238,28 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
     // x47 (jamotong): products this package takes the place of - removed, any version, as it installs.
     const rp_tkey_t *rk = ir_find_key(t, "replaces");
     if (rk && rk->val.kind != RP_TV_ARRAY) {
-        ERR(c, rk->pos, "RP1306", "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]");
+        ERR(c, rk->pos, "RP1306", "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]");
     }
     for (size_t k = 0; rk && rk->val.kind == RP_TV_ARRAY && k < rk->val.count; ++k) {
         const rp_tval_t *v = &rk->val.items[k];
         char *code = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
         if (code == NULL || !ir_guid_ok(code)) {
-            ERR(c, rk->pos, "RP1308", "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')", code ? code : "?");
+            ERR(c, rk->pos, "RP1308", "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')", proven_arg_cstr(code ? code : "?"));
         } else if ((ir->upgrade_code.ptr && RP_EQ(code, ir->upgrade_code)) || (ir->parent.ptr && RP_EQ(code, ir->parent))) {
-            ERR(c, rk->pos, "RP1309", "replaces names %s, which is this package's own upgrade-code or its parent", code);
+            ERR(c, rk->pos, "RP1309", "replaces names {}, which is this package's own upgrade-code or its parent", proven_arg_cstr(code));
         } else if (ir->replace_count == 16) {
             ERR(c, rk->pos, "RP1308", "replaces holds at most 16 upgrade codes");
         } else {
             bool dup = false;
             for (size_t j = 0; j < ir->replace_count; ++j) dup = dup || strcmp(ir->replaces[j], code) == 0;
-            if (dup) ERR(c, rk->pos, "RP1301", "replaces lists %s twice", code);
+            if (dup) ERR(c, rk->pos, "RP1301", "replaces lists {} twice", proven_arg_cstr(code));
             else memcpy(ir->replaces[ir->replace_count++], code, 39);
         }
         rp_mem_free(c->alloc, code);
     }
     if ((ir->parent.ptr || ir->remove_addons || ir->replace_count) && ir_msix_output(c)) {
         const char *key = ir->parent.ptr ? "parent" : ir->remove_addons ? "remove-addons" : "replaces";
-        ERR(c, ir_key_pos(t, key), "RP1316", "%s is for MSI packages: an MSIX is not removed by msiexec", key);
+        ERR(c, ir_key_pos(t, key), "RP1316", "{} is for MSI packages: an MSIX is not removed by msiexec", proven_arg_cstr(key));
     }
     ir->downgrade_message = RP_V(ir_get_str(c, t, "downgrade-message", false, NULL));
 
@@ -304,19 +304,19 @@ void ir_parse_module(ctx_t *c, const rp_ttable_t *t) {
     ir->manufacturer = RP_V(ir_get_str(c, t, "manufacturer", true, NULL));
     ir->version = RP_V(ir_get_str(c, t, "version", true, NULL));
     if (ir->version.ptr && !ir_parse_version(rp_cs(ir->version), ir->version_parts, &ir->version_count)) {
-        ERR(c, ir_key_pos(t, "version"), "RP1308", "version '%s' must be a.b.c or a.b.c.d", rp_cs(ir->version));
+        ERR(c, ir_key_pos(t, "version"), "RP1308", "version '{}' must be a.b.c or a.b.c.d", proven_arg_cstr(rp_cs(ir->version)));
     }
     char *arch = c->opt->arch.ptr ? ir_dup(c, rp_cs(c->opt->arch)) : ir_get_str(c, t, "arch", true, NULL);
     if (arch) {
         if (strcmp(arch, "x64") == 0) ir->arch = RP_ARCH_X64;
         else if (strcmp(arch, "arm64") == 0) ir->arch = RP_ARCH_ARM64;
         else if (strcmp(arch, "x86") == 0) ir->arch = RP_ARCH_X86;
-        else ERR(c, ir_key_pos(t, "arch"), "RP1308", "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')", arch);
+        else ERR(c, ir_key_pos(t, "arch"), "RP1308", "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')", proven_arg_cstr(arch));
         rp_mem_free(c->alloc, arch);
     }
     ir->upgrade_code = RP_V(ir_get_str(c, t, "id", true, NULL));
     if (ir->upgrade_code.ptr && !ir_guid_ok(rp_ws(ir->upgrade_code))) {
-        ERR(c, ir_key_pos(t, "id"), "RP1308", "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version");
+        ERR(c, ir_key_pos(t, "id"), "RP1308", "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version");
     }
     ir->language = 0;               // language neutral, as most modules are
     char *lang = ir_get_str(c, t, "language", false, NULL);
@@ -355,7 +355,7 @@ void ir_parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
     char *adv = ir_get_str(c, t, "advertise", false, NULL);
     if (adv) {
         if (strcmp(adv, "disallow") == 0) f->no_advertise = true;
-        else if (strcmp(adv, "allow") != 0) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "advertise is \"allow\" or \"disallow\" (got '%s')", adv);
+        else if (strcmp(adv, "allow") != 0) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "advertise is \"allow\" or \"disallow\" (got '{}')", proven_arg_cstr(adv));
         rp_mem_free(c->alloc, adv);
     }
     f->follow_parent = ir_get_bool(c, t, "follow-parent", false);
@@ -375,7 +375,7 @@ void ir_parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d) {
     ir_check_id(c, t, 72);
     d->id = ir_dup_v(c, t->id);
     d->pos = t->pos;
-    if (ir_windows_name(rp_cs(t->id))) ERR(c, t->pos, "RP1404", "[dir.%s]: '%s' is a Windows name; give the dir another ID", rp_cs(t->id), rp_cs(t->id));
+    if (ir_windows_name(rp_cs(t->id))) ERR(c, t->pos, "RP1404", "[dir.{}]: '{}' is a Windows name; give the dir another ID", proven_arg_cstr(rp_cs(t->id)), proven_arg_cstr(rp_cs(t->id)));
     d->guard = ir_get_bool(c, t, "guard", false);
     d->feature = RP_V(ir_get_str(c, t, "feature", false, NULL));
     char *path = ir_get_path(c, t, "path", true);
@@ -420,11 +420,11 @@ void ir_parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d) {
 // RFC-0002 8.1: relative, '/' only.
 bool ir_source_path_ok(ctx_t *c, const char *s, rp_pos_t pos) {
     if (strchr(s, '\\')) {
-        ERR(c, pos, "RP1502", "source paths use '/', not '\\\\' (got '%s')", s);
+        ERR(c, pos, "RP1502", "source paths use '/', not '\\\\' (got '{}')", proven_arg_cstr(s));
         return false;
     }
     if (s[0] == '/' || (s[0] && s[1] == ':')) {
-        ERR(c, pos, "RP1501", "source path '%s' must be relative to the source file", s);
+        ERR(c, pos, "RP1501", "source path '{}' must be relative to the source file", proven_arg_cstr(s));
         return false;
     }
     return true;
@@ -437,7 +437,7 @@ void ir_parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     ir_check_id(c, t, 72);
     f->id = ir_dup_v(c, t->id);
     char *iso = ir_get_str(c, t, "isolate-for", false, NULL);
-    if (iso && (strncmp(iso, "file:", 5) != 0 || iso[5] == 0)) ERR(c, ir_key_pos(t, "isolate-for"), "RP1311", "%s must be \"file:<ID>\" naming a [file.*] of this package", "isolate-for");
+    if (iso && (strncmp(iso, "file:", 5) != 0 || iso[5] == 0)) ERR(c, ir_key_pos(t, "isolate-for"), "RP1311", "{} must be \"file:<ID>\" naming a [file.*] of this package", proven_arg_cstr("isolate-for"));
     else if (iso) f->isolate_for = RP_V(ir_dup(c, iso + 5));
     rp_mem_free(c->alloc, iso);
     // RFC-0031 B9: an assembly.
@@ -449,18 +449,18 @@ void ir_parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     static const char *const refs[] = { "assembly-for", "manifest" };
     for (int r = 0; r < 2; ++r) {
         char *v = ir_get_str(c, t, refs[r], false, NULL);
-        if (v && (strncmp(v, "file:", 5) != 0 || v[5] == 0)) ERR(c, ir_key_pos(t, refs[r]), "RP1311", "%s must be \"file:<ID>\" naming a [file.*] of this package", refs[r]);
+        if (v && (strncmp(v, "file:", 5) != 0 || v[5] == 0)) ERR(c, ir_key_pos(t, refs[r]), "RP1311", "{} must be \"file:<ID>\" naming a [file.*] of this package", proven_arg_cstr(refs[r]));
         else if (v && r == 0) f->assembly_for = RP_V(ir_dup(c, v + 5));
         else if (v) f->manifest = RP_V(ir_dup(c, v + 5));
         rp_mem_free(c->alloc, v);
     }
     if ((f->assembly_for.ptr || f->manifest.ptr) && f->assembly == RP_ASM_NONE) {
-        ERR(c, t->pos, "RP1202", "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\"", rp_cs(t->id));
+        ERR(c, t->pos, "RP1202", "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\"", proven_arg_cstr(rp_cs(t->id)));
     }
     if (f->assembly == RP_ASM_WIN32 && f->manifest.ptr == NULL) {
-        ERR(c, t->pos, "RP1202", "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file", rp_cs(t->id));
+        ERR(c, t->pos, "RP1202", "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file", proven_arg_cstr(rp_cs(t->id)));
     } else if (f->assembly == RP_ASM_DOTNET && f->manifest.ptr) {
-        ERR(c, ir_key_pos(t, "manifest"), "RP1316", "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one", rp_cs(t->id));
+        ERR(c, ir_key_pos(t, "manifest"), "RP1316", "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one", proven_arg_cstr(rp_cs(t->id)));
     }
     f->pos = t->pos;
     f->when = RP_V(ir_get_when(c, t));
@@ -490,10 +490,10 @@ void ir_parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     (void)proven_fmt_to(sp_, n, "{}/{}", proven_arg_cstr(dir), proven_arg_cstr(s));
     f->source_path = RP_V(sp_);
     rp_fskind_t kind = rp_pal_stat(c->alloc, rp_cs(f->source_path), &f->size);
-    if (kind == RP_FS_NONE) ERR(c, sp, "RP1507", "source file '%s' not found", s);
-    else if (kind == RP_FS_LINK) ERR(c, sp, "RP1504", "source '%s' is a symbolic link; links are not followed", s);
-    else if (kind == RP_FS_DIR) ERR(c, sp, "RP1508", "source '%s' is a directory; use [files.ID] for many files", s);
-    else if (kind != RP_FS_FILE) ERR(c, sp, "RP1508", "source '%s' is not a regular file", s);
+    if (kind == RP_FS_NONE) ERR(c, sp, "RP1507", "source file '{}' not found", proven_arg_cstr(s));
+    else if (kind == RP_FS_LINK) ERR(c, sp, "RP1504", "source '{}' is a symbolic link; links are not followed", proven_arg_cstr(s));
+    else if (kind == RP_FS_DIR) ERR(c, sp, "RP1508", "source '{}' is a directory; use [files.ID] for many files", proven_arg_cstr(s));
+    else if (kind != RP_FS_FILE) ERR(c, sp, "RP1508", "source '{}' is not a regular file", proven_arg_cstr(s));
     if (f->name.ptr == NULL) {
         const char *b = strrchr(s, '/');
         f->name = RP_V(ir_dup(c, b ? b + 1 : s));
@@ -589,7 +589,7 @@ static void glob_walk(glob_t *g, const char *rel, size_t seg, size_t depth) {
     size_t n = 0;
     proven_err_t e = dir ? rp_pal_list_dir(c->alloc, dir, &names, &n) : PROVEN_ERR_NOMEM;
     if (e == PROVEN_ERR_INVALID_ENCODING) {
-        ERR(c, g->pos, "RP1506", "a file name under '%s' is not valid Unicode and cannot be packaged", dir);
+        ERR(c, g->pos, "RP1506", "a file name under '{}' is not valid Unicode and cannot be packaged", proven_arg_cstr(dir));
         g->failed = true;
     }
     if (e != PROVEN_OK) {
@@ -619,7 +619,7 @@ static void glob_walk(glob_t *g, const char *rel, size_t seg, size_t depth) {
             rp_fskind_t kind = child ? rp_pal_stat(c->alloc, child, NULL) : RP_FS_NONE;
             char *crel = ir_join(c, rel, names[k]);
             if (kind == RP_FS_LINK) {
-                ERR(c, g->pos, "RP1504", "'%s' is a symbolic link; links are not followed", child);
+                ERR(c, g->pos, "RP1504", "'{}' is a symbolic link; links are not followed", proven_arg_cstr(child));
                 g->failed = true;
             } else if (last && kind == RP_FS_FILE && crel) {
                 glob_add(g, crel);
@@ -674,7 +674,7 @@ void ir_expand_files(ctx_t *c, const rp_ttable_t *t) {
     glob_t g = { .c = c, .pos = gp };
     if (dir && pattern && ir_source_path_ok(c, pattern, gp)) {
         const rp_ir_dir_t *d = rp_ir_find_dir(c->ir, RP_V(dir));
-        if (d == NULL) ERR(c, ir_key_pos(t, "dir"), "RP1307", "dir '%s' is not defined", dir);
+        if (d == NULL) ERR(c, ir_key_pos(t, "dir"), "RP1307", "dir '{}' is not defined", proven_arg_cstr(dir));
         if (feature == NULL && d && d->feature.ptr) feature = ir_dup(c, rp_cs(d->feature));
         // Split into segments; the leading ones without wildcards are the root.
         size_t nseg = 1;
@@ -711,7 +711,7 @@ void ir_expand_files(ctx_t *c, const rp_ttable_t *t) {
         g.segs += lit;
         g.nseg -= lit;
         if (root && g.nseg > 0) glob_walk(&g, "", 0, 0);
-        if (!g.failed && g.count == 0) ERR(c, gp, "RP1503", "glob '%s' matches no file", pattern);
+        if (!g.failed && g.count == 0) ERR(c, gp, "RP1503", "glob '{}' matches no file", proven_arg_cstr(pattern));
         glob_sort(&g);
         for (size_t k = 0; k < g.count && !c->nomem; ++k) {
             const char *rel = g.found[k];
@@ -742,10 +742,10 @@ void ir_expand_files(ctx_t *c, const rp_ttable_t *t) {
                 f->feature = RP_V(feature ? ir_dup(c, feature) : NULL);
                 f->pos = gp;
                 if (rp_pal_stat(c->alloc, rp_cs(f->source_path), &f->size) != RP_FS_FILE) {
-                    ERR(c, gp, "RP1508", "'%s' is not a regular file", rp_cs(f->source));
+                    ERR(c, gp, "RP1508", "'{}' is not a regular file", proven_arg_cstr(rp_cs(f->source)));
                 }
                 if (c->opt->output.ptr && rp_pal_same_file(c->alloc, rp_cs(f->source_path), rp_cs(c->opt->output))) {
-                    ERR(c, gp, "RP1505", "glob '%s' matches the output file '%s'", pattern, rp_cs(c->opt->output));
+                    ERR(c, gp, "RP1505", "glob '{}' matches the output file '{}'", proven_arg_cstr(pattern), proven_arg_cstr(rp_cs(c->opt->output)));
                 }
                 ir_target_name_ok(c, rp_cs(f->name), gp);
             }

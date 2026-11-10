@@ -26,13 +26,13 @@ static int open_pkg(const char *path, pkg_t *p) {
     rp_limits_t lim = rp_limits_default();
     memset(p, 0, sizeof *p);
     if (rp_pal_read_file(heap, path, MAX_INPUT, &p->data, &p->len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", path);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(path));
         return RP_EXIT_IO;
     }
     const char *why = NULL;
     proven_err_t err = rp_msix_open(heap, p->data, p->len, &lim, &p->files, &p->count, &p->manifest, &p->manifest_len, &why);
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid MSIX package: %s", path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid MSIX package: {}", proven_arg_cstr(path), proven_arg_cstr(why ? why : "unreadable"));
         rp_mem_free(heap, p->data);
         return err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : RP_EXIT_LINT;
     }
@@ -103,7 +103,7 @@ int rp_msix_lint(const char *path, bool strict) {
     static const char *const need[][2] = { { "Identity", "Name" }, { "Identity", "Publisher" }, { "Identity", "Version" } };
     for (size_t i = 0; i < 3; ++i) {
         if (!rp_xml_attr((const char *)p.manifest, p.manifest_len, need[i][0], need[i][1], v, sizeof v) || v[0] == 0) {
-            rp_diag_error("RP2201", "'%s': the manifest has no %s %s", path, need[i][0], need[i][1]);
+            rp_diag_error("RP2201", "'{}': the manifest has no {} {}", proven_arg_cstr(path), proven_arg_cstr(need[i][0]), proven_arg_cstr(need[i][1]));
             ++errors;
         }
     }
@@ -123,11 +123,11 @@ int rp_msix_lint(const char *path, bool strict) {
         bool found = false;
         for (size_t k = 0; k < p.count && !found; ++k) found = strcmp(p.files[k].name, v) == 0;
         if (!found) {
-            rp_diag_error("RP2202", "'%s': the manifest names '%s', which is not in the package", path, v);
+            rp_diag_error("RP2202", "'{}': the manifest names '{}', which is not in the package", proven_arg_cstr(path), proven_arg_cstr(v));
             ++errors;
         }
     }
-    rp_lang_format(line, sizeof line, "%s: %zu files, %zu errors, 0 warnings\n", path, p.count, errors);
+    rp_lang_format(line, sizeof line, "{}: {} files, {} errors, 0 warnings\n", proven_arg_cstr(path), proven_arg_u64(p.count), proven_arg_u64(errors));
     if (!rp_diag_json_on()) rc = out(line);
     close_pkg(&p);
     return errors ? RP_EXIT_LINT : rc;

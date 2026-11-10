@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Nirmala UI\n"
 "X-Rubrapack-Group: 3\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, संवाद {6}{7}\n  1 नाम, निर्माता, संस्करण, आर्किटेक्चर            2 इंस्टॉल फ़ोल्डर, किसके लिए इंस्टॉल होता है\n  3 संवाद, लाइसेंस, भाषाएँ                       4 वैकल्पिक भाग\n  5 शॉर्टकट                                      6 फ़ाइलें: प्रोग्राम फ़ोल्डर से मिलाएँ\n  7 कोई भी कुंजी                                  v देखें   l lint   s सहेजें   q बाहर निकलें\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\nइस कोड वाले संदेश (* किसी ना�
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nपरिणाम stdout पर जाते हैं, निदान stderr पर।\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\nक्या करें: {1}।\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} अब नहीं है, पर एक शॉर्टकट इसे खोलता है: पहले शॉर्टकट (5) बदलें\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  वहाँ {1} फ़ाइलें और {2} फ़ोल्डर\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7, v, l, s या q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  [dir.{1}] और [files.{2}] जोड़े गए\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  [file.{1}] जोड़ा गया\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint: ऊपर की समस्याएँ देखें (व�
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  [ui] languages की अन्य भाषाएँ रखी जाती हैं; वह सूची 7 (कोई भी कुंजी) से बदलें\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  [file.{1}] हटाया गया\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  [files.{1}]{2} हटाया गया\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  यह TOML उपसमुच्चय में नहीं बै�
 msgid "  that was not readable text; again, please\n"
 msgstr "  वह पढ़ने योग्य पाठ नहीं था; कृपया फिर से\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  प्रोग्राम फ़ोल्डर '{1}': {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - Windows Installer (.msi) और MSIX (.msix) पैकेज बन�
 msgid " and its dir"
 msgstr " और उसका dir"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}) कोई पर्यावरण चर नहीं है, इसलिए विस्तारणीय मान इसे नहीं रख सकता; स्ट्रिंग मान का उपयोग करें (इंस्टॉल के समय भरा जाता है)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) एक {2} है: यह किसी पथ को शुरू कर सकता है, या उस मान के स्थान पर आ सकता है जिसे Windows Installer भरता है (रजिस्ट्री, पर्यावरण, INI, तर्क, संदेश), यहाँ नहीं"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) ऐसा फ़ोल्डर नहीं जिससे पथ शुरू हो सके (कोई dir ID, या ProgramFiles, LOCALAPPDATA, ProgramData ... - मैनुअल का Paths देखें){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  संरचना:       {2}\n  डाइजेस्ट:      {3}\n  हस्ताक्षर:      {4}\n  शृंखला:        {5}{6}{7}\n  निरस्तीकरण:    जाँचा नहीं गया\n  टाइमस्टैम्प:    {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2}: चर सेट नहीं है"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' इस संवाद का नियंत्रण नहीं है"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' {3} में नहीं है"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}': {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': लाइसेंस पाठ को फ़ॉन्ट का अंग्रेज़ी नाम चाहिए, इसलिए यह भाषा के अपने फ़ॉन्ट में दिखता है; वहाँ भी यही फ़ॉन्ट उपयोग करने के लिए अंग्रेज़ी नाम लिखें (जैसे \"Malgun Gothic\")"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "{1} = '{2}' एक फ़ोल्डर होना चाहिए"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "{1} घटक, पर पैकेज प्लैटफ़ॉर्म {2} है"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} kind = \"{2}\" से संबंधित नहीं है"
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} kind = \"firewall\" से संबंधित नहीं है"
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} में LANGID (1..65535) होते हैं, जैसे 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} में स्ट्रिंग होती हैं"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "{1} {2} से {3} वर्ण लंबा है"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} \"कुंजी=मान\" पाठों की सूची है"
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "{1} पाठों की सूची है, जैसे [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} 1 से 31 वर्णों का फ़ॉन्ट नाम है, जैसे \"Segoe UI\" (मिला {2})"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} बंद उद्धरण चिह्नों और संतुलित कोष्ठकों वाली MSI शर्त है"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} स्ट्रिंग की सरणी है, हर मान के लिए एक"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} MSI पैकेजों के लिए है: MSIX को msiexec नहीं हटाता"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} अब नहीं है। [file.{2}] हटाएँ?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} 240 वर्णों से लंबा है"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} नया है। जोड़ें?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} रजिस्ट्री प्रारूप में GUID नहीं है"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} ऐसा कोड नहीं जिसे यह rubrapack उपयोग करता है{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} \"file:<ID>\" होना चाहिए जो इस पैकेज की किसी [file.*] को नामित करे"
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "{1} {2} से {3} अक्षर, अंक, '.' या '-' होना चाहिए, '.' से शुरू नहीं (मिला '{4}')"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1} GUID होना चाहिए"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1} {{12345678-...} जैसा GUID होना चाहिए (मिला '{2}')"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "{1} एक http:// या https:// पता होना चाहिए ('{2}' मिला)"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1} https://, http:// या file:// पता, या \\\\server\\share पथ होना चाहिए (मिला '{2}')"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1} upgrade-code से भिन्न होना चाहिए (हर आर्किटेक्चर के लिए एक अपग्रेड परिवार)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} को Windows बिल्ड {2} या बाद वाला चाहिए: [msix] min-version = \"10.0.{3}.0\" सेट करें"
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} को resources/bin/rubrapack_ca-{2}.dll चाहिए, जिसके बिना यह rubrapack बनाया गया था"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}, TSA जाँचा नहीं गया (--tsa-trust दें)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}, TSA विश्वसनीय"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}, TSA अविश्वसनीय - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} नहीं है या खाली है। [files.{3}] और [dir.{4}] हटाएँ?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ नया फ़ोल्डर है। जोड़ें?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1}: त्रुटियाँ: {2}{-3}, चेतावनियाँ: {4}{-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1}: त्रुटियाँ: {2}{-3}, चेतावनियाँ: {4}{-5} ({6} की तुलना में)\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1}: {2} फ़ाइलें, {3} बाइट\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1}: {2} फ़ाइलें, {3} त्रुटियाँ, 0 चेतावनियाँ\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1}: {2} और निदान नहीं दिखाए गए\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1}: '{2}' प्रोग्राम (.exe) नहीं है"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' rubrapack द्वारा रखी जाने वाली मानक क्रिया नहीं है"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1}: फ़ाइल '{2}' इस पैकेज की [file.*] नहीं है"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1}: फ़ाइल '{2}' प्रोग्राम (.exe) नहीं है"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "'$(' बंद नहीं है (पाठ '$(' के लिए '$$(' लिखें)"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' पहले से है; इसे जैसा है वैसा छोड़ा गया"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' पहले से है; इसे हटाएँ या किसी दूसरे फ़ोल्डर में बनाएँ"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}' के पास पहले से {2} हैंडलर है ([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}' के पास पहले से अनुमतियाँ हैं"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' और '{2}' पैकेज में एक ही पथ हैं"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' Windows या ब्राउज़रों का है"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "'{1}' को '{2}' के सामने नहीं पढ़ा जा सकता: {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' TOML उपसमुच्चय में नहीं बैठता; कुछ नहीं सहेजा गया"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' पहले से है"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' पहले से है; इसे `rubrapack edit {2}` से बदलें"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' मौजूद है और खाली निर्देशिका नहीं है; किसी नई में निकालें"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' {2} में जाता है; या msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}' की सारांश जानकारी स्ट्रीम पढ़ी नहीं जा सकती"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' में निकालने के लिए Directory, Component, File और Media तालिकाएँ नहीं हैं"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "'{1}' में एम्बेडेड रूपांतरण '{2}' नहीं है"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}' में पढ़ने योग्य सारांश जानकारी नहीं है"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}' में ट्रांसफ़ॉर्म '{2}' नहीं है"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' UTF-16 है: edit केवल UTF-8 स्रोत बदलता है (पहले इसे UTF-8 में सहेजें)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' एक Windows नाम है; चर को कोई दूसरा नाम दें"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' एक [chain] है: यह सेटअप प्रोग्राम बनाता है, -o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' अंतर्निहित फ़्रेम का नियंत्रण है; कोई दूसरा ID चुनें"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' मशीन फ़ोल्डर है; {2} पैकेज वहाँ नहीं लिख सकता"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' मर्ज मॉड्यूल है: इसके बजाय इसे [merge.ID] से मिलाएँ"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' ऐसा नाम है जिसे MSIX प्रारूप अपने लिए रखता है"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' प्रतीकात्मक लिंक है; लिंक का अनुसरण नहीं किया जाता"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' एक [property.*] भी है"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' एक dir ID भी है; चर को कोई दूसरा नाम दें"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' मशीन 0x{2} के लिए बना है, इस पैकेज के arch के लिए नहीं; यदि यही इरादा है तो any-arch = true सेट करें"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' न PE फ़ाइल (.exe, .dll) है, न MSI पैकेज, न MSIX पैकेज या बंडल, न cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' न PE फ़ाइल है, न MSI पैकेज, न MSIX पैकेज या बंडल, न cabinet"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' न ज्ञात फ़ोल्डर है न dir ID (ज्ञात फ़ोल्डर: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' न MSIX पैकेज है न पैकेज परिवार का नाम (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' ऐसी cabinet नहीं जिसे rubrapack पढ़ सके (stored या MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' निदान कोड नहीं है (RP और चार अंक, जैसे RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' प्रोग्राम (.exe) नहीं है"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' सामान्य फ़ाइल नहीं है"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' rubrapack सेटअप प्रोग्राम नहीं है{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' मान्य ID नहीं है (अक्षर, अंक और '_', अंक से शुरू नहीं, अधिकतम {2})"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' मान्य MSI डेटाबेस नहीं है: {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' मान्य MSIX पैकेज नहीं है: {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' मान्य पैकेज नहीं है: {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' मान्य स्रोत नहीं है (TOML उपसमुच्चय); पहले इसे हाथ से ठीक करें"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' मान्य ट्रांसफ़ॉर्म नहीं है: {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' मान्य चर नाम नहीं है"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' आरक्षित है और ID के रूप में उपयोग नहीं हो सकता"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' किसी dir का नाम है: केवल रजिस्ट्री या dir खोज ही dir भर सकती है"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' प्रोग्राम फ़ाइल (PE) जैसा दिखता है पर उसके हेडर या संसाधन क्षतिग्रस्त हैं"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}' स्ट्रिंग होना चाहिए"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}' पूर्णांक होना चाहिए"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}' {2} और {3} के बीच होना चाहिए"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}' true या false होना चाहिए"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' खाली नहीं होना चाहिए"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' कोई ट्रांसफ़ॉर्म नामित नहीं करता (सारांश गुण 8): पैच नहीं है"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' किसी फ़ोल्डर से शुरू होता है: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}': {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}': {2} '{3}' में {4} है; कुछ नहीं निकाला गया"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}': {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}': {2} प्रविष्टियाँ, सीमा {3} (--limit-entries) से अधिक; कुछ नहीं निकाला गया"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}': '{2}' और '{3}' Windows पर एक ही पथ होंगे; कुछ नहीं निकाला गया"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}': '{2}' [ui] languages में नहीं है"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}': एक तालिका पढ़ी नहीं जा सकती"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}': एक तालिका अपठनीय है"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}': MSIX अपनी सभी फ़ाइलें इंस्टॉल करता है (when); msi-only = true का उपयोग करें"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}': MSIX अपनी सभी फ़ाइलें हटाता है (keep); msi-only = true का उपयोग करें"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}': cabinet '{2}' क्षतिग्रस्त है या stored/MSZIP नहीं है"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}': cabinet नाम '{2}' सादा फ़ाइल नाम नहीं है"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}': संपीड़ित फ़ाइल '{2}' (क्रम {3}) की कोई cabinet नहीं है"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}': निर्देशिका '{2}' का पैरेंट '{3}' मौजूद नहीं है"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}': निर्देशिका '{2}' स्वयं अपना पूर्वज है या बहुत गहराई तक नेस्टेड है"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}': फ़ाइल '{2}' अपने MsiFileHash से मेल नहीं खाती"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}': फ़ाइल '{2}' का कोई घटक या निर्देशिका नहीं है"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}': फ़ाइल '{2}' {3} बाइट की है, File तालिका {4} कहती है"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}': फ़ाइल '{2}' cabinet '{3}' में नहीं है"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}': इसकी बाहरी cabinet हस्ताक्षर में शामिल नहीं हैं (--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}': इसका फ़ोल्डर किसी ज्ञात स्थान तक नहीं ले जाता"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}': लिखने के लिए {2} बाइट से अधिक (--limit-bytes); कुछ नहीं निकाला गया"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}': --timestamp नहीं: प्रमाणपत्र की समय-सीमा समाप्त होने पर हस्ताक्षर मान्य नहीं रहता"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}': पैकेज '{2}' अपने SHA-256 से मेल नहीं खाता"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}': cabinet स्ट्रीम '{2}' मौजूद नहीं है"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}': मैनिफ़ेस्ट में {2} {3} नहीं है"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}': मैनिफ़ेस्ट '{2}' का नाम लेता है, जो पैकेज में नहीं है"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}': {2} से टाइमस्टैम्प: {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}': ट्रांसफ़ॉर्म '{2}' को '{3}' के सामने नहीं पढ़ा जा सकता: {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' पैकेज की अपनी भाषा है ({2}); वह पाठ प्रत्यय के बिना दें"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "'version' कोई तर्क नहीं लेता"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "--allow-unsigned-cabs .msi के लिए है"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "बंडल के लिए --arch: x64, x86 और arm64 की सूची, हर एक एक बार (मिला '{1}')"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "--dist स्रोत के बगल में नया फ़ोल
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "--flat .msixbundle आउटपुट के लिए है (इसके पैकेज इसके बगल में लिखे जाते हैं)"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "--jobs 1 से 64 तक की संख्या लेता है (मिला '{1}')"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "--key अधिकतम {1} बाहरी cabinet पर हस्ताक्षर करता है; cab-max-size बढ़ाएँ"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "--key-store Windows प्रमाणपत्र भंडार ह�
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store प्रमाणपत्र का SHA-1 थंबप्रिंट लेता है (40 हेक्स अंक)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1}: ऐसी कोई भाषा नहीं (अंतर्निहित: {2}; किसी अन्य को अपना भाषा पैक चाहिए, {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "--lang (या RUBRAPACK_LANG) इन पाठों की भाषा चुनता है: {1}, या कोई भाषा जिसका भाषा पैक हो।\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "--lang को भाषा चाहिए, जैसे en या ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "--languages को संवाद चाहिए: --ui भी दें"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "--msix-compress deflate या store लेता है (मिला '{1}')"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1}: चर सेट नहीं है"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "--patch-code बड़े अक्षरों में कोष्ठकों सहित GUID लेता है: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1}: चर सेट नहीं है"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "--previous दो .msi पैकेजों की तुलना क�
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots: ऑपरेटिंग सिस्टम के मूल प्रमाणपत्र पढ़े नहीं जा सकते"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "--target {1} आउटपुट '{2}' से मेल नहीं खाता"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "--target {1} लागू नहीं है (msi या msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "--target msi या msix लेता है (मिला '{1}')"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "--winget को [winget] तालिका चाहिए: identifier,
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "--winget को पैकेज एक फ़ाइल में चाहिए: winget एक डाउनलोड करता है, इसलिए cab = \"external\" नहीं"
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "-D {1} दो बार दिया गया है"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1}: '{2}' एक Windows नाम है; चर को कोई दूसरा नाम दें"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "-D को NAME=VALUE चाहिए (मिला '{1}')"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "-i हर उत्तर पूछता है; या तो -i द�
 msgid "; its range is "
 msgstr "; इसकी सीमा है "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "ActionProperty '{1}' SecureCustomProperties में नहीं है"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Program Files के अंतर्गत फ़ोल्डर का 
 msgid "Folder with the files to install"
 msgstr "इंस्टॉल की जाने वाली फ़ाइलों वाला फ़ोल्डर"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "ID '{1}' पहले से उपयोग में है (पंक्ति {2}); सभी तालिकाओं में ID अलग होने चाहिए"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "किसके लिए इंस्टॉल (machine, user, dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "table.key के रूप में कुंजी (package.version, dir.INSTALLDIR.path, ...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "KeyPath '{1}' किसी दूसरे घटक का है"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "KeyPath '{1}' File में नहीं है"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "KeyPath '{1}' Registry में नहीं है"
 
 msgid "Korean dialogs as well as English?"
 msgstr "अंग्रेज़ी के साथ कोरियाई संवाद भी?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "LastSequence {1} किसी निचले DiskId वाले से कम है"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX: MSIX पैकेज को क्या चाहिए, और �
 msgid "Main program, for shortcuts (- for none)"
 msgstr "मुख्य प्रोग्राम, शॉर्टकट के लिए (- कोई नहीं)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "मैनुअल: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "उत्पाद का नाम"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "ProductCode और UpgradeCode एक ही GUID हैं"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} अपने पहले तीन भागों में पिछले {2} से ऊँचा नहीं है: Windows Installer अपग्रेड नहीं करता"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "वह प्रोग्राम जिसे शॉर्टकट खोलते हैं (- कोई शॉर्टकट नहीं)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1}: ऐसी कोई भाषा नहीं (अंतर्निहित: {2}; किसी अन्य को अपना भाषा पैक चाहिए, {3}.po)"
 
 msgid "Reference, "
 msgstr "संदर्भ, "
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "क्रम {1} किसी Media पंक्ति में शामिल नहीं है (अंतिम {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "क्रम {1} किसी दूसरी फ़ाइल द्वारा उपयोग में है"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "लिखने के लिए स्रोत फ़ाइल"
 msgid "Source format"
 msgstr "स्रोत प्रारूप"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "प्रकार {1} के लिए Source को कोई File पंक्ति नामित करनी चाहिए"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "TOML उपसमुच्चय"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "UTF-16 big-endian फ़ाइलें समर्थित नहीं हैं; UTF-8 में सहेजें"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "UpgradeCode {1} पिछले संस्करण के {2} से भिन्न है: यह पैकेज उसे नहीं बदलता"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "संस्करण और अपग्रेड"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer अधिकतम 255.255.65535(.65535) की अनुमति देता है"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "Windows ने नहीं बताया कि '{1}' के लिए क्या इंस्टॉल है"
 
 msgid "Windows name"
 msgstr "Windows नाम"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] को '{4}' चाहिए"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] मर्ज मॉड्यूल में नहीं जा सकता; उसे मिलाने वाले पैकेज में यह होता है"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] अभी समर्थित नहीं है ({3} के लिए नियोजित)"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] MSIX में नहीं जा सकता; इसके बिना MSIX बनाने के लिए msi-only = true जोड़ें"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] MSIX में नहीं जा सकता; इसके बिना MSIX बनाने के लिए msi-only = true जोड़ें"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "[{1}.{2}] उपयोगकर्ता के AppData या LocalAppData में है: सभी उपयोगकर्ताओं के लिए इंस्टॉल किया गया dual पैकेज इसे केवल इंस्टॉल करने वाले उपयोगकर्ता की प्रोफ़ाइल में रखता है"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: मर्ज मॉड्यूल में ID अधिकतम 35 वर्णों का होता है (मॉड्यूल का GUID उसमें जोड़ा जाता है)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] को ID चाहिए: [{2}.ID] लिखें"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] ID नहीं लेता: [{2}] लिखें"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "[Content_Types].xml अंतिम प्रविष्टि नह�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] तालिका-सरणियाँ समर्थित नहीं हैं; हर आइटम को अपना [kind.ID] दें"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] एक बार रखा जाता है: before, after या sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] को do और undo दोनों चाहिए (undo विफल do को भी वापस लेता है)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] को entry चाहिए: बुलाया जाने वाला DLL फ़ंक्शन"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] को run = \"file:<ID>\" चाहिए: वह प्रोग्राम जिसे do और undo चलाते हैं"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "[action.{1}] InstallFinalize से पहले इस पैकेज की एक फ़ाइल चलाता है, जबकि पहली इंस्टॉलेशन में वह फ़ाइल अभी नहीं होती (Windows Installer त्रुटि 1721 या 1723): इसे InstallFinalize के बाद रखें या deferred बनाएँ"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] एक चीज़ चलाता है: run (एक exe), dll (इंस्टॉल की गई DLL) या binary (पैकेज में मौजूद DLL); या do और undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}]: {2} एक क्रिया के लिए है, do/undo जोड़े के लिए नहीं"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}]: इंस्टॉल की गई फ़ाइल चलाने वाली स्थगित क्रिया InstallFiles के बाद होनी चाहिए (sequence > 4000)"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}]: तत्काल क्रिया इंस्टॉल करने वाले उपयोगकर्ता के रूप में चलती है; as अन्य चरणों के लिए है"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}]: args एक प्रोग्राम के हैं; DLL data लेती है"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}]: check do/undo जोड़े के साथ जाता है"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}]: data स्थगित, commit या rollback क्रिया के लिए है (तत्काल क्रिया गुण पढ़ती है)"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}]: entry एक DLL का फ़ंक्शन है; run args लेता है"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX के लिए args सादा पाठ होने चाहिए (इंस्टॉल के समय भरा जाने वाला [...] नहीं)"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}]: MSIX में फ़ाइल प्रकार एक ऐप्लिकेशन खोलता है: target किसी [msix-app.*] का executable होना चाहिए"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] दो बार है"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "[chain-package] को ID चाहिए: [chain-package.ID] लिखें"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}]: app-id और typelib केवल MSI के लिए लिखे जाते हैं; MSIX क्लास को इनके बिना पंजीकृत करता है"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}]: args प्रोग्राम के होते हैं; DLL लोड होता है, शुरू नहीं होता"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}]: surrogate DLL को dllhost में चलाता है; '{2}' एक प्रोग्राम है"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}]: threading DLL के लिए है; प्रोग्राम अपना apartment खुद तय करता है"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}]: typelib-version और typelib-file को typelib चाहिए"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] {2} में जाता है; या msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}]: इसका स्रोत ऐसी फ़ाइल होनी चाहिए जो पैकेज में जाती है"
 
 msgid "[define] values must be strings"
 msgstr "[define] मान स्ट्रिंग होने चाहिए"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] को '{2}' चाहिए"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "[dialog-control.{1}] को image चाहिए"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] को 'property' चाहिए"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] को 'text' चाहिए"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] को 'values' चाहिए"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}] में {2} नियंत्रण हैं; अधिकतम 64"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}] में कोई [dialog-control.*] नहीं है"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] अन्य संवादों के रास्ते स्वयं के बाद रखा गया है"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] को ui = \"minimal\", \"installdir\" या \"features\" चाहिए"
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}]: '{2}' एक Windows नाम है; dir को कोई दूसरा ID दें"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}]: guard को rubrapack का सहायक DLL चाहिए, जिसे मर्ज मॉड्यूल नहीं रखता"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] को एक फ़ीचर चाहिए"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}]: MSIX अपने सभी चर सेट करता है (when); msi-only = true का उपयोग करें"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: इसका मान ऐसी जगह बताता है जो MSIX नहीं दे सकता (पैकेज के बाहर का कोई फ़ोल्डर जो Windows फ़ोल्डर नहीं, या इंस्टॉल के समय का भाग); msi-only = true का उपयोग करें"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}]: external-location = true के साथ पैकेज में प्रोग्राम की कोई फ़ाइल नहीं होती, इसलिए rubrapack का लॉन्चर भी नहीं; या msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] पहले से ही अपने प्रोग्राम के फ़ोल्डर में है; isolate-for कहीं और इंस्टॉल की गई साझा DLL के लिए है"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] उपयोगकर्ता प्रोफ़ाइल में है और इसमें component-guid है: इसका कुंजी पथ फ़ाइल ही रहता है, जबकि Windows के नियम वहाँ HKCU मान चाहते हैं (ICE38); वह पाने के लिए component-guid हटाएँ"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}]: {2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' .NET असेंबली नहीं है (Assembly पंक्ति वाला CLI हेडर नहीं)"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}]: .NET असेंबली अपना मैनिफ़ेस्ट ख़ुद रखती है; manifest, Win32 असेंबली के लिए है"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}]: Win32 असेंबली को manifest = \"file:<ID>\", यानी अपनी मैनिफ़ेस्ट फ़ाइल चाहिए"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: साझा .NET असेंबली GAC में जाती है, जो केवल मज़बूत नाम वाली असेंबली लेता है; इस पर हस्ताक्षर करें या assembly-for = \"file:<प्रोग्राम>\" दें"
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: साझा Win32 असेंबली WinSxS में ऐसे कैटलॉग के साथ जाती है जो मैनिफ़ेस्ट के publicKeyToken द्वारा बताई गई कुंजी से हस्ताक्षरित हो; --key के साथ बनाएँ (या निजी असेंबली के लिए assembly-for = \"file:<प्रोग्राम>\" दें)"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: साझा Win32 असेंबली का मैनिफ़ेस्ट '{2}' अपने हस्ताक्षरकर्ता को बताता है: assemblyIdentity में publicKeyToken (जिस --key से बनाया जाता है उसका टोकन)"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for और manifest, assembly = \"dotnet\" या \"win32\" के साथ आते हैं"
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}]: इसके मैनिफ़ेस्ट '{2}' में name और version वाला assemblyIdentity नहीं है"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: इसका मैनिफ़ेस्ट '{2}' उसी dir और feature में (उसी when के साथ) होना चाहिए: दोनों एक घटक हैं"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}]: मैनिफ़ेस्ट publicKeyToken \"{2}\" बताता है, पर --key का टोकन \"{3}\" है"
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: मैनिफ़ेस्ट '{2}' किसी दूसरी असेंबली का है या ख़ुद असेंबली है"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}]: एक्सप्लोरर {2} हैंडलर DLL से लोड करता है; [com.{3}] एक प्रोग्राम है"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}]: Windows गुण हैंडलर केवल प्रति मशीन पढ़ता है; पैकेज को scope = \"machine\" चाहिए"
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}]: पूर्वावलोकन हैंडलर Windows के prevhost में चलता है; app-id और surrogate को [com.{2}] से बाहर रखें"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}]: MSIX केवल थंबनेल और पूर्वावलोकन हैंडलर रखता है (पैक किए गए गुण हैंडलर ने एक्सप्लोरर को कोई मान नहीं दिए); msi-only = true इसे MSI के लिए रखता है"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}]: MSIX का फ़ाइल प्रकार किसी ऐप्लिकेशन का होता है; एक [msix-app.*] जोड़ें"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}]: क्लास {2} इस पैकेज की [com.*] नहीं है (हैंडलर का DLL इसे सेवा देता है)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}]: MSIX में हैंडलर अपने सभी प्रकार साझा करते हैं या कोई नहीं (एक प्रकार एक फ़ाइल प्रकार संबंध में होता है)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}]: MSIX में इसकी क्लास surrogate में चलती है; [com.{2}] में threading = \"sta\" इसकी विंडो को संदेश लूप देता है (threading = {3} के साथ पूर्वावलोकन खाली रह सकता है)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}]: MSIX में इसके सभी प्रकार एक [assoc] फ़ाइल प्रकार में होते हैं, या किसी में नहीं"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}]: इसकी क्लास msi-only है ([com.{2}]); MSIX में इसके लिए कोई सर्वर नहीं होगा"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}]: types फ़ाइल प्रकारों की सूची है, जैसे [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] {2} में जाता है; या msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] को 'value' चाहिए"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] को फ़ीचर चाहिए: 'feature' यहाँ या उसके dir पर सेट करें"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}]: MSIX अपनी सभी INI प्रविष्टियाँ लिखता है (when); msi-only = true का उपयोग करें"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}]: इसके मान में ऐसा भाग है जिसे Windows Installer इंस्टॉल के समय भरता है ([...]); MSIX फ़ाइल बनते समय लिखता है"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] को 'on' चाहिए: आइटम कहाँ दिखता है, जैसे [\".txt\"] या \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] को 'target' (जो प्रोग्राम यह शुरू करता है) चाहिए, या parent = \"{2}\" वाले आइटम (उप-मेनू)"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] को 'target' चाहिए: वह प्रोग्राम जिसे आइटम शुरू करता है"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}]: Windows 11 का मेन्यू केवल अक्षरों और अंकों वाला ID लेता है ('_' नहीं): नाम बदलें, या windows11 = false करें"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: उप-मेनू कुछ शुरू नहीं करता: 'args' छोड़ दें"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}]: उप-मेनू का आइटम वहीं दिखता है जहाँ उसका उप-मेनू: 'on' छोड़ दें"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args में ऐसा भाग है जिसे Windows Installer इंस्टॉल के समय भरता है ([...]); MSIX में केवल स्थिर पाठ होता है"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}]: hide-when, \"HKCU\\\\key\\\\value\" या \"HKLM\\\\...\" होता है, Windows 11 मेन्यू के ऐसे आइटम पर जो किसी उप-मेन्यू में न हो"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}]: hide-when ऐसा मान बताता है जिसे यह पैकेज खुद लिखता है ([registry.{2}]): आइटम कभी नहीं दिखेगा"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: इसका प्रोग्राम MSIX में नहीं है (msi-only?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: इसके मान पैकेज की रजिस्ट्री में नहीं जा सकते"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: list में ऐसा भाग है जिसे Windows Installer इंस्टॉल के समय भरता है ([...]); MSIX में केवल स्थिर पाठ होता है"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}]: जब पथ एक कमांड लाइन में नहीं समाते, तब list, {2} की जगह लेता है: multi = \"one\", args में {3} और list में {4} (सूची फ़ाइल) चाहिए"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}]: on = \"{2}\": कोई [assoc.{3}] नहीं है"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}]: on एक फ़ाइल प्रकार या उनकी सूची है, जैसे [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}]: parent '{2}' कोई [menu.*] नहीं है"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}]: parent '{2}' उप-मेनू होना चाहिए: बिना target और बिना अपने parent वाला [menu.*]"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] {2} में जाता है; या msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] को फ़ीचर चाहिए: 'feature' यहाँ या उसके dir पर सेट करें"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}]: '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; या msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] को feature चाहिए (या with = \"file:<ID>\")"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}]: feature अपने घटक के साथ जाता है, with के साथ नहीं"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name एक फ़ाइल बताता है; name में वाइल्डकार्ड हैं"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}]: शेयर लक्ष्य को types, formats या दोनों चाहिए"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}]: ऑटोप्ले हैंडलर को content-events, device-events या दोनों चाहिए"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args सादा पाठ होने चाहिए (इंस्टॉल के समय भरा जाने वाला [...] नहीं)"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}]: device-events को class चाहिए (प्रोग्राम की IHWEventHandler COM क्लास)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}]: file {2} होना चाहिए"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}]: file को ऐसी फ़ाइल नामित करनी चाहिए जो पैकेज में जाती है"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}]: file को ऐसा प्रोग्राम नामित करना चाहिए जो पैकेज में जाता है"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types फ़ाइल प्रकारों की सूची है, जैसे [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows केवल अक्षर और अंक लेता है"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "[msix-psf] न external-location = true के साथ चलता �
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "[msix-psf] एप्लिकेशन PSF लॉन्चर से शुरू करता है: इसे [msix-app.ID] चाहिए"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf]: config '{1}' अपने \"applications\" में एप्लिकेशन '{2}' का नाम नहीं लेता"
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf]: files में '{1}' (लॉन्चर) नहीं है"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}]: फ़ाइल '{2}' DLL नहीं है"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] अपना ड्राइवर एक बार बताता है: driver (एक [odbc-driver]) या driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] को driver-name के साथ with = \"file:<ID>\" चाहिए: वह घटक जिसके साथ यह इंस्टॉल होता है"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}]: प्रति मशीन पैकेज डेटा स्रोतों को मशीन के लिए पंजीकृत करता है"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] एक प्रति बताता है: msix (publisher के साथ) या upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}]: msix पैकेज का पहचान नाम है (3 से 50 अक्षर, अंक, '.' या '-') और इसे publisher (\"CN=...\") चाहिए, जैसा उसके मैनिफ़ेस्ट में है"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}]: दूसरी प्रति को पूर्व-जाँच खोजती है: preflight = true चाहिए"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}]: upgrade-code इसी पैकेज का है (वह अपग्रेड है, दूसरी प्रति नहीं)"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] के dir में एक फ़ीचर होना चाहिए"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}]: MSIX के लिए args सादा पाठ होने चाहिए (इंस्टॉल के समय भरा जाने वाला [...] नहीं)"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}]: MSIX में स्कीम एक ऐप्लिकेशन खोलती है: target किसी [msix-app.*] का executable होना चाहिए"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] को 'value' चाहिए (या remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}]: HKCR MSIX के बाहर नहीं पहुँचता; [assoc.*], [protocol.*], [com.*] या [handler.*] का उपयोग करें, या msi-only = true"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: qword मान को rubrapack का सहायक DLL चाहिए, जिसे मर्ज मॉड्यूल नहीं रखता"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}]: MSIX केवल {2}\\Software के अंतर्गत मान रखता है"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}]: MSIX न मान हटाता है न उन्हें पीछे छोड़ता है (remove, keep); msi-only = true का उपयोग करें"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}]: MSIX अपने सभी मान लिखता है (when); msi-only = true का उपयोग करें"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}]: इसके मान में ऐसा भाग है जिसे Windows Installer इंस्टॉल के समय भरता है ([...]); MSIX में केवल स्थिर मान होते हैं"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: on = \"uninstall\" को rubrapack का सहायक DLL चाहिए, जिसे मर्ज मॉड्यूल नहीं रखता"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: कुंजी या मान का नाम रजिस्ट्री हाइव में नहीं जा सकता"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}]: users = \"all\" कंप्यूटर-स्तरीय पैकेज में on = \"uninstall\" के साथ root = \"HKCU\" के लिए है"
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] को फ़ीचर चाहिए: 'feature' यहाँ या उसके dir पर सेट करें"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}]: recursive = true {2} के नीचे के फ़ोल्डर के लिए नहीं है"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true को rubrapack का सहायक DLL चाहिए, जिसे मर्ज मॉड्यूल नहीं रखता"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}]: users = \"all\" कंप्यूटर-स्तरीय पैकेज में AppData या LocalAppData के फ़ोल्डर पर recursive = true के लिए है"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX के लिए args सादा पाठ होने चाहिए (इंस्टॉल के समय भरा जाने वाला [...] नहीं)"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file को ऐसा प्रोग्राम नामित करना चाहिए जो पैकेज में जाता है"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] सुविधा '{2}' का विज्ञापन करता है, जिसमें advertise = \"disallow\" है"
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}]: advertise को when के साथ नहीं जोड़ा जाता"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}]: MSIX के शॉर्टकट केवल डेस्कटॉप और स्टार्ट मेनू में होते हैं{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}]: MSIX शॉर्टकट का कोई working-dir नहीं होता"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}]: MSIX शॉर्टकट हमेशा रहता है (when MSI के लिए है)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX शॉर्टकट अपने ऐप्लिकेशन का लोगो दिखाता है; icon MSI के लिए है"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}]: विज्ञापित शॉर्टकट MSI के लिए है (MSIX पूरे पैकेज को इंस्टॉल करता है)"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}]: विज्ञापित शॉर्टकट को एक आइकन चाहिए"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: MSIX के लिए args सादा पाठ होने चाहिए (इंस्टॉल के समय भरा जाने वाला [...] नहीं)"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}]: MSIX में शॉर्टकट एक ऐप्लिकेशन शुरू करता है: target किसी [msix-app.*] का executable होना चाहिए"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}]: MSIX की स्टार्ट मेनू प्रविष्टि उसका ऐप्लिकेशन है, जो args नहीं लेता"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: किसी संवाद पाठ का यह ID नहीं है"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "[ui] embedded MSI के लिए है; MSIX का अपना इ�
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "[ui] को [package] में ui = \"basic\" या किसी अन्य संवाद सेट की आवश्यकता है (या embedded = \"....dll\")"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "\\{1} एस्केप कोई Unicode स्केलर मान नहीं है"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "किसी पैकेज का `lint`: संवाद, कोड �
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX पैकेज या बंडल का `lint`"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "{1} नियंत्रण में property नहीं है"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "{1} नियंत्रण में कोई पाठ नहीं; उसके बगल में पाठ नियंत्रण रखें"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "{1} नियंत्रण को [property.{2}] चाहिए जिसमें उसका कोई मान डिफ़ॉल्ट हो (मौन इंस्टॉलेशन इसका उपयोग करता है)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "{1} पैकेज HKLM में नहीं लिख सकता; HKMU का उपयोग करें"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "पथ के किसी प्रमाणपत्र में ऐ�
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "पथ का कोई प्रमाणपत्र ऐसे प्रमाणपत्र से हस्ताक्षरित है जो CA नहीं है"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "chain में केवल [chain], [chain-package.ID] और [define] होते हैं, [{1}] नहीं; पैकेज अपने स्रोतों से बनते हैं"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "chain में अधिकतम {1} पैकेज होते हैं"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "chain को कम से कम एक [chain-package.ID] चाहि
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "ऐसा वर्ण जिसकी Windows नाम में अनुमति नहीं देता (/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "एक कंटेनर में अधिकतम {1} पैकेज परिवार होते हैं"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "ऐसी सुविधा जो यह rubrapack नहीं दे
 msgid "a file larger than allowed"
 msgstr "अनुमति से बड़ी फ़ाइल"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "'{1}' के अंतर्गत एक फ़ाइल नाम मान्य Unicode नहीं है और पैक नहीं किया जा सकता"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "किसी फ़ाइल की घटक या निर्दे�
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "फ़ॉन्ट MSIX में उसे नामित करने वाले [font.*] के ज़रिए जाता है"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "फ़्रेमवर्क पैकेज के अपने कोई एप्लिकेशन, क्षमताएँ या निर्भरताएँ नहीं होतीं ({1})"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "hive cell अपने bin को पार करता है"
 msgid "a hive version or type rubrapack does not read"
 msgstr "hive संस्करण या प्रकार जिसे rubrapack नहीं पढ़ता"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "किसी ज्ञात फ़ोल्डर ('{1}') को स्वयं अनुमतियाँ नहीं दी जा सकतीं"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "उपयोगकर्ता नाम या पासवर्ड �
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "qword मान पूर्णांक है या \"0x\" और 1 से 16 हेक्स अंक"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "radio नियंत्रण अपने बटन एक के ऊपर एक रखता है: ऊँचाई प्रति मान कम से कम 12 होनी चाहिए ({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "आरक्षित डिवाइस नाम"
 msgid "a rollback action cannot be asynchronous"
 msgstr "rollback क्रिया अतुल्यकालिक नहीं हो सकती"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "स्कीम एक छोटा अक्षर है, फिर छोटे अक्षर, अंक, '+', '-' या '.' (मिला '{1}')"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "एक सेक्शन फ़ाइल के बाहर है"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "सेवा नाम में '/' या '\\' नहीं हो सकता (अधिकतम 256 वर्ण)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "सेटअप .exe [chain] वाले स्रोत से बनता है; '{1}' एक पैकेज (.msi, .msix) बनाता है"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "संस्करण बिंदुओं वाली 3 या 4 स�
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "account LocalSystem, LocalService या NetworkService होना चाहिए"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "क्रिया '{1}' पहले से परिभाषित है"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "क्रिया न मानक क्रिया है न CustomAction में है"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "action, \"warn\" या \"refuse\" होना चाहिए ('{1}' मिला)"
 
 msgid "adds too many tables"
 msgstr "बहुत अधिक तालिकाएँ जोड़ता है"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "advertise \"allow\" या \"disallow\" होना चाहिए ('{1}' मिला)"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "after = '{1}' न इस संवाद सेट का पृष्ठ है (RpWelcomeDlg{2}{3}{4}) न कोई [dialog.*]"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "alias kind = \"alias\" से संबंधित है"
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "alias .exe पर खत्म होने वाला फ़ाइल नाम होना चाहिए: अक्षर, अंक, '.', '_', '-' (मिला '{1}')"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "INI सेक्शन में ']' और कुंजी में '=
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "MSIX अस्थायी फ़ोल्डर में फ़ाइलें नहीं रख सकता"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "किसी ऐप्लिकेशन का एक alias होता है ([msix-extension.{1}] पहले से एक है)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "एक ऐप्लिकेशन का एक ही शेयर लक्ष्य होता है ([msix-extension.{1}] पहले से एक है)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "वैकल्पिक या संशोधन पैकेज क�
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "x86 पैकेज केवल 32-बिट रजिस्ट्री दृश्य में लिखता है"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "ऐप '{1}' कोई [msix-app.*] नहीं है"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "appinstaller-uri और package-uri साथ आते हैं: .appinstaller फ़ाइल और पैकेज कहाँ होंगे"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "arch \"x64\", \"arm64\" या \"x86\" होना चाहिए (मिला '{1}')"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "arch \"x64\", \"x86\" या \"arm64\" होना चाहिए (सेटअप प्रोग्राम का अपना)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "तर्क {1} मान्य UTF-8 नहीं है (बाइट {2})"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "तर्क {1} मान्य Unicode नहीं है (UTF-16 इकाई {2})"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "सरणियों के भीतर सरणियाँ सम�
 msgid "arrays must hold only strings or only integers"
 msgstr "सरणियों में केवल स्ट्रिंग या केवल पूर्णांक होने चाहिए"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "as \"system\" या \"user\" होना चाहिए ('{1}' मिला)"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "assembly \"dotnet\" या \"win32\" होना चाहिए"
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "अंग्रेज़ी के अलावा अधिकतम {1} भाषाएँ"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "अधिकतम 100 [msix-app.*] तालिकाएँ"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "अधिकतम 50 [action.*] तालिकाएँ (इस फ़ाइल में {1} हैं)"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "banner .bmp फ़ाइल होनी चाहिए (Windows Instal
 msgid "build a package from a source file"
 msgstr "स्रोत फ़ाइल से पैकेज बनाएँ"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "{2} स्रोत से {1} बनाने के लिए उसका अपना अपग्रेड परिवार चाहिए: [package] में {3} = \"{{...}\" जोड़ें"
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "cab \"embed\" या \"external\" होना चाहिए"
 msgid "cannot be read"
 msgstr "पढ़ा नहीं जा सकता"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "पैकेजों को बंडल नहीं किया जा सकता: {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "'{1}' और '{2}' की तुलना नहीं हो सकती"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "'{1}' नहीं बनाया जा सकता"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "'{1}' नहीं बनाया जा सकता{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "'{1}' नहीं मिला; `rubrapack new {2}` से एक बनाएँ"
 
 msgid "cannot make a default logo"
 msgstr "डिफ़ॉल्ट लोगो नहीं बनाया जा सकता"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "'{1}' से '{2}' तक पैच नहीं बनाया जा सकता"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "'{1}' से '{2}' तक ट्रांसफ़ॉर्म नहीं बनाया जा सकता"
 
 msgid "cannot open the certificate store"
 msgstr "प्रमाणपत्र भंडार नहीं खोला जा सकता"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "'{1}' नहीं पढ़ा जा सकता"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "'{1}' नहीं पढ़ा जा सकता ({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "पैकेज '{1}' नहीं पढ़ा जा सकता"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "स्रोत फ़ाइल '{1}' नहीं पढ़ी जा सकती"
 
 msgid "cannot read that folder"
 msgstr "वह फ़ोल्डर नहीं पढ़ा जा सकता"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "{1} फ़ाइल '{2}' नहीं पढ़ी जा सकती"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "PIN फ़ाइल '{1}' नहीं पढ़ी जा सकती"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "'{2}' के बगल वाली cabinet '{1}' नहीं पढ़ी जा सकती"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "प्रमाणपत्र फ़ाइल '{1}' नहीं पढ़ी जा सकती"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "'{1}' के प्रमाणपत्र नहीं पढ़े जा सकते"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "'{1}' के प्रमाणपत्र नहीं पढ़े जा सकते: {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "कुंजी फ़ाइल '{1}' नहीं पढ़ी जा सकती"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "पासवर्ड फ़ाइल '{1}' नहीं पढ़ी जा सकती"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "'{2}' के बगल वाली असंपीड़ित फ़ाइल '{1}' नहीं पढ़ी जा सकती"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "{1} नहीं लिखा जा सकता"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "'{1}' नहीं लिखा जा सकता"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "'{1}' को जाँचने के लिए नहीं लिखा जा सकता"
 
 msgid "cannot write resources.pri"
 msgstr "resources.pri नहीं लिखा जा सकता"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "'{1}' के बगल में मेनू फ़ाइलें नहीं लिखी जा सकतीं"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "{1} का संसाधन पैकेज नहीं लिखा जा सकता"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "capabilities नामों की सरणी है, जैसे [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "क्षमता '{1}' rubrapack की जानी हुई नहीं है (मैनुअल उनकी सूची देता है)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "क्षमता '{1}' को Windows बिल्ड 17763 या बाद वाला चाहिए"
 
 msgid "carriage return without a line feed"
 msgstr "line feed के बिना carriage return"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "प्रमाणपत्र फ़ाइल '{1}': {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "स्रोत पथ जाँचें (स्रोत फ़ाइ�
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "वर्तनी जाँचें (संदेश निकटतम नाम सुझाता है) और तालिका की कुंजियाँ"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "क्लास {1} को पहले से [com.{2}] सेवा देता है"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "क्लास {1} [msix-extension.{2}] में भी है"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "class {{12345678-...} जैसा GUID होना चाहिए (मिला '{1}')"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "preflight = false के साथ close-programs का कोई प्रभाव नहीं"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "close-programs \"ask\", \"always\" या \"never\" होना चाहिए (मिला '{1}')"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "स्तंभ {1} में गलत प्रकार का मान है"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "स्तंभ {1} मान्य UTF-8 नहीं है"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "स्तंभ {1} null नहीं हो सकता"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "स्तंभ {1}: {2} स्तंभ की सीमा से बाहर है"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "स्तंभ {1}: {2} UTF-16 इकाइयाँ, स्तंभ में {3} आती हैं"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "स्तंभ {1}: {2} वर्ण, स्तंभ में {3} आते हैं"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "आदेश '{1}' अभी लागू नहीं है"
 
 msgid "command-line"
 msgstr "कमांड लाइन"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "घटक {1} {2} 32 और 64 बिट के बीच बदला: घटक नियमों को नया GUID चाहिए"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "घटक {1} {2} अब नहीं है (उसके संसाधन पिछले संस्करण के साथ हटाए जाते हैं)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "घटक {1} {2} का कुंजी पथ अब {4} के बजाय {3} है: घटक नियमों को नया GUID चाहिए"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "शर्त में बंद न किया गया उद्ध
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "शर्त 240 वर्णों से लंबी है (rubrapack \"Installed OR ( )\" जोड़ता है)"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "config में \"Name=value\" स्ट्रिंग होती हैं (मिला '{1}')"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "इसमें नियंत्रण वर्ण है"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "इसमें < > : \" / \\ | ? * में से एक है"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "content-type मीडिया प्रकार है, जैसे \"image/png\" (मिला '{1}')"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "default-when को 1 से ऊपर level चाहिए (level-1 �
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "चर परिभाषित करें ([define] या -D NAME=value), या शाब्दिक $ के लिए $$ लिखें"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "संवाद '{1}' कोई [dialog.*] नहीं है"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "'Rp' से शुरू होने वाले संवाद ID (और FilesInUse) rubrapack के अपने हैं"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "dir '{1}' अपने ही भीतर है (पथ लूप)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "dir '{1}' न dir ID है न Programs, Desktop, StartMenu या Startup"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "dir '{1}' dir ID नहीं है"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "dir '{1}' परिभाषित नहीं है"
 
 msgid "dir ID"
 msgstr "dir ID"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "direction \"in\" या \"out\" होना चाहिए (मिला '{1}')"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "do/undo तर्क 255 वर्णों से लंबे है�
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "बिंदु वाली कुंजियाँ समर्थित नहीं; कुंजी को उसकी अपनी तालिका में रखें"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "ड्राइवर '{1}' [odbc-driver.*] नहीं है"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "स्पेस या बिंदु पर समाप्त हो�
 msgid "error"
 msgstr "त्रुटि"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "executable = \"{1}\" को ऐसी [file.*] नामित करनी चाहिए जो पैकेज में जाती है"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "तालिका नाम बंद करने के लिए ']'
 msgid "expected a key, a [table] or a comment"
 msgstr "कुंजी, [table] या टिप्पणी अपेक्षित थी"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "एक्सटेंशन '{1}' का पहले से प्रोग्राम है ([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "extension '.' और छोटे अक्षर, अंक, '_' या '-' होना चाहिए (मिला '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "external-location = true के लिए Windows बिल्ड 19041 
 msgid "extra-files has no effect with preflight = false"
 msgstr "preflight = false के साथ extra-files का कोई प्रभाव नहीं"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "extra-files \"ask\", \"keep\" या \"delete\" होना चाहिए (मिला '{1}')"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "फ़ीचर {1} अब नहीं है: जिन इंस्टॉलेशन में यह थी वे इसकी सामग्री खो देते हैं"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "फ़ीचर '{1}' स्वयं अपना पूर्वज है"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "फ़ीचर '{1}' परिभाषित नहीं है"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "फ़ीचर पैरेंट '{1}' परिभाषित नहीं है"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "फ़ाइल '{1}' पहले से सेवा '{2}' चलाती है"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "फ़ाइल '{1}' पहले से फ़ॉन्ट के रूप में पंजीकृत है"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "फ़ाइल '{1}' इस पैकेज की [file.*] नहीं है"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "फ़ाइल '{1}' Fonts फ़ोल्डर में ही इंस्टॉल होनी चाहिए (path = \"Fonts\" वाला [dir.*])"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "फ़ाइल '{1}' को फ़ीचर चाहिए: 'feature' यहाँ या उसके dir पर सेट करें"
 
 msgid "file must be \"file:<ID>\""
 msgstr "file \"file:<ID>\" होना चाहिए"
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "फ़ाइल नाम {1} UTF-16 इकाइयों का है; 8.3 छोटे नाम के साथ MSI में अधिकतम {2} आते हैं"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "file-system-virtualization और registry-virtualization = false को Windows बिल्ड 18362 या बाद वाला चाहिए: [msix] min-version = \"10.0.18362.0\" सेट करें"
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file: '{1}' इस पैकेज की [file.*] नहीं है"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' COM क्लास को केवल .exe या .dll के रूप में सेवा देता है"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "संदेश में नामित मान ठीक करे�
 msgid "floating-point numbers are not supported"
 msgstr "फ़्लोटिंग-पॉइंट संख्याएँ समर्थित नहीं हैं"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "फ़ोल्डर '{1}' को फ़ीचर चाहिए: 'feature' यहाँ या उसके dir पर सेट करें"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "फ़ोल्डर नाम {1} UTF-16 इकाइयों का है; 8.3 छोटे नाम के साथ MSI में अधिकतम {2} आते हैं"
 
 msgid "follow-parent needs a parent"
 msgstr "follow-parent को पैरेंट चाहिए"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "फ़ॉन्ट को scope = \"machine\" चाहिए (यह {1} है)"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "format {1} को नया rubrapack चाहिए (यह format {2} पढ़ता है)"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "format एक पूर्ण संख्या है: format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "--key, --pkcs11 और --key-store में से एक दें"
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "प्रोग्राम फ़ोल्डर के उप-फ़ोल्डर दें, अल्पविराम से अलग, या - कोई नहीं"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "glob '{1}' किसी फ़ाइल से मेल नहीं खाता"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "glob '{1}' आउटपुट फ़ाइल '{2}' से मेल खाता है"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "इसमें 65001 (UTF-8) के अलावा किसी को
 msgid "icon must be an .ico file"
 msgstr "icon .ico फ़ाइल होनी चाहिए"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon: फ़ाइल '{1}' इस पैकेज की [file.*] नहीं है"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "id {{12345678-1234-1234-1234-123456789ABC} जैसा GUID होना चाहिए: मॉड्यूल का अपना, हर संस्करण में वही"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "identifier winget का Publisher.Package है: 1 से 32 वर्णों के 2 से 8 भाग, बिना रिक्त स्थान और \\ / : * ? \" < > | के ('{1}' मिला)"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "identity-name A-Z, a-z, 0-9, '.' और '-' के 3 से 50 वर्णों का होना चाहिए (मिला '{1}')"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "इनलाइन तालिकाएँ समर्थित नह
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "installed Windows से पूछता है कि क्या इंस्टॉल है; यह केवल Windows पर चलता है"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "पंक्ति {1} वाले पथ पर ही इंस्टॉल होता है (Windows नामों में अक्षरों के छोटे-बड़े होने की उपेक्षा करता है{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "आंतरिक त्रुटि: किसी अंतर्न�
 msgid "internal: a module table has no _Validation rule"
 msgstr "आंतरिक: मॉड्यूल तालिका का कोई _Validation नियम नहीं"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "आंतरिक: {1} के एक स्तंभ का कोई _Validation नियम नहीं"
 
 msgid "invalid"
 msgstr "अमान्य"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "अमान्य - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "मान्य MSIX पैकेज नहीं है"
 msgid "is not valid UTF-8"
 msgstr "मान्य UTF-8 नहीं है"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for: '{1}' प्रोग्राम (.exe) नहीं है"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "अपग्रेड कोड वही रखें, संस्करण बढ़ाएँ, बने रहने वाली फ़ाइलों के घटक कोड वही रखें"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "कुंजी '{1}' इस तालिका में दो बार सेट है (पहली बार पंक्ति {2} पर)"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "कुंजी '{1}' '\\' से शुरू या खत्म नहीं होनी चाहिए और उसमें खाली भाग नहीं होना चाहिए"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "कुंजी '{1}' तालिका के बाहर है; पहली तालिका से पहले केवल 'format' आता है"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "कुंजी फ़ाइल '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" या \"autoplay\" होना चाहिए (मिला '{1}')"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "kind \"preview\", \"thumbnail\" या \"property\" होना चाहिए (मिला '{1}')"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "kind registry, file, dir या component होना चाहिए"
 msgid "labels is an array of strings, one per value"
 msgstr "labels स्ट्रिंग की सरणी है, हर मान के लिए एक"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "भाषा '{1}' का कोई भाषा पैक नहीं (स्रोत के बगल में lang/{2}.po, या RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "भाषा '{1}' दो बार सूचीबद्ध है"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "भाषा '{1}' [ui] languages में नहीं है"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "भाषा '{1}' में {2} पाठ नहीं हैं, पहला {3} है: उन्हें उसके भाषा पैक (lang/{4}.po) में जोड़ें या [ui-text.ID] text-{5} दें"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "भाषा '{1}' को [ui] langid-{2} चाहिए (स्वचालित चुनाव के लिए उसके LANGID)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "भाषा '{1}' को [ui] name-{2} चाहिए (भाषा पृष्ठ पर उसका नाम)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "language \"neutral\", \"en-US\" या \"ko-KR\" होना चाह�
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" अकेला लिखा जाता है, किसी ऐरे में नहीं: यह सभी अंतर्निहित भाषाएँ लेता है"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "languages में \"ko\" या \"zh_TW\" जैसे कोड होते हैं (2 या 3 छोटे अक्षर, फिर _ और क्षेत्र के दो बड़े अक्षर) (मिला '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "launcher files में PSF लॉन्चर की फ़ाइल �
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license .txt, .md (सादे पाठ के रूप में दिखता है) या .rtf फ़ाइल होनी चाहिए"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint: {1} पंक्ति {2}: स्तंभ {3} NFC में नहीं है ({4} पंक्ति{-5}); build --nfc फ़ोल्डर, फ़ाइल और शॉर्टकट नामों को NFC में रखता है"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint: {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint: कोड पेज {1}, 65001 नहीं: पाठ UTF-8 के रूप में नहीं जाँचा जाता, चौड़ाई केवल ASCII के लिए"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint: ऊपर की समस्याएँ देखें\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "उन कुंजियों की सूची जिनसे कोई टोकन या Windows प्रमाणपत्र भंडार हस्ताक्षर कर सकता है"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "लोगो '{1}' और उसका .scale-100 रूप दोनों मौजूद हैं: एक रखें"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "स्केल {2} पर लोगो '{1}' {3}x{4} पिक्सेल है; इसे {5}x{6} होना चाहिए"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "स्केल {2} पर लोगो '{1}' PNG फ़ाइल नहीं है"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "लोगो '{1}' {2}x{3} पिक्सेल का है; फ़ाइल प्रकार का लोगो वर्गाकार होना चाहिए"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "लोगो '{1}' {2}x{3} पिक्सेल है; इसे {4}x{5} होना चाहिए"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "लोगो '{1}' PNG फ़ाइल नहीं है"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "लोगो '{1}' नहीं मिला (न ही .scale-100 ... .scale-400 रूप)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "लोगो '{1}': स्केल रूपों वाले लोगो को एक्सटेंशन सहित ASCII फ़ाइल नाम चाहिए"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "logo एक 8-बिट RGB या RGBA .png होना चाहिए, इंटरलेस्ड नहीं, हर भुजा अधिकतम 1024 पिक्सेल"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "main-package मुख्य पैकेज का पहचान नाम है (मिला '{1}')"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "इसमें नियंत्रण वर्ण या / \\ : * ? 
 msgid "may not start with a space or end with a space or a dot"
 msgstr "यह स्पेस से शुरू या स्पेस या बिंदु पर खत्म नहीं हो सकता"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "मर्ज मॉड्यूल '{1}' नहीं मिला"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "3 से अधिक रीडायरेक्ट"
 msgid "more than 96 sections"
 msgstr "96 से अधिक सेक्शन"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "एक से अधिक स्रोत फ़ाइल ('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "एक से अधिक टोकन मौजूद हैं: --tok
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "multi \"each\", \"one\" या \"single\" होना चाहिए (मिला '{1}')"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "1 से 64 बाइट होना चाहिए"
 msgid "name contains a control character"
 msgstr "नाम में नियंत्रण वर्ण है"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "name पैकेज का पहचान नाम है (मिला '{1}')"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "ऐसा फ़ोल्डर नामित करता है ज�
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "new msix अभी लागू नहीं है: MSI स्रोत बनाएँ और [msix] जोड़ें (मैनुअल देखें)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "'format = {1}' पंक्ति नहीं: rubrapack 0.18 या पहले के प्रारूप का स्रोत, जिसे यह संस्करण नहीं पढ़ता (पथ अब $(ProgramFiles) या $(INSTALLDIR) से शुरू होते हैं); मैनुअल का Source format देखें"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "कोई सर्वर नाम नहीं, या वह 255 ब�
 msgid "no string pool: not a transform"
 msgstr "कोई स्ट्रिंग पूल नहीं: ट्रांसफ़ॉर्म नहीं है"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "'{2}' में कोई तालिका '{1}' नहीं"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "ऑक्टल और बाइनरी संख्याएँ स�
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "on = \"uninstall\" HKLM, HKCU और HKMU के लिए है (क्लासेस [assoc.*], [com.*] आदि के साथ जाती हैं)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "on = \"uninstall\" किसी कुंजी को उसके नीचे की हर चीज़ सहित हटाता है: '{1}' Software के नीचे किसी उत्पाद की अपनी कुंजी नहीं है"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "on = \"uninstall\" हटाते समय पूरी कुंजी हटाता है; यह '{1}' नहीं लेता"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "on \"install\" या \"uninstall\" होना चाहिए"
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "on \"install\", \"uninstall\" या \"both\" होना चाहिए"
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on: हर एक फ़ाइल प्रकार है ('.' और छोटे अक्षर, अंक, '_' या '-'), \"*\" (हर फ़ाइल), \"folder\", \"background\" (फ़ोल्डर का खाली भाग), \"drive\" या \"assoc:<ID>\" (मिला '{1}')"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "केवल radio, combo और listbox नियंत्रण values
 msgid "out of memory"
 msgstr "मेमोरी समाप्त"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "आउटपुट '{1}': rubrapack .msi, .msm, .msix, .msixbundle, .msixupload और chain का setup .exe लिखता है"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "पैकेज '{1}' {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "पैकेज '{1}' नहीं मिला"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "parent किसी दूसरे उत्पाद का upgrade-code होना चाहिए, इस पैकेज का अपना नहीं"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "parent मुख्य उत्पाद का upgrade-code होना चाहिए, {{12345678-1234-1234-1234-123456789ABC} जैसा GUID"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "path किसी Windows फ़ोल्डर से शुरू ह�
 msgid "paths"
 msgstr "पथ"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "perceived-type \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" या \"application\" होना चाहिए (मिला '{1}')"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "अनुमतियों को scope = \"machine\" चाहिए (यह {1} है)"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "phase \"immediate\", \"deferred\", \"commit\" या \"rollback\" होना चाहिए ('{1}' मिला)"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "ports कोई पोर्ट या 1-65535 के भीतर \"8000-8100\" जैसी सीमा होनी चाहिए (मिला '{1}')"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "यह सहायता छापें, या किसी एक �
 msgid "product-code must be a GUID"
 msgstr "product-code GUID होना चाहिए"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "profile \"all\", \"domain\", \"private\" या \"public\" होना चाहिए (मिला '{1}')"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "prog-id '{1}' पहले से [com.{2}] का है"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "prog-id '{1}' [assoc.{2}] का भी है: फ़ाइल प्रकार और COM क्लास को दो नाम चाहिए"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "prog-id '{1}' [assoc.{2}] में भी दूसरे विवरण, target, icon या args के साथ है"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "prog-id '{1}' [assoc.{2}] में भी है, दूसरे logo के साथ"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "prog-id अक्षर, अंक, '.', '_' या '-' होना चाहिए, अंक से शुरू नहीं, अधिकतम 39 (मिला '{1}')"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "properties Windows Installer पैकेजों के लिए है; MSIX इसे नहीं लेता"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "गुण '{1}' पहले से नियंत्रण '{2}' का है"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "गुण '{1}' का नाम किसी dir या फ़ीचर का है"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "गुण '{1}' पहले से परिभाषित है (पंक्ति {2})"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "गुण '{1}' पहले से खोजा जाता है (पंक्ति {2})"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "गुण '{1}' rubrapack या इंस्टॉलर सेट करता है और यहाँ परिभाषित नहीं हो सकता"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "गुण '{1}' आपका अपना सार्वजनिक नाम होना चाहिए (बड़े अक्षरों में)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "गुण '{1}' सार्वजनिक नाम होना चाहिए: बड़े अक्षर, अंक और '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "protocol \"tcp\" या \"udp\" होना चाहिए (मिला '{1}')"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "public-folder पैकेज का एक फ़ोल्डर होना चाहिए, जैसे \"Public\" (मिला '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "जब कोई अपग्रेड इस संस्करण क�
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "recursive = true फ़ोल्डर को उसकी हर चीज़ सहित हटाता है; यह 'name' नहीं लेता"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "refuse-upgrade-below {1} इस पैकेज के संस्करण {2} से ऊपर है"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "refuse-upgrade-below '{1}' 1.2.3 जैसा संस्करण होना चाहिए"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message को refuse-upgrade-below चाहिए"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "भाषा पृष्ठ के क्षेत्र {1} में {2} भाषाएँ हैं, अधिकतम {3} (उनके पैक का X-Rubrapack-Group)"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "registration \"machine\" या \"user\" होना चाहिए ('{1}' मिला)"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "रजिस्ट्री '{1}' एक मान हटाती है; उसके पास बचाने को कुछ नहीं"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "रजिस्ट्री मान '{1}' को फ़ीचर चाहिए"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "remove-addons को सफ़ाई कार्य चाहिए: cl
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "replaces में अधिकतम 16 अपग्रेड कोड होते हैं"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "replaces में अपग्रेड कोड होते हैं, {{12345678-1234-1234-1234-123456789ABC} जैसे GUID (मिला '{1}')"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "replaces अपग्रेड कोडों की सरणी है, जैसे [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "replaces {1} को दो बार सूचीबद्ध करता है"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "replaces {1} को नामित करता है, जो इस पैकेज का अपना upgrade-code या उसका पैरेंट है"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "आवश्यक गुण {1} नहीं है"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "rollback जुड़वाँ {1} से पहले आना चाहिए ({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "root HKLM, HKCR या HKCU होना चाहिए"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "root HKLM, HKCU, HKCR या HKMU होना चाहिए (मिला '{1}')"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new: कुछ प्रश्न स्रोत बनात
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "`rubrapack help <command>` चलाएँ; पथ जाँचें और कि आउटपुट फ़ोल्डर मौजूद है"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run: '{1}' (मशीन 0x{2}) इस पैकेज की मशीनों पर नहीं चल सकता"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run: '{1}' प्रोग्राम (.exe) नहीं है"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run: फ़ाइल '{1}' इस पैकेज की [file.*] नहीं है"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "स्रोत को UTF-8 (या BOM सहित UTF-16) में,
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "बताता है कि इस Windows पर उस अपग्रेड कोड वाला उत्पाद या उस फ़ैमिली का ऐप पैकेज इंस्टॉल है या नहीं"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "स्कीम '{1}' का पहले से प्रोग्राम है ([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "scope \"machine\", \"user\" या \"dual\" होना चाहिए
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "sddl \"D:PAI(A;OICI;FA;;;BA)\" जैसी SDDL स्ट्रिंग होनी चाहिए"
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "खोज गुण '{1}' आपका अपना सार्वजनिक नाम होना चाहिए (बड़े अक्षरों में)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "संदेश देखें; rubrapack से दोबारा बनाने पर इनमें से अधिकांश ठीक हो जाते हैं"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "क्रम {1} {2} ({3}) के बाद नहीं है"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "किसी क्रिया को ऐसी क्रिया के बगल में रखता है जिसे न पैकेज चलाता है न मॉड्यूल"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "सेवा नाम '{1}' पहले से उपयोग में है"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "सेवाओं को scope = \"machine\" चाहिए (यह {1} है)"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "शॉर्टकट नाम {1} UTF-16 इकाइयों का है; 8.3 छोटे नाम के साथ MSI में अधिकतम {2} आते हैं"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "दो पैकेजों में क्या अलग है द
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "PE फ़ाइल, MSI पैकेज, MSIX पैकेज या बंडल पर हस्ताक्षर करें"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "{1} पर हस्ताक्षर किए\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "स्रोत '{1}' एक निर्देशिका है; कई फ़ाइलों के लिए [files.ID] का उपयोग करें"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "स्रोत '{1}' प्रतीकात्मक लिंक है; लिंक का अनुसरण नहीं किया जाता"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "स्रोत '{1}' सामान्य फ़ाइल नहीं है"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "पैकेज बनते समय स्रोत फ़ाइल '{1}' बदल गई"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "स्रोत फ़ाइल '{1}' 2 GiB से बड़ी है"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "स्रोत फ़ाइल '{1}' नहीं मिली"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "source \"file:<ID>\" होना चाहिए"
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "source .msi, .msix, .msixbundle या .msp पैकेज होना चाहिए"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "स्रोत पथ '{1}' स्रोत फ़ाइल के सापेक्ष होना चाहिए"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "स्रोत पथ '/' का उपयोग करते हैं, '\\\\' का नहीं (मिला '{1}')"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source: फ़ाइल '{1}' इस पैकेज की [file.*] नहीं है"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "summary-name ASCII होना चाहिए (सारांश ज�
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "symbols .pdb फ़ाइलों की सूची है, जैसे [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "तालिका {1} {2}"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "तालिका '{1}' अपठनीय है"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "तालिका [{1}{2}{3}] दो बार परिभाषित है (पहली बार पंक्ति {4} पर)"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "tags अधिकतम 16 खोज शब्दों की सूच
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "कोई कॉन्फ़िगरेशन नहीं लेता (इसमें ModuleConfiguration नहीं)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "लक्ष्य '{1}' मौजूद नहीं है"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "target \"dir:<ID>\", \"file:<ID>\" या \"registry:<ID>\" होना
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "target \"file:<ID>\" होना चाहिए जो इस पैकेज की किसी [file.*] को नामित करे"
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "लक्ष्य नाम '{1}' {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target: फ़ाइल '{1}' इस पैकेज की [file.*] नहीं है"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "task-id '{1}' पहले से [msix-extension.{2}] उपयोग करता है"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "UTF-16 फ़ाइल मान्य UTF-16 नहीं है"
 msgid "the ZIP central directory lies outside the file"
 msgstr "ZIP central directory फ़ाइल के बाहर है"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "ऐप्लिकेशन ID '{1}' Application Id बनता है: केवल अक्षर और अंक, अंक से शुरू नहीं"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "एम्बेडेड cabinet पैकेज को 2 GiB या अ
 msgid "the entry is not in the central directory"
 msgstr "प्रविष्टि central directory में नहीं है"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "त्रुटि संवाद '{1}' को {3} नाम का {2} नियंत्रण चाहिए (त्रुटि 2835)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "executable '{1}' .exe होना चाहिए"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "मैनिफ़ेस्ट में Identity Publisher नहीं
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "पैकेज के पूरे नाम के लिए मैनिफ़ेस्ट की Identity नहीं पढ़ी जा सकती"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "मर्ज मॉड्यूल {1}"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "नाम {1}"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "पैकेज परिवार {1} कंटेनर में दो बार है"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "पैकेज की सामग्री उसके हस्त�
 msgid "the package's directory cannot be read"
 msgstr "पैकेज की निर्देशिका पढ़ी नहीं जा सकती"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "पैकेज की फ़ाइल के नाम में उद्धरण चिह्न या प्रतिशत चिह्न नहीं होना चाहिए: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "प्रतिक्रिया 4 MiB से बड़ी है"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "प्रतिक्रिया chunked के अलावा कोई transfer coding उपयोग करती है"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "वही शर्त पहले से आवश्यक है (पंक्ति {1})"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "स्रोत फ़ाइल का एन्कोडिंग"
 msgid "the system random source failed"
 msgstr "सिस्टम का यादृच्छिक स्रोत विफल हुआ"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "टैब क्रम (Control_Next) Control_First से अपने {1} नियंत्रणों में एक चक्र नहीं है (Windows Installer त्रुटि 2809 या 2810 के साथ रुकता है)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "यह rubrapack अपने मेनू भाग के बिना
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "यह rubrapack सेटअप प्रोग्राम के बिना बना है (nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "threading \"sta\", \"mta\", \"both\" या \"neutral\" होना चाहिए (मिला '{1}')"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "resources.pri के लिए बहुत अधिक स्थान
 msgid "too many packages in the bundle"
 msgstr "बंडल में बहुत अधिक पैकेज"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "'{2}' में रूपांतरण '{1}' पढ़ा नहीं जा सकता: {3}"
 
 msgid "trusted"
 msgstr "विश्वसनीय"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "दो क्रियाएँ एक ही sequence {1} साझा करती हैं ({2} और {3}); किसी एक [action] को दूसरा sequence, before या after दें"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "एक बंडल में एक ही नाम के दो प�
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "एक बंडल में एक ही ResourceId के दो संसाधन पैकेज"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "type string, expand, dword, qword, binary या multi होना चाहिए (मिला '{1}')"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "type को text, checkbox, edit, radio, combo, listbox या bitmap होना चाहिए ('{1}' मिला)"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' इस पैकेज की [file.*] नहीं है"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "typelib-version हेक्स अंकों में major.minor है, जैसे \"1.0\" (मिला '{1}')"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "types और verb kind = \"context-menu\" से संबंधित �
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types: हर एक \".ext\" या \"*\" (हर फ़ाइल) है"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types: हर एक '.' और छोटे अक्षर, अंक, '_' या '-' है (मिला '{1}')"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "ui = \"{1}\" उपयोगकर्ता को dir '{2}' का फ़ोल्डर चुनने देता है, जो मौजूद नहीं ([ui] install-dir सेट करें)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "ui = \"features\" को चुनने के लिए [feature.*] तालिकाएँ चाहिए"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "ui none, basic, minimal, installdir या features होना चाहिए (मिला '{1}')"
 
 msgid "unexpected text after the value"
 msgstr "मान के बाद अनपेक्षित पाठ"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "अज्ञात आदेश '{1}' ('rubrapack help' देखें)"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "अज्ञात एस्केप \\{1} (बैकस्लैश वाले पाठ के लिए '...' का उपयोग करें)"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "अज्ञात inspect विकल्प (तालिका नाम, --summary, --files या --streams का उपयोग करें)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "[{2}{3}{4}] में अज्ञात कुंजी '{1}'"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "[{2}{3}{4}] में अज्ञात कुंजी '{1}' (क्या आपका मतलब '{5}' था?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "अज्ञात या अधूरा {1} विकल्प '{2}'"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "अज्ञात तालिका [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "अज्ञात तालिका [{1}{2}{3}] (क्या आपका मतलब [{4}] था?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "पैकेज को नई निर्देशिका में खोलें, उसी ढाँचे में जैसे वह इंस्टॉल होता है"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "असमर्थित - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "update-* कुंजियों को appinstaller-uri और package
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "upgrade = false on = \"uninstall\" या \"both\" के लिए है (इंस्टॉलेशन कभी अपग्रेड का हटाना नहीं होता)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "upgrade-code {{12345678-1234-1234-1234-123456789ABC} जैसा GUID होना चाहिए"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "उपयोग: rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "उपयोग: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "rubrapack का पूर्ण बिल्ड या कोई दू
 msgid "used by more than one component"
 msgstr "एक से अधिक घटक उपयोग करते हैं"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "users \"all\" होना चाहिए (मिला '{1}')"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "मान '{1}' दो बार सूचीबद्ध है"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "values 1 से 32 स्ट्रिंग की सरणी है"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "मान: ID, GUID, संस्करण, सीमा से बाहर संख्याएँ, ऐसी चीज़ों के संदर्भ जो मौजूद नहीं"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "चर '{1}' परिभाषित नहीं है ([define] या -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "चर नाम '{1}' में '=' नहीं हो सकता न वह = + - ! * से शुरू हो सकता है"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "चर"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "चर: बिना मान का $(NAME), बंद न किया गया $(, Windows नाम या dir ID जहाँ वह नहीं आ सकता"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "संस्करण '{1}' a.b.c या a.b.c.d होना चाहिए"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "संस्करण '{1}' a.b.c या a.b.c.d होना चाहिए, जहाँ a, b <= 255 और c, d <= 65535"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "निदान कोड का अर्थ, उसे ले जा�
 msgid "with must be \"file:<ID>\""
 msgstr "with \"file:<ID>\" होना चाहिए"
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with: फ़ाइल '{1}' इस पैकेज की [file.*] नहीं है"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "--pkcs11 के बिना `keys list` Windows प्रमाणपत्र भंडार दिखाता है"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "working-dir '{1}' dir ID नहीं है"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "तालिका या मान उसी सरल तरीके 
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "मान '[~]' के बिना लिखें; mode = \"append\" या \"prepend\" उसे जोड़ता है"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "{1} लिखा गया\n"
 
 msgid "x + width must be at most 370 (the page width)"

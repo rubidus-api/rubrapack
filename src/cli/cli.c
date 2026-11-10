@@ -69,7 +69,7 @@ const char *rp_cli_usage(const char *command) {
 }
 
 int rp_cli_usage_error(const char *command) {
-    rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack %s", rp_cli_usage(command));
+    rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack {}", proven_arg_cstr(rp_cli_usage(command)));
     return RP_EXIT_USAGE;
 }
 
@@ -133,8 +133,8 @@ static int print_usage(rp_out_t out) {
     }
     if (err == PROVEN_OK) {
         char list[256], text[1024];
-        rp_lang_format(text, sizeof text, "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n",
-                       built_in_langs(list, sizeof list));
+        rp_lang_format(text, sizeof text, "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n",
+                       proven_arg_cstr(built_in_langs(list, sizeof list)));
         err = rp_pal_puts(out, text);
     }
     if (err == PROVEN_OK) {
@@ -163,13 +163,13 @@ static int cmd_help(int argc, char **argv) {
     }
     const command_t *c = find_command(argv[2]);
     if (c == nullptr) {
-        rp_diag_error(RP_DIAG_UNKNOWN_COMMAND, "unknown command '%s' (see 'rubrapack help')",
-                      shown(argv[2], buf, sizeof buf));
+        rp_diag_error(RP_DIAG_UNKNOWN_COMMAND, "unknown command '{}' (see 'rubrapack help')",
+                      proven_arg_cstr(shown(argv[2], buf, sizeof buf)));
         return RP_EXIT_USAGE;
     }
     char line[2048];                    // the longest usage (build) is over 600 bytes
-    rp_lang_format(line, sizeof line, "usage: rubrapack %s\n\n%s%s\n", c->usage, rp_tr(c->summary),
-                   c->implemented ? "" : " (not implemented yet)");
+    rp_lang_format(line, sizeof line, "usage: rubrapack {}\n\n{}{}\n", proven_arg_cstr(c->usage), proven_arg_cstr(rp_tr(c->summary)),
+                   proven_arg_cstr(c->implemented ? "" : " (not implemented yet)"));
     return rp_pal_puts(RP_OUT_STDOUT, line) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
 }
 
@@ -177,8 +177,8 @@ int rp_main(int argc, char **argv) {
     for (int i = 1; i < argc; ++i) {
         rp_text_result_t r = rp_utf8_validate((const uint8_t *)argv[i], strlen(argv[i]));
         if (r.err != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "argument %d is not valid UTF-8 (byte %zu)", i,
-                          r.offset);
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "argument {} is not valid UTF-8 (byte {})", proven_arg_i32(i),
+                          proven_arg_u64(r.offset));
             return RP_EXIT_USAGE;
         }
     }
@@ -191,8 +191,8 @@ int rp_main(int argc, char **argv) {
         char *env = rp_pal_getenv(heap, "RUBRAPACK_LANG");
         if (env && env[0] && !rp_lang_set(env)) {
             char buf[64], buf2[64], list[256];
-            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)",
-                          shown(env, buf, sizeof buf), built_in_langs(list, sizeof list), shown(env, buf2, sizeof buf2));
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)",
+                          proven_arg_cstr(shown(env, buf, sizeof buf)), proven_arg_cstr(built_in_langs(list, sizeof list)), proven_arg_cstr(shown(env, buf2, sizeof buf2)));
             rp_mem_free(heap, env);
             return RP_EXIT_USAGE;
         }
@@ -215,8 +215,8 @@ int rp_main(int argc, char **argv) {
         }
         if (!rp_lang_set(code)) {
             char buf[64], buf2[64], list[256];
-            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)",
-                          shown(code, buf, sizeof buf), built_in_langs(list, sizeof list), shown(code, buf2, sizeof buf2));
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)",
+                          proven_arg_cstr(shown(code, buf, sizeof buf)), proven_arg_cstr(built_in_langs(list, sizeof list)), proven_arg_cstr(shown(code, buf2, sizeof buf2)));
             return RP_EXIT_USAGE;
         }
     }
@@ -256,10 +256,10 @@ int rp_main(int argc, char **argv) {
     char buf[256];
     const command_t *c = find_command(name);
     if (c == nullptr) {
-        rp_diag_error(RP_DIAG_UNKNOWN_COMMAND, "unknown command '%s' (see 'rubrapack help')",
-                      shown(name, buf, sizeof buf));
+        rp_diag_error(RP_DIAG_UNKNOWN_COMMAND, "unknown command '{}' (see 'rubrapack help')",
+                      proven_arg_cstr(shown(name, buf, sizeof buf)));
         return RP_EXIT_USAGE;
     }
-    rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "command '%s' is not implemented yet", c->name);
+    rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "command '{}' is not implemented yet", proven_arg_cstr(c->name));
     return RP_EXIT_USAGE;
 }

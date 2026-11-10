@@ -272,8 +272,8 @@ static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
     bool ok_file = load_table(msi, "File", &file), ok_comp = load_table(msi, "Component", &comp),
          ok_dir = load_table(msi, "Directory", &dir), ok_hash = load_table(msi, "MsiFileHash", &hash);
     if (!ok_file || !ok_comp || !ok_dir || !ok_hash) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "table '%s' is unreadable",
-                      !ok_file ? "File" : !ok_comp ? "Component" : !ok_dir ? "Directory" : "MsiFileHash");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "table '{}' is unreadable",
+                      proven_arg_cstr(!ok_file ? "File" : !ok_comp ? "Component" : !ok_dir ? "Directory" : "MsiFileHash"));
         rc = RP_EXIT_IO;
     }
     int f_ver = column_of(msi, &file, "Version"), f_lang = column_of(msi, &file, "Language");
@@ -381,7 +381,7 @@ static int inspect_cab(const char *path, const uint8_t *data, size_t len, proven
     size_t n = 0;
     uint8_t *arena = NULL;
     if (rp_cab_read(alloc, data, len, &limits, &files, &n, &arena) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a cabinet rubrapack can read (stored or MSZIP)", path);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a cabinet rubrapack can read (stored or MSZIP)", proven_arg_cstr(path));
         return RP_EXIT_IO;
     }
     rp_buf_t b = rp_buf_new(alloc, (size_t)1 << 26);
@@ -405,7 +405,7 @@ static int inspect_chain(const char *path, const uint8_t *data, size_t len, prov
     size_t n = 0;
     proven_err_t err = rp_chain_read(heap, data, len, name, sizeof name, &e, &n);
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a rubrapack setup program%s", path, err == PROVEN_ERR_NOT_FOUND ? "" : " (its payload is damaged)");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a rubrapack setup program{}", proven_arg_cstr(path), proven_arg_cstr(err == PROVEN_ERR_NOT_FOUND ? "" : " (its payload is damaged)"));
         return RP_EXIT_IO;
     }
     rp_buf_t b = rp_buf_new(heap, 1u << 20);
@@ -474,8 +474,8 @@ int rp_cmd_inspect(int argc, char **argv) {
     size_t len = 0;
     proven_err_t err = rp_pal_read_file(heap, path, MAX_INPUT, &data, &len);
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s' (%s)", path,
-                      err == PROVEN_ERR_NOT_FOUND ? "not found" : err == PROVEN_ERR_OUT_OF_BOUNDS ? "too large" : "read error");
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}' ({})", proven_arg_cstr(path),
+                      proven_arg_cstr(err == PROVEN_ERR_NOT_FOUND ? "not found" : err == PROVEN_ERR_OUT_OF_BOUNDS ? "too large" : "read error"));
         return RP_EXIT_IO;
     }
     size_t pl = strlen(path);
@@ -500,7 +500,7 @@ int rp_cmd_inspect(int argc, char **argv) {
     const char *why = NULL;
     int rc = RP_EXIT_OK;
     if (rp_cfb_open(&cfb, heap, data, len, &limits, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid package: %s", path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid package: {}", proven_arg_cstr(path), proven_arg_cstr(why ? why : "unreadable"));
         rp_mem_free(heap, data);
         return RP_EXIT_IO;
     }
@@ -511,14 +511,14 @@ int rp_cmd_inspect(int argc, char **argv) {
         return rc;
     }
     if (rp_msi_open(&msi, heap, &cfb, &limits, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid MSI database: %s", path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid MSI database: {}", proven_arg_cstr(path), proven_arg_cstr(why ? why : "unreadable"));
         rp_cfb_close(&cfb);
         rp_mem_free(heap, data);
         return RP_EXIT_IO;
     }
     rp_suminfo_t si;
     if (load_summary(&cfb, heap, &sum, &si) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' has an unreadable summary information stream", path);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' has an unreadable summary information stream", proven_arg_cstr(path));
         rc = RP_EXIT_IO;
     } else if (what == NULL) {
         rc = overview(&msi, &si, heap);
@@ -544,10 +544,10 @@ int rp_cmd_inspect(int argc, char **argv) {
                 rp_mem_free(heap, out);
             }
         } else if (rp_msi_find_table(&msi, what, &t) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_NO_TABLE, "no table '%s' in '%s'", what, path);
+            rp_diag_error(RP_DIAG_NO_TABLE, "no table '{}' in '{}'", proven_arg_cstr(what), proven_arg_cstr(path));
             rc = RP_EXIT_USAGE;
         } else if (rp_msi_export_idt(&msi, t, &out, &n) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "table '%s' is unreadable", what);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "table '{}' is unreadable", proven_arg_cstr(what));
             rc = RP_EXIT_IO;
         } else {
             rc = emit(out, n);

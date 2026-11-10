@@ -545,7 +545,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
     const char *why = rpn_check_dist(a, dist);
     if (why) {
         char m[700];
-        rp_lang_format(m, sizeof m, "  the program folder '%s': %s\n", dist, why);
+        rp_lang_format(m, sizeof m, "  the program folder '{}': {}\n", proven_arg_cstr(dist), proven_arg_cstr(why));
         say(m);
         return ask ? 0 : RP_EXIT_IO;
     }
@@ -571,16 +571,16 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         }
         char m[700];
         if (target) {
-            rp_lang_format(m, sizeof m, "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n", src);
+            rp_lang_format(m, sizeof m, "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n", proven_arg_cstr(src));
             say(m);
             continue;
         }
         bool yes = true;
-        rp_lang_format(m, sizeof m, "%s is gone. Remove [file.%s]?", src, ids[i]);
+        rp_lang_format(m, sizeof m, "{} is gone. Remove [file.{}]?", proven_arg_cstr(src), proven_arg_cstr(ids[i]));
         if (ask && rpn_ask_yes(a, m, true, &yes)) break;
         if (yes) {
             remove_table(s, "file", ids[i]);
-            rp_lang_format(m, sizeof m, "  removed [file.%s]\n", ids[i]);
+            rp_lang_format(m, sizeof m, "  removed [file.{}]\n", proven_arg_cstr(ids[i]));
             say(m);
         }
     }
@@ -589,7 +589,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         if (rpn_in_names(&a->scan.dirs, subs[i].name)) continue;
         char m[700];
         bool yes = true;
-        rp_lang_format(m, sizeof m, "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?", dist, subs[i].name, subs[i].files, subs[i].dir);
+        rp_lang_format(m, sizeof m, "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?", proven_arg_cstr(dist), proven_arg_cstr(subs[i].name), proven_arg_cstr(subs[i].files), proven_arg_cstr(subs[i].dir));
         if (ask && rpn_ask_yes(a, m, true, &yes)) break;
         if (!yes) continue;
         remove_table(s, "files", subs[i].files);
@@ -599,7 +599,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
             dir_used |= v && strcmp(v, subs[i].dir) == 0;
         }
         if (!dir_used) remove_table(s, "dir", subs[i].dir);
-        rp_lang_format(m, sizeof m, "  removed [files.%s]%s\n", subs[i].files, dir_used ? "" : TR(" and its dir"));
+        rp_lang_format(m, sizeof m, "  removed [files.{}]{}\n", proven_arg_cstr(subs[i].files), proven_arg_cstr(dir_used ? "" : TR(" and its dir")));
         say(m);
     }
     // New files and sub folders.
@@ -616,7 +616,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         if (known) continue;
         char m[900];
         bool yes = true;
-        rp_lang_format(m, sizeof m, "%s is new. Add it?", src);
+        rp_lang_format(m, sizeof m, "{} is new. Add it?", proven_arg_cstr(src));
         if (ask && rpn_ask_yes(a, m, true, &yes)) break;
         if (!yes) continue;
         all_ids(s, &used);
@@ -624,7 +624,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         rpn_make_id(&used, f, "", id, sizeof id);
         set_str(s, "file", id, "dir", "INSTALLDIR");
         set_str(s, "file", id, "source", src);
-        rp_lang_format(m, sizeof m, "  added [file.%s]\n", id);
+        rp_lang_format(m, sizeof m, "  added [file.{}]\n", proven_arg_cstr(id));
         say(m);
     }
     for (size_t i = 0; i < a->scan.dirs.n; ++i) {
@@ -634,7 +634,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         if (known) continue;
         char m[900];
         bool yes = true;
-        rp_lang_format(m, sizeof m, "%s/%s/ is a new folder. Add it?", dist, f);
+        rp_lang_format(m, sizeof m, "{}/{}/ is a new folder. Add it?", proven_arg_cstr(dist), proven_arg_cstr(f));
         if (ask && rpn_ask_yes(a, m, true, &yes)) break;
         if (!yes) continue;
         all_ids(s, &used);
@@ -647,7 +647,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         set_str(s, "files", fid, "dir", did);
         (void)proven_fmt_to(v, sizeof v, "{}/{}/**", proven_arg_cstr(dist), proven_arg_cstr(f));
         set_str(s, "files", fid, "glob", v);
-        rp_lang_format(m, sizeof m, "  added [dir.%s] and [files.%s]\n", did, fid);
+        rp_lang_format(m, sizeof m, "  added [dir.{}] and [files.{}]\n", proven_arg_cstr(did), proven_arg_cstr(fid));
         say(m);
     }
     rp_mem_free(heap(), subs);
@@ -703,7 +703,7 @@ static int check(src_t *s, char *argv0) {
     char tmp[1100];
     (void)proven_fmt_to(tmp, sizeof tmp, "{}.rp-edit.toml", proven_arg_cstr(s->path));
     if (rp_pal_write_file_atomic(heap(), tmp, (const uint8_t *)s->t, s->n) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s' to check it", tmp);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}' to check it", proven_arg_cstr(tmp));
         return RP_EXIT_IO;
     }
     char *lint_argv[] = { argv0, "lint", tmp, NULL };
@@ -715,12 +715,12 @@ static int check(src_t *s, char *argv0) {
 
 static int save(src_t *s, char *argv0) {
     if (rp_pal_write_file_atomic(heap(), s->path, (const uint8_t *)s->t, s->n) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", s->path);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(s->path));
         return RP_EXIT_IO;
     }
     s->dirty = false;
     char line[1200];
-    rp_lang_format(line, sizeof line, "wrote %s\n", s->path);
+    rp_lang_format(line, sizeof line, "wrote {}\n", proven_arg_cstr(s->path));
     (void)rp_pal_puts(RP_OUT_STDOUT, line);
     char *lint_argv[] = { argv0, "lint", (char *)s->path, NULL };
     int rc = rp_cmd_lint_source(3, lint_argv);
@@ -734,12 +734,12 @@ static void summary(const src_t *s) {
     const char *sc = get(s, "package", NULL, "scope"), *ui = get(s, "package", NULL, "ui");
     char line[1400];
     rp_lang_format(line, sizeof line,
-             "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n"
+             "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n"
              "  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n"
              "  3 dialogs, license, languages                  4 optional parts\n"
              "  5 shortcuts                                    6 files: match the program folder\n"
              "  7 any key                                      v view   l lint   s save   q quit\n",
-             s->path, nm ? nm : "?", v ? v : "?", ar ? ar : "?", sc ? sc : "machine", ui ? ui : "none", s->dirty ? TR(" (changed)") : "");
+             proven_arg_cstr(s->path), proven_arg_cstr(nm ? nm : "?"), proven_arg_cstr(v ? v : "?"), proven_arg_cstr(ar ? ar : "?"), proven_arg_cstr(sc ? sc : "machine"), proven_arg_cstr(ui ? ui : "none"), proven_arg_cstr(s->dirty ? TR(" (changed)") : ""));
     (void)rp_pal_puts(RP_OUT_STDERR, line);
 }
 
@@ -760,12 +760,12 @@ int rp_cmd_edit(int argc, char **argv) {
         bool toml = pl > 5 && rp_ascii_ieq(s.path + pl - 5, ".toml");
         char stem[1024];
         (void)proven_fmt_to(stem, sizeof stem, "{}", proven_arg_cstr_n(s.path, toml ? (int)(pl - 5) : 0));
-        if (err == PROVEN_ERR_NOT_FOUND && toml) rp_diag_error(RP_DIAG_INPUT, TR_N("cannot find '%s'; make one with `rubrapack new %s`"), s.path, stem);
-        else rp_diag_error(RP_DIAG_INPUT, TR_N("cannot read '%s'"), s.path);
+        if (err == PROVEN_ERR_NOT_FOUND && toml) rp_diag_error(RP_DIAG_INPUT, TR_N("cannot find '{}'; make one with `rubrapack new {}`"), proven_arg_cstr(s.path), proven_arg_cstr(stem));
+        else rp_diag_error(RP_DIAG_INPUT, TR_N("cannot read '{}'"), proven_arg_cstr(s.path));
         return RP_EXIT_IO;
     }
     if (len >= 2 && ((data[0] == 0xFF && data[1] == 0xFE) || (data[0] == 0xFE && data[1] == 0xFF))) {
-        rp_diag_error(RP_DIAG_INPUT, "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)", s.path);
+        rp_diag_error(RP_DIAG_INPUT, "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)", proven_arg_cstr(s.path));
         rp_mem_free(heap(), data);
         return RP_EXIT_USAGE;
     }
@@ -781,7 +781,7 @@ int rp_cmd_edit(int argc, char **argv) {
     rp_srcdiags_t d = { 0 };
     if (rp_toml_parse(heap(), (const uint8_t *)s.t, s.n, &s.doc, &d) != PROVEN_OK) {
         rp_srcdiag_print(&d, s.path);
-        rp_diag_error(RP_DIAG_INPUT, "'%s' is not a valid source (the TOML subset); fix it by hand first", s.path);
+        rp_diag_error(RP_DIAG_INPUT, "'{}' is not a valid source (the TOML subset); fix it by hand first", proven_arg_cstr(s.path));
         rp_mem_free(heap(), s.t);
         return RP_EXIT_SOURCE;
     }
@@ -801,7 +801,7 @@ int rp_cmd_edit(int argc, char **argv) {
                 if ((set && !eq) || !split_name(name, kind, id, k)) {
                     rc = usage();
                 } else if (set ? !set_any(&s, kind, id, k, eq + 1) : !unset(&s, kind, id[0] ? id : NULL, k)) {
-                    rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "'%s' does not fit the TOML subset; nothing was saved", arg);
+                    rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "'{}' does not fit the TOML subset; nothing was saved", proven_arg_cstr(arg));
                     rc = RP_EXIT_USAGE;
                 }
             } else if (strcmp(argv[i], "--sync") == 0) {

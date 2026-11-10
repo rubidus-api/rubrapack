@@ -86,7 +86,7 @@ static int msi_products(rp_buf_t *o, const char *code) {
     enum_related_fn related = msi ? (enum_related_fn)(void (*)(void))GetProcAddress(msi, "MsiEnumRelatedProductsW") : NULL;
     product_info_fn info = msi ? (product_info_fn)(void (*)(void))GetProcAddress(msi, "MsiGetProductInfoW") : NULL;
     if (related == NULL || info == NULL) {
-        rp_diag_error(RP_DIAG_INPUT, "Windows did not say what is installed for '%s'", code);
+        rp_diag_error(RP_DIAG_INPUT, "Windows did not say what is installed for '{}'", proven_arg_cstr(code));
         if (msi) FreeLibrary(msi);
         return RP_EXIT_IO;
     }
@@ -111,7 +111,7 @@ static int msix_packages(rp_buf_t *o, const char *family) {
     HMODULE k32 = GetModuleHandleW(L"kernel32.dll");
     by_family_fn by_family = k32 ? (by_family_fn)(void (*)(void))GetProcAddress(k32, "GetPackagesByPackageFamily") : NULL;
     if (by_family == NULL) {
-        rp_diag_error(RP_DIAG_INPUT, "Windows did not say what is installed for '%s'", family);
+        rp_diag_error(RP_DIAG_INPUT, "Windows did not say what is installed for '{}'", proven_arg_cstr(family));
         return RP_EXIT_IO;
     }
     wchar_t wfamily[256];
@@ -122,7 +122,7 @@ static int msix_packages(rp_buf_t *o, const char *family) {
     LONG rc = by_family(wfamily, &count, NULL, &chars, NULL);
     if (rc == ERROR_SUCCESS && count == 0) return NOTHING_INSTALLED;
     if (rc != ERROR_INSUFFICIENT_BUFFER) {
-        rp_diag_error(RP_DIAG_INPUT, "Windows did not say what is installed for '%s'", family);
+        rp_diag_error(RP_DIAG_INPUT, "Windows did not say what is installed for '{}'", proven_arg_cstr(family));
         return RP_EXIT_IO;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -137,7 +137,7 @@ static int msix_packages(rp_buf_t *o, const char *family) {
         }
         out = count ? RP_EXIT_OK : NOTHING_INSTALLED;
     } else {
-        rp_diag_error(RP_DIAG_INPUT, "Windows did not say what is installed for '%s'", family);
+        rp_diag_error(RP_DIAG_INPUT, "Windows did not say what is installed for '{}'", proven_arg_cstr(family));
     }
     rp_mem_free(heap, names);
     rp_mem_free(heap, buf);

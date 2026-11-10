@@ -49,7 +49,7 @@ static int family_of(proven_allocator_t heap, const char *path, char *out, size_
     rp_msix_file_t *files = NULL;
     const char *why = NULL;
     if (rp_pal_read_file(heap, path, (size_t)lim.max_output, &data, &len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", path);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(path));
         return RP_EXIT_IO;
     }
     int rc = RP_EXIT_OK;
@@ -57,7 +57,7 @@ static int family_of(proven_allocator_t heap, const char *path, char *out, size_
     if (rp_msix_open(heap, data, len, &lim, &files, &nf, &man, &ml, &why) != PROVEN_OK ||
         !rp_xml_attr((const char *)man, ml, "Identity", "Name", name, sizeof name) ||
         !rp_xml_attr((const char *)man, ml, "Identity", "Publisher", publisher, sizeof publisher)) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid MSIX package: %s", path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid MSIX package: {}", proven_arg_cstr(path), proven_arg_cstr(why ? why : "unreadable"));
         rc = RP_EXIT_IO;
     } else {
         char id[14];
@@ -84,7 +84,7 @@ int rp_cmd_container(int argc, char **argv) {
         } else if (nin < MAX_FAMILIES) {
             in[nin++] = argv[i];
         } else {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "a container holds at most %u package families", (unsigned)MAX_FAMILIES);
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "a container holds at most {} package families", proven_arg_u32((unsigned)MAX_FAMILIES));
             return RP_EXIT_USAGE;
         }
     }
@@ -101,12 +101,12 @@ int rp_cmd_container(int argc, char **argv) {
         } else if (rp_family_name_ok(in[k])) {
             (void)proven_fmt_to(families[k], sizeof families[k], "{}", proven_arg_cstr(in[k]));
         } else {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)", in[k]);
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)", proven_arg_cstr(in[k]));
             return RP_EXIT_USAGE;
         }
         for (size_t j = 0; j < k; ++j) {
             if (rp_ascii_ieq(families[j], families[k])) {
-                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "the package family %s is in the container twice", families[k]);
+                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "the package family {} is in the container twice", proven_arg_cstr(families[k]));
                 return RP_EXIT_USAGE;
             }
         }
@@ -123,7 +123,7 @@ int rp_cmd_container(int argc, char **argv) {
     rp_buf_puts(&b, "</AppSharedPackageContainer>\r\n");
     int rc = RP_EXIT_OK;
     if (b.err != PROVEN_OK || rp_pal_write_file_atomic(heap, out, b.data, b.len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '{}'", proven_arg_cstr(out));
         rc = RP_EXIT_IO;
     }
     rp_buf_free(&b);

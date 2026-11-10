@@ -81,8 +81,8 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     ir->msix_publisher_display = RP_V(ir_get_str(c, t, "publisher-display-name", false, NULL));
     ir->msix_min_version = RP_V(ir_get_str(c, t, "min-version", false, NULL));
     if (ir->msix_identity_name.ptr && !msix_name_ok(rp_cs(ir->msix_identity_name))) {
-        ERR(c, ir_key_pos(t, "identity-name"), "RP1601", "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')",
-            rp_cs(ir->msix_identity_name));
+        ERR(c, ir_key_pos(t, "identity-name"), "RP1601", "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')",
+            proven_arg_cstr(rp_cs(ir->msix_identity_name)));
     }
     if (ir->msix_publisher.ptr && (strchr(rp_cs(ir->msix_publisher), '=') == NULL || ir->msix_publisher.size > 8192)) {
         ERR(c, ir_key_pos(t, "publisher"), "RP1602", "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\"");
@@ -142,7 +142,7 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
                 } else {
                     (void)proven_fmt_to(path, n, "{}/{}", proven_arg_cstr(dir), proven_arg_cstr(s));
                     uint64_t size = 0;
-                    if (rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) ERR(c, sym->pos, "RP1507", "source file '%s' not found", s);
+                    if (rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) ERR(c, sym->pos, "RP1507", "source file '{}' not found", proven_arg_cstr(s));
                     ir->msix_symbols[ir->msix_symbol_count++] = path;
                 }
             }
@@ -150,7 +150,7 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
         }
     }
     if (ir->msix_main.ptr && !msix_name_ok(rp_cs(ir->msix_main))) {
-        ERR(c, ir_key_pos(t, "main-package"), "RP1601", "main-package is the main package's identity name (got '%s')", rp_cs(ir->msix_main));
+        ERR(c, ir_key_pos(t, "main-package"), "RP1601", "main-package is the main package's identity name (got '{}')", proven_arg_cstr(rp_cs(ir->msix_main)));
     }
     if (ir->msix_main_publisher.ptr && strchr(rp_cs(ir->msix_main_publisher), '=') == NULL) {
         ERR(c, ir_key_pos(t, "main-publisher"), "RP1602", "main-publisher is the main package's publisher, such as \"CN=Example\"");
@@ -175,7 +175,7 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     for (int k = 0; k < 2; ++k) {
         const char *u = vals[k];
         if (u && strncmp(u, "https://", 8) != 0 && strncmp(u, "http://", 7) != 0 && strncmp(u, "file://", 7) != 0 && strncmp(u, "\\\\", 2) != 0) {
-            ERR(c, ir_key_pos(t, uris[k]), "RP1615", "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')", uris[k], u);
+            ERR(c, ir_key_pos(t, uris[k]), "RP1615", "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')", proven_arg_cstr(uris[k]), proven_arg_cstr(u));
         }
     }
     if (ir->msix_appinstaller_uri.ptr == NULL && (ir_find_key(t, "update-hours") || ir_find_key(t, "update-prompt") || ir_find_key(t, "update-blocks") ||
@@ -205,7 +205,7 @@ char *ir_logo_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool sizes, 
                 variant = rp_pal_stat(c->alloc, v, &size) == RP_FS_FILE;
             }
         }
-        if (!variant) ERR(c, p, "RP1507", "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)", *shown);
+        if (!variant) ERR(c, p, "RP1507", "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)", proven_arg_cstr(*shown));
     }
     return path;
 }
@@ -254,7 +254,7 @@ void ir_parse_msix_app(ctx_t *c, const rp_ttable_t *t) {
     a->hidden = ir_get_bool(c, t, "hidden", false);
     bool id_ok = t->id.ptr[0] != '\0' && t->id.size <= 64 && !(t->id.ptr[0] >= '0' && t->id.ptr[0] <= '9');
     for (const char *p = rp_cs(t->id); *p; ++p) id_ok &= (*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') || (*p >= '0' && *p <= '9');
-    if (!id_ok) ERR(c, t->pos, "RP1606", "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit", rp_cs(t->id));
+    if (!id_ok) ERR(c, t->pos, "RP1606", "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit", proven_arg_cstr(rp_cs(t->id)));
 }
 
 // [msix-dependency.ID] (RFC-0018): a framework package, such as Microsoft.VCLibs.140.00.UWPDesktop.
@@ -278,7 +278,7 @@ void ir_parse_msix_dep(ctx_t *c, const rp_ttable_t *t) {
     d->name = RP_V(ir_get_str(c, t, "name", true, NULL));
     d->publisher = RP_V(ir_get_str(c, t, "publisher", true, NULL));
     d->min_version = RP_V(ir_get_str(c, t, "min-version", true, NULL));
-    if (d->name.ptr && !msix_name_ok(rp_cs(d->name))) ERR(c, ir_key_pos(t, "name"), "RP1601", "name is a package's identity name (got '%s')", rp_cs(d->name));
+    if (d->name.ptr && !msix_name_ok(rp_cs(d->name))) ERR(c, ir_key_pos(t, "name"), "RP1601", "name is a package's identity name (got '{}')", proven_arg_cstr(rp_cs(d->name)));
     if (d->publisher.ptr && strchr(rp_cs(d->publisher), '=') == NULL) {
         ERR(c, ir_key_pos(t, "publisher"), "RP1602", "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\"");
     }
@@ -303,9 +303,9 @@ static char *psf_path(ctx_t *c, const rp_ttable_t *t, const char *key, rp_fskind
         (void)proven_fmt_to(path, n, "{}/{}", proven_arg_cstr(dir), proven_arg_cstr(s));
         uint64_t size = 0;
         rp_fskind_t kind = rp_pal_stat(c->alloc, path, &size);
-        if (kind == RP_FS_NONE) ERR(c, ir_key_pos(t, key), "RP1507", "source file '%s' not found", s);
-        else if (kind != want && want == RP_FS_DIR) ERR(c, ir_key_pos(t, key), "RP1508", "%s = '%s' must be a folder", key, s);
-        else if (kind != want) ERR(c, ir_key_pos(t, key), "RP1508", "source '%s' is not a regular file", s);
+        if (kind == RP_FS_NONE) ERR(c, ir_key_pos(t, key), "RP1507", "source file '{}' not found", proven_arg_cstr(s));
+        else if (kind != want && want == RP_FS_DIR) ERR(c, ir_key_pos(t, key), "RP1508", "{} = '{}' must be a folder", proven_arg_cstr(key), proven_arg_cstr(s));
+        else if (kind != want) ERR(c, ir_key_pos(t, key), "RP1508", "source '{}' is not a regular file", proven_arg_cstr(s));
     }
     rp_mem_free(c->alloc, s);
     return path;
@@ -370,20 +370,20 @@ void ir_parse_winget(ctx_t *c, const rp_ttable_t *t) {
     ir->wg_license_url = RP_V(ir_get_str(c, t, "license-url", false, NULL));
     ir->wg_moniker = RP_V(ir_get_str(c, t, "moniker", false, NULL));
     if (ir->wg_id.ptr && !wg_id_ok(rp_cs(ir->wg_id))) {
-        ERR(c, ir_key_pos(t, "identifier"), "RP1306", "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')", rp_cs(ir->wg_id));
+        ERR(c, ir_key_pos(t, "identifier"), "RP1306", "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')", proven_arg_cstr(rp_cs(ir->wg_id)));
     }
     const char *const url_keys[] = { "installer-url", "publisher-url", "package-url", "license-url" };
     const char *const urls[] = { rp_cs(ir->wg_url), rp_cs(ir->wg_publisher_url), rp_cs(ir->wg_package_url), rp_cs(ir->wg_license_url)};
     for (size_t k = 0; k < 4; ++k) {
-        if (urls[k] && !wg_url_ok(urls[k])) ERR(c, ir_key_pos(t, url_keys[k]), "RP1306", "%s must be an http:// or https:// address (got '%s')", url_keys[k], urls[k]);
+        if (urls[k] && !wg_url_ok(urls[k])) ERR(c, ir_key_pos(t, url_keys[k]), "RP1306", "{} must be an http:// or https:// address (got '{}')", proven_arg_cstr(url_keys[k]), proven_arg_cstr(urls[k]));
     }
-    if (ir->wg_license.ptr && (ir->wg_license.size < 3 || ir->wg_license.size > 512)) ERR(c, ir_key_pos(t, "license"), "RP1306", "%s is %u to %u characters long", "license", 3u, 512u);
-    if (ir->wg_desc.ptr && (ir->wg_desc.size < 3 || ir->wg_desc.size > 256)) ERR(c, ir_key_pos(t, "short-description"), "RP1306", "%s is %u to %u characters long", "short-description", 3u, 256u);
+    if (ir->wg_license.ptr && (ir->wg_license.size < 3 || ir->wg_license.size > 512)) ERR(c, ir_key_pos(t, "license"), "RP1306", "{} is {} to {} characters long", proven_arg_cstr("license"), proven_arg_u32(3u), proven_arg_u32(512u));
+    if (ir->wg_desc.ptr && (ir->wg_desc.size < 3 || ir->wg_desc.size > 256)) ERR(c, ir_key_pos(t, "short-description"), "RP1306", "{} is {} to {} characters long", proven_arg_cstr("short-description"), proven_arg_u32(3u), proven_arg_u32(256u));
     for (size_t k = 0; k < ir->wg_desc_by_lang_count; ++k) {
         size_t n = ir->wg_desc_by_lang[k].text.size;
-        if (n < 3 || n > 256) ERR(c, t->pos, "RP1306", "%s is %u to %u characters long", "short-description", 3u, 256u);
+        if (n < 3 || n > 256) ERR(c, t->pos, "RP1306", "{} is {} to {} characters long", proven_arg_cstr("short-description"), proven_arg_u32(3u), proven_arg_u32(256u));
     }
-    if (ir->wg_moniker.ptr && (ir->wg_moniker.size < 1 || ir->wg_moniker.size > 40)) ERR(c, ir_key_pos(t, "moniker"), "RP1306", "%s is %u to %u characters long", "moniker", 1u, 40u);
+    if (ir->wg_moniker.ptr && (ir->wg_moniker.size < 1 || ir->wg_moniker.size > 40)) ERR(c, ir_key_pos(t, "moniker"), "RP1306", "{} is {} to {} characters long", proven_arg_cstr("moniker"), proven_arg_u32(1u), proven_arg_u32(40u));
     const rp_tkey_t *tags = ir_find_key(t, "tags");
     if (tags && (tags->val.kind != RP_TV_ARRAY || tags->val.count > 16 || (tags->val.count && tags->val.items[0].kind != RP_TV_STRING))) {
         ERR(c, tags->pos, "RP1306", "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]");
@@ -393,7 +393,7 @@ void ir_parse_winget(ctx_t *c, const rp_ttable_t *t) {
         for (size_t k = 0; ir->wg_tags && k < tags->val.count; ++k) {
             char *s = ir_subst(c, &tags->val.items[k]);
             if (s == NULL) continue;
-            if (strlen(s) < 1 || strlen(s) > 40) ERR(c, tags->pos, "RP1306", "%s is %u to %u characters long", "a tag", 1u, 40u);
+            if (strlen(s) < 1 || strlen(s) > 40) ERR(c, tags->pos, "RP1306", "{} is {} to {} characters long", proven_arg_cstr("a tag"), proven_arg_u32(1u), proven_arg_u32(40u));
             for (size_t j = 0; j < ir->wg_tag_count; ++j) {
                 if (strcmp(ir->wg_tags[j], s) == 0) ERR(c, tags->pos, "RP1306", "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]");
             }
@@ -410,9 +410,9 @@ void ir_parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p) {
     bool upper = t->id.ptr[0] != '\0' && t->id.size <= 72;
     for (const char *s = rp_cs(t->id); *s; ++s) upper &= (*s >= 'A' && *s <= 'Z') || (*s >= '0' && *s <= '9') || *s == '_';
     if (!upper || (t->id.ptr[0] >= '0' && t->id.ptr[0] <= '9')) {
-        ERR(c, t->pos, "RP1310", "property '%s' must be a public name: upper-case letters, digits and '_'", rp_cs(t->id));
+        ERR(c, t->pos, "RP1310", "property '{}' must be a public name: upper-case letters, digits and '_'", proven_arg_cstr(rp_cs(t->id)));
     } else if (ir_tool_property(rp_cs(t->id))) {
-        ERR(c, t->pos, "RP1310", "property '%s' is set by rubrapack or the installer and cannot be defined here", rp_cs(t->id));
+        ERR(c, t->pos, "RP1310", "property '{}' is set by rubrapack or the installer and cannot be defined here", proven_arg_cstr(rp_cs(t->id)));
     }
     p->value = RP_V(ir_get_str(c, t, "value", true, NULL));
     p->secure = ir_get_bool(c, t, "secure", false);
@@ -422,7 +422,7 @@ void ir_parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p) {
 // "file:ID" -> ID (an error when malformed).
 static char *action_file(ctx_t *c, const rp_ttable_t *t, const char *key) {
     char *v = ir_get_str(c, t, key, false, NULL), *id = NULL;
-    if (v && (strncmp(v, "file:", 5) != 0 || v[5] == '\0')) ERR(c, ir_key_pos(t, key), "RP1311", "%s must be \"file:<ID>\" naming a [file.*] of this package", key);
+    if (v && (strncmp(v, "file:", 5) != 0 || v[5] == '\0')) ERR(c, ir_key_pos(t, key), "RP1311", "{} must be \"file:<ID>\" naming a [file.*] of this package", proven_arg_cstr(key));
     else if (v) id = ir_dup(c, v + 5);
     rp_mem_free(c->alloc, v);
     return id;
@@ -443,11 +443,11 @@ void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
         a->do_args = RP_V(ir_get_fmt(c, t, "do", false, NULL, IR_FMT_INSTALL));
         a->undo_args = RP_V(ir_get_fmt(c, t, "undo", false, NULL, IR_FMT_INSTALL));
         a->check_args = RP_V(ir_get_fmt(c, t, "check", false, NULL, IR_FMT_INSTALL));
-        if (a->run_file.ptr == NULL) ERR(c, t->pos, "RP1202", "[action.%s] needs run = \"file:<ID>\": the program do and undo run", rp_cs(t->id));
-        if (!has_do || !has_undo) ERR(c, t->pos, "RP1312", "[action.%s] needs both do and undo (the undo also rolls back a failed do)", rp_cs(t->id));
+        if (a->run_file.ptr == NULL) ERR(c, t->pos, "RP1202", "[action.{}] needs run = \"file:<ID>\": the program do and undo run", proven_arg_cstr(rp_cs(t->id)));
+        if (!has_do || !has_undo) ERR(c, t->pos, "RP1312", "[action.{}] needs both do and undo (the undo also rolls back a failed do)", proven_arg_cstr(rp_cs(t->id)));
         static const char *const single[] = { "args", "dll", "binary", "entry", "phase", "as", "when", "data", "before", "after", "sequence", "ignore-exit", NULL };
         for (size_t k = 0; single[k]; ++k) {
-            if (ir_find_key(t, single[k])) ERR(c, ir_key_pos(t, single[k]), "RP1316", "[action.%s]: %s is for a single action, not a do/undo pair", rp_cs(t->id), single[k]);
+            if (ir_find_key(t, single[k])) ERR(c, ir_key_pos(t, single[k]), "RP1316", "[action.{}]: {} is for a single action, not a do/undo pair", proven_arg_cstr(rp_cs(t->id)), proven_arg_cstr(single[k]));
         }
         return;
     }
@@ -457,38 +457,38 @@ void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
     if (a->binary_shown.ptr && ir_source_path_ok(c, rp_cs(a->binary_shown), ir_key_pos(t, "binary"))) a->binary_source = RP_V(ir_join(c, rp_cs(c->opt->source_dir), rp_cs(a->binary_shown)));
     int forms = (a->run_file.ptr != NULL) + (a->dll_file.ptr != NULL) + (a->binary_shown.ptr != NULL);
     a->kind = a->run_file.ptr ? RP_ACT_EXE : a->dll_file.ptr ? RP_ACT_DLL : RP_ACT_BINARY;
-    if (forms != 1) ERR(c, t->pos, "RP1202", "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo", rp_cs(t->id));
+    if (forms != 1) ERR(c, t->pos, "RP1202", "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo", proven_arg_cstr(rp_cs(t->id)));
     a->args = RP_V(ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL));
     a->entry = RP_V(ir_get_str(c, t, "entry", false, NULL));
-    if (a->kind == RP_ACT_EXE && a->entry.ptr) ERR(c, ir_key_pos(t, "entry"), "RP1316", "[action.%s]: entry is a DLL's function; run takes args", rp_cs(t->id));
-    if (a->kind != RP_ACT_EXE && a->args.ptr) ERR(c, ir_key_pos(t, "args"), "RP1316", "[action.%s]: args are a program's; a DLL gets data", rp_cs(t->id));
-    if (a->kind != RP_ACT_EXE && forms == 1 && a->entry.ptr == NULL) ERR(c, t->pos, "RP1202", "[action.%s] needs entry: the DLL's function to call", rp_cs(t->id));
+    if (a->kind == RP_ACT_EXE && a->entry.ptr) ERR(c, ir_key_pos(t, "entry"), "RP1316", "[action.{}]: entry is a DLL's function; run takes args", proven_arg_cstr(rp_cs(t->id)));
+    if (a->kind != RP_ACT_EXE && a->args.ptr) ERR(c, ir_key_pos(t, "args"), "RP1316", "[action.{}]: args are a program's; a DLL gets data", proven_arg_cstr(rp_cs(t->id)));
+    if (a->kind != RP_ACT_EXE && forms == 1 && a->entry.ptr == NULL) ERR(c, t->pos, "RP1202", "[action.{}] needs entry: the DLL's function to call", proven_arg_cstr(rp_cs(t->id)));
     char *phase = ir_get_str(c, t, "phase", false, NULL);
     static const char *const phases[] = { "immediate", "deferred", "commit", "rollback" };
     a->phase = RP_PHASE_DEFERRED;
     if (phase) {
         int found = -1;
         for (int k = 0; k < 4; ++k) found = strcmp(phase, phases[k]) == 0 ? k : found;
-        if (found < 0) ERR(c, ir_key_pos(t, "phase"), "RP1316", "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')", phase);
+        if (found < 0) ERR(c, ir_key_pos(t, "phase"), "RP1316", "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')", proven_arg_cstr(phase));
         else a->phase = found;
     }
     rp_mem_free(c->alloc, phase);
     char *as = ir_get_str(c, t, "as", false, NULL);
     if (as && strcmp(as, "user") == 0) a->as_user = 1;
     else if (as && strcmp(as, "system") == 0) a->as_user = 0;
-    else if (as) ERR(c, ir_key_pos(t, "as"), "RP1316", "as must be \"system\" or \"user\" (got '%s')", as);
-    if (as && a->phase == RP_PHASE_IMMEDIATE) ERR(c, ir_key_pos(t, "as"), "RP1316", "[action.%s]: an immediate action runs as the user who installs; as is for the other phases", rp_cs(t->id));
+    else if (as) ERR(c, ir_key_pos(t, "as"), "RP1316", "as must be \"system\" or \"user\" (got '{}')", proven_arg_cstr(as));
+    if (as && a->phase == RP_PHASE_IMMEDIATE) ERR(c, ir_key_pos(t, "as"), "RP1316", "[action.{}]: an immediate action runs as the user who installs; as is for the other phases", proven_arg_cstr(rp_cs(t->id)));
     rp_mem_free(c->alloc, as);
     a->when = RP_V(ir_get_when(c, t));
     a->data = RP_V(ir_get_fmt(c, t, "data", false, NULL, IR_FMT_INSTALL));
-    if (a->data.ptr && a->phase == RP_PHASE_IMMEDIATE) ERR(c, ir_key_pos(t, "data"), "RP1316", "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)", rp_cs(t->id));
+    if (a->data.ptr && a->phase == RP_PHASE_IMMEDIATE) ERR(c, ir_key_pos(t, "data"), "RP1316", "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)", proven_arg_cstr(rp_cs(t->id)));
     a->before = RP_V(ir_get_str(c, t, "before", false, NULL));
     a->after = RP_V(ir_get_str(c, t, "after", false, NULL));
     a->sequence = (int32_t)ir_get_int(c, t, "sequence", 0, 1, 32767);
     if ((a->before.ptr != NULL) + (a->after.ptr != NULL) + (a->sequence != 0) > 1)
-        ERR(c, t->pos, "RP1316", "[action.%s] is placed once: before, after or sequence", rp_cs(t->id));
+        ERR(c, t->pos, "RP1316", "[action.{}] is placed once: before, after or sequence", proven_arg_cstr(rp_cs(t->id)));
     a->ignore_exit = ir_get_bool(c, t, "ignore-exit", false);
-    if (ir_find_key(t, "check")) ERR(c, ir_key_pos(t, "check"), "RP1316", "[action.%s]: check goes with a do/undo pair", rp_cs(t->id));
+    if (ir_find_key(t, "check")) ERR(c, ir_key_pos(t, "check"), "RP1316", "[action.{}]: check goes with a do/undo pair", proven_arg_cstr(rp_cs(t->id)));
 }
 
 static bool ieq_n(const char *a, const char *b, size_t n) {
@@ -507,7 +507,7 @@ static bool ieq_n(const char *a, const char *b, size_t n) {
 static bool ir_users_all(ctx_t *c, const rp_ttable_t *t, char *users) {
     if (users == NULL) return false;
     bool all = strcmp(users, "all") == 0;
-    if (!all) ERR(c, ir_key_pos(t, "users"), "RP1316", "users must be \"all\" (got '%s')", users);
+    if (!all) ERR(c, ir_key_pos(t, "users"), "RP1316", "users must be \"all\" (got '{}')", proven_arg_cstr(users));
     rp_mem_free(c->alloc, users);
     return all;
 }
@@ -531,14 +531,14 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
         else if (strcmp(root, "HKCR") == 0) r->root = RP_ROOT_HKCR;
         else if (strcmp(root, "HKCU") == 0) r->root = RP_ROOT_HKCU;
         else if (strcmp(root, "HKMU") == 0) r->root = RP_ROOT_HKMU;
-        else ERR(c, ir_key_pos(t, "root"), "RP1316", "root must be HKLM, HKCU, HKCR or HKMU (got '%s')", root);
+        else ERR(c, ir_key_pos(t, "root"), "RP1316", "root must be HKLM, HKCU, HKCR or HKMU (got '{}')", proven_arg_cstr(root));
         // on = "uninstall" (a key wiped at removal) may name HKCU in a per-machine package: the
         // program wrote there as each user, and the removing user's is the one in reach.
         const rp_tkey_t *onk = ir_find_key(t, "on");
         if (r->root == RP_ROOT_HKCU && scope == 0 && !(onk && onk->val.kind == RP_TV_STRING && RP_EQ(onk->val.s, "uninstall"))) {
             ERR(c, ir_key_pos(t, "root"), "RP1316", "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\"");
         } else if (r->root == RP_ROOT_HKLM && scope != 0) {
-            ERR(c, ir_key_pos(t, "root"), "RP1316", "a %s package cannot write HKLM; use HKMU", scope == 1 ? "per-user" : "dual");
+            ERR(c, ir_key_pos(t, "root"), "RP1316", "a {} package cannot write HKLM; use HKMU", proven_arg_cstr(scope == 1 ? "per-user" : "dual"));
         } else if (r->root == RP_ROOT_HKCU && scope == 2) {
             ERR(c, ir_key_pos(t, "root"), "RP1316", "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU");
         }
@@ -546,7 +546,7 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
     }
     r->key = RP_V(ir_get_str(c, t, "key", true, NULL));
     if (r->key.ptr && (r->key.ptr[0] == '\\' || r->key.ptr[r->key.size - 1] == '\\' || strstr(rp_cs(r->key), "\\\\") || ir_has_control(rp_cs(r->key)))) {
-        ERR(c, ir_key_pos(t, "key"), "RP1316", "key '%s' must not start or end with '\\' or contain an empty part", rp_cs(r->key));
+        ERR(c, ir_key_pos(t, "key"), "RP1316", "key '{}' must not start or end with '\\' or contain an empty part", proven_arg_cstr(rp_cs(r->key)));
     }
     r->name = RP_V(ir_get_str(c, t, "name", false, NULL));
     if (r->name.ptr && r->name.ptr[0] == '\0') {        // "" is the default value, as omitting it
@@ -568,7 +568,7 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
     if (r->purge && r->remove && r->key.ptr) {
         static const char *const keys2[] = { "name", "with", "when", "keep", NULL };
         for (size_t k = 0; keys2[k]; ++k) {
-            if (ir_find_key(t, keys2[k])) ERR(c, ir_key_pos(t, keys2[k]), "RP1316", "on = \"uninstall\" removes the whole key at removal; it takes no '%s'", keys2[k]);
+            if (ir_find_key(t, keys2[k])) ERR(c, ir_key_pos(t, keys2[k]), "RP1316", "on = \"uninstall\" removes the whole key at removal; it takes no '{}'", proven_arg_cstr(keys2[k]));
         }
         if (r->root == RP_ROOT_HKCR) ERR(c, ir_key_pos(t, "root"), "RP1316", "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)");
         // Only a key of the product: below Software, and not a whole branch of Windows' own.
@@ -586,7 +586,7 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
             size_t ol = strlen(own[k]);
             if (ieq_n(rp_cs(r->key), own[k], ol) && (r->key.ptr[ol] == '\\' || r->key.ptr[ol] == 0)) below = false;
         }
-        if (!below) ERR(c, ir_key_pos(t, "key"), "RP1316", "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software", rp_cs(r->key));
+        if (!below) ERR(c, ir_key_pos(t, "key"), "RP1316", "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software", proven_arg_cstr(rp_cs(r->key)));
     }
     char *view = ir_get_str(c, t, "view", false, NULL);
     if (view) {
@@ -615,12 +615,12 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
         for (int k = 0; k < 6; ++k) {
             if (strcmp(type, types[k]) == 0) r->type = (rp_reg_type_t)k, known = true;
         }
-        if (!known) ERR(c, ir_key_pos(t, "type"), "RP1316", "type must be string, expand, dword, qword, binary or multi (got '%s')", type);
+        if (!known) ERR(c, ir_key_pos(t, "type"), "RP1316", "type must be string, expand, dword, qword, binary or multi (got '{}')", proven_arg_cstr(type));
         rp_mem_free(c->alloc, type);
     }
     const rp_tkey_t *v = ir_find_key(t, "value");
     if (v == NULL) {
-        if (!r->remove) ERR(c, t->pos, "RP1202", "[registry.%s] needs 'value' (or remove = true)", rp_cs(t->id));
+        if (!r->remove) ERR(c, t->pos, "RP1202", "[registry.{}] needs 'value' (or remove = true)", proven_arg_cstr(rp_cs(t->id)));
         return;
     }
     if (r->remove) {
@@ -712,8 +712,8 @@ void ir_parse_shortcut(ctx_t *c, const rp_ttable_t *t, rp_ir_shortcut_t *s) {
     // different component shape and is not combined with it here.
     s->advertise = ir_get_bool(c, t, "advertise", false);
     if (s->advertise) {
-        if (s->icon_shown.ptr == NULL) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "[shortcut.%s]: an advertised shortcut needs an icon", rp_cs(t->id));
-        if (s->when.ptr) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "[shortcut.%s]: advertise is not combined with when", rp_cs(t->id));
+        if (s->icon_shown.ptr == NULL) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "[shortcut.{}]: an advertised shortcut needs an icon", proven_arg_cstr(rp_cs(t->id)));
+        if (s->when.ptr) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "[shortcut.{}]: advertise is not combined with when", proven_arg_cstr(rp_cs(t->id)));
     }
     s->dir = RP_V(ir_get_str(c, t, "dir", true, NULL));
     s->name = RP_V(ir_get_str(c, t, "name", true, NULL));
@@ -825,7 +825,7 @@ void ir_parse_ini(ctx_t *c, const rp_ttable_t *t, rp_ir_ini_t *x) {
     }
     bool has_value = false;
     x->value = RP_V(ir_get_fmt(c, t, "value", false, &has_value, IR_FMT_INSTALL));
-    if (x->mode != 2 && !has_value) ERR(c, t->pos, "RP1202", "[ini.%s] needs 'value'", rp_cs(t->id));
+    if (x->mode != 2 && !has_value) ERR(c, t->pos, "RP1202", "[ini.{}] needs 'value'", proven_arg_cstr(rp_cs(t->id)));
     if (x->mode == 2 && has_value) ERR(c, ir_key_pos(t, "value"), "RP1316", "mode = \"remove\" removes the key; it takes no 'value'");
     x->feature = RP_V(ir_get_str(c, t, "feature", false, NULL));
 }
@@ -845,8 +845,8 @@ static bool condition_ok(const char *s) {
 char *ir_get_cond(ctx_t *c, const rp_ttable_t *t, const char *key) {
     char *w = ir_get_str(c, t, key, false, NULL);
     if (w == NULL) return NULL;
-    if (w[0] == '\0' || !condition_ok(w)) ERR(c, ir_key_pos(t, key), "RP1316", "%s is an MSI condition with closed quotes and balanced parentheses", key);
-    else if (strlen(w) > 240) ERR(c, ir_key_pos(t, key), "RP1316", "%s is longer than 240 characters", key);
+    if (w[0] == '\0' || !condition_ok(w)) ERR(c, ir_key_pos(t, key), "RP1316", "{} is an MSI condition with closed quotes and balanced parentheses", proven_arg_cstr(key));
+    else if (strlen(w) > 240) ERR(c, ir_key_pos(t, key), "RP1316", "{} is longer than 240 characters", proven_arg_cstr(key));
     return w;
 }
 
@@ -878,7 +878,7 @@ void ir_parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x) {
         bool upper = true;
         for (const char *p = rp_cs(x->property); *p; ++p) upper &= (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_';
         if (!upper || ir_tool_property(rp_cs(x->property))) {
-            ERR(c, ir_key_pos(t, "property"), "RP1310", "search property '%s' must be a public name of your own (upper case)", rp_cs(x->property));
+            ERR(c, ir_key_pos(t, "property"), "RP1310", "search property '{}' must be a public name of your own (upper case)", proven_arg_cstr(rp_cs(x->property)));
         }
     }
     char *kind = ir_get_str(c, t, "kind", true, NULL);
@@ -1049,7 +1049,7 @@ void ir_parse_merge(ctx_t *c, const rp_ttable_t *t, rp_ir_merge_t *x) {
                 char *s = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
                 const char *eq = s ? strchr(s, '=') : NULL;
                 if (eq == NULL || eq == s) {
-                    ERR(c, cfg->pos, "RP1306", "config holds \"Name=value\" strings (got '%s')", s ? s : "?");
+                    ERR(c, cfg->pos, "RP1306", "config holds \"Name=value\" strings (got '{}')", proven_arg_cstr(s ? s : "?"));
                     rp_mem_free(c->alloc, s);
                     continue;
                 }
@@ -1065,7 +1065,7 @@ void ir_parse_merge(ctx_t *c, const rp_ttable_t *t, rp_ir_merge_t *x) {
         x->source = RP_V(ir_join(c, c->opt->source_dir.ptr ? rp_cs(c->opt->source_dir) : ".", rp_cs(x->shown)));
         uint64_t size;
         if (x->source.ptr && rp_pal_stat(c->alloc, rp_cs(x->source), &size) != RP_FS_FILE) {
-            ERR(c, ir_key_pos(t, "source"), "RP1507", "merge module '%s' not found", rp_cs(x->shown));
+            ERR(c, ir_key_pos(t, "source"), "RP1507", "merge module '{}' not found", proven_arg_cstr(rp_cs(x->shown)));
         }
     }
 }
@@ -1075,7 +1075,7 @@ static char *file_ref(ctx_t *c, const rp_ttable_t *t, const char *key, bool requ
     char *v = ir_get_str(c, t, key, required, NULL);
     if (v == NULL) return NULL;
     char *id = NULL;
-    if (strncmp(v, "file:", 5) != 0 || v[5] == '\0') ERR(c, ir_key_pos(t, key), "RP1315", "%s must be \"file:<ID>\" naming a [file.*] of this package", key);
+    if (strncmp(v, "file:", 5) != 0 || v[5] == '\0') ERR(c, ir_key_pos(t, key), "RP1315", "{} must be \"file:<ID>\" naming a [file.*] of this package", proven_arg_cstr(key));
     else id = ir_dup(c, v + 5);
     rp_mem_free(c->alloc, v);
     return id;
@@ -1096,7 +1096,7 @@ static void check_prog_id(ctx_t *c, const rp_ttable_t *t, const char *p) {
     for (const char *q = p; ok && *q; ++q) {
         ok = (*q >= 'a' && *q <= 'z') || (*q >= 'A' && *q <= 'Z') || (*q >= '0' && *q <= '9') || *q == '.' || *q == '_' || *q == '-';
     }
-    if (!ok) ERR(c, ir_key_pos(t, "prog-id"), "RP1316", "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')", p);
+    if (!ok) ERR(c, ir_key_pos(t, "prog-id"), "RP1316", "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')", proven_arg_cstr(p));
 }
 
 void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
@@ -1108,7 +1108,7 @@ void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
     x->pos = t->pos;
     x->extension = RP_V(ir_get_str(c, t, "extension", true, NULL));
     if (x->extension.ptr && (x->extension.ptr[0] != '.' || x->extension.size > 64 || !lower_name(rp_cs(x->extension) + 1, "_-", 1))) {
-        ERR(c, ir_key_pos(t, "extension"), "RP1316", "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')", rp_cs(x->extension));
+        ERR(c, ir_key_pos(t, "extension"), "RP1316", "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')", proven_arg_cstr(rp_cs(x->extension)));
     }
     x->prog_id = RP_V(ir_get_str(c, t, "prog-id", true, NULL));
     if (x->prog_id.ptr) check_prog_id(c, t, rp_cs(x->prog_id));
@@ -1129,14 +1129,14 @@ void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
         for (const char *q = rp_cs(x->content_type); ok && *q; ++q) {
             ok = (*q >= 'a' && *q <= 'z') || (*q >= 'A' && *q <= 'Z') || (*q >= '0' && *q <= '9') || strchr("/.+-_!#$&^", *q) != NULL;
         }
-        if (!ok) ERR(c, ir_key_pos(t, "content-type"), "RP1316", "content-type is a media type, like \"image/png\" (got '%s')", rp_cs(x->content_type));
+        if (!ok) ERR(c, ir_key_pos(t, "content-type"), "RP1316", "content-type is a media type, like \"image/png\" (got '{}')", proven_arg_cstr(rp_cs(x->content_type)));
     }
     x->perceived_type = RP_V(ir_get_str(c, t, "perceived-type", false, NULL));
     if (x->perceived_type.ptr) {
         static const char *const kinds[] = { "image", "text", "audio", "video", "compressed", "document", "system", "application", NULL };
         if (!ir_in_list(rp_cs(x->perceived_type), kinds)) {
             ERR(c, ir_key_pos(t, "perceived-type"), "RP1316", "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", "
-                                                              "\"document\", \"system\" or \"application\" (got '%s')", rp_cs(x->perceived_type));
+                                                              "\"document\", \"system\" or \"application\" (got '{}')", proven_arg_cstr(rp_cs(x->perceived_type)));
         }
     }
 }
@@ -1149,10 +1149,10 @@ void ir_parse_protocol(ctx_t *c, const rp_ttable_t *t, rp_ir_protocol_t *x) {
     x->pos = t->pos;
     x->name = RP_V(ir_get_str(c, t, "name", true, NULL));
     if (x->name.ptr && (!(x->name.ptr[0] >= 'a' && x->name.ptr[0] <= 'z') || x->name.size > 64 || !lower_name(rp_cs(x->name), "+-.", 2))) {
-        ERR(c, ir_key_pos(t, "name"), "RP1316", "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')", rp_cs(x->name));
+        ERR(c, ir_key_pos(t, "name"), "RP1316", "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')", proven_arg_cstr(rp_cs(x->name)));
     }
     static const char *const taken[] = { "http", "https", "file", "ftp", "mailto", "ms-settings", "shell", NULL };
-    if (x->name.ptr && ir_in_list(rp_cs(x->name), taken)) ERR(c, ir_key_pos(t, "name"), "RP1316", "'%s' belongs to Windows or the browsers", rp_cs(x->name));
+    if (x->name.ptr && ir_in_list(rp_cs(x->name), taken)) ERR(c, ir_key_pos(t, "name"), "RP1316", "'{}' belongs to Windows or the browsers", proven_arg_cstr(rp_cs(x->name)));
     x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
     x->target_file = RP_V(file_ref(c, t, "target", true));
     x->args = RP_V(ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL));
@@ -1161,7 +1161,7 @@ void ir_parse_protocol(ctx_t *c, const rp_ttable_t *t, rp_ir_protocol_t *x) {
 
 static char *guid_key(ctx_t *c, const rp_ttable_t *t, const char *key, bool required) {
     char *v = ir_get_str(c, t, key, required, NULL);
-    if (v && !ir_guid_ok(v)) ERR(c, ir_key_pos(t, key), "RP1316", "%s must be a GUID like {12345678-...} (got '%s')", key, v);
+    if (v && !ir_guid_ok(v)) ERR(c, ir_key_pos(t, key), "RP1316", "{} must be a GUID like {{12345678-...}} (got '{}')", proven_arg_cstr(key), proven_arg_cstr(v));
     return v;
 }
 
@@ -1180,7 +1180,7 @@ void ir_parse_com(ctx_t *c, const rp_ttable_t *t, rp_ir_com_t *x) {
     for (size_t k = 0; th && k < 4; ++k) {
         if (strcmp(th, models[k][0]) == 0) x->threading = RP_V(ir_dup(c, models[k][1]));
     }
-    if (th && x->threading.ptr == NULL) ERR(c, ir_key_pos(t, "threading"), "RP1316", "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')", th);
+    if (th && x->threading.ptr == NULL) ERR(c, ir_key_pos(t, "threading"), "RP1316", "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')", proven_arg_cstr(th));
     rp_mem_free(c->alloc, th);
     x->args = RP_V(ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL));
     x->prog_id = RP_V(ir_get_str(c, t, "prog-id", false, NULL));
@@ -1195,9 +1195,9 @@ void ir_parse_com(ctx_t *c, const rp_ttable_t *t, rp_ir_com_t *x) {
         const char *v = rp_cs(x->typelib_version), *dot = strchr(v, '.');
         bool ok = dot && dot > v && dot - v <= 4 && dot[1] && strlen(dot + 1) <= 4;
         for (const char *q = v; ok && *q; ++q) ok = q == dot || ir_is_hex(*q);
-        if (!ok) ERR(c, ir_key_pos(t, "typelib-version"), "RP1316", "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')", v);
+        if (!ok) ERR(c, ir_key_pos(t, "typelib-version"), "RP1316", "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')", proven_arg_cstr(v));
     }
-    if (x->typelib.ptr == NULL && (x->typelib_version.ptr || x->typelib_file.ptr)) ERR(c, t->pos, "RP1316", "[com.%s]: typelib-version and typelib-file need typelib", rp_cs(t->id));
+    if (x->typelib.ptr == NULL && (x->typelib_version.ptr || x->typelib_file.ptr)) ERR(c, t->pos, "RP1316", "[com.{}]: typelib-version and typelib-file need typelib", proven_arg_cstr(rp_cs(t->id)));
     if (x->typelib.ptr && x->typelib_version.ptr == NULL) x->typelib_version = RP_V(ir_dup(c, "1.0"));
     x->msi_only = ir_get_bool(c, t, "msi-only", false);
 }
@@ -1212,14 +1212,14 @@ void ir_parse_handler(ctx_t *c, const rp_ttable_t *t, rp_ir_handler_t *x) {
     if (kind && strcmp(kind, "preview") == 0) x->kind = RP_HANDLER_PREVIEW;
     else if (kind && strcmp(kind, "thumbnail") == 0) x->kind = RP_HANDLER_THUMBNAIL;
     else if (kind && strcmp(kind, "property") == 0) x->kind = RP_HANDLER_PROPERTY;
-    else if (kind) ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')", kind);
+    else if (kind) ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')", proven_arg_cstr(kind));
     rp_mem_free(c->alloc, kind);
     x->clsid = RP_V(guid_key(c, t, "class", true));
     x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
     x->msi_only = ir_get_bool(c, t, "msi-only", false);
     const rp_tkey_t *tk = ir_find_key(t, "types");
     if (tk == NULL || tk->val.kind != RP_TV_ARRAY || tk->val.count == 0) {
-        ERR(c, tk ? tk->pos : t->pos, "RP1316", "[handler.%s]: types is a list of file types, like [\".txt\"]", rp_cs(t->id));
+        ERR(c, tk ? tk->pos : t->pos, "RP1316", "[handler.{}]: types is a list of file types, like [\".txt\"]", proven_arg_cstr(rp_cs(t->id)));
         return;
     }
     x->types = rp_mem_alloc(c->alloc, tk->val.count, sizeof *x->types);
@@ -1231,7 +1231,7 @@ void ir_parse_handler(ctx_t *c, const rp_ttable_t *t, rp_ir_handler_t *x) {
         const rp_tval_t *v = &tk->val.items[k];
         char *ty = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
         if (!(ty && ty[0] == '.' && strlen(ty) <= 64 && lower_name(ty + 1, "_-", 1))) {
-            ERR(c, tk->pos, "RP1316", "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')", ty ? ty : "?");
+            ERR(c, tk->pos, "RP1316", "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')", proven_arg_cstr(ty ? ty : "?"));
         }
         x->types[x->type_count++] = ty;
     }
@@ -1258,12 +1258,12 @@ void ir_parse_menu(ctx_t *c, const rp_ttable_t *t, rp_ir_menu_t *x) {
     if (multi == NULL || strcmp(multi, "each") == 0) x->multi = RP_MENU_EACH;
     else if (strcmp(multi, "one") == 0) x->multi = RP_MENU_ONE;
     else if (strcmp(multi, "single") == 0) x->multi = RP_MENU_SINGLE;
-    else ERR(c, ir_key_pos(t, "multi"), "RP1316", "multi must be \"each\", \"one\" or \"single\" (got '%s')", multi);
+    else ERR(c, ir_key_pos(t, "multi"), "RP1316", "multi must be \"each\", \"one\" or \"single\" (got '{}')", proven_arg_cstr(multi));
     rp_mem_free(c->alloc, multi);
     // on: one text or a list. An item of a sub-menu shows where its sub-menu shows and has none.
     const rp_tkey_t *tk = ir_find_key(t, "on");
     size_t n = tk == NULL ? 0 : tk->val.kind == RP_TV_ARRAY ? tk->val.count : 1;
-    if (tk && n == 0) ERR(c, tk->pos, "RP1316", "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]", rp_cs(t->id));
+    if (tk && n == 0) ERR(c, tk->pos, "RP1316", "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]", proven_arg_cstr(rp_cs(t->id)));
     if (n == 0) return;
     x->on = rp_mem_alloc(c->alloc, n, sizeof *x->on);
     if (x->on == NULL) {
@@ -1277,7 +1277,7 @@ void ir_parse_menu(ctx_t *c, const rp_ttable_t *t, rp_ir_menu_t *x) {
                          (strncmp(on, "assoc:", 6) == 0 && on[6]) || (on[0] == '.' && strlen(on) <= 64 && lower_name(on + 1, "_-", 1)));
         if (!ok) {
             ERR(c, tk->pos, "RP1316", "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", "
-                                      "\"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')", on ? on : "?");
+                                      "\"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')", proven_arg_cstr(on ? on : "?"));
         }
         x->on[x->on_count++] = on;
     }
@@ -1303,7 +1303,7 @@ static void contract_name(ctx_t *c, const rp_ttable_t *t, const char *key, const
         char ch = v[k];
         ok = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '.' || ch == '-';
     }
-    if (!ok) ERR(c, ir_key_pos(t, key), "RP1316", "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')", key, lo, hi, v);
+    if (!ok) ERR(c, ir_key_pos(t, key), "RP1316", "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')", proven_arg_cstr(key), proven_arg_u32(lo), proven_arg_u32(hi), proven_arg_cstr(v));
 }
 
 // A list of texts (1-255 characters, no backslash); an empty list or another value is refused.
@@ -1312,7 +1312,7 @@ static char **contract_list(ctx_t *c, const rp_ttable_t *t, const char *key, con
     *count = 0;
     if (tk == NULL) return NULL;
     if (tk->val.kind != RP_TV_ARRAY || tk->val.count == 0) {
-        ERR(c, tk->pos, "RP1316", "%s is a list of texts, like [\"%s\"]", key, example);
+        ERR(c, tk->pos, "RP1316", "{} is a list of texts, like [\"{}\"]", proven_arg_cstr(key), proven_arg_cstr(example));
         return NULL;
     }
     char **out = rp_mem_alloc(c->alloc, tk->val.count, sizeof *out);
@@ -1327,7 +1327,7 @@ static char **contract_list(ctx_t *c, const rp_ttable_t *t, const char *key, con
         if (s == NULL || s[0] == 0 || strlen(s) > 255 || strchr(s, '\\')) bad = true;
         if (s) out[(*count)++] = s;
     }
-    if (bad) ERR(c, tk->pos, "RP1316", "%s is a list of texts, like [\"%s\"]", key, example);
+    if (bad) ERR(c, tk->pos, "RP1316", "{} is a list of texts, like [\"{}\"]", proven_arg_cstr(key), proven_arg_cstr(example));
     return out;
 }
 
@@ -1338,7 +1338,7 @@ static void parse_msix_contract(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t
     for (size_t k = 0; k < t->count; ++k) {
         const char *key = rp_cs(t->keys[k].key);
         if (strcmp(key, "kind") == 0 || strcmp(key, "app") == 0 || ir_in_list(key, contract_allowed[row])) continue;
-        if (ir_in_list(key, known)) ERR(c, t->keys[k].pos, "RP1316", "%s does not belong to kind = \"%s\"", key, kind);
+        if (ir_in_list(key, known)) ERR(c, t->keys[k].pos, "RP1316", "{} does not belong to kind = \"{}\"", proven_arg_cstr(key), proven_arg_cstr(kind));
     }
     if (x->kind == RP_MSIX_EXT_APP_EXTENSION) {
         x->name = RP_V(ir_get_str(c, t, "name", true, NULL));
@@ -1349,14 +1349,14 @@ static void parse_msix_contract(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t
         x->folder = RP_V(ir_get_str(c, t, "public-folder", false, NULL));
         if (x->folder.ptr && (x->folder.ptr[0] == 0 || x->folder.ptr[0] == '\\' || x->folder.ptr[0] == '/' || x->folder.size > 256 ||
                           strpbrk(rp_cs(x->folder), "<>:\"|?*") || strstr(rp_cs(x->folder), ".."))) {
-            ERR(c, ir_key_pos(t, "public-folder"), "RP1316", "public-folder must be a folder of the package, like \"Public\" (got '%s')", rp_cs(x->folder));
+            ERR(c, ir_key_pos(t, "public-folder"), "RP1316", "public-folder must be a folder of the package, like \"Public\" (got '{}')", proven_arg_cstr(rp_cs(x->folder)));
         }
         for (char *q = rp_ws(x->folder); q && *q; ++q) if (*q == '/') *q = '\\';
         x->display = RP_V(ir_get_str(c, t, "display-name", false, NULL));
         x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
     } else if (x->kind == RP_MSIX_EXT_APP_EXTENSION_HOST) {
         x->names = contract_list(c, t, "names", "com.example.plugin", &x->name_count);
-        if (!ir_find_key(t, "names")) ERR(c, t->pos, "RP1316", "%s is a list of texts, like [\"%s\"]", "names", "com.example.plugin");
+        if (!ir_find_key(t, "names")) ERR(c, t->pos, "RP1316", "{} is a list of texts, like [\"{}\"]", proven_arg_cstr("names"), proven_arg_cstr("com.example.plugin"));
         for (size_t k = 0; k < x->name_count; ++k) contract_name(c, t, "names", x->names[k], 2, 65519);
     } else if (x->kind == RP_MSIX_EXT_APP_SERVICE) {
         x->name = RP_V(ir_get_str(c, t, "name", true, NULL));
@@ -1366,7 +1366,7 @@ static void parse_msix_contract(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t
     } else if (x->kind == RP_MSIX_EXT_SHARE_TARGET) {
         const rp_tkey_t *tk = ir_find_key(t, "types");
         if (tk && (tk->val.kind != RP_TV_ARRAY || tk->val.count == 0)) {
-            ERR(c, tk->pos, "RP1316", "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]", rp_cs(t->id));
+            ERR(c, tk->pos, "RP1316", "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]", proven_arg_cstr(rp_cs(t->id)));
         } else if (tk) {
             x->types = rp_mem_alloc(c->alloc, tk->val.count, sizeof *x->types);
             if (x->types == NULL) c->nomem = true;
@@ -1379,7 +1379,7 @@ static void parse_msix_contract(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t
             }
         }
         x->names = contract_list(c, t, "formats", "Text", &x->name_count);
-        if (!tk && !ir_find_key(t, "formats")) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: a share target needs types, formats or both", rp_cs(t->id));
+        if (!tk && !ir_find_key(t, "formats")) ERR(c, t->pos, "RP1316", "[msix-extension.{}]: a share target needs types, formats or both", proven_arg_cstr(rp_cs(t->id)));
         x->description = RP_V(ir_get_str(c, t, "description", false, NULL));
     } else {
         x->action = RP_V(ir_get_str(c, t, "action", true, NULL));
@@ -1387,17 +1387,17 @@ static void parse_msix_contract(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t
         x->names = contract_list(c, t, "content-events", "ShowPicturesOnArrival", &x->name_count);
         x->events = contract_list(c, t, "device-events", "ImageSourceArrival", &x->event_count);
         if (!ir_find_key(t, "content-events") && !ir_find_key(t, "device-events")) {
-            ERR(c, t->pos, "RP1316", "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both", rp_cs(t->id));
+            ERR(c, t->pos, "RP1316", "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both", proven_arg_cstr(rp_cs(t->id)));
         }
         x->verb = RP_V(ir_get_str(c, t, "verb", false, NULL));
         if (x->verb.ptr == NULL) x->verb = ir_dup_v(c, t->id);
         bool alnum = x->verb.ptr != NULL;
         for (const char *q = rp_cs(x->verb); alnum && *q; ++q) alnum = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
-        if (x->verb.ptr && !alnum) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: verb '%s': Windows takes letters and digits only", rp_cs(t->id), rp_cs(x->verb));
+        if (x->verb.ptr && !alnum) ERR(c, t->pos, "RP1316", "[msix-extension.{}]: verb '{}': Windows takes letters and digits only", proven_arg_cstr(rp_cs(t->id)), proven_arg_cstr(rp_cs(x->verb)));
         x->clsid = RP_V(ir_get_str(c, t, "class", false, NULL));
-        if (x->clsid.ptr && !ir_guid_ok(rp_ws(x->clsid))) ERR(c, ir_key_pos(t, "class"), "RP1316", "class must be a GUID like {12345678-...} (got '%s')", rp_cs(x->clsid));
+        if (x->clsid.ptr && !ir_guid_ok(rp_ws(x->clsid))) ERR(c, ir_key_pos(t, "class"), "RP1316", "class must be a GUID like {{12345678-...}} (got '{}')", proven_arg_cstr(rp_cs(x->clsid)));
         if (x->event_count && x->clsid.ptr == NULL) {
-            ERR(c, t->pos, "RP1316", "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)", rp_cs(t->id));
+            ERR(c, t->pos, "RP1316", "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)", proven_arg_cstr(rp_cs(t->id)));
         }
         x->args = RP_V(ir_get_str(c, t, "args", false, NULL));
     }
@@ -1424,7 +1424,7 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
             char ch = x->alias.ptr[k];
             ok = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '.' || ch == '_' || ch == '-';
         }
-        if (x->alias.ptr && !ok) ERR(c, ir_key_pos(t, "alias"), "RP1316", "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')", rp_cs(x->alias));
+        if (x->alias.ptr && !ok) ERR(c, ir_key_pos(t, "alias"), "RP1316", "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')", proven_arg_cstr(rp_cs(x->alias)));
         if (ir_find_key(t, "task-id") || ir_find_key(t, "display-name") || ir_find_key(t, "enabled")) {
             ERR(c, t->pos, "RP1316", "task-id, display-name and enabled belong to kind = \"startup-task\"");
         }
@@ -1440,10 +1440,10 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
         x->file = RP_V(file_ref(c, t, "file", false));
         char *dir = ir_get_str(c, t, "direction", true, NULL), *proto = ir_get_str(c, t, "protocol", true, NULL);
         if (dir && strcmp(dir, "in") != 0 && strcmp(dir, "out") != 0) {
-            ERR(c, ir_key_pos(t, "direction"), "RP1316", "direction must be \"in\" or \"out\" (got '%s')", dir);
+            ERR(c, ir_key_pos(t, "direction"), "RP1316", "direction must be \"in\" or \"out\" (got '{}')", proven_arg_cstr(dir));
         }
         if (proto && strcmp(proto, "tcp") != 0 && strcmp(proto, "udp") != 0) {
-            ERR(c, ir_key_pos(t, "protocol"), "RP1316", "protocol must be \"tcp\" or \"udp\" (got '%s')", proto);
+            ERR(c, ir_key_pos(t, "protocol"), "RP1316", "protocol must be \"tcp\" or \"udp\" (got '{}')", proven_arg_cstr(proto));
         }
         x->outbound = dir && strcmp(dir, "out") == 0;
         x->udp = proto && strcmp(proto, "udp") == 0;
@@ -1462,7 +1462,7 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
                 ok = ports[used] == 0;
             }
             if (!ok || lo < 1 || hi > 65535 || lo > hi) {
-                ERR(c, ir_key_pos(t, "ports"), "RP1316", "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')", ports);
+                ERR(c, ir_key_pos(t, "ports"), "RP1316", "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')", proven_arg_cstr(ports));
             } else {
                 x->port_min = lo;
                 x->port_max = hi;
@@ -1472,11 +1472,11 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
         x->profile = RP_V(ir_get_str(c, t, "profile", false, NULL));
         static const char *const profiles[] = { "all", "domain", "private", "public", NULL };
         if (x->profile.ptr && !ir_in_list(rp_cs(x->profile), profiles)) {
-            ERR(c, ir_key_pos(t, "profile"), "RP1316", "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')", rp_cs(x->profile));
+            ERR(c, ir_key_pos(t, "profile"), "RP1316", "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')", proven_arg_cstr(rp_cs(x->profile)));
         }
         const char *other[] = { "alias", "task-id", "display-name", "enabled" };
         for (size_t k = 0; k < sizeof other / sizeof other[0]; ++k) {
-            if (ir_find_key(t, other[k])) ERR(c, ir_key_pos(t, other[k]), "RP1316", "%s does not belong to kind = \"firewall\"", other[k]);
+            if (ir_find_key(t, other[k])) ERR(c, ir_key_pos(t, other[k]), "RP1316", "{} does not belong to kind = \"firewall\"", proven_arg_cstr(other[k]));
         }
     } else if (kind && (strcmp(kind, "com-server") == 0 || strcmp(kind, "toast") == 0 || strcmp(kind, "context-menu") == 0)) {
         // RFC-0016 2: a COM class of the package (com:ComServer), the toast activator (a COM class of
@@ -1484,7 +1484,7 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
         x->kind = strcmp(kind, "com-server") == 0 ? RP_MSIX_EXT_COM : strcmp(kind, "toast") == 0 ? RP_MSIX_EXT_TOAST : RP_MSIX_EXT_CONTEXT_MENU;
         x->file = RP_V(file_ref(c, t, "file", x->kind != RP_MSIX_EXT_TOAST));
         x->clsid = RP_V(ir_get_str(c, t, "class", true, NULL));
-        if (x->clsid.ptr && !ir_guid_ok(rp_ws(x->clsid))) ERR(c, ir_key_pos(t, "class"), "RP1316", "class must be a GUID like {12345678-...} (got '%s')", rp_cs(x->clsid));
+        if (x->clsid.ptr && !ir_guid_ok(rp_ws(x->clsid))) ERR(c, ir_key_pos(t, "class"), "RP1316", "class must be a GUID like {{12345678-...}} (got '{}')", proven_arg_cstr(rp_cs(x->clsid)));
         x->display = RP_V(ir_get_str(c, t, "display-name", false, NULL));
         x->args = RP_V(ir_get_str(c, t, "args", false, NULL));
         if (x->kind == RP_MSIX_EXT_TOAST && x->args.ptr == NULL) x->args = RP_V(ir_dup(c, "-ToastActivated"));
@@ -1494,7 +1494,7 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
             for (size_t k = 0; k < 4; ++k) {
                 if (strcmp(th, models[k][0]) == 0) x->threading = RP_V(ir_dup(c, models[k][1]));
             }
-            if (x->threading.ptr == NULL) ERR(c, ir_key_pos(t, "threading"), "RP1316", "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')", th);
+            if (x->threading.ptr == NULL) ERR(c, ir_key_pos(t, "threading"), "RP1316", "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')", proven_arg_cstr(th));
             rp_mem_free(c->alloc, th);
         } else {
             x->threading = RP_V(ir_dup(c, "STA"));
@@ -1504,10 +1504,10 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
             if (x->verb.ptr == NULL) x->verb = ir_dup_v(c, t->id);
             bool alnum = x->verb.ptr != NULL;
             for (const char *q = rp_cs(x->verb); alnum && *q; ++q) alnum = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
-            if (x->verb.ptr && !alnum) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: verb '%s': Windows takes letters and digits only", rp_cs(t->id), rp_cs(x->verb));
+            if (x->verb.ptr && !alnum) ERR(c, t->pos, "RP1316", "[msix-extension.{}]: verb '{}': Windows takes letters and digits only", proven_arg_cstr(rp_cs(t->id)), proven_arg_cstr(rp_cs(x->verb)));
             const rp_tkey_t *tk = ir_find_key(t, "types");
             if (tk == NULL || tk->val.kind != RP_TV_ARRAY || tk->val.count == 0) {
-                ERR(c, tk ? tk->pos : t->pos, "RP1316", "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]", rp_cs(t->id));
+                ERR(c, tk ? tk->pos : t->pos, "RP1316", "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]", proven_arg_cstr(rp_cs(t->id)));
             } else {
                 x->types = rp_mem_alloc(c->alloc, tk->val.count, sizeof *x->types);
                 if (x->types == NULL) c->nomem = true;
@@ -1524,17 +1524,17 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
         }
         const char *other[] = { "alias", "task-id", "enabled", "direction", "protocol", "ports", "profile" };
         for (size_t k = 0; k < sizeof other / sizeof other[0]; ++k) {
-            if (ir_find_key(t, other[k])) ERR(c, ir_key_pos(t, other[k]), "RP1316", "%s does not belong to kind = \"%s\"", other[k], kind);
+            if (ir_find_key(t, other[k])) ERR(c, ir_key_pos(t, other[k]), "RP1316", "{} does not belong to kind = \"{}\"", proven_arg_cstr(other[k]), proven_arg_cstr(kind));
         }
     } else if (kind && ir_in_list(kind, contract_kinds)) {
         parse_msix_contract(c, t, x, kind, keys);
     } else if (kind) {
         ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", "
-            "\"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')", kind);
+            "\"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')", proven_arg_cstr(kind));
     }
     // The keys of the RFC-0031 kinds belong to them alone.
     for (size_t k = 0; kind && !ir_in_list(kind, contract_kinds) && contract_keys[k]; ++k) {
-        if (ir_find_key(t, contract_keys[k])) ERR(c, ir_key_pos(t, contract_keys[k]), "RP1316", "%s does not belong to kind = \"%s\"", contract_keys[k], kind);
+        if (ir_find_key(t, contract_keys[k])) ERR(c, ir_key_pos(t, contract_keys[k]), "RP1316", "{} does not belong to kind = \"{}\"", proven_arg_cstr(contract_keys[k]), proven_arg_cstr(kind));
     }
     rp_mem_free(c->alloc, kind);
 }
@@ -1549,7 +1549,7 @@ void ir_parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
     e->when = RP_V(ir_get_when(c, t));
     e->name = RP_V(ir_get_str(c, t, "name", true, NULL));
     if (e->name.ptr && (strchr("=+-!*", e->name.ptr[0]) || strchr(rp_cs(e->name), '=') || ir_has_control(rp_cs(e->name)))) {
-        ERR(c, ir_key_pos(t, "name"), "RP1316", "variable name '%s' may not contain '=' or start with = + - ! *", rp_cs(e->name));
+        ERR(c, ir_key_pos(t, "name"), "RP1316", "variable name '{}' may not contain '=' or start with = + - ! *", proven_arg_cstr(rp_cs(e->name)));
     }
     e->value = RP_V(ir_get_fmt(c, t, "value", true, NULL, IR_FMT_INSTALL));
     if (e->value.ptr && strstr(rp_cs(e->value), "[~]")) {
@@ -1582,15 +1582,15 @@ void ir_parse_other(ctx_t *c, const rp_ttable_t *t, rp_ir_other_t *x) {
     ir_get_ltexts(c, t, "message", &x->message_by_lang, &x->message_by_lang_count);
     char *action = ir_get_str(c, t, "action", false, NULL);
     if (action && strcmp(action, "refuse") == 0) x->refuse = true;
-    else if (action && strcmp(action, "warn") != 0) ERR(c, ir_key_pos(t, "action"), "RP1316", "action must be \"warn\" or \"refuse\" (got '%s')", action);
+    else if (action && strcmp(action, "warn") != 0) ERR(c, ir_key_pos(t, "action"), "RP1316", "action must be \"warn\" or \"refuse\" (got '{}')", proven_arg_cstr(action));
     rp_mem_free(c->alloc, action);
     if ((x->msix.ptr == NULL) == (x->upgrade_code.ptr == NULL) || (x->publisher.ptr && x->msix.ptr == NULL)) {
-        ERR(c, t->pos, "RP1316", "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code", rp_cs(t->id));
+        ERR(c, t->pos, "RP1316", "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code", proven_arg_cstr(rp_cs(t->id)));
     } else if (x->msix.ptr) {
         bool ok = x->msix.size >= 3 && x->msix.size <= 50 && x->publisher.ptr && strchr(rp_cs(x->publisher), '=');
         for (const char *q = rp_cs(x->msix); ok && *q; ++q) ok = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9') || *q == '.' || *q == '-';
-        if (!ok) ERR(c, t->pos, "RP1316", "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them", rp_cs(t->id));
+        if (!ok) ERR(c, t->pos, "RP1316", "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them", proven_arg_cstr(rp_cs(t->id)));
     } else if (!ir_guid_ok(rp_ws(x->upgrade_code))) {
-        ERR(c, ir_key_pos(t, "upgrade-code"), "RP1308", "%s must be a GUID like {12345678-...} (got '%s')", "upgrade-code", rp_cs(x->upgrade_code));
+        ERR(c, ir_key_pos(t, "upgrade-code"), "RP1308", "{} must be a GUID like {{12345678-...}} (got '{}')", proven_arg_cstr("upgrade-code"), proven_arg_cstr(rp_cs(x->upgrade_code)));
     }
 }

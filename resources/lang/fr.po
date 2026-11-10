@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Segoe UI\n"
 "X-Rubrapack-Group: 6\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1} : \"{2}\" {3}, {4}, {5}, dialogues {6}{7}\n  1 nom, fabricant, version, architecture        2 dossier d'installation, pour qui\n  3 dialogues, licence, langues                  4 parties facultatives\n  5 raccourcis                                   6 fichiers : suivre le dossier du programme\n  7 toute clé                                    v voir   l lint   s enregistrer   q quitter\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\nMessages avec ce code (* représente un nom ou une valeur) :\n"
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nLes résultats vont sur stdout, les diagnostics sur stderr.\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\nQue faire : {1}.\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} a disparu, mais un raccourci l'ouvre : modifiez d'abord les raccourcis (5)\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  {1} fichiers et {2} dossiers s'y trouvent\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7, v, l, s ou q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  [dir.{1}] et [files.{2}] ajoutés\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  [file.{1}] ajouté\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint : voir les problèmes ci-dessus (le fichier nommé est une copie 
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  les autres langues de [ui] languages sont conservées ; modifiez cette liste avec 7 (toute clé)\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  [file.{1}] supprimé\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  [files.{1}]{2} supprimé\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  cela ne respecte pas le sous-ensemble TOML ; rien n'a été modifié\n
 msgid "  that was not readable text; again, please\n"
 msgstr "  ce n'était pas du texte lisible ; recommencez, s'il vous plaît\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  le dossier du programme '{1}' : {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - crée des packages Windows Installer (.msi) et MSIX (.msix)\n\nutilis
 msgid " and its dir"
 msgstr " et son dir"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}) n'a pas de variable d'environnement, donc une valeur extensible ne peut pas la contenir ; utilisez une valeur chaîne (remplie à l'installation)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) est un {2} : il peut commencer un chemin, ou remplacer une valeur que Windows Installer remplit (registre, environnement, INI, arguments, messages), mais pas ici"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) n'est pas un dossier par lequel un chemin peut commencer (un ID de dir, ou ProgramFiles, LOCALAPPDATA, ProgramData ... - voir Paths dans le manuel){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  structure :   {2}\n  condensat :   {3}\n  signature :   {4}\n  chaîne :      {5}{6}{7}\n  révocation :  non vérifiée\n  horodatage :  {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2} : la variable n'est pas définie"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' n'est pas un contrôle de ce dialogue"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' n'est pas dans {3}"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}' : {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}' : le texte de la licence a besoin du nom anglais de la police, il s'affiche donc dans la police propre à la langue ; écrivez le nom anglais (comme \"Malgun Gothic\") pour utiliser aussi cette police"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "{1} = '{2}' doit être un dossier"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "composant {1}, mais la plateforme du package est {2}"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} n'appartient pas à kind = \"{2}\""
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} n'appartient pas à kind = \"firewall\""
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} contient des LANGID (1..65535), comme 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} contient des chaînes"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "{1} fait de {2} à {3} caractères"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} est une liste de textes \"Clé=Valeur\""
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "{1} est une liste de textes, par exemple [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} est un nom de police de 1 à 31 caractères, comme \"Segoe UI\" ({2} reçus)"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} est une condition MSI aux guillemets fermés et aux parenthèses équilibrées"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} est un tableau de chaînes, une par valeur"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} concerne les packages MSI : un MSIX n'est pas supprimé par msiexec"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} a disparu. Supprimer [file.{2}] ?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} dépasse 240 caractères"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} est nouveau. L'ajouter ?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} n'est pas un GUID au format du registre"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} n'est pas un code utilisé par ce rubrapack{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} doit être \"file:<ID>\" et nommer un [file.*] de ce package"
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "{1} doit comporter de {2} à {3} lettres, chiffres, '.' ou '-', sans commencer par '.' (reçu : '{4}')"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1} doit être un GUID"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1} doit être un GUID comme {12345678-...} (reçu : '{2}')"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "{1} doit être une adresse http:// ou https:// (reçu '{2}')"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1} doit être une adresse https://, http:// ou file://, ou un chemin \\\\server\\share (reçu : '{2}')"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1} doit différer de upgrade-code (une famille de mise à niveau par architecture)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} nécessite la build {2} de Windows ou ultérieure : définissez [msix] min-version = \"10.0.{3}.0\""
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} nécessite resources/bin/rubrapack_ca-{2}.dll, que ce rubrapack n'inclut pas"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}, TSA non vérifiée (indiquez --tsa-trust)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}, TSA approuvée"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}, TSA non approuvée - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} a disparu ou est vide. Supprimer [files.{3}] et [dir.{4}] ?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ est un nouveau dossier. L'ajouter ?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1} : {2} erreur(s){-3}, {4} avertissement(s){-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1} : {2} erreur(s){-3}, {4} avertissement(s){-5} (par rapport à {6})\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1} : {2} fichiers, {3} octets\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1} : {2} fichiers, {3} erreurs, 0 avertissement\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1} : {2} autres diagnostics non affichés\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1} : '{2}' n'est pas un programme (.exe)"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1} : '{2}' n'est pas une action standard que rubrapack place"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1} : le fichier '{2}' n'est pas un [file.*] de ce package"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1} : le fichier '{2}' n'est pas un programme (.exe)"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "'$(' n'est pas fermé (écrivez '$$(' pour le texte '$(')"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' existe déjà ; il est laissé tel quel"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' existe déjà ; supprimez-le ou générez dans un autre dossier"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}' a déjà un gestionnaire {2} ([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}' a déjà des autorisations"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' et '{2}' sont le même chemin dans le package"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' appartient à Windows ou aux navigateurs"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "'{1}' ne peut pas être lu par rapport à '{2}' : {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' ne respecte pas le sous-ensemble TOML ; rien n'a été enregistré"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' existe déjà"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' existe déjà ; modifiez-le avec `rubrapack edit {2}`"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' existe et n'est pas un répertoire vide ; extrayez dans un nouveau"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' va dans {2} ; ou msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}' a un flux d'informations récapitulatives illisible"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' n'a pas de tables Directory, Component, File et Media à extraire"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "'{1}' n'a pas de transformation incorporée '{2}'"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}' n'a pas d'informations récapitulatives lisibles"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}' n'a pas de transformation '{2}'"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' est en UTF-16 : edit ne modifie que les sources UTF-8 (enregistrez-le d'abord en UTF-8)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' est un nom de Windows ; donnez un autre nom à la variable"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' est un [chain] : il crée un programme d'installation, -o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' est un contrôle du cadre intégré ; choisissez un autre ID"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' est un dossier de l'ordinateur ; un package {2} ne peut pas y écrire"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' est un module de fusion : fusionnez-le plutôt avec [merge.ID]"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' est un nom que le format MSIX se réserve"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' est un lien symbolique ; les liens ne sont pas suivis"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' est aussi une [property.*]"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' est aussi un ID de dir ; donnez un autre nom à la variable"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' est compilé pour la machine 0x{2}, pas pour l'arch de ce package ; définissez any-arch = true si c'est voulu"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' n'est ni un fichier PE (.exe, .dll), ni un package MSI, ni un package ou bundle MSIX, ni un cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' n'est ni un fichier PE, ni un package MSI, ni un package ou bundle MSIX, ni un cabinet"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' n'est ni un dossier connu ni un ID de dir (dossiers connus : ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' n'est ni un paquet MSIX ni un nom de famille de paquets (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' n'est pas un cabinet que rubrapack sait lire (stored ou MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' n'est pas un code de diagnostic (RP et quatre chiffres, comme RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' n'est pas un programme (.exe)"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' n'est pas un fichier ordinaire"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' n'est pas un programme d'installation rubrapack{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' n'est pas un ID valide (lettres, chiffres et '_', sans commencer par un chiffre, au plus {2})"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' n'est pas une base de données MSI valide : {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' n'est pas un package MSIX valide : {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' n'est pas un package valide : {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' n'est pas une source valide (le sous-ensemble TOML) ; corrigez-la d'abord à la main"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' n'est pas une transformation valide : {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' n'est pas un nom de variable valide"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' est réservé et ne peut pas servir d'ID"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' est le nom d'un dir : seule une recherche dans le registre ou de dir peut remplir un dir"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' ressemble à un fichier programme (PE), mais ses en-têtes ou ressources sont endommagés"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}' doit être une chaîne"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}' doit être un entier"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}' doit être compris entre {2} et {3}"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}' doit être true ou false"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' ne doit pas être vide"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' ne nomme aucune transformation (propriété récapitulative 8) : ce n'est pas un correctif"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' commence par un dossier : \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}' : {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}' : {2} '{3}' a {4} ; rien n'a été extrait"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}' : {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}' : {2} entrées, plus que la limite {3} (--limit-entries) ; rien n'a été extrait"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}' : '{2}' et '{3}' seraient le même chemin sous Windows ; rien n'a été extrait"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}' : '{2}' n'est pas dans [ui] languages"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}' : une table ne peut pas être lue"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}' : une table est illisible"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}' : un MSIX installe tous ses fichiers (when) ; utilisez msi-only = true"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}' : un MSIX supprime tous ses fichiers (keep) ; utilisez msi-only = true"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}' : le cabinet '{2}' est endommagé ou n'est pas stored/MSZIP"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}' : le nom de cabinet '{2}' n'est pas un simple nom de fichier"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}' : le fichier compressé '{2}' (séquence {3}) n'a pas de cabinet"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}' : le répertoire '{2}' a un parent '{3}' qui n'existe pas"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}' : le répertoire '{2}' est son propre ancêtre ou est trop imbriqué"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}' : le fichier '{2}' ne correspond pas à son MsiFileHash"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}' : le fichier '{2}' n'a pas de composant ou de répertoire"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}' : le fichier '{2}' fait {3} octets, la table File indique {4}"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}' : le fichier '{2}' n'est pas dans le cabinet '{3}'"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}' : ses cabinets externes ne sont pas couverts par la signature (--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}' : son dossier ne mène pas à un emplacement connu"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}' : plus de {2} octets à écrire (--limit-bytes) ; rien n'a été extrait"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}' : pas de --timestamp : la signature cesse d'être valide à l'expiration du certificat"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}' : le package '{2}' ne correspond pas à son SHA-256"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}' : le flux de cabinet '{2}' est absent"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}' : le manifeste n'a pas de {2} {3}"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}' : le manifeste nomme '{2}', qui n'est pas dans le package"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}' : horodatage de {2} : {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}' : la transformation '{2}' ne peut pas être lue par rapport à '{3}' : {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' est la langue propre du package ({2}) ; donnez ce texte sans le suffixe"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "'version' n'accepte pas d'arguments"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "--allow-unsigned-cabs concerne les .msi"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "--arch pour un bundle : une liste de x64, x86 et arm64, chacun une fois (reçu : '{1}')"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "--dist nomme un nouveau dossier à côté de la source (sans chemin)"
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "--flat est pour une sortie .msixbundle (ses paquets sont écrits à côté)"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "--jobs accepte un nombre de 1 à 64 (reçu : '{1}')"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "--key signe au plus {1} cabinets externes ; augmentez cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "--key-store est un magasin de certificats Windows ; ailleurs, utilisez u
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store prend l'empreinte SHA-1 du certificat (40 chiffres hexadécimaux)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1} : cette langue n'existe pas (intégrées : {2} ; une autre a besoin de son pack de langue, {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "--lang (ou RUBRAPACK_LANG) choisit la langue de ces textes : {1}, ou une langue avec un pack de langue.\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "--lang a besoin d'une langue, comme en ou ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "--languages a besoin de dialogues : indiquez aussi --ui"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "--msix-compress accepte deflate ou store (reçu : '{1}')"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1} : la variable n'est pas définie"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "--patch-code prend un GUID en majuscules avec accolades : {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1} : la variable n'est pas définie"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "--previous compare deux packages .msi"
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots : les certificats racine du système d'exploitation ne peuvent pas être lus"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "--target {1} ne correspond pas à la sortie '{2}'"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "--target {1} n'est pas implémenté (msi ou msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "--target accepte msi ou msix (reçu : '{1}')"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "--winget a besoin d'une table [winget] : identifier, installer-url, lice
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "--winget a besoin du paquet en un seul fichier : winget en télécharge un, donc pas cab = \"external\""
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "-D {1} est donné deux fois"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1} : '{2}' est un nom de Windows ; donnez un autre nom à la variable"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "-D a besoin de NOM=VALEUR (reçu : '{1}')"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "-i demande chaque réponse ; donnez soit -i, soit les options"
 msgid "; its range is "
 msgstr " ; sa plage est "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "ActionProperty '{1}' n'est pas dans SecureCustomProperties"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Nom du dossier sous Program Files"
 msgid "Folder with the files to install"
 msgstr "Dossier contenant les fichiers à installer"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "L'ID '{1}' est déjà utilisé (ligne {2}) ; les ID doivent différer dans toutes les tables"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "Installer pour (machine, user, dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "Clé sous la forme table.clé (package.version, dir.INSTALLDIR.path, ...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "KeyPath '{1}' appartient à un autre composant"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "KeyPath '{1}' n'est pas dans File"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "KeyPath '{1}' n'est pas dans Registry"
 
 msgid "Korean dialogs as well as English?"
 msgstr "Des dialogues en coréen en plus de l'anglais ?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "LastSequence {1} est inférieur à celui d'un DiskId plus petit"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX : ce dont un package MSIX a besoin, et ce qu'il ne peut pas conteni
 msgid "Main program, for shortcuts (- for none)"
 msgstr "Programme principal, pour les raccourcis (- pour aucun)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "Manuel : {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "Nom du produit"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "ProductCode et UpgradeCode sont le même GUID"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} n'est pas supérieure à la précédente {2} dans ses trois premiers champs : Windows Installer ne met pas à niveau"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Programme qu'ouvrent les raccourcis (- pour aucun raccourci)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1} : cette langue n'existe pas (intégrées : {2} ; une autre a besoin de son pack de langue, {3}.po)"
 
 msgid "Reference, "
 msgstr "Référence, "
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "La séquence {1} n'est couverte par aucune ligne Media (dernière {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "La séquence {1} est utilisée par un autre fichier"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "Fichier source à écrire"
 msgid "Source format"
 msgstr "Format de la source"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "Source doit nommer une ligne File pour le type {1}"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "Le sous-ensemble TOML"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "Les fichiers UTF-16 big-endian ne sont pas pris en charge ; enregistrez en UTF-8"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "UpgradeCode {1} diffère de celui de la version précédente, {2} : ce package ne la remplace pas"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "Versions et mises à niveau"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer autorise au plus 255.255.65535(.65535)"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "Windows n'a pas indiqué ce qui est installé pour '{1}'"
 
 msgid "Windows name"
 msgstr "nom Windows"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] a besoin de '{4}'"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] ne peut pas aller dans un module de fusion ; c'est le package qui le fusionne qui l'a"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] n'est pas encore pris en charge (prévu pour {3})"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] ne peut pas aller dans un MSIX ; ajoutez msi-only = true pour générer le MSIX sans lui"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] ne peut pas aller dans un MSIX ; ajoutez msi-only = true pour générer le MSIX sans lui"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "[{1}.{2}] est dans l'AppData ou le LocalAppData de l'utilisateur : un paquet dual installé pour tous les utilisateurs ne le met que dans le profil de l'utilisateur qui installe"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}] : un ID dans un module de fusion a au plus 35 caractères (le GUID du module y est ajouté)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] a besoin d'un ID : écrivez [{2}.ID]"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] ne prend pas d'ID : écrivez [{2}]"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "[Content_Types].xml n'est pas la dernière entrée (ce n'est pas un pack
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Les tableaux de tables [[...]] ne sont pas pris en charge ; donnez à chaque élément son propre [kind.ID]"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] est placée une fois : before, after ou sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] a besoin de do et de undo (undo annule aussi un do échoué)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] exige entry : la fonction de la DLL à appeler"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] exige run = \"file:<ID>\" : le programme que do et undo exécutent"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "[action.{1}] exécute un fichier de ce package avant InstallFinalize, alors qu'une première installation ne l'a pas encore (erreur Windows Installer 1721 ou 1723) : placez-la après InstallFinalize ou rendez-la deferred"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] exécute une chose : run (un exe), dll (une DLL installée) ou binary (une DLL du paquet) ; ou do et undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}] : {2} est pour une action unique, pas pour une paire do/undo"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}] : une action différée qui exécute un fichier installé doit venir après InstallFiles (sequence > 4000)"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}] : une action immédiate s'exécute comme l'utilisateur qui installe ; as est pour les autres phases"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}] : args sont ceux d'un programme ; une DLL reçoit data"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}] : check va avec une paire do/undo"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}] : data est pour une action différée, commit ou rollback (une immédiate lit les propriétés)"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}] : entry est la fonction d'une DLL ; run prend args"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}] : les args d'un MSIX doivent être du texte simple (pas de [...] rempli à l'installation)"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}] : dans un MSIX un type de fichier ouvre une application : target doit être un exécutable [msix-app.*]"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] figure deux fois"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "[chain-package] a besoin d'un ID : écrivez [chain-package.ID]"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}] : app-id et typelib ne sont écrits que pour le MSI ; le MSIX inscrit la classe sans eux"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}] : args concerne un programme ; une DLL est chargée, pas lancée"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}] : surrogate exécute une DLL dans dllhost ; '{2}' est un programme"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}] : threading concerne une DLL ; un programme définit son propre apartment"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}] : typelib-version et typelib-file ont besoin de typelib"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] va dans {2} ; ou msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}] : sa source doit être un fichier qui entre dans le package"
 
 msgid "[define] values must be strings"
 msgstr "Les valeurs de [define] doivent être des chaînes"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] a besoin de '{2}'"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "[dialog-control.{1}] a besoin de image"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] a besoin de 'property'"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] a besoin de 'text'"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] a besoin de 'values'"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}] a {2} contrôles ; au plus 64"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}] n'a pas de [dialog-control.*]"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] est placé après lui-même via d'autres dialogues"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] a besoin de ui = \"minimal\", \"installdir\" ou \"features\""
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}] : '{2}' est un nom de Windows ; donnez un autre ID au dir"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}] : guard a besoin de la DLL d'aide de rubrapack, qu'un module de fusion ne contient pas"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] a besoin d'une fonctionnalité"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}] : un MSIX définit toutes ses variables (when) ; utilisez msi-only = true"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}] : sa valeur nomme un emplacement qu'un MSIX ne peut pas donner (un dossier hors du package qui n'est pas un dossier Windows, ou une partie fixée à l'installation) ; utilisez msi-only = true"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}] : avec external-location = true, le paquet ne contient aucun fichier du programme, donc pas non plus le lanceur de rubrapack ; ou msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] est déjà dans le dossier de son programme ; isolate-for est pour une DLL partagée installée ailleurs"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] est dans le profil de l'utilisateur et a component-guid : son chemin clé reste le fichier, alors que les règles de Windows y veulent une valeur HKCU (ICE38) ; retirez component-guid pour en obtenir une"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}] : {2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}] : '{2}' n'est pas un assembly .NET (pas d'en-tête CLI avec une ligne Assembly)"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}] : un assembly .NET porte lui-même son manifeste ; manifest est pour un assembly Win32"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}] : un assembly Win32 a besoin de manifest = \"file:<ID>\", son fichier manifeste"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}] : un assembly .NET partagé va dans le GAC, qui n'accepte que les assemblys à nom fort ; signez-le ou donnez assembly-for = \"file:<programme>\""
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}] : un assembly Win32 partagé va dans WinSxS avec un catalogue signé par la clé que nomme le publicKeyToken du manifeste ; générez avec --key (ou donnez assembly-for = \"file:<programme>\" pour un assembly privé)"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}] : le manifeste '{2}' d'un assembly Win32 partagé nomme son signataire : publicKeyToken dans assemblyIdentity (le jeton de la --key utilisée pour générer)"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}] : assembly-for et manifest vont avec assembly = \"dotnet\" ou \"win32\""
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}] : son manifeste '{2}' n'a pas d'assemblyIdentity avec name et version"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}] : son manifeste '{2}' doit être dans le même dir et la même feature (et sous le même when) : les deux forment un composant"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}] : le manifeste nomme publicKeyToken \"{2}\", mais le jeton de la --key est \"{3}\""
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}] : le manifeste '{2}' est celui d'un autre assembly ou est lui-même un assembly"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}] : l'Explorateur charge un gestionnaire {2} depuis une DLL ; [com.{3}] est un programme"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}] : Windows ne lit les gestionnaires de propriétés que par ordinateur ; le package a besoin de scope = \"machine\""
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}] : un gestionnaire d'aperçu s'exécute dans le prevhost de Windows ; retirez app-id et surrogate de [com.{2}]"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}] : un MSIX ne contient que des gestionnaires de miniatures et d'aperçu (un gestionnaire de propriétés empaqueté n'a donné aucune valeur à l'Explorateur) ; msi-only = true le garde pour le MSI"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}] : un type de fichier MSIX appartient à une application ; ajoutez une [msix-app.*]"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}] : la classe {2} n'est pas une [com.*] de ce package (la DLL du gestionnaire la sert)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}] : dans un MSIX les gestionnaires partagent tous leurs types ou aucun (un type est dans une seule association de type de fichier)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}] : dans un MSIX sa classe s'exécute dans un substitut ; threading = \"sta\" dans [com.{2}] donne à sa fenêtre une boucle de messages (avec threading = {3} l'aperçu peut rester vide)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}] : dans un MSIX ses types sont tous dans un même type de fichier [assoc], ou dans aucun"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}] : sa classe est msi-only ([com.{2}]) ; le MSIX n'aurait pas de serveur pour elle"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}] : types est une liste de types de fichiers, comme [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] va dans {2} ; ou msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] a besoin de 'value'"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] a besoin d'une fonctionnalité : définissez 'feature' ici ou sur son dir"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}] : un MSIX écrit toutes ses entrées INI (when) ; utilisez msi-only = true"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}] : sa valeur a une partie que Windows Installer remplit à l'installation ([...]) ; un MSIX écrit le fichier lors de sa génération"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] a besoin de 'on' : où l'élément apparaît, comme [\".txt\"] ou \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] a besoin de 'target' (le programme qu'il lance), ou d'éléments avec parent = \"{2}\" (un sous-menu)"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] a besoin de 'target' : le programme que lance l'élément"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}] : le menu de Windows 11 n'accepte qu'un ID de lettres et de chiffres (pas de '_') : renommez-le, ou windows11 = false"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}] : un sous-menu ne lance rien : omettez 'args'"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}] : un élément de sous-menu apparaît là où apparaît son sous-menu : omettez 'on'"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}] : args a une partie que Windows Installer remplit à l'installation ([...]) ; un MSIX ne contient que du texte fixe"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}] : hide-when vaut \"HKCU\\\\key\\\\value\" ou \"HKLM\\\\...\", sur un élément du menu de Windows 11 qui n'est pas dans un sous-menu"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}] : hide-when désigne une valeur que ce paquet écrit lui-même ([registry.{2}]) : l'élément ne s'afficherait jamais"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}] : son programme n'est pas dans le MSIX (msi-only ?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}] : ses valeurs ne peuvent pas aller dans le registre du package"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}] : list a une partie que Windows Installer remplit à l'installation ([...]) ; un MSIX ne contient que du texte fixe"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}] : list remplace {2} quand les chemins ne tiennent pas sur une ligne de commande : il faut multi = \"one\", {3} dans args et {4} (le fichier de liste) dans list"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}] : on = \"{2}\" : il n'y a pas de [assoc.{3}]"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}] : on est un type de fichier ou une liste de types, comme [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}] : parent '{2}' n'est pas un [menu.*]"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}] : parent '{2}' doit être un sous-menu : un [menu.*] sans target et sans parent propre"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] va dans {2} ; ou msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] a besoin d'une fonctionnalité : définissez 'feature' ici ou sur son dir"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}] : '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}] : '{2}' {3} ; ou msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] exige feature (ou with = \"file:<ID>\")"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}] : feature va avec un composant propre, pas avec with"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}] : new-name nomme un fichier ; name a des caractères génériques"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}] : une cible de partage nécessite types, formats ou les deux"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}] : un gestionnaire d'exécution automatique nécessite content-events, device-events ou les deux"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}] : args doit être du texte simple (pas de [...] rempli à l'installation)"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}] : device-events nécessitent class (la classe COM IHWEventHandler du programme)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}] : file doit être {2}"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}] : file doit nommer un fichier qui entre dans le package"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}] : file doit nommer un programme qui entre dans le package"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}] : types est une liste de types de fichiers, comme [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}] : verb '{2}' : Windows n'accepte que des lettres et des chiffres"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "[msix-psf] ne va ni avec external-location = true ni avec [env.*] (le la
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "[msix-psf] lance les applications par le lanceur PSF : il lui faut un [msix-app.ID]"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf] : le config '{1}' ne nomme pas l'application '{2}' dans ses \"applications\""
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf] : files n'a pas '{1}' (le lanceur)"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}] : le fichier '{2}' n'est pas une DLL"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] nomme son pilote une fois : driver (un [odbc-driver]) ou driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] avec driver-name exige with = \"file:<ID>\" : le composant avec lequel il est installé"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}] : un paquet par machine enregistre les sources de données pour la machine"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] désigne une copie : msix (avec publisher) ou upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}] : msix est le nom d'identité du paquet (3 à 50 lettres, chiffres, '.' ou '-') et demande publisher (\"CN=...\"), tels que son manifeste les donne"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}] : la vérification préalable cherche l'autre copie : il faut preflight = true"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}] : upgrade-code est celui de ce paquet (c'est une mise à niveau, pas une autre copie)"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] a besoin que son dir ait une fonctionnalité"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}] : les args d'un MSIX doivent être du texte simple (pas de [...] rempli à l'installation)"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}] : dans un MSIX un schéma ouvre une application : target doit être un exécutable [msix-app.*]"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] a besoin de 'value' (ou remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}] : HKCR n'atteint pas l'extérieur d'un MSIX ; utilisez [assoc.*], [protocol.*], [com.*] ou [handler.*], ou msi-only = true"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}] : une valeur qword a besoin de la DLL d'aide de rubrapack, qu'un module de fusion ne contient pas"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}] : un MSIX ne contient que des valeurs sous {2}\\Software"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}] : un MSIX ne supprime ni ne laisse de valeurs (remove, keep) ; utilisez msi-only = true"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}] : un MSIX écrit toutes ses valeurs (when) ; utilisez msi-only = true"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}] : sa valeur a une partie que Windows Installer remplit à l'installation ([...]) ; un MSIX ne contient que des valeurs fixes"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}] : on = \"uninstall\" a besoin de la DLL d'aide de rubrapack, qu'un module de fusion ne contient pas"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}] : le nom de clé ou de valeur ne peut pas aller dans une ruche du registre"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}] : users = \"all\" est pour root = \"HKCU\" avec on = \"uninstall\", dans un paquet pour l'ordinateur"
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] a besoin d'une fonctionnalité : définissez 'feature' ici ou sur son dir"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}] : recursive = true ne concerne pas un dossier sous {2}"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}] : recursive = true a besoin de la DLL d'aide de rubrapack, qu'un module de fusion ne contient pas"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}] : users = \"all\" est pour recursive = true sur un dossier d'AppData ou de LocalAppData, dans un paquet pour l'ordinateur"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}] : les args d'un MSIX doivent être du texte simple (pas de [...] rempli à l'installation)"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}] : file doit nommer un programme qui entre dans le package"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] annonce la fonctionnalité '{2}', qui a advertise = \"disallow\""
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}] : advertise ne se combine pas avec when"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}] : un MSIX n'a de raccourcis que sur le Bureau et dans le menu Démarrer{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}] : un raccourci MSIX n'a pas de working-dir"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}] : un raccourci MSIX est toujours présent (when concerne un MSI)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}] : un raccourci MSIX affiche le logo de son application ; icon concerne un MSI"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}] : un raccourci annoncé est pour un MSI (un MSIX installe tout le paquet)"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}] : un raccourci annoncé a besoin d'une icône"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}] : les args d'un MSIX doivent être du texte simple (pas de [...] rempli à l'installation)"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}] : dans un MSIX un raccourci lance une application : target doit être un exécutable [msix-app.*]"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}] : l'entrée du menu Démarrer d'un MSIX est son application, qui ne prend pas d'args"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}] : aucun texte de dialogue n'a cet ID"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "[ui] embedded est pour un MSI ; un MSIX n'a pas d'IU d'installation prop
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "[ui] a besoin de ui = \"basic\" ou d'un autre jeu de dialogues dans [package] (ou embedded = \"....dll\")"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "l'échappement \\{1} n'est pas une valeur scalaire Unicode"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "`lint` d'un package : dialogues, page de codes, normalisation du texte"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` d'un package ou bundle MSIX"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "un contrôle {1} n'a pas de property"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "un contrôle {1} n'a pas de texte ; placez un contrôle de texte à côté"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "un contrôle {1} a besoin de [property.{2}] avec l'une de ses valeurs par défaut (une installation silencieuse l'utilise)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "un package {1} ne peut pas écrire dans HKLM ; utilisez HKMU"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "un certificat du chemin a une extension critique que rubrapack ne compre
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "un certificat du chemin est signé par un certificat qui n'est pas une AC"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "une chaîne ne contient que [chain], [chain-package.ID] et [define], pas [{1}] ; les packages sont générés à partir de leurs propres sources"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "une chaîne contient au plus {1} packages"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "une chaîne a besoin d'au moins un [chain-package.ID]"
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "un caractère que Windows n'autorise pas dans un nom (/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "un conteneur contient au plus {1} familles de paquets"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "une fonction que ce rubrapack ne fournit pas (ou sans laquelle il a ét�
 msgid "a file larger than allowed"
 msgstr "un fichier plus grand que permis"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "un nom de fichier sous '{1}' n'est pas de l'Unicode valide et ne peut pas être empaqueté"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "la chaîne de composant ou de répertoire d'un fichier est rompue"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "une police entre dans un MSIX via une [font.*] qui la nomme"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "un paquet d'infrastructure n'a ni applications, ni fonctionnalités, ni dépendances propres ({1})"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "une cellule de ruche traverse son bin"
 msgid "a hive version or type rubrapack does not read"
 msgstr "une version ou un type de ruche que rubrapack ne lit pas"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "un dossier connu lui-même ('{1}') ne peut pas recevoir d'autorisations"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "un proxy avec nom d'utilisateur ou mot de passe n'est pas pris en charge
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "une valeur qword est un entier ou \"0x\" et 1 à 16 chiffres hexadécimaux"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "un contrôle radio empile ses boutons : height doit être d'au moins 12 par valeur ({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "un nom de périphérique réservé"
 msgid "a rollback action cannot be asynchronous"
 msgstr "une action de restauration ne peut pas être asynchrone"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "un schéma est une lettre minuscule, puis des minuscules, chiffres, '+', '-' ou '.' (reçu : '{1}')"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "une section est hors du fichier"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "un nom de service ne peut pas contenir '/' ou '\\' (au plus 256 caractères)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "un .exe d'installation est généré à partir d'une source avec [chain] ; '{1}' génère un package (.msi, .msix)"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "une version est composée de 3 ou 4 nombres séparés par des points, co
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "account doit être LocalSystem, LocalService ou NetworkService"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "l'action '{1}' est déjà définie"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "l'action n'est ni une action standard ni dans CustomAction"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "action doit valoir \"warn\" ou \"refuse\" (reçu '{1}')"
 
 msgid "adds too many tables"
 msgstr "ajoute trop de tables"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "advertise doit être \"allow\" ou \"disallow\" (reçu '{1}')"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "after = '{1}' n'est ni une page de ce jeu de dialogues (RpWelcomeDlg{2}{3}{4}) ni un [dialog.*]"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "alias appartient à kind = \"alias\""
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "alias doit être un nom de fichier finissant par .exe : lettres, chiffres, '.', '_', '-' (reçu : '{1}')"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "une section INI ne peut pas contenir ']' et une clé ne peut pas conteni
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "un MSIX ne peut pas placer de fichiers dans le dossier temporaire"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "une application a un seul alias ([msix-extension.{1}] en est déjà un)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "une application a une seule cible de partage ([msix-extension.{1}] en est déjà une)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "un package facultatif ou de modification ne déclare ni fonctionnalités
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "un package x86 n'écrit que dans la vue 32 bits du registre"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "l'application '{1}' n'est pas une [msix-app.*]"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "appinstaller-uri et package-uri vont ensemble : où seront le fichier .appinstaller et le package"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "arch doit être \"x64\", \"arm64\" ou \"x86\" (reçu : '{1}')"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "arch doit être \"x64\", \"x86\" ou \"arm64\" (celle du programme d'installation lui-même)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "l'argument {1} n'est pas de l'UTF-8 valide (octet {2})"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "l'argument {1} n'est pas de l'Unicode valide (unité UTF-16 {2})"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "les tableaux dans des tableaux ne sont pas pris en charge"
 msgid "arrays must hold only strings or only integers"
 msgstr "les tableaux ne doivent contenir que des chaînes ou que des entiers"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "as doit valoir \"system\" ou \"user\" (reçu '{1}')"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "assembly doit être \"dotnet\" ou \"win32\""
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "au plus {1} langues en plus de l'anglais"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "au plus 100 tables [msix-app.*]"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "au plus 50 tables [action.*] (ce fichier en a {1})"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "banner doit être un fichier .bmp (Windows Installer n'affiche que le BM
 msgid "build a package from a source file"
 msgstr "génère un package à partir d'un fichier source"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "générer {1} à partir d'une source {2} nécessite sa propre famille de mise à niveau : ajoutez {3} = \"{...}\" à [package]"
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "cab doit être \"embed\" ou \"external\""
 msgid "cannot be read"
 msgstr "ne peut pas être lu"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "impossible de regrouper les packages : {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "impossible de comparer '{1}' et '{2}'"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "impossible de créer '{1}'"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "impossible de créer '{1}'{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "'{1}' introuvable ; créez-en un avec `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "impossible de créer un logo par défaut"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "impossible de créer un correctif de '{1}' vers '{2}'"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "impossible de créer une transformation de '{1}' vers '{2}'"
 
 msgid "cannot open the certificate store"
 msgstr "impossible d'ouvrir le magasin de certificats"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "impossible de lire '{1}'"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "impossible de lire '{1}' ({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "impossible de lire le package '{1}'"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "impossible de lire le fichier source '{1}'"
 
 msgid "cannot read that folder"
 msgstr "impossible de lire ce dossier"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "impossible de lire le fichier {1} '{2}'"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "impossible de lire le fichier de PIN '{1}'"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "impossible de lire le cabinet '{1}' à côté de '{2}'"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "impossible de lire le fichier de certificat '{1}'"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "impossible de lire les certificats de '{1}'"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "impossible de lire les certificats de '{1}' : {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "impossible de lire le fichier de clé '{1}'"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "impossible de lire le fichier de mot de passe '{1}'"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "impossible de lire le fichier non compressé '{1}' à côté de '{2}'"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "impossible d'écrire {1}"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "impossible d'écrire '{1}'"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "impossible d'écrire '{1}' pour le vérifier"
 
 msgid "cannot write resources.pri"
 msgstr "impossible d'écrire resources.pri"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "impossible d'écrire les fichiers du menu à côté de '{1}'"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "impossible d'écrire le package de ressources de {1}"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "capabilities est un tableau de noms, comme [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "la fonctionnalité '{1}' n'est pas connue de rubrapack (le manuel les énumère)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "la fonctionnalité '{1}' nécessite la build 17763 de Windows ou ultérieure"
 
 msgid "carriage return without a line feed"
 msgstr "retour chariot sans saut de ligne"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "fichier de certificat '{1}' : {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "vérifiez les chemins de la source (relatifs au fichier source) ; défin
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "vérifiez l'orthographe (le message suggère le nom le plus proche) et les clés de la table"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "la classe {1} est déjà servie par [com.{2}]"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "la classe {1} est aussi dans [msix-extension.{2}]"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "class doit être un GUID comme {12345678-...} (reçu : '{1}')"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "close-programs n'a aucun effet avec preflight = false"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "close-programs doit être \"ask\", \"always\" ou \"never\" (reçu : '{1}')"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "la colonne {1} contient un mauvais type de valeur"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "la colonne {1} n'est pas de l'UTF-8 valide"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "la colonne {1} ne peut pas être nulle"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "colonne {1} : {2} est hors de la plage de la colonne"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "colonne {1} : {2} unités UTF-16 ; la colonne en contient {3}"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "colonne {1} : {2} caractères ; la colonne en contient {3}"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "la commande '{1}' n'est pas encore implémentée"
 
 msgid "command-line"
 msgstr "ligne de commande"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "le composant {1} {2} est passé entre 32 et 64 bits : les règles des composants veulent un nouveau GUID"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "le composant {1} {2} a disparu (ses ressources sont supprimées avec la version précédente)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "le composant {1} {2} a maintenant le chemin clé {3} au lieu de {4} : les règles des composants veulent un nouveau GUID"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "la condition a un guillemet non fermé ou des parenthèses déséquilibr
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "la condition dépasse 240 caractères (rubrapack ajoute \"Installed OR ( )\")"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "config contient des chaînes \"Name=value\" (reçu : '{1}')"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "contient un caractère de contrôle"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "contient l'un de < > : \" / \\ | ? *"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "content-type est un type de média, comme \"image/png\" (reçu : '{1}')"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "default-when a besoin d'un level supérieur à 1 (une fonctionnalité de
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "définissez la variable ([define] ou -D NAME=value), ou écrivez $$ pour un $ littéral"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "le dialogue '{1}' n'est pas un [dialog.*]"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "les ID de dialogue commençant par 'Rp' (et FilesInUse) appartiennent à rubrapack"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "le dir '{1}' est à l'intérieur de lui-même (boucle de chemin)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "le dir '{1}' n'est ni un ID de dir ni Programs, Desktop, StartMenu ou Startup"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "le dir '{1}' n'est pas un ID de dir"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "le dir '{1}' n'est pas défini"
 
 msgid "dir ID"
 msgstr "ID de dir"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "direction doit être \"in\" ou \"out\" (reçu : '{1}')"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "les arguments de do/undo dépassent 255 caractères"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "les clés pointées ne sont pas prises en charge ; mettez la clé dans sa propre table"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "le pilote '{1}' n'est pas un [odbc-driver.*]"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "finit par une espace ou un point"
 msgid "error"
 msgstr "erreur"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "executable = \"{1}\" doit nommer un [file.*] qui entre dans le package"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "']' attendu pour fermer le nom de la table"
 msgid "expected a key, a [table] or a comment"
 msgstr "une clé, une [table] ou un commentaire attendu"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "l'extension '{1}' a déjà un programme ([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "extension doit être '.' et des minuscules, chiffres, '_' ou '-' (reçu : '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "external-location = true nécessite la build 19041 de Windows ou ultéri
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files n'a aucun effet avec preflight = false"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "extra-files doit être \"ask\", \"keep\" ou \"delete\" (reçu : '{1}')"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "la fonctionnalité {1} a disparu : les installations qui l'avaient perdent ce qu'elle contenait"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "la fonctionnalité '{1}' est son propre ancêtre"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "la fonctionnalité '{1}' n'est pas définie"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "le parent de fonctionnalité '{1}' n'est pas défini"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "le fichier '{1}' exécute déjà le service '{2}'"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "le fichier '{1}' est déjà inscrit comme police"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "le fichier '{1}' n'est pas un [file.*] de ce package"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "le fichier '{1}' doit être installé dans le dossier Fonts lui-même (un [dir.*] avec path = \"Fonts\")"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "le fichier '{1}' a besoin d'une fonctionnalité : définissez 'feature' ici ou sur son dir"
 
 msgid "file must be \"file:<ID>\""
 msgstr "file doit être \"file:<ID>\""
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "le nom de fichier fait {1} unités UTF-16 ; avec son nom court 8.3, MSI en contient au plus {2}"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "file-system-virtualization et registry-virtualization = false nécessitent la build 18362 de Windows ou ultérieure : définissez [msix] min-version = \"10.0.18362.0\""
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file : '{1}' n'est pas un [file.*] de ce package"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file : '{1}' ne sert des classes COM que comme .exe ou .dll"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "corrigez la valeur que nomme le message ; les ID sont des lettres, chiff
 msgid "floating-point numbers are not supported"
 msgstr "les nombres à virgule flottante ne sont pas pris en charge"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "le dossier '{1}' a besoin d'une fonctionnalité : définissez 'feature' ici ou sur son dir"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "le nom de dossier fait {1} unités UTF-16 ; avec son nom court 8.3, MSI en contient au plus {2}"
 
 msgid "follow-parent needs a parent"
 msgstr "follow-parent a besoin d'un parent"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "les polices ont besoin de scope = \"machine\" (celui-ci est {1})"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "format {1} nécessite un rubrapack plus récent (celui-ci lit format {2})"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "format est un nombre entier : format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "donnez l'un de --key, --pkcs11 et --key-store"
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "donnez des sous-dossiers du dossier du programme, séparés par des virgules, ou - pour aucun"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "le glob '{1}' ne correspond à aucun fichier"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "le glob '{1}' correspond au fichier de sortie '{2}'"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "a du texte hors ASCII dans une autre page de codes que 65001 (UTF-8)"
 msgid "icon must be an .ico file"
 msgstr "icon doit être un fichier .ico"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon : le fichier '{1}' n'est pas un [file.*] de ce package"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "id doit être un GUID comme {12345678-1234-1234-1234-123456789ABC} : celui du module, conservé dans chaque version"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "identifier est le Publisher.Package de winget : 2 à 8 parties de 1 à 32 caractères, sans espaces ni \\ / : * ? \" < > | (reçu '{1}')"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "identity-name doit avoir de 3 à 50 caractères parmi A-Z, a-z, 0-9, '.' et '-' (reçu : '{1}')"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "les tables en ligne ne sont pas prises en charge ; utilisez une table [k
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "installed demande à Windows ce qui est installé ; il ne fonctionne que sous Windows"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "s'installe au même chemin que la ligne {1} (Windows ignore la casse des noms{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "erreur interne : un dialogue intégré a un ordre de tabulation rompu ; 
 msgid "internal: a module table has no _Validation rule"
 msgstr "interne : une table du module n'a pas de règle _Validation"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "interne : pas de règle _Validation pour une colonne de {1}"
 
 msgid "invalid"
 msgstr "non valide"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "non valide - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "n'est pas un package MSIX valide"
 msgid "is not valid UTF-8"
 msgstr "n'est pas de l'UTF-8 valide"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for : '{1}' n'est pas un programme (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "gardez le code de mise à niveau, augmentez la version, gardez les codes de composant des fichiers qui restent"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "la clé '{1}' est définie deux fois dans cette table (d'abord à la ligne {2})"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "la clé '{1}' ne doit pas commencer ni finir par '\\' ni contenir de partie vide"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "clé '{1}' hors d'une table ; seul 'format' vient avant la première table"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "fichier de clé '{1}' : {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "kind doit être \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" ou \"autoplay\" (reçu : '{1}')"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "kind doit être \"preview\", \"thumbnail\" ou \"property\" (reçu : '{1}')"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "kind doit être registry, file, dir ou component"
 msgid "labels is an array of strings, one per value"
 msgstr "labels est un tableau de chaînes, une par valeur"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "la langue '{1}' n'a pas de pack de langue (lang/{2}.po à côté de la source, ou RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "la langue '{1}' figure deux fois"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "la langue '{1}' n'est pas dans [ui] languages"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "il manque {2} texte(s) à la langue '{1}', le premier est {3} : ajoutez-les à son pack de langue (lang/{4}.po) ou donnez [ui-text.ID] text-{5}"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "la langue '{1}' a besoin de [ui] langid-{2} (ses LANGID, pour le choix automatique)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "la langue '{1}' a besoin de [ui] name-{2} (son nom sur la page de langue)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "language doit être \"neutral\", \"en-US\" ou \"ko-KR\""
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" s'écrit seul, pas dans un tableau : il prend toutes les langues intégrées"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "languages contient des codes comme \"ko\" ou \"zh_TW\" (2 ou 3 lettres minuscules, puis _ et les deux majuscules d'une région) (reçu : '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "launcher est le nom de fichier du lanceur PSF dans files, comme \"PsfLau
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license doit être un fichier .txt, .md (affiché en texte brut) ou .rtf"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint : {1} ligne {2} : la colonne {3} n'est pas en NFC ({4} ligne(s){-5}) ; build --nfc met en NFC les noms de dossiers, fichiers et raccourcis"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint : {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint : page de codes {1}, pas 65001 : le texte n'est pas vérifié comme UTF-8, les largeurs seulement pour l'ASCII"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint : voir les problèmes ci-dessus\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "liste les clés avec lesquelles un jeton ou le magasin de certificats Windows peut signer"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "le logo '{1}' et sa variante .scale-100 sont tous deux présents : gardez-en un"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "le logo '{1}' à l'échelle {2} fait {3}x{4} pixels ; il doit faire {5}x{6}"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "le logo '{1}' à l'échelle {2} n'est pas un fichier PNG"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "le logo '{1}' fait {2}x{3} pixels ; le logo d'un type de fichier doit être carré"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "le logo '{1}' fait {2}x{3} pixels ; il doit faire {4}x{5}"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "le logo '{1}' n'est pas un fichier PNG"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "logo '{1}' introuvable (ni en variantes .scale-100 ... .scale-400)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}' : un logo avec variantes d'échelle a besoin d'un nom de fichier ASCII avec extension"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "logo doit être un .png RVB ou RVBA 8 bits, non entrelacé, d'au plus 1024 pixels de côté"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "main-package est le nom d'identité du package principal (reçu : '{1}')"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "ne peut pas contenir de caractères de contrôle ni / \\ : * ? \" < > | 
 msgid "may not start with a space or end with a space or a dot"
 msgstr "ne peut pas commencer par une espace ni finir par une espace ou un point"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "module de fusion '{1}' introuvable"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "plus de 3 redirections"
 msgid "more than 96 sections"
 msgstr "plus de 96 sections"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "plus d'un fichier source ('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "plusieurs jetons sont présents : nommez-en un avec --token-label"
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "multi doit être \"each\", \"one\" ou \"single\" (reçu : '{1}')"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "doit faire de 1 à 64 octets"
 msgid "name contains a control character"
 msgstr "le nom contient un caractère de contrôle"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "name est le nom d'identité d'un package (reçu : '{1}')"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "nomme un dossier absent de sa table Directory"
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "new msix n'est pas encore implémenté : créez une source MSI et ajoutez [msix] (voir le manuel)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "pas de ligne 'format = {1}' : une source au format de rubrapack 0.18 ou antérieur, que cette version ne lit pas (les chemins commencent maintenant par $(ProgramFiles) ou $(INSTALLDIR)) ; voir Source format dans le manuel"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "pas de nom de serveur, ou un nom de plus de 255 octets"
 msgid "no string pool: not a transform"
 msgstr "pas de pool de chaînes : ce n'est pas une transformation"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "pas de table '{1}' dans '{2}'"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "les nombres octaux et binaires ne sont pas pris en charge ; utilisez le 
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "on = \"uninstall\" concerne HKLM, HKCU et HKMU (les classes vont avec [assoc.*], [com.*] et similaires)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "on = \"uninstall\" supprime une clé avec tout ce qu'elle contient : '{1}' n'est pas la clé propre d'un produit sous Software"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "on = \"uninstall\" supprime toute la clé à la désinstallation ; il ne prend pas de '{1}'"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "on doit être \"install\" ou \"uninstall\""
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "on doit être \"install\", \"uninstall\" ou \"both\""
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on : chacun est un type de fichier ('.' et des minuscules, chiffres, '_' ou '-'), \"*\" (tous les fichiers), \"folder\", \"background\" (la partie vide d'un dossier), \"drive\" ou \"assoc:<ID>\" (reçu : '{1}')"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "seuls les contrôles radio, combo et listbox acceptent values"
 msgid "out of memory"
 msgstr "mémoire insuffisante"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "sortie '{1}' : rubrapack écrit .msi, .msm, .msix, .msixbundle, .msixupload et le .exe d'installation d'une chaîne"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "package '{1}' {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "package '{1}' introuvable"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "parent doit être l'upgrade-code d'un autre produit, pas celui de ce package"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "parent doit être l'upgrade-code du produit principal, un GUID comme {12345678-1234-1234-1234-123456789ABC}"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "path doit commencer par un dossier Windows (comme $(ProgramFiles) ou $(S
 msgid "paths"
 msgstr "chemins"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "perceived-type doit être \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" ou \"application\" (reçu : '{1}')"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "les autorisations ont besoin de scope = \"machine\" (celui-ci est {1})"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "phase doit valoir \"immediate\", \"deferred\", \"commit\" ou \"rollback\" (reçu '{1}')"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "ports doit être un port ou une plage comme \"8000-8100\" dans 1-65535 (reçu : '{1}')"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "affiche cette aide, ou l'utilisation d'une commande"
 msgid "product-code must be a GUID"
 msgstr "product-code doit être un GUID"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "profile doit être \"all\", \"domain\", \"private\" ou \"public\" (reçu : '{1}')"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "le prog-id '{1}' est déjà celui de [com.{2}]"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "le prog-id '{1}' est aussi celui de [assoc.{2}] : un type de fichier et une classe COM ont besoin de deux noms"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "le prog-id '{1}' est aussi dans [assoc.{2}] avec une autre description, target, icon ou args"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "le prog-id '{1}' figure aussi dans [assoc.{2}] avec un autre logo"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "prog-id doit être des lettres, chiffres, '.', '_' ou '-', sans commencer par un chiffre, au plus 39 (reçu : '{1}')"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "properties sert aux packages Windows Installer ; un MSIX n'en prend pas"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "la propriété '{1}' appartient déjà au contrôle '{2}'"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "la propriété '{1}' a le nom d'un dir ou d'une fonctionnalité"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "la propriété '{1}' est déjà définie (ligne {2})"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "la propriété '{1}' est déjà recherchée (ligne {2})"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "la propriété '{1}' est définie par rubrapack ou le programme d'installation et ne peut pas être définie ici"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "la propriété '{1}' doit être un nom public à vous (en majuscules)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "la propriété '{1}' doit être un nom public : majuscules, chiffres et '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "protocol doit être \"tcp\" ou \"udp\" (reçu : '{1}')"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "public-folder doit être un dossier du paquet, par exemple \"Public\" (reçu : '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "recursive = true ne s'exécute jamais quand une mise à niveau supprime 
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "recursive = true supprime le dossier avec tout son contenu ; il ne prend pas de 'name'"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "refuse-upgrade-below {1} est supérieur à la version {2} de ce package"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "refuse-upgrade-below '{1}' doit être une version comme 1.2.3"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message a besoin de refuse-upgrade-below"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "la région {1} de la page des langues contient {2} langues, au plus {3} (X-Rubrapack-Group de leurs paquets)"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "registration doit valoir \"machine\" ou \"user\" (reçu '{1}')"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "registry '{1}' supprime une valeur ; il n'a rien à protéger"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "la valeur du registre '{1}' a besoin d'une fonctionnalité"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "remove-addons a besoin de la tâche de nettoyage : retirez cleanup = fal
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "replaces contient au plus 16 codes de mise à niveau"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "replaces contient des codes de mise à niveau, des GUID comme {12345678-1234-1234-1234-123456789ABC} (reçu : '{1}')"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "replaces est un tableau de codes de mise à niveau, comme [\"{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "replaces liste {1} deux fois"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "replaces nomme {1}, qui est l'upgrade-code de ce package ou son parent"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "la propriété obligatoire {1} manque"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "l'action jumelle de restauration doit venir avant {1} ({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "root doit être HKLM, HKCR ou HKCU"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "root doit être HKLM, HKCU, HKCR ou HKMU (reçu : '{1}')"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new : quelques questions créent la source (Entrée prend la v
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "lancez `rubrapack help <command>` ; vérifiez les chemins et que le dossier de sortie existe"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run : '{1}' (machine 0x{2}) ne peut pas s'exécuter sur les machines de ce package"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run : '{1}' n'est pas un programme (.exe)"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run : le fichier '{1}' n'est pas un [file.*] de ce package"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "enregistrez la source en UTF-8 (ou UTF-16 avec BOM), avec des fins de li
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "indique si ce Windows a un produit de ce code de mise à niveau ou un package d'application de cette famille installé"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "le schéma '{1}' a déjà un programme ([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "scope doit être \"machine\", \"user\" ou \"dual\""
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "sddl doit être une chaîne SDDL comme \"D:PAI(A;OICI;FA;;;BA)\""
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "la propriété de recherche '{1}' doit être un nom public à vous (en majuscules)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "voir le message ; régénérer avec rubrapack corrige la plupart"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "la séquence {1} n'est pas après {2} ({3})"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "place une action à côté d'une autre que ni le package ni le module n'exécutent"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "le nom de service '{1}' est déjà utilisé"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "les services ont besoin de scope = \"machine\" (celui-ci est {1})"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "le nom du raccourci fait {1} unités UTF-16 ; avec son nom court 8.3, MSI en contient au plus {2}"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "montre ce qui diffère entre deux paquets : tables, lignes, cellules et 
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "signe un fichier PE, un package MSI, un package ou bundle MSIX"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "{1} signé\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "la source '{1}' est un répertoire ; utilisez [files.ID] pour plusieurs fichiers"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "la source '{1}' est un lien symbolique ; les liens ne sont pas suivis"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "la source '{1}' n'est pas un fichier ordinaire"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "le fichier source '{1}' a changé pendant la génération du package"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "le fichier source '{1}' dépasse 2 Gio"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "fichier source '{1}' introuvable"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "source doit être \"file:<ID>\""
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "source doit être un package .msi, .msix, .msixbundle ou .msp"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "le chemin source '{1}' doit être relatif au fichier source"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "les chemins source utilisent '/', pas '\\\\' (reçu : '{1}')"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source : le fichier '{1}' n'est pas un [file.*] de ce package"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "summary-name doit être en ASCII (les informations récapitulatives ne c
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "symbols est une liste de fichiers .pdb, comme [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "table {1} {2}"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "la table '{1}' est illisible"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "la table [{1}{2}{3}] est définie deux fois (d'abord à la ligne {4})"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "tags est une liste d'au plus 16 termes de recherche, comme [\"editor\", 
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "ne prend pas de configuration (il n'a pas de ModuleConfiguration)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "la cible '{1}' n'existe pas"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "target doit être \"dir:<ID>\", \"file:<ID>\" ou \"registry:<ID>\""
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "target doit être \"file:<ID>\" et nommer un [file.*] de ce package"
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "nom de cible '{1}' {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target : le fichier '{1}' n'est pas un [file.*] de ce package"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "le task-id '{1}' est déjà utilisé par [msix-extension.{2}]"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "le fichier UTF-16 n'est pas de l'UTF-16 valide"
 msgid "the ZIP central directory lies outside the file"
 msgstr "le répertoire central ZIP est hors du fichier"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "l'ID d'application '{1}' devient Application Id : lettres et chiffres seulement, sans commencer par un chiffre"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "les cabinets incorporés portent le package à 2 Gio ou plus, ce que Win
 msgid "the entry is not in the central directory"
 msgstr "l'entrée n'est pas dans le répertoire central"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "le dialogue d'erreur '{1}' a besoin d'un contrôle {2} nommé {3} (erreur 2835)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "l'exécutable '{1}' doit être un .exe"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "le manifeste n'a pas d'Identity Publisher"
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "l'Identity du manifeste ne peut pas être lue pour le nom complet du package"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "le module de fusion {1}"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "le nom {1}"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "la famille de paquets {1} figure deux fois dans le conteneur"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "le contenu du package ne correspond pas à sa signature (il a été modi
 msgid "the package's directory cannot be read"
 msgstr "le répertoire du package ne peut pas être lu"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "le nom de fichier du paquet ne doit contenir ni guillemets ni signe pour cent : '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "la réponse dépasse 4 Mio"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "la réponse utilise un codage de transfert autre que chunked"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "la même condition est déjà exigée (ligne {1})"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "l'encodage du fichier source"
 msgid "the system random source failed"
 msgstr "la source aléatoire du système a échoué"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "l'ordre de tabulation (Control_Next) n'est pas un cycle unique à travers ses {1} contrôles depuis Control_First (Windows Installer s'arrête avec l'erreur 2809 ou 2810)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "ce rubrapack a été généré sans sa partie menu : les éléments [men
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "ce rubrapack a été généré sans le programme d'installation (nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "threading doit être \"sta\", \"mta\", \"both\" ou \"neutral\" (reçu : '{1}')"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "trop de textes localisés et d'échelles de logo pour resources.pri"
 msgid "too many packages in the bundle"
 msgstr "trop de packages dans le bundle"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "impossible de lire la transformation '{1}' de '{2}' : {3}"
 
 msgid "trusted"
 msgstr "approuvé"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "deux actions partagent sequence {1} ({2} et {3}) ; donnez à une [action] une autre sequence, before ou after"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "deux packages d'un même nom dans un bundle"
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "deux packages de ressources d'un même ResourceId dans un bundle"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "type doit être string, expand, dword, qword, binary ou multi (reçu : '{1}')"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "type doit être text, checkbox, edit, radio, combo, listbox ou bitmap (reçu '{1}')"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file : '{1}' n'est pas un [file.*] de ce package"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "typelib-version est major.minor en chiffres hexadécimaux, comme \"1.0\" (reçu : '{1}')"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "types et verb appartiennent à kind = \"context-menu\""
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types : chacun est \".ext\" ou \"*\" (tous les fichiers)"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types : chacun est '.' et des minuscules, chiffres, '_' ou '-' (reçu : '{1}')"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "ui = \"{1}\" laisse l'utilisateur choisir le dossier du dir '{2}', qui n'existe pas (définissez [ui] install-dir)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "ui = \"features\" a besoin de tables [feature.*] parmi lesquelles choisir"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "ui doit être none, basic, minimal, installdir ou features (reçu : '{1}')"
 
 msgid "unexpected text after the value"
 msgstr "texte inattendu après la valeur"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "commande inconnue '{1}' (voir 'rubrapack help')"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "échappement inconnu \\{1} (utilisez '...' pour un texte avec des barres obliques inverses)"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "option inspect inconnue (utilisez un nom de table, --summary, --files ou --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "clé inconnue '{1}' dans [{2}{3}{4}]"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "clé inconnue '{1}' dans [{2}{3}{4}] (vouliez-vous dire '{5}' ?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "option {1} inconnue ou incomplète '{2}'"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "table inconnue [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "table inconnue [{1}{2}{3}] (vouliez-vous dire [{4}] ?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "décompresse un package dans un nouveau répertoire, disposé comme à l'installation"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "non pris en charge - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "les clés update-* ont besoin de appinstaller-uri et package-uri"
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "upgrade = false concerne on = \"uninstall\" ou \"both\" (une installation n'est jamais la suppression d'une mise à niveau)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "upgrade-code doit être un GUID comme {12345678-1234-1234-1234-123456789ABC}"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "utilisation : rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "utilisation : rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "utilisez une génération complète de rubrapack ou un autre moyen"
 msgid "used by more than one component"
 msgstr "utilisé par plusieurs composants"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "users doit être \"all\" (reçu : '{1}')"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "la valeur '{1}' figure deux fois"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "values est un tableau de 1 à 32 chaînes"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "valeurs : ID, GUID, versions, nombres hors limites, références à des choses qui n'existent pas"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "la variable '{1}' n'est pas définie ([define] ou -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "le nom de variable '{1}' ne peut pas contenir '=' ni commencer par = + - ! *"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "variables"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "variables : $(NAME) sans valeur, $( non fermé, un nom de Windows ou un ID de dir là où il ne peut pas se trouver"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "la version '{1}' doit être a.b.c ou a.b.c.d"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "la version '{1}' doit être a.b.c ou a.b.c.d avec a, b <= 255 et c, d <= 65535"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "ce que signifie un code de diagnostic, les messages qui le portent, que 
 msgid "with must be \"file:<ID>\""
 msgstr "with doit être \"file:<ID>\""
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with : le fichier '{1}' n'est pas un [file.*] de ce package"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "sans --pkcs11, `keys list` affiche le magasin de certificats Windows"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "working-dir '{1}' n'est pas un ID de dir"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "écrivez la table ou la valeur de la manière simple que montre le manue
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "écrivez la valeur sans '[~]' ; mode = \"append\" ou \"prepend\" l'ajoute"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "{1} écrit\n"
 
 msgid "x + width must be at most 370 (the page width)"

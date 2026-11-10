@@ -31,8 +31,10 @@ typedef struct {
     size_t       dropped;
 } rp_srcdiags_t;
 
-[[gnu::format(RP_PRINTF_FORMAT, 5, 6)]]
-void rp_srcdiag_add(rp_srcdiags_t *d, rp_pos_t pos, const char *code, bool warning, const char *fmt, ...);
+// A diagnostic: a proven format and its proven_arg_* values (diag.h's RP_ARGS), in the command
+// line's language.
+#define rp_srcdiag_add(d, pos, code, warning, fmt, ...) rp_srcdiag_add_a(d, pos, code, warning, fmt, RP_ARGS(__VA_ARGS__))
+void rp_srcdiag_add_a(rp_srcdiags_t *d, rp_pos_t pos, const char *code, bool warning, const char *fmt, const proven_arg_t *args, size_t nargs);
 
 // Prints every collected diagnostic to stderr, prefixed with `path`.
 void rp_srcdiag_print(const rp_srcdiags_t *d, const char *path);

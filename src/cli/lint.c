@@ -34,18 +34,18 @@ int rp_pkg_open(proven_allocator_t heap, const char *path, const rp_limits_t *li
     size_t len = 0;
     proven_err_t err = rp_pal_read_file(heap, path, MAX_INPUT, &p->data, &len);
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s' (%s)", path, err == PROVEN_ERR_NOT_FOUND ? "not found" : "read error");
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}' ({})", proven_arg_cstr(path), proven_arg_cstr(err == PROVEN_ERR_NOT_FOUND ? "not found" : "read error"));
         return RP_EXIT_IO;
     }
     p->stage = 1;
     const char *why = NULL;
     if (rp_cfb_open(&p->cfb, heap, p->data, len, limits, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid package: %s", path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid package: {}", proven_arg_cstr(path), proven_arg_cstr(why ? why : "unreadable"));
         return RP_EXIT_IO;
     }
     p->stage = 2;
     if (rp_msi_open(&p->msi, heap, &p->cfb, limits, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid MSI database: %s", path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid MSI database: {}", proven_arg_cstr(path), proven_arg_cstr(why ? why : "unreadable"));
         return RP_EXIT_IO;
     }
     p->stage = 3;
@@ -58,7 +58,7 @@ int rp_pkg_open(proven_allocator_t heap, const char *path, const rp_limits_t *li
         if (p->sum == NULL || rp_cfb_read(&p->cfb, id, p->sum, sum_len) != PROVEN_OK) sum_len = 0;
     }
     if (rp_msi_view(&p->msi, sum_len ? p->sum : NULL, sum_len, &p->view) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': a table cannot be read", path);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': a table cannot be read", proven_arg_cstr(path));
         return RP_EXIT_IO;
     }
     p->stage = 4;
@@ -81,8 +81,8 @@ static int lint_against(const char *path, const char *previous, bool strict) {
         if (err == PROVEN_OK) err = rp_msi_lint_previous(heap, &a.view.db, &b.view.db, &d);
         rp_srcdiag_print(&d, path);
         char line[512];
-        rp_lang_format(line, sizeof line, "%s: %zu error%s, %zu warning%s (against %s)\n", path, d.errors, d.errors == 1 ? "" : "s",
-                 d.warnings, d.warnings == 1 ? "" : "s", previous);
+        rp_lang_format(line, sizeof line, "{}: {} error{}, {} warning{} (against {})\n", proven_arg_cstr(path), proven_arg_u64(d.errors), proven_arg_cstr(d.errors == 1 ? "" : "s"),
+                 proven_arg_u64(d.warnings), proven_arg_cstr(d.warnings == 1 ? "" : "s"), proven_arg_cstr(previous));
         rc = err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : d.errors || (strict && d.warnings) ? RP_EXIT_LINT : RP_EXIT_OK;
         if (!rp_diag_json_on() && rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK && rc == RP_EXIT_OK) rc = RP_EXIT_IO;
     }
@@ -99,19 +99,19 @@ static int lint_package(const char *path, bool strict) {
     size_t len = 0, sum_len = 0;
     proven_err_t err = rp_pal_read_file(heap, path, MAX_INPUT, &data, &len);
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s' (%s)", path, err == PROVEN_ERR_NOT_FOUND ? "not found" : "read error");
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}' ({})", proven_arg_cstr(path), proven_arg_cstr(err == PROVEN_ERR_NOT_FOUND ? "not found" : "read error"));
         return RP_EXIT_IO;
     }
     rp_cfb_t cfb;
     rp_msi_t msi;
     const char *why = NULL;
     if (rp_cfb_open(&cfb, heap, data, len, &limits, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid package: %s", path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid package: {}", proven_arg_cstr(path), proven_arg_cstr(why ? why : "unreadable"));
         rp_mem_free(heap, data);
         return RP_EXIT_IO;
     }
     if (rp_msi_open(&msi, heap, &cfb, &limits, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid MSI database: %s", path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid MSI database: {}", proven_arg_cstr(path), proven_arg_cstr(why ? why : "unreadable"));
         rp_cfb_close(&cfb);
         rp_mem_free(heap, data);
         return RP_EXIT_IO;
@@ -128,7 +128,7 @@ static int lint_package(const char *path, bool strict) {
     rp_srcdiags_t d = { 0 };
     err = rp_msi_view(&msi, sum_len ? sum : NULL, sum_len, &view);
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': a table cannot be read", path);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': a table cannot be read", proven_arg_cstr(path));
         rc = RP_EXIT_IO;
     } else {
         rp_lint_opts_t opts = { .foreign = true, .strict = strict };
@@ -136,8 +136,8 @@ static int lint_package(const char *path, bool strict) {
         rp_msi_view_free(&msi, &view);
         rp_srcdiag_print(&d, path);
         char line[512];
-        rp_lang_format(line, sizeof line, "%s: %zu error%s, %zu warning%s\n", path, d.errors, d.errors == 1 ? "" : "s", d.warnings,
-                 d.warnings == 1 ? "" : "s");
+        rp_lang_format(line, sizeof line, "{}: {} error{}, {} warning{}\n", proven_arg_cstr(path), proven_arg_u64(d.errors), proven_arg_cstr(d.errors == 1 ? "" : "s"), proven_arg_u64(d.warnings),
+                 proven_arg_cstr(d.warnings == 1 ? "" : "s"));
         rc = err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : d.errors || (strict && d.warnings) ? RP_EXIT_LINT : RP_EXIT_OK;
         if (!rp_diag_json_on() && rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK && rc == RP_EXIT_OK) rc = RP_EXIT_IO;
     }

@@ -188,13 +188,13 @@ proven_err_t rp_msi_lint_previous(proven_allocator_t alloc, const rp_msi_wdb_t *
     const char *code;
     // The upgrade itself.
     if (!guid_eq(property(&n, "UpgradeCode"), property(&o, "UpgradeCode"))) {
-        rp_srcdiag_add(diags, (rp_pos_t){ 0 }, "RP2301", false, "UpgradeCode %s differs from the previous version's %s: this package does not replace it",
-                       property(&n, "UpgradeCode"), property(&o, "UpgradeCode"));
+        rp_srcdiag_add(diags, (rp_pos_t){ 0 }, "RP2301", false, "UpgradeCode {} differs from the previous version's {}: this package does not replace it",
+                       proven_arg_cstr(property(&n, "UpgradeCode")), proven_arg_cstr(property(&o, "UpgradeCode")));
     }
     const char *vn = property(&n, "ProductVersion"), *vo = property(&o, "ProductVersion");
     if (version_cmp(vn, vo) <= 0) {
         rp_srcdiag_add(diags, (rp_pos_t){ 0 }, "RP2302", false,
-                       "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade", vn, vo);
+                       "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade", proven_arg_cstr(vn), proven_arg_cstr(vo));
     }
     if (guid_eq(property(&n, "ProductCode"), property(&o, "ProductCode"))) {
         code = "RP2303";
@@ -214,7 +214,7 @@ proven_err_t rp_msi_lint_previous(proven_allocator_t alloc, const rp_msi_wdb_t *
         const char *name = str(&o, cellp(co, ro, column(co, "Component")));
         if (rn == SIZE_MAX) {
             code = "RP2306";
-            WARN("component %s %s is gone (its resources are removed with the previous version)", name, g);
+            WARN("component {} {} is gone (its resources are removed with the previous version)", proven_arg_cstr(name), proven_arg_cstr(g));
             continue;
         }
         char a[1400], b[1400];
@@ -222,12 +222,12 @@ proven_err_t rp_msi_lint_previous(proven_allocator_t alloc, const rp_msi_wdb_t *
         key_path(&n, rn, b, sizeof b);
         if (strcmp(a, b) != 0) {
             code = "RP2304";
-            WARN("component %s %s now has the key path %s instead of %s: the component rules want a new GUID", name, g, b, a);
+            WARN("component {} {} now has the key path {} instead of {}: the component rules want a new GUID", proven_arg_cstr(name), proven_arg_cstr(g), proven_arg_cstr(b), proven_arg_cstr(a));
         }
         const rp_msi_cell_t *xo = cellp(co, ro, column(co, "Attributes")), *xn = cellp(cn, rn, column(cn, "Attributes"));
         if (xo && xn && (xo->i & 256) != (xn->i & 256)) {
             code = "RP2305";
-            WARN("component %s %s changed between 32 and 64 bits: the component rules want a new GUID", name, g);
+            WARN("component {} {} changed between 32 and 64 bits: the component rules want a new GUID", proven_arg_cstr(name), proven_arg_cstr(g));
         }
     }
     // Features the user may have chosen, and that are gone.
@@ -242,7 +242,7 @@ proven_err_t rp_msi_lint_previous(proven_allocator_t alloc, const rp_msi_wdb_t *
         const char *f = str(&o, fc);
         if (!found) {
             code = "RP2307";
-            WARN("feature %s is gone: installations that had it lose what it held", f);
+            WARN("feature {} is gone: installations that had it lose what it held", proven_arg_cstr(f));
         }
     }
     bool nomem = n.nomem || o.nomem;

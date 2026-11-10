@@ -143,7 +143,7 @@ static bool path_ok(plan_t *p, const char *rel, const char *what) {
         size_t n = e ? (size_t)(e - s) : strlen(s);
         const char *why = name_problem(s, n);
         if (why) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': %s '%s' has %s; nothing was extracted", p->path, what, rel, why);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': {} '{}' has {}; nothing was extracted", proven_arg_cstr(p->path), proven_arg_cstr(what), proven_arg_cstr(rel), proven_arg_cstr(why));
             return false;
         }
         if (e == NULL) return true;
@@ -220,21 +220,21 @@ static int write_plan(plan_t *p, const char *dest) {
     rp_sort(p->items, p->count, sizeof *p->items, cmp_fold);
     for (size_t i = 1; i < p->count; ++i) {
         if (strcmp(p->items[i - 1].fold, p->items[i].fold) == 0 && !(p->items[i - 1].dir && p->items[i].dir)) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted",
-                          p->path, p->items[i - 1].rel, p->items[i].rel);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted",
+                          proven_arg_cstr(p->path), proven_arg_cstr(p->items[i - 1].rel), proven_arg_cstr(p->items[i].rel));
             return RP_EXIT_IO;
         }
     }
     if (p->count > p->limits.max_entries) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted",
-                      p->path, p->count, (unsigned long long)p->limits.max_entries);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted",
+                      proven_arg_cstr(p->path), proven_arg_u64(p->count), proven_arg_u64((unsigned long long)p->limits.max_entries));
         return RP_EXIT_IO;
     }
     rp_budget_t bytes = rp_budget(p->limits.max_output);
     for (size_t i = 0; i < p->count; ++i) {
         if (rp_budget_charge(&bytes, p->items[i].size) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted",
-                          p->path, (unsigned long long)p->limits.max_output);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted",
+                          proven_arg_cstr(p->path), proven_arg_u64((unsigned long long)p->limits.max_output));
             return RP_EXIT_IO;
         }
     }
@@ -242,7 +242,7 @@ static int write_plan(plan_t *p, const char *dest) {
     rp_fskind_t k = rp_pal_stat(p->alloc, dest, &size);
     if (k == RP_FS_NONE) {
         if (rp_pal_mkdir_new(p->alloc, dest) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_OUTPUT, "cannot create '%s'", dest);
+            rp_diag_error(RP_DIAG_OUTPUT, "cannot create '{}'", proven_arg_cstr(dest));
             return RP_EXIT_IO;
         }
     } else {
@@ -252,7 +252,7 @@ static int write_plan(plan_t *p, const char *dest) {
         for (size_t i = 0; i < n; ++i) rp_mem_free(p->alloc, names[i]);
         rp_mem_free(p->alloc, names);
         if (!empty) {
-            rp_diag_error(RP_DIAG_OUTPUT, "'%s' exists and is not an empty directory; extract into a new one", dest);
+            rp_diag_error(RP_DIAG_OUTPUT, "'{}' exists and is not an empty directory; extract into a new one", proven_arg_cstr(dest));
             return RP_EXIT_IO;
         }
     }
@@ -267,7 +267,7 @@ static int write_plan(plan_t *p, const char *dest) {
             if (full == NULL) return RP_EXIT_IO;
             proven_err_t err = it->dir ? rp_pal_mkdir_new(p->alloc, full) : rp_pal_write_file_new(p->alloc, full, it->data, it->size);
             if (err != PROVEN_OK) {
-                rp_diag_error(RP_DIAG_OUTPUT, "cannot create '%s'%s", full, err == PROVEN_ERR_BUSY ? " (the name is taken)" : "");
+                rp_diag_error(RP_DIAG_OUTPUT, "cannot create '{}'{}", proven_arg_cstr(full), proven_arg_cstr(err == PROVEN_ERR_BUSY ? " (the name is taken)" : ""));
                 return RP_EXIT_IO;
             }
             if (!it->dir) {
@@ -277,7 +277,7 @@ static int write_plan(plan_t *p, const char *dest) {
         }
     }
     char line[1200];
-    rp_lang_format(line, sizeof line, "%s: %zu files, %llu bytes\n", dest, files, (unsigned long long)total);
+    rp_lang_format(line, sizeof line, "{}: {} files, {} bytes\n", proven_arg_cstr(dest), proven_arg_u64(files), proven_arg_u64((unsigned long long)total));
     return rp_pal_puts(RP_OUT_STDOUT, line) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
 }
 
@@ -288,7 +288,7 @@ static int plan_cab(plan_t *p, const uint8_t *data, size_t len) {
     size_t n = 0;
     uint8_t *arena = NULL;
     if (rp_cab_read(p->alloc, data, len, &p->read, &files, &n, &arena) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a cabinet rubrapack can read (stored or MSZIP)", p->path);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a cabinet rubrapack can read (stored or MSZIP)", proven_arg_cstr(p->path));
         return RP_EXIT_IO;
     }
     own(p, files);
@@ -311,13 +311,13 @@ static int plan_chain(plan_t *p, const uint8_t *data, size_t len) {
     size_t n = 0;
     proven_err_t err = rp_chain_read(p->alloc, data, len, NULL, 0, &e, &n);
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a rubrapack setup program%s", p->path, err == PROVEN_ERR_NOT_FOUND ? "" : " (its payload is damaged)");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a rubrapack setup program{}", proven_arg_cstr(p->path), proven_arg_cstr(err == PROVEN_ERR_NOT_FOUND ? "" : " (its payload is damaged)"));
         return RP_EXIT_IO;
     }
     own(p, e);
     for (size_t i = 0; i < n; ++i) {
         if (!e[i].hash_ok) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': package '%s' does not match its SHA-256", p->path, e[i].id);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': package '{}' does not match its SHA-256", proven_arg_cstr(p->path), proven_arg_cstr(e[i].id));
             return RP_EXIT_IO;
         }
         size_t il = strlen(e[i].id), el = strlen(e[i].ext);
@@ -340,7 +340,7 @@ static int plan_msix(plan_t *p, const uint8_t *data, size_t len) {
     size_t ml = 0;
     const char *why = NULL;
     if (rp_msix_open(p->alloc, data, len, &p->read, &files, &n, &manifest, &ml, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid MSIX package: %s", p->path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid MSIX package: {}", proven_arg_cstr(p->path), proven_arg_cstr(why ? why : "unreadable"));
         return RP_EXIT_IO;
     }
     rp_mem_free(p->alloc, manifest);
@@ -432,7 +432,7 @@ static dir_t *find_dir(dir_t *d, size_t n, const rp_msi_index_t *ix, const char 
 static bool resolve(plan_t *p, dir_t *d, size_t n, const rp_msi_index_t *ix, dir_t *x, unsigned depth, bool short_src) {
     if (x->state == 2) return true;
     if (x->state == 1 || depth > p->limits.max_depth) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': directory '%s' is its own ancestor or nested too deep", p->path, x->key);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': directory '{}' is its own ancestor or nested too deep", proven_arg_cstr(p->path), proven_arg_cstr(x->key));
         return false;
     }
     x->state = 1;
@@ -443,7 +443,7 @@ static bool resolve(plan_t *p, dir_t *d, size_t n, const rp_msi_index_t *ix, dir
     } else {
         dir_t *parent = find_dir(d, n, ix, x->parent);
         if (parent == NULL) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': directory '%s' has a parent '%s' that is not there", p->path, x->key, x->parent);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': directory '{}' has a parent '{}' that is not there", proven_arg_cstr(p->path), proven_arg_cstr(x->key), proven_arg_cstr(x->parent));
             return false;
         }
         if (!resolve(p, d, n, ix, parent, depth + 1, short_src)) return false;
@@ -466,7 +466,7 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
     rp_msi_t msi;
     const char *why = NULL;
     if (rp_msi_open(&msi, p->alloc, cfb, &p->read, &why) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid MSI database: %s", p->path, why ? why : "unreadable");
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid MSI database: {}", proven_arg_cstr(p->path), proven_arg_cstr(why ? why : "unreadable"));
         return RP_EXIT_IO;
     }
     // Word Count (PID 15): bit 0 short source names, bit 1 compressed by default.
@@ -487,7 +487,7 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
     rp_msi_view_t view;
     int rc = RP_EXIT_IO;
     if (rp_msi_view(&msi, NULL, 0, &view) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': a table cannot be read", p->path);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': a table cannot be read", proven_arg_cstr(p->path));
         rp_msi_close(&msi);
         return RP_EXIT_IO;
     }
@@ -501,7 +501,7 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
     bool has_hash = tab(db, "MsiFileHash", hcols, 5, &ht);
     if (!tab(db, "Directory", dcols, 3, &dt) || !tab(db, "Component", ccols, 2, &ct) || !tab(db, "File", fcols, 6, &ft) ||
         !tab(db, "Media", mcols, 3, &mt)) {
-        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' has no Directory, Component, File and Media tables to extract from", p->path);
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' has no Directory, Component, File and Media tables to extract from", proven_arg_cstr(p->path));
         goto out;
     }
     size_t nd = dt.t->row_count;
@@ -551,7 +551,7 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
         }
         dir_t *dir = dkey ? find_dir(dirs, nd, &dix, dkey) : NULL;
         if (dir == NULL) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': file '%s' has no component or directory", p->path, key);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': file '{}' has no component or directory", proven_arg_cstr(p->path), proven_arg_cstr(key));
             goto out;
         }
         char *tname = pick_name(p, fname, false, false, false), *sname = pick_name(p, fname, false, true, word_count & 1);
@@ -565,7 +565,7 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
         size_t size = 0;
         if (compressed) {
             if (mi == nm || media[mi].cab == NULL) {
-                rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': compressed file '%s' (sequence %ld) has no cabinet", p->path, key, (long)seq);
+                rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': compressed file '{}' (sequence {}) has no cabinet", proven_arg_cstr(p->path), proven_arg_cstr(key), proven_arg_i64((long)seq));
                 goto out;
             }
             media_t *m = &media[mi];
@@ -578,7 +578,7 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
                     uint32_t id;
                     if (rp_msi_stream_name(m->cab + 1, false, packed, &plen) != PROVEN_OK ||
                         rp_cfb_find(cfb, 0, packed, plen, &id) != PROVEN_OK || cfb->entries[id].size > MAX_INPUT) {
-                        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': the cabinet stream '%s' is not there", p->path, m->cab + 1);
+                        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': the cabinet stream '{}' is not there", proven_arg_cstr(p->path), proven_arg_cstr(m->cab + 1));
                         goto out;
                     }
                     cab_len = (size_t)cfb->entries[id].size;
@@ -589,19 +589,19 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
                     }
                 } else {                        // a file next to the package
                     if (name_problem(m->cab, strlen(m->cab))) {
-                        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': cabinet name '%s' is not a plain file name", p->path, m->cab);
+                        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': cabinet name '{}' is not a plain file name", proven_arg_cstr(p->path), proven_arg_cstr(m->cab));
                         goto out;
                     }
                     char *cp = join(p, msi_dir, m->cab);
                     if (cp == NULL || rp_pal_read_file(p->alloc, cp, MAX_INPUT, &cab, &cab_len) != PROVEN_OK) {
-                        rp_diag_error(RP_DIAG_INPUT, "cannot read the cabinet '%s' next to '%s'", m->cab, p->path);
+                        rp_diag_error(RP_DIAG_INPUT, "cannot read the cabinet '{}' next to '{}'", proven_arg_cstr(m->cab), proven_arg_cstr(p->path));
                         goto out;
                     }
                 }
                 own(p, cab);
                 uint8_t *arena = NULL;
                 if (rp_cab_read(p->alloc, cab, cab_len, &p->read, &m->files, &m->count, &arena) != PROVEN_OK) {
-                    rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': cabinet '%s' is damaged or not stored/MSZIP", p->path, m->cab);
+                    rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': cabinet '{}' is damaged or not stored/MSZIP", proven_arg_cstr(p->path), proven_arg_cstr(m->cab));
                     goto out;
                 }
                 own(p, m->files);
@@ -613,7 +613,7 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
             }
             size_t k = rp_msi_index_find(&m->by_name, key, strlen(key));
             if (k == SIZE_MAX) {
-                rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': file '%s' is not in cabinet '%s'", p->path, key, m->cab);
+                rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': file '{}' is not in cabinet '{}'", proven_arg_cstr(p->path), proven_arg_cstr(key), proven_arg_cstr(m->cab));
                 goto out;
             }
             data = m->files[k].data;
@@ -624,15 +624,15 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
             char *sp = join(p, msi_dir, srel);
             uint8_t *buf = NULL;
             if (sp == NULL || rp_pal_read_file(p->alloc, sp, MAX_INPUT, &buf, &size) != PROVEN_OK) {
-                rp_diag_error(RP_DIAG_INPUT, "cannot read the uncompressed file '%s' next to '%s'", srel, p->path);
+                rp_diag_error(RP_DIAG_INPUT, "cannot read the uncompressed file '{}' next to '{}'", proven_arg_cstr(srel), proven_arg_cstr(p->path));
                 goto out;
             }
             own(p, buf);
             data = buf;
         }
         if (fsize->kind == RP_MSI_INT && (uint64_t)(uint32_t)fsize->i != size) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': file '%s' is %zu bytes, the File table says %lu", p->path, key, size,
-                          (unsigned long)(uint32_t)fsize->i);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': file '{}' is {} bytes, the File table says {}", proven_arg_cstr(p->path), proven_arg_cstr(key), proven_arg_u64(size),
+                          proven_arg_u64((unsigned long)(uint32_t)fsize->i));
             goto out;
         }
         size_t key_len = strlen(key);
@@ -649,7 +649,7 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
                 same &= want == got;
             }
             if (!same) {
-                rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': file '%s' does not match its MsiFileHash", p->path, key);
+                rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}': file '{}' does not match its MsiFileHash", proven_arg_cstr(p->path), proven_arg_cstr(key));
                 goto out;
             }
         }
@@ -745,7 +745,7 @@ int rp_cmd_extract(int argc, char **argv) {
     uint8_t *data = NULL;
     size_t len = 0;
     if (rp_pal_read_file(heap, input, MAX_INPUT, &data, &len) != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", input);
+        rp_diag_error(RP_DIAG_INPUT, "cannot read '{}'", proven_arg_cstr(input));
         return RP_EXIT_IO;
     }
     int rc;
@@ -759,7 +759,7 @@ int rp_cmd_extract(int argc, char **argv) {
         rp_cfb_t cfb;
         const char *why = NULL;
         if (rp_cfb_open(&cfb, heap, data, len, &read, &why) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid package: %s", input, why ? why : "unreadable");
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' is not a valid package: {}", proven_arg_cstr(input), proven_arg_cstr(why ? why : "unreadable"));
             rc = RP_EXIT_IO;
         } else {
             char *dir = folder_of(&p, input);

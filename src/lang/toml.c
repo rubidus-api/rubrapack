@@ -186,7 +186,7 @@ static bool parse_basic_string(parser_t *p, rp_tval_t *out) {
                 p->i++;
             }
             if (!good || (cp >= 0xD800 && cp <= 0xDFFF) || cp > 0x10FFFF) {
-                ERR(p, esc, "RP1100", "\\%c escape is not a Unicode scalar value", e);
+                ERR(p, esc, "RP1100", "\\{} escape is not a Unicode scalar value", proven_arg_char((char)(e)));
                 ok = false;
             } else {
                 uint8_t u[4];
@@ -198,7 +198,7 @@ static bool parse_basic_string(parser_t *p, rp_tval_t *out) {
                 rp_buf_put(&b, u, un);
             }
         } else {
-            ERR(p, esc, "RP1100", "unknown escape \\%c (use '...' for text with backslashes)", e >= 0x20 && e < 0x7F ? e : '?');
+            ERR(p, esc, "RP1100", "unknown escape \\{} (use '...' for text with backslashes)", proven_arg_char((char)(e >= 0x20 && e < 0x7F ? e : '?')));
             ok = false;
         }
     }
@@ -464,8 +464,8 @@ static rp_ttable_t *add_table(parser_t *p, char *kind, char *id, rp_pos_t pos) {
         rp_ttable_t *x = &p->doc->tables[t];
         bool same_id = (x->id.ptr == NULL && id == NULL) || (x->id.ptr && id && RP_EQ(x->id, id));
         if (RP_EQ(x->kind, kind) && same_id) {
-            rp_srcdiag_add(p->d, pos, "RP1107", false, "table [%s%s%s] is defined twice (first at line %u)", kind,
-                           id ? "." : "", id ? id : "", (unsigned)x->pos.line);
+            rp_srcdiag_add(p->d, pos, "RP1107", false, "table [{}{}{}] is defined twice (first at line {})", proven_arg_cstr(kind),
+                           proven_arg_cstr(id ? "." : ""), proven_arg_cstr(id ? id : ""), proven_arg_u32((unsigned)x->pos.line));
             rp_mem_free(p->alloc, kind);
             rp_mem_free(p->alloc, id);
             return NULL;
@@ -583,8 +583,8 @@ static void parse_keyval(parser_t *p) {
     }
     for (size_t j = 0; j < t->count; ++j) {
         if (t->keys[j].key.size == len && memcmp(t->keys[j].key.ptr, p->s + start, len) == 0) {
-            rp_srcdiag_add(p->d, k.pos, "RP1107", false, "key '%.*s' is set twice in this table (first at line %u)",
-                           (int)len, (const char *)p->s + start, (unsigned)t->keys[j].pos.line);
+            rp_srcdiag_add(p->d, k.pos, "RP1107", false, "key '{}' is set twice in this table (first at line {})",
+                           proven_arg_cstr_n((const char *)p->s + start, (size_t)((int)len)), proven_arg_u32((unsigned)t->keys[j].pos.line));
             free_val(p->alloc, &k.val);
             return;
         }
@@ -651,7 +651,7 @@ proven_err_t rp_toml_parse(proven_allocator_t alloc, const uint8_t *data, size_t
         rp_text_result_t r = rp_utf16_to_utf8(w, units, NULL, 0);
         if ((n - 2) % 2 != 0 || r.err != PROVEN_OK) {
             rp_mem_free(alloc, w);
-            rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1001", false, "the UTF-16 file is not valid UTF-16");
+            rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP1001", false, "the UTF-16 file is not valid UTF-16");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         converted = rp_mem_alloc(alloc, r.units, 1);
@@ -664,7 +664,7 @@ proven_err_t rp_toml_parse(proven_allocator_t alloc, const uint8_t *data, size_t
         s = converted;
         n = r.units;
     } else if (n >= 2 && s[0] == 0xFE && s[1] == 0xFF) {
-        rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1001", false, "UTF-16 big-endian files are not supported; save as UTF-8");
+        rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP1001", false, "UTF-16 big-endian files are not supported; save as UTF-8");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     rp_text_result_t v = rp_utf8_validate(s, n);

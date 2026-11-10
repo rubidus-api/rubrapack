@@ -2,7 +2,7 @@
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
-# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# it, msgstr its translation, with {1}, {2} ... for the English text's values ({}) in
 # the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
 # msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
 
@@ -21,7 +21,7 @@ msgstr ""
 "X-Rubrapack-Font: Segoe UI\n"
 "X-Rubrapack-Group: 7\n"
 
-msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgid "\n{}: \"{}\" {}, {}, {}, dialogs {}{}\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, valintaikkunat {6}{7}\n  1 nimi, valmistaja, versio, arkkitehtuuri     2 asennuskansio, kenelle asennetaan\n  3 valintaikkunat, lisenssi, kielet            4 valinnaiset osat\n  5 pikakuvakkeet                               6 tiedostot: vastaa ohjelmakansiota\n  7 mikä tahansa avain                          v näytä   l lint   s tallenna   q lopeta\n"
 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
@@ -30,22 +30,22 @@ msgstr "\nTämän koodin viestit (* tarkoittaa nimeä tai arvoa):\n"
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nTulokset menevät stdoutiin, diagnostiikka stderriin.\n"
 
-msgid "\nWhat to do: %s.\n"
+msgid "\nWhat to do: {}.\n"
 msgstr "\nMitä tehdä: {1}.\n"
 
-msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgid "  {} is gone, but a shortcut opens it: change the shortcuts (5) first\n"
 msgstr "  {1} on poissa, mutta pikakuvake avaa sen: muuta ensin pikakuvakkeita (5)\n"
 
-msgid "  %zu files and %zu folders there\n"
+msgid "  {} files and {} folders there\n"
 msgstr "  siellä on {1} tiedostoa ja {2} kansiota\n"
 
 msgid "  1-7, v, l, s or q\n"
 msgstr "  1-7, v, l, s tai q\n"
 
-msgid "  added [dir.%s] and [files.%s]\n"
+msgid "  added [dir.{}] and [files.{}]\n"
 msgstr "  lisättiin [dir.{1}] ja [files.{2}]\n"
 
-msgid "  added [file.%s]\n"
+msgid "  added [file.{}]\n"
 msgstr "  lisättiin [file.{1}]\n"
 
 msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
@@ -60,10 +60,10 @@ msgstr "  lint: katso yllä olevat ongelmat (siinä mainittu tiedosto on tarkist
 msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
 msgstr "  muut kielet kohdassa [ui] languages säilyvät; muuta luetteloa valinnalla 7 (mikä tahansa avain)\n"
 
-msgid "  removed [file.%s]\n"
+msgid "  removed [file.{}]\n"
 msgstr "  poistettiin [file.{1}]\n"
 
-msgid "  removed [files.%s]%s\n"
+msgid "  removed [files.{}]{}\n"
 msgstr "  poistettiin [files.{1}]{2}\n"
 
 msgid "  sub folders:"
@@ -75,7 +75,7 @@ msgstr "  se ei sovi TOML-osajoukkoon; mitään ei muutettu\n"
 msgid "  that was not readable text; again, please\n"
 msgstr "  se ei ollut luettavaa tekstiä; uudelleen, kiitos\n"
 
-msgid "  the program folder '%s': %s\n"
+msgid "  the program folder '{}': {}\n"
 msgstr "  ohjelmakansio '{1}': {2}\n"
 
 msgid "  the source has no [file] tables for a shortcut to point at\n"
@@ -99,409 +99,409 @@ msgstr " - rakentaa Windows Installer- (.msi) ja MSIX-paketteja (.msix)\n\nkäyt
 msgid " and its dir"
 msgstr " ja sen dir"
 
-msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgid "$({}) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
 msgstr "$({1}):lla ei ole ympäristömuuttujaa, joten laajennettava arvo ei voi sisältää sitä; käytä merkkijonoarvoa (täytetään asennuksessa)"
 
-msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgid "$({}) is a {}: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
 msgstr "$({1}) on {2}: se voi aloittaa polun tai edustaa arvoa, jonka Windows Installer täyttää (rekisteri, ympäristö, INI, argumentit, viestit), mutta ei tässä"
 
-msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgid "$({}) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths){}"
 msgstr "$({1}) ei ole kansio, josta polku voi alkaa (dir-tunnus tai ProgramFiles, LOCALAPPDATA, ProgramData ... - katso käsikirjan Paths){2}"
 
-msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgid "{}\n  structure:  {}\n  digest:     {}\n  signature:  {}\n  chain:      {}{}{}\n  revocation: not-checked\n  timestamp:  {}\n"
 msgstr "{1}\n  rakenne:      {2}\n  tiiviste:     {3}\n  allekirjoitus: {4}\n  ketju:        {5}{6}{7}\n  sulkulista:   ei tarkistettu\n  aikaleima:    {8}\n"
 
-msgid "%s %s: the variable is not set"
+msgid "{} {}: the variable is not set"
 msgstr "{1} {2}: muuttujaa ei ole asetettu"
 
-msgid "%s '%.*s' is not a control of this dialog"
+msgid "{} '{}' is not a control of this dialog"
 msgstr "{1} '{2}' ei ole tämän valintaikkunan ohjausobjekti"
 
-msgid "%s '%.*s' is not in %s"
+msgid "{} '{}' is not in {}"
 msgstr "{1} '{2}' ei ole kohteessa {3}"
 
-msgid "%s '%s': %s"
+msgid "{} '{}': {}"
 msgstr "{1} '{2}': {3}"
 
-msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgid "{} '{}': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': lisenssiteksti tarvitsee fontin englanninkielisen nimen, joten se näkyy kielen omalla fontilla; kirjoita englanninkielinen nimi (kuten \"Malgun Gothic\") käyttääksesi tätä fonttia myös siellä"
 
-msgid "%s = '%s' must be a folder"
+msgid "{} = '{}' must be a folder"
 msgstr "{1} = '{2}' on oltava kansio"
 
-msgid "%s component, but the package platform is %.*s"
+msgid "{} component, but the package platform is {}"
 msgstr "{1}-komponentti, mutta paketin alusta on {2}"
 
-msgid "%s does not belong to kind = \"%s\""
+msgid "{} does not belong to kind = \"{}\""
 msgstr "{1} ei kuulu kohteeseen kind = \"{2}\""
 
-msgid "%s does not belong to kind = \"firewall\""
+msgid "{} does not belong to kind = \"firewall\""
 msgstr "{1} ei kuulu kohteeseen kind = \"firewall\""
 
-msgid "%s holds LANGIDs (1..65535), like 1041"
+msgid "{} holds LANGIDs (1..65535), like 1041"
 msgstr "{1} sisältää LANGID-arvoja (1..65535), kuten 1041"
 
-msgid "%s holds strings"
+msgid "{} holds strings"
 msgstr "{1} sisältää merkkijonoja"
 
-msgid "%s is %u to %u characters long"
+msgid "{} is {} to {} characters long"
 msgstr "{1} on {2}–{3} merkkiä pitkä"
 
-msgid "%s is a list of \"Key=Value\" texts"
+msgid "{} is a list of \"Key=Value\" texts"
 msgstr "{1} on luettelo \"Avain=Arvo\"-teksteistä"
 
-msgid "%s is a list of texts, like [\"%s\"]"
+msgid "{} is a list of texts, like [\"{}\"]"
 msgstr "{1} on luettelo tekstejä, esimerkiksi [\"{2}\"]"
 
-msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgid "{} is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got {})"
 msgstr "{1} on 1-31 merkin fontin nimi, kuten \"Segoe UI\" (saatiin {2})"
 
-msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgid "{} is an MSI condition with closed quotes and balanced parentheses"
 msgstr "{1} on MSI-ehto, jossa lainausmerkit on suljettu ja sulkeet täsmäävät"
 
-msgid "%s is an array of strings, one per value"
+msgid "{} is an array of strings, one per value"
 msgstr "{1} on merkkijonojen taulukko, yksi arvoa kohden"
 
-msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgid "{} is for MSI packages: an MSIX is not removed by msiexec"
 msgstr "{1} on MSI-paketeille: msiexec ei poista MSIX-pakettia"
 
-msgid "%s is gone. Remove [file.%s]?"
+msgid "{} is gone. Remove [file.{}]?"
 msgstr "{1} on poissa. Poistetaanko [file.{2}]?"
 
-msgid "%s is longer than 240 characters"
+msgid "{} is longer than 240 characters"
 msgstr "{1} on pidempi kuin 240 merkkiä"
 
-msgid "%s is new. Add it?"
+msgid "{} is new. Add it?"
 msgstr "{1} on uusi. Lisätäänkö se?"
 
-msgid "%s is not a GUID in registry format"
+msgid "{} is not a GUID in registry format"
 msgstr "{1} ei ole GUID rekisterimuodossa"
 
-msgid "%s is not a code this rubrapack uses%s%s"
+msgid "{} is not a code this rubrapack uses{}{}"
 msgstr "{1} ei ole koodi, jota tämä rubrapack käyttää{2}{3}"
 
-msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgid "{} must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1}:n on oltava \"file:<ID>\", joka nimeää tämän paketin [file.*]-taulukon"
 
-msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgid "{} must be {} to {} letters, digits, '.' or '-', not starting with '.' (got '{}')"
 msgstr "{1}:n on oltava {2}–{3} kirjainta, numeroa, '.' tai '-' eikä se saa alkaa '.':llä (saatiin '{4}')"
 
-msgid "%s must be a GUID"
+msgid "{} must be a GUID"
 msgstr "{1}:n on oltava GUID"
 
-msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgid "{} must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "{1}:n on oltava GUID, kuten {12345678-...} (saatiin '{2}')"
 
-msgid "%s must be an http:// or https:// address (got '%s')"
+msgid "{} must be an http:// or https:// address (got '{}')"
 msgstr "{1} on oltava http://- tai https://-osoite (saatiin '{2}')"
 
-msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgid "{} must be an https://, http:// or file:// address, or a \\\\server\\share path (got '{}')"
 msgstr "{1}:n on oltava https://-, http://- tai file://-osoite tai \\\\server\\share-polku (saatiin '{2}')"
 
-msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgid "{} must differ from upgrade-code (one upgrade family per architecture)"
 msgstr "{1}:n on erottava upgrade-codesta (yksi päivitysperhe arkkitehtuuria kohden)"
 
-msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgid "{} needs Windows build {} or later: set [msix] min-version = \"10.0.{}.0\""
 msgstr "{1} vaatii Windowsin koontiversion {2} tai uudemman: aseta [msix] min-version = \"10.0.{3}.0\""
 
-msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgid "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without"
 msgstr "{1} tarvitsee tiedoston resources/bin/rubrapack_ca-{2}.dll, jota ilman tämä rubrapack käännettiin"
 
-msgid "%s, TSA not-checked (give --tsa-trust)"
+msgid "{}, TSA not-checked (give --tsa-trust)"
 msgstr "{1}, TSA:ta ei tarkistettu (anna --tsa-trust)"
 
-msgid "%s, TSA trusted"
+msgid "{}, TSA trusted"
 msgstr "{1}, TSA luotettu"
 
-msgid "%s, TSA untrusted - %s"
+msgid "{}, TSA untrusted - {}"
 msgstr "{1}, TSA ei luotettu - {2}"
 
-msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgid "{}/{} is gone or empty. Remove [files.{}] and [dir.{}]?"
 msgstr "{1}/{2} on poissa tai tyhjä. Poistetaanko [files.{3}] ja [dir.{4}]?"
 
-msgid "%s/%s/ is a new folder. Add it?"
+msgid "{}/{}/ is a new folder. Add it?"
 msgstr "{1}/{2}/ on uusi kansio. Lisätäänkö se?"
 
-msgid "%s: %zu error%s, %zu warning%s\n"
+msgid "{}: {} error{}, {} warning{}\n"
 msgstr "{1}: {2} virhettä{-3}, {4} varoitusta{-5}\n"
 
-msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgid "{}: {} error{}, {} warning{} (against {})\n"
 msgstr "{1}: {2} virhettä{-3}, {4} varoitusta{-5} (verrattuna: {6})\n"
 
-msgid "%s: %zu files, %llu bytes\n"
+msgid "{}: {} files, {} bytes\n"
 msgstr "{1}: {2} tiedostoa, {3} tavua\n"
 
-msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgid "{}: {} files, {} errors, 0 warnings\n"
 msgstr "{1}: {2} tiedostoa, {3} virhettä, 0 varoitusta\n"
 
-msgid "%s: %zu more diagnostics not shown\n"
+msgid "{}: {} more diagnostics not shown\n"
 msgstr "{1}: {2} diagnostiikkaa lisää, ei näytetty\n"
 
-msgid "%s: '%s' is not a program (.exe)"
+msgid "{}: '{}' is not a program (.exe)"
 msgstr "{1}: '{2}' ei ole ohjelma (.exe)"
 
-msgid "%s: '%s' is not a standard action rubrapack places"
+msgid "{}: '{}' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' ei ole vakiotoiminto, jonka rubrapack sijoittaa"
 
-msgid "%s: file '%s' is not a [file.*] of this package"
+msgid "{}: file '{}' is not a [file.*] of this package"
 msgstr "{1}: tiedosto '{2}' ei ole tämän paketin [file.*]"
 
-msgid "%s: file '%s' is not a program (.exe)"
+msgid "{}: file '{}' is not a program (.exe)"
 msgstr "{1}: tiedosto '{2}' ei ole ohjelma (.exe)"
 
 msgid "'$(' is not closed (write '$$(' for the text '$(')"
 msgstr "'$(' ei ole suljettu (kirjoita '$$(' tekstille '$(')"
 
-msgid "'%s' already exists; it is left as it is"
+msgid "'{}' already exists; it is left as it is"
 msgstr "'{1}' on jo olemassa; se jätetään ennalleen"
 
-msgid "'%s' already exists; remove it or build into another folder"
+msgid "'{}' already exists; remove it or build into another folder"
 msgstr "'{1}' on jo olemassa; poista se tai käännä toiseen kansioon"
 
-msgid "'%s' already has a %s handler ([handler.%s])"
+msgid "'{}' already has a {} handler ([handler.{}])"
 msgstr "'{1}':lla on jo {2}-käsittelijä ([handler.{3}])"
 
-msgid "'%s' already has permissions"
+msgid "'{}' already has permissions"
 msgstr "'{1}':lla on jo käyttöoikeudet"
 
-msgid "'%s' and '%s' are the same path in the package"
+msgid "'{}' and '{}' are the same path in the package"
 msgstr "'{1}' ja '{2}' ovat sama polku paketissa"
 
-msgid "'%s' belongs to Windows or the browsers"
+msgid "'{}' belongs to Windows or the browsers"
 msgstr "'{1}' kuuluu Windowsille tai selaimille"
 
-msgid "'%s' cannot be read against '%s': %s"
+msgid "'{}' cannot be read against '{}': {}"
 msgstr "'{1}':tä ei voi lukea suhteessa '{2}':een: {3}"
 
-msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgid "'{}' does not fit the TOML subset; nothing was saved"
 msgstr "'{1}' ei sovi TOML-osajoukkoon; mitään ei tallennettu"
 
-msgid "'%s' exists already"
+msgid "'{}' exists already"
 msgstr "'{1}' on jo olemassa"
 
-msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgid "'{}' exists already; change it with `rubrapack edit {}`"
 msgstr "'{1}' on jo olemassa; muuta sitä komennolla `rubrapack edit {2}`"
 
-msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgid "'{}' exists and is not an empty directory; extract into a new one"
 msgstr "'{1}' on olemassa eikä ole tyhjä kansio; pura uuteen"
 
-msgid "'%s' goes to %s; or msi-only = true"
+msgid "'{}' goes to {}; or msi-only = true"
 msgstr "'{1}' menee kohteeseen {2}; tai msi-only = true"
 
-msgid "'%s' has an unreadable summary information stream"
+msgid "'{}' has an unreadable summary information stream"
 msgstr "'{1}':ssä on lukukelvoton yhteenvetotietovirta"
 
-msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgid "'{}' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}':ssä ei ole Directory-, Component-, File- ja Media-taulukoita, joista purkaa"
 
-msgid "'%s' has no embedded transform '%s'"
+msgid "'{}' has no embedded transform '{}'"
 msgstr "kohteessa '{1}' ei ole upotettua muunnosta '{2}'"
 
-msgid "'%s' has no readable summary information"
+msgid "'{}' has no readable summary information"
 msgstr "'{1}':ssä ei ole luettavia yhteenvetotietoja"
 
-msgid "'%s' has no transform '%.*s'"
+msgid "'{}' has no transform '{}'"
 msgstr "'{1}':ssä ei ole muunnosta '{2}'"
 
-msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgid "'{}' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
 msgstr "'{1}' on UTF-16: edit muuttaa vain UTF-8-lähteitä (tallenna se ensin UTF-8:na)"
 
-msgid "'%s' is a Windows name; give the variable another name"
+msgid "'{}' is a Windows name; give the variable another name"
 msgstr "'{1}' on Windowsin nimi; anna muuttujalle toinen nimi"
 
-msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgid "'{}' is a [chain]: it builds a setup program, -o setup.exe"
 msgstr "'{1}' on [chain]: se rakentaa asennusohjelman, -o setup.exe"
 
-msgid "'%s' is a control of the built-in frame; choose another ID"
+msgid "'{}' is a control of the built-in frame; choose another ID"
 msgstr "'{1}' on sisäänrakennetun kehyksen ohjausobjekti; valitse toinen tunnus"
 
-msgid "'%s' is a machine folder; a %s package cannot write there"
+msgid "'{}' is a machine folder; a {} package cannot write there"
 msgstr "'{1}' on koneen kansio; {2}-paketti ei voi kirjoittaa sinne"
 
-msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgid "'{}' is a merge module: merge it with [merge.ID] instead"
 msgstr "'{1}' on yhdistämismoduuli: yhdistä se sen sijaan [merge.ID]:llä"
 
-msgid "'%s' is a name the MSIX format keeps for itself"
+msgid "'{}' is a name the MSIX format keeps for itself"
 msgstr "'{1}' on nimi, jonka MSIX-muoto varaa itselleen"
 
-msgid "'%s' is a symbolic link; links are not followed"
+msgid "'{}' is a symbolic link; links are not followed"
 msgstr "'{1}' on symbolinen linkki; linkkejä ei seurata"
 
-msgid "'%s' is also a [property.*]"
+msgid "'{}' is also a [property.*]"
 msgstr "'{1}' on myös [property.*]"
 
-msgid "'%s' is also a dir ID; give the variable another name"
+msgid "'{}' is also a dir ID; give the variable another name"
 msgstr "'{1}' on myös dir-tunnus; anna muuttujalle toinen nimi"
 
-msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgid "'{}' is built for machine 0x{:04X}, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' on käännetty koneelle 0x{2}, ei tämän paketin arch-arvolle; aseta any-arch = true, jos se on tarkoitus"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' ei ole PE-tiedosto (.exe, .dll), MSI-paketti, MSIX-paketti tai -nippu eikä cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgid "'{}' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
 msgstr "'{1}' ei ole PE-tiedosto, MSI-paketti, MSIX-paketti tai -nippu eikä cabinet"
 
-msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgid "'{}' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ei ole tunnettu kansio eikä dir-tunnus (tunnetut kansiot: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
-msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgid "'{}' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
 msgstr "'{1}' ei ole MSIX-paketti eikä pakettiperheen nimi (<Name>_<publisher ID>)"
 
-msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgid "'{}' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' ei ole cabinet, jota rubrapack osaa lukea (stored tai MSZIP)"
 
-msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgid "'{}' is not a diagnostic code (RP and four digits, like RP1612)"
 msgstr "'{1}' ei ole diagnostiikkakoodi (RP ja neljä numeroa, kuten RP1612)"
 
-msgid "'%s' is not a program (.exe)"
+msgid "'{}' is not a program (.exe)"
 msgstr "'{1}' ei ole ohjelma (.exe)"
 
-msgid "'%s' is not a regular file"
+msgid "'{}' is not a regular file"
 msgstr "'{1}' ei ole tavallinen tiedosto"
 
-msgid "'%s' is not a rubrapack setup program%s"
+msgid "'{}' is not a rubrapack setup program{}"
 msgstr "'{1}' ei ole rubrapackin asennusohjelma{2}"
 
-msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgid "'{}' is not a valid ID (letters, digits and '_', not starting with a digit, at most {})"
 msgstr "'{1}' ei ole kelvollinen tunnus (kirjaimia, numeroita ja '_', ei ala numerolla, enintään {2})"
 
-msgid "'%s' is not a valid MSI database: %s"
+msgid "'{}' is not a valid MSI database: {}"
 msgstr "'{1}' ei ole kelvollinen MSI-tietokanta: {2}"
 
-msgid "'%s' is not a valid MSIX package: %s"
+msgid "'{}' is not a valid MSIX package: {}"
 msgstr "'{1}' ei ole kelvollinen MSIX-paketti: {2}"
 
-msgid "'%s' is not a valid package: %s"
+msgid "'{}' is not a valid package: {}"
 msgstr "'{1}' ei ole kelvollinen paketti: {2}"
 
-msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgid "'{}' is not a valid source (the TOML subset); fix it by hand first"
 msgstr "'{1}' ei ole kelvollinen lähde (TOML-osajoukko); korjaa se ensin käsin"
 
-msgid "'%s' is not a valid transform: %s"
+msgid "'{}' is not a valid transform: {}"
 msgstr "'{1}' ei ole kelvollinen muunnos: {2}"
 
-msgid "'%s' is not a valid variable name"
+msgid "'{}' is not a valid variable name"
 msgstr "'{1}' ei ole kelvollinen muuttujan nimi"
 
-msgid "'%s' is reserved and cannot be used as an ID"
+msgid "'{}' is reserved and cannot be used as an ID"
 msgstr "'{1}' on varattu, eikä sitä voi käyttää tunnuksena"
 
-msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgid "'{}' is the name of a dir: only a registry or dir search can fill a dir"
 msgstr "'{1}' on dir-kohteen nimi: vain rekisteri- tai dir-haku voi täyttää dir-kohteen"
 
-msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgid "'{}' looks like a program file (PE) but its headers or resources are damaged"
 msgstr "'{1}' näyttää ohjelmatiedostolta (PE), mutta sen otsakkeet tai resurssit ovat vahingoittuneet"
 
-msgid "'%s' must be a string"
+msgid "'{}' must be a string"
 msgstr "'{1}':n on oltava merkkijono"
 
-msgid "'%s' must be an integer"
+msgid "'{}' must be an integer"
 msgstr "'{1}':n on oltava kokonaisluku"
 
-msgid "'%s' must be between %lld and %lld"
+msgid "'{}' must be between {} and {}"
 msgstr "'{1}':n on oltava välillä {2}-{3}"
 
-msgid "'%s' must be true or false"
+msgid "'{}' must be true or false"
 msgstr "'{1}':n on oltava true tai false"
 
-msgid "'%s' must not be empty"
+msgid "'{}' must not be empty"
 msgstr "'{1}' ei saa olla tyhjä"
 
-msgid "'%s' names no transforms (summary property 8): not a patch"
+msgid "'{}' names no transforms (summary property 8): not a patch"
 msgstr "'{1}' ei nimeä muunnoksia (yhteenvetoominaisuus 8): ei korjaustiedosto"
 
-msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgid "'{}' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 msgstr "'{1}' alkaa kansiolla: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
 
-msgid "'%s': %s"
+msgid "'{}': {}"
 msgstr "'{1}': {2}"
 
-msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgid "'{}': {} '{}' has {}; nothing was extracted"
 msgstr "'{1}': {2} '{3}' sisältää {4}; mitään ei purettu"
 
-msgid "'%s': %s%s"
+msgid "'{}': {}{}"
 msgstr "'{1}': {2}{3}"
 
-msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgid "'{}': {} entries, more than the limit {} (--limit-entries); nothing was extracted"
 msgstr "'{1}': {2} merkintää, enemmän kuin raja {3} (--limit-entries); mitään ei purettu"
 
-msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgid "'{}': '{}' and '{}' would be the same path on Windows; nothing was extracted"
 msgstr "'{1}': '{2}' ja '{3}' olisivat Windowsissa sama polku; mitään ei purettu"
 
-msgid "'%s': '%s' is not in [ui] languages"
+msgid "'{}': '{}' is not in [ui] languages"
 msgstr "'{1}': '{2}' ei ole kohdassa [ui] languages"
 
-msgid "'%s': a table cannot be read"
+msgid "'{}': a table cannot be read"
 msgstr "'{1}': taulukkoa ei voi lukea"
 
-msgid "'%s': a table is unreadable"
+msgid "'{}': a table is unreadable"
 msgstr "'{1}': taulukko on lukukelvoton"
 
-msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgid "'{}': an MSIX installs all its files (when); use msi-only = true"
 msgstr "'{1}': MSIX asentaa kaikki tiedostonsa (when); käytä msi-only = true"
 
-msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgid "'{}': an MSIX removes all its files (keep); use msi-only = true"
 msgstr "'{1}': MSIX poistaa kaikki tiedostonsa (keep); käytä msi-only = true"
 
-msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgid "'{}': cabinet '{}' is damaged or not stored/MSZIP"
 msgstr "'{1}': cabinet '{2}' on vahingoittunut tai ei stored/MSZIP"
 
-msgid "'%s': cabinet name '%s' is not a plain file name"
+msgid "'{}': cabinet name '{}' is not a plain file name"
 msgstr "'{1}': cabinet-nimi '{2}' ei ole pelkkä tiedostonimi"
 
-msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgid "'{}': compressed file '{}' (sequence {}) has no cabinet"
 msgstr "'{1}': pakatulla tiedostolla '{2}' (järjestys {3}) ei ole cabinetia"
 
-msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgid "'{}': directory '{}' has a parent '{}' that is not there"
 msgstr "'{1}': hakemistolla '{2}' on yläkansio '{3}', jota ei ole"
 
-msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgid "'{}': directory '{}' is its own ancestor or nested too deep"
 msgstr "'{1}': hakemisto '{2}' on oma esivanhempansa tai liian syvällä"
 
-msgid "'%s': file '%s' does not match its MsiFileHash"
+msgid "'{}': file '{}' does not match its MsiFileHash"
 msgstr "'{1}': tiedosto '{2}' ei vastaa MsiFileHash-arvoaan"
 
-msgid "'%s': file '%s' has no component or directory"
+msgid "'{}': file '{}' has no component or directory"
 msgstr "'{1}': tiedostolla '{2}' ei ole komponenttia tai hakemistoa"
 
-msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgid "'{}': file '{}' is {} bytes, the File table says {}"
 msgstr "'{1}': tiedosto '{2}' on {3} tavua, File-taulukon mukaan {4}"
 
-msgid "'%s': file '%s' is not in cabinet '%s'"
+msgid "'{}': file '{}' is not in cabinet '{}'"
 msgstr "'{1}': tiedosto '{2}' ei ole cabinetissa '{3}'"
 
-msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgid "'{}': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
 msgstr "'{1}': allekirjoitus ei kata sen ulkoisia cabinet-tiedostoja (--allow-unsigned-cabs)"
 
-msgid "'%s': its folder does not lead to a known location"
+msgid "'{}': its folder does not lead to a known location"
 msgstr "'{1}': sen kansio ei johda tunnettuun sijaintiin"
 
-msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgid "'{}': more than {} bytes to write (--limit-bytes); nothing was extracted"
 msgstr "'{1}': kirjoitettavaa yli {2} tavua (--limit-bytes); mitään ei purettu"
 
-msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgid "'{}': no --timestamp: the signature stops being valid when the certificate expires"
 msgstr "'{1}': ei --timestamp-valitsinta: allekirjoitus lakkaa olemasta voimassa, kun varmenne vanhenee"
 
-msgid "'%s': package '%s' does not match its SHA-256"
+msgid "'{}': package '{}' does not match its SHA-256"
 msgstr "'{1}': paketti '{2}' ei vastaa SHA-256-arvoaan"
 
-msgid "'%s': the cabinet stream '%s' is not there"
+msgid "'{}': the cabinet stream '{}' is not there"
 msgstr "'{1}': cabinet-virtaa '{2}' ei ole"
 
-msgid "'%s': the manifest has no %s %s"
+msgid "'{}': the manifest has no {} {}"
 msgstr "'{1}': manifestissa ei ole {2} {3}"
 
-msgid "'%s': the manifest names '%s', which is not in the package"
+msgid "'{}': the manifest names '{}', which is not in the package"
 msgstr "'{1}': manifesti mainitsee '{2}':n, jota ei ole paketissa"
 
-msgid "'%s': timestamp from %s: %s"
+msgid "'{}': timestamp from {}: {}"
 msgstr "'{1}': aikaleima palvelusta {2}: {3}"
 
-msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgid "'{}': transform '{}' cannot be read against '{}': {}"
 msgstr "'{1}': muunnosta '{2}' ei voi lukea suhteessa '{3}':een: {4}"
 
-msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgid "'-{}' is the package's own language ({}); give that text without the suffix"
 msgstr "'-{1}' on paketin oma kieli ({2}); anna se teksti ilman päätettä"
 
 msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
@@ -519,7 +519,7 @@ msgstr "'version' ei ota argumentteja"
 msgid "--allow-unsigned-cabs is for .msi"
 msgstr "--allow-unsigned-cabs on .msi-tiedostoille"
 
-msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '{}')"
 msgstr "--arch nipulle: luettelo x64, x86 ja arm64, kukin kerran (saatiin '{1}')"
 
 msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
@@ -537,10 +537,10 @@ msgstr "--dist nimeää uuden kansion lähteen viereen (ei polkua)"
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
 msgstr "--flat on .msixbundle-tulostetta varten (sen paketit kirjoitetaan sen viereen)"
 
-msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgid "--jobs takes a number from 1 to 64 (got '{}')"
 msgstr "--jobs ottaa luvun 1-64 (saatiin '{1}')"
 
-msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgid "--key signs at most {} external cabinets; raise cab-max-size"
 msgstr "--key allekirjoittaa enintään {1} ulkoista cabinetia; kasvata cab-max-size-arvoa"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
@@ -549,10 +549,10 @@ msgstr "--key-store on Windowsin varmennesäilö; muualla käytä avaintiedostoa
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store ottaa varmenteen SHA-1-allekirjoituksen (40 heksadesimaalinumeroa)"
 
-msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "--lang {}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "--lang {1}: kieltä ei ole (sisäänrakennetut: {2}; muu tarvitsee kielipakettinsa, {3}.po)"
 
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: {}, or one with a language pack.\n"
 msgstr "--lang (tai RUBRAPACK_LANG) valitsee näiden tekstien kielen: {1} tai kieli, jolle on kielipaketti.\n"
 
 msgid "--lang needs a language, such as en or ko"
@@ -561,16 +561,16 @@ msgstr "--lang tarvitsee kielen, kuten en tai ko"
 msgid "--languages needs dialogs: give --ui too"
 msgstr "--languages tarvitsee valintaikkunat: anna myös --ui"
 
-msgid "--msix-compress takes deflate or store (got '%s')"
+msgid "--msix-compress takes deflate or store (got '{}')"
 msgstr "--msix-compress ottaa deflate tai store (saatiin '{1}')"
 
-msgid "--pass-env %s: the variable is not set"
+msgid "--pass-env {}: the variable is not set"
 msgstr "--pass-env {1}: muuttujaa ei ole asetettu"
 
-msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgid "--patch-code takes a GUID in upper case with braces: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}}"
 msgstr "--patch-code ottaa GUID:n isoin kirjaimin aaltosulkeissa: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
 
-msgid "--pin-env %s: the variable is not set"
+msgid "--pin-env {}: the variable is not set"
 msgstr "--pin-env {1}: muuttujaa ei ole asetettu"
 
 msgid "--previous compares two .msi packages"
@@ -579,13 +579,13 @@ msgstr "--previous vertaa kahta .msi-pakettia"
 msgid "--system-roots: the operating system's root certificates cannot be read"
 msgstr "--system-roots: käyttöjärjestelmän pää-varmenteita ei voi lukea"
 
-msgid "--target %s does not match the output '%s'"
+msgid "--target {} does not match the output '{}'"
 msgstr "--target {1} ei vastaa tulostetta '{2}'"
 
-msgid "--target %s is not implemented (msi or msix)"
+msgid "--target {} is not implemented (msi or msix)"
 msgstr "--target {1} ei ole toteutettu (msi tai msix)"
 
-msgid "--target takes msi or msix (got '%s')"
+msgid "--target takes msi or msix (got '{}')"
 msgstr "--target ottaa msi tai msix (saatiin '{1}')"
 
 msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
@@ -609,13 +609,13 @@ msgstr "--winget tarvitsee [winget]-taulun: identifier, installer-url, license, 
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
 msgstr "--winget tarvitsee paketin yhtenä tiedostona: winget lataa yhden, joten ei cab = \"external\""
 
-msgid "-D %.*s is given twice"
+msgid "-D {} is given twice"
 msgstr "-D {1} on annettu kahdesti"
 
-msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgid "-D {}: '{}' is a Windows name; give the variable another name"
 msgstr "-D {1}: '{2}' on Windowsin nimi; anna muuttujalle toinen nimi"
 
-msgid "-D needs NAME=VALUE (got '%s')"
+msgid "-D needs NAME=VALUE (got '{}')"
 msgstr "-D tarvitsee muodon NIMI=ARVO (saatiin '{1}')"
 
 msgid "-i asks for every answer; give either -i or the options"
@@ -624,7 +624,7 @@ msgstr "-i kysyy jokaisen vastauksen; anna joko -i tai valitsimet"
 msgid "; its range is "
 msgstr "; sen alue on "
 
-msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgid "ActionProperty '{}' is not in SecureCustomProperties"
 msgstr "ActionProperty '{1}' ei ole SecureCustomProperties-ominaisuudessa"
 
 msgid "ActionProperty must be a public (upper case) property"
@@ -675,7 +675,7 @@ msgstr "Kansion nimi Program Filesin alla"
 msgid "Folder with the files to install"
 msgstr "Kansio, jossa asennettavat tiedostot ovat"
 
-msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgid "ID '{}' is already used (line {}); IDs must differ across all tables"
 msgstr "Tunnus '{1}' on jo käytössä (rivi {2}); tunnusten on oltava erilaiset kaikissa taulukoissa"
 
 msgid "Install folder ([dir.INSTALLDIR] path)"
@@ -687,19 +687,19 @@ msgstr "Kenelle asennetaan (machine, user, dual)"
 msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
 msgstr "Avain muodossa taulukko.avain (package.version, dir.INSTALLDIR.path, ...)"
 
-msgid "KeyPath '%.*s' belongs to another component"
+msgid "KeyPath '{}' belongs to another component"
 msgstr "KeyPath '{1}' kuuluu toiseen komponenttiin"
 
-msgid "KeyPath '%.*s' is not in File"
+msgid "KeyPath '{}' is not in File"
 msgstr "KeyPath '{1}' ei ole File-taulukossa"
 
-msgid "KeyPath '%.*s' is not in Registry"
+msgid "KeyPath '{}' is not in Registry"
 msgstr "KeyPath '{1}' ei ole Registry-taulukossa"
 
 msgid "Korean dialogs as well as English?"
 msgstr "Korealaiset valintaikkunat englanninkielisten lisäksi?"
 
-msgid "LastSequence %ld is below that of a lower DiskId"
+msgid "LastSequence {} is below that of a lower DiskId"
 msgstr "LastSequence {1} on pienempi kuin alemman DiskId:n"
 
 msgid "Leave without saving the changes?"
@@ -720,7 +720,7 @@ msgstr "MSIX: mitä MSIX-paketti tarvitsee ja mitä se ei voi sisältää"
 msgid "Main program, for shortcuts (- for none)"
 msgstr "Pääohjelma pikakuvakkeita varten (- ei mitään)"
 
-msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgid "Manual: {}\"{}\" - https://rubidus-api.github.io/rubrapack/en/{}{}\n"
 msgstr "Käsikirja: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
 
 msgid "Manufacturer"
@@ -747,22 +747,22 @@ msgstr "Tuotteen nimi"
 msgid "ProductCode and UpgradeCode are the same GUID"
 msgstr "ProductCode ja UpgradeCode ovat sama GUID"
 
-msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgid "ProductVersion {} is not higher than the previous {} in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} ei ole kolmessa ensimmäisessä kentässä suurempi kuin edellinen {2}: Windows Installer ei päivitä"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Ohjelma, jonka pikakuvakkeet avaavat (- ei pikakuvakkeita)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgid "RUBRAPACK_LANG={}: no such language (built in: {}; another needs its language pack, {}.po)"
 msgstr "RUBRAPACK_LANG={1}: kieltä ei ole (sisäänrakennetut: {2}; muu tarvitsee kielipakettinsa, {3}.po)"
 
 msgid "Reference, "
 msgstr "Viite, "
 
-msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgid "Sequence {} is not covered by any Media row (last {})"
 msgstr "Järjestystä {1} ei kata mikään Media-rivi (viimeinen {2})"
 
-msgid "Sequence %ld is used by another file"
+msgid "Sequence {} is used by another file"
 msgstr "Järjestys {1} on toisen tiedoston käytössä"
 
 msgid "Source file to write"
@@ -771,7 +771,7 @@ msgstr "Kirjoitettava lähdetiedosto"
 msgid "Source format"
 msgstr "Lähdemuoto"
 
-msgid "Source must name a File row for type %ld"
+msgid "Source must name a File row for type {}"
 msgstr "Sourcen on nimettävä File-rivi tyypille {1}"
 
 msgid "Start menu shortcut?"
@@ -792,7 +792,7 @@ msgstr "TOML-osajoukko"
 msgid "UTF-16 big-endian files are not supported; save as UTF-8"
 msgstr "UTF-16 big-endian -tiedostoja ei tueta; tallenna UTF-8:na"
 
-msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgid "UpgradeCode {} differs from the previous version's {}: this package does not replace it"
 msgstr "UpgradeCode {1} eroaa edellisen version arvosta {2}: tämä paketti ei korvaa sitä"
 
 msgid "UpgradeCode is not a GUID in registry format"
@@ -816,34 +816,34 @@ msgstr "Versiot ja päivitykset"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer sallii enintään 255.255.65535(.65535)"
 
-msgid "Windows did not say what is installed for '%s'"
+msgid "Windows did not say what is installed for '{}'"
 msgstr "Windows ei kertonut, mitä kohteelle '{1}' on asennettu"
 
 msgid "Windows name"
 msgstr "Windows-nimi"
 
-msgid "[%s%s%s] needs '%s'"
+msgid "[{}{}{}] needs '{}'"
 msgstr "[{1}{2}{3}] tarvitsee '{4}'"
 
-msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgid "[{}{}] cannot go into a merge module; the package that merges it has it"
 msgstr "[{1}{2}] ei voi olla yhdistämismoduulissa; sen yhdistävällä paketilla on se"
 
-msgid "[%s%s] is not supported yet (planned for %s)"
+msgid "[{}{}] is not supported yet (planned for {})"
 msgstr "[{1}{2}] ei ole vielä tuettu (suunniteltu: {3})"
 
-msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
-msgstr "[{1}.{2}] ei voi olla MSIX:ssä; lisää msi-only = true rakentaaksesi MSIX:n ilman sitä"
+msgid "[{}] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}] ei voi olla MSIX:ssä; lisää msi-only = true rakentaaksesi MSIX:n ilman sitä"
 
-msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgid "[{}.{}] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
 msgstr "[{1}.{2}] on käyttäjän AppData- tai LocalAppData-kansiossa: kaikille käyttäjille asennettu dual-paketti vie sen vain asentavan käyttäjän profiiliin"
 
-msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgid "[{}.{}]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: yhdistämismoduulin tunnuksessa on enintään 35 merkkiä (moduulin GUID lisätään siihen)"
 
-msgid "[%s] needs an ID: write [%s.ID]"
+msgid "[{}] needs an ID: write [{}.ID]"
 msgstr "[{1}] tarvitsee tunnuksen: kirjoita [{2}.ID]"
 
-msgid "[%s] takes no ID: write [%s]"
+msgid "[{}] takes no ID: write [{}]"
 msgstr "[{1}] ei ota tunnusta: kirjoita [{2}]"
 
 msgid "[Content_Types].xml has no </Types>"
@@ -855,313 +855,313 @@ msgstr "[Content_Types].xml ei ole viimeinen merkintä (ei rubrapackin tai Windo
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]]-taulukkotaulukoita ei tueta; anna kullekin kohteelle oma [kind.ID]"
 
-msgid "[action.%s] is placed once: before, after or sequence"
+msgid "[action.{}] is placed once: before, after or sequence"
 msgstr "[action.{1}] sijoitetaan kerran: before, after tai sequence"
 
-msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgid "[action.{}] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] tarvitsee sekä do- että undo-arvon (undo peruu myös epäonnistuneen do-toiminnon)"
 
-msgid "[action.%s] needs entry: the DLL's function to call"
+msgid "[action.{}] needs entry: the DLL's function to call"
 msgstr "[action.{1}] tarvitsee entry-arvon: kutsuttavan DLL-funktion"
 
-msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgid "[action.{}] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] tarvitsee run = \"file:<ID>\": ohjelman, jonka do ja undo suorittavat"
 
-msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgid "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
 msgstr "[action.{1}] suorittaa tämän paketin tiedoston ennen InstallFinalizea, jolloin ensimmäisessä asennuksessa sitä ei vielä ole (Windows Installer -virhe 1721 tai 1723): sijoita se InstallFinalizen jälkeen tai tee siitä deferred"
 
-msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgid "[action.{}] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] suorittaa yhden asian: run (exe), dll (asennettu DLL) tai binary (paketin DLL); tai do ja undo"
 
-msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgid "[action.{}]: {} is for a single action, not a do/undo pair"
 msgstr "[action.{1}]: {2} on yhdelle toiminnolle, ei do/undo-parille"
 
-msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgid "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
 msgstr "[action.{1}]: viivästetyn toiminnon, joka suorittaa asennetun tiedoston, on oltava InstallFilesin jälkeen (sequence > 4000)"
 
-msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgid "[action.{}]: an immediate action runs as the user who installs; as is for the other phases"
 msgstr "[action.{1}]: välitön toiminto suoritetaan asentavana käyttäjänä; as on muita vaiheita varten"
 
-msgid "[action.%s]: args are a program's; a DLL gets data"
+msgid "[action.{}]: args are a program's; a DLL gets data"
 msgstr "[action.{1}]: args kuuluvat ohjelmalle; DLL saa data-arvon"
 
-msgid "[action.%s]: check goes with a do/undo pair"
+msgid "[action.{}]: check goes with a do/undo pair"
 msgstr "[action.{1}]: check kuuluu do/undo-parille"
 
-msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgid "[action.{}]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
 msgstr "[action.{1}]: data on viivästetylle, commit- tai rollback-toiminnolle (välitön lukee ominaisuuksia)"
 
-msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgid "[action.{}]: entry is a DLL's function; run takes args"
 msgstr "[action.{1}]: entry on DLL:n funktio; run ottaa args-arvon"
 
-msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[assoc.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX:n args-arvon on oltava pelkkää tekstiä (ei asennuksessa täytettäviä [...])"
 
-msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgid "[assoc.{}]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
 msgstr "[assoc.{1}]: MSIX:ssä tiedostotyyppi avaa sovelluksen: targetin on oltava [msix-app.*]-suoritettava tiedosto"
 
-msgid "[chain-package.%s] is there twice"
+msgid "[chain-package.{}] is there twice"
 msgstr "[chain-package.{1}] on kahdesti"
 
 msgid "[chain-package] needs an ID: write [chain-package.ID]"
 msgstr "[chain-package] tarvitsee tunnuksen: kirjoita [chain-package.ID]"
 
-msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgid "[com.{}]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
 msgstr "[com.{1}]: app-id ja typelib kirjoitetaan vain MSI:lle; MSIX rekisteröi luokan ilman niitä"
 
-msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgid "[com.{}]: args are a program's; a DLL is loaded, not started"
 msgstr "[com.{1}]: args kuuluvat ohjelmalle; DLL ladataan, sitä ei käynnistetä"
 
-msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgid "[com.{}]: surrogate runs a DLL in dllhost; '{}' is a program"
 msgstr "[com.{1}]: surrogate suorittaa DLL:n dllhostissa; '{2}' on ohjelma"
 
-msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgid "[com.{}]: threading is for a DLL; a program sets its own apartment"
 msgstr "[com.{1}]: threading on DLL:lle; ohjelma asettaa oman apartmenttinsa"
 
-msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgid "[com.{}]: typelib-version and typelib-file need typelib"
 msgstr "[com.{1}]: typelib-version ja typelib-file tarvitsevat typelib-arvon"
 
-msgid "[copy.%s] goes to %s; or msi-only = true"
+msgid "[copy.{}] goes to {}; or msi-only = true"
 msgstr "[copy.{1}] menee kohteeseen {2}; tai msi-only = true"
 
-msgid "[copy.%s]: its source must be a file that goes into the package"
+msgid "[copy.{}]: its source must be a file that goes into the package"
 msgstr "[copy.{1}]: sen lähteen on oltava pakettiin menevä tiedosto"
 
 msgid "[define] values must be strings"
 msgstr "[define]-arvojen on oltava merkkijonoja"
 
-msgid "[dialog-control.%s] needs '%s'"
+msgid "[dialog-control.{}] needs '{}'"
 msgstr "[dialog-control.{1}] tarvitsee '{2}'"
 
-msgid "[dialog-control.%s] needs 'image'"
+msgid "[dialog-control.{}] needs 'image'"
 msgstr "[dialog-control.{1}] tarvitsee image-arvon"
 
-msgid "[dialog-control.%s] needs 'property'"
+msgid "[dialog-control.{}] needs 'property'"
 msgstr "[dialog-control.{1}] tarvitsee 'property'"
 
-msgid "[dialog-control.%s] needs 'text'"
+msgid "[dialog-control.{}] needs 'text'"
 msgstr "[dialog-control.{1}] tarvitsee 'text'"
 
-msgid "[dialog-control.%s] needs 'values'"
+msgid "[dialog-control.{}] needs 'values'"
 msgstr "[dialog-control.{1}] tarvitsee 'values'"
 
-msgid "[dialog.%s] has %zu controls; at most 64"
+msgid "[dialog.{}] has {} controls; at most 64"
 msgstr "[dialog.{1}]:ssä on {2} ohjausobjektia; enintään 64"
 
-msgid "[dialog.%s] has no [dialog-control.*]"
+msgid "[dialog.{}] has no [dialog-control.*]"
 msgstr "[dialog.{1}]:ssä ei ole [dialog-control.*]-kohteita"
 
-msgid "[dialog.%s] is placed after itself through other dialogs"
+msgid "[dialog.{}] is placed after itself through other dialogs"
 msgstr "[dialog.{1}] sijoittuu itsensä jälkeen muiden valintaikkunoiden kautta"
 
-msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgid "[dialog.{}] needs ui = \"minimal\", \"installdir\" or \"features\""
 msgstr "[dialog.{1}] tarvitsee ui = \"minimal\", \"installdir\" tai \"features\""
 
-msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgid "[dir.{}]: '{}' is a Windows name; give the dir another ID"
 msgstr "[dir.{1}]: '{2}' on Windowsin nimi; anna dir-kohteelle toinen tunnus"
 
-msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[dir.{}]: guard needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[dir.{1}]: guard tarvitsee rubrapackin apu-DLL:n, jota yhdistämismoduuli ei sisällä"
 
-msgid "[env.%s] needs a feature"
+msgid "[env.{}] needs a feature"
 msgstr "[env.{1}] tarvitsee ominaisuuden"
 
-msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgid "[env.{}]: an MSIX sets all its variables (when); use msi-only = true"
 msgstr "[env.{1}]: MSIX asettaa kaikki muuttujansa (when); käytä msi-only = true"
 
-msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgid "[env.{}]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: sen arvo nimeää paikan, jota MSIX ei voi antaa (paketin ulkopuolinen kansio, joka ei ole Windowsin kansio, tai asennusaikainen osa); käytä msi-only = true"
 
-msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgid "[env.{}]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
 msgstr "[env.{1}]: kun external-location = true, paketissa ei ole yhtään ohjelman tiedostoa, joten ei myöskään rubrapackin käynnistintä; tai msi-only = true"
 
-msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgid "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] on jo ohjelmansa kansiossa; isolate-for on jaetulle DLL:lle, joka on asennettu muualle"
 
-msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgid "[file.{}] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] on käyttäjäprofiilissa ja sillä on component-guid: avainpolku pysyy tiedostona, vaikka Windowsin säännöt haluavat siihen HKCU-arvon (ICE38); jätä component-guid pois saadaksesi sen"
 
-msgid "[file.%s]: %s"
+msgid "[file.{}]: {}"
 msgstr "[file.{1}]: {2}"
 
-msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgid "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' ei ole .NET-kokoonpano (ei CLI-otsaketta, jossa on Assembly-rivi)"
 
-msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgid "[file.{}]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
 msgstr "[file.{1}]: .NET-kokoonpano kantaa luettelonsa itse; manifest on Win32-kokoonpanolle"
 
-msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgid "[file.{}]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
 msgstr "[file.{1}]: Win32-kokoonpano tarvitsee manifest = \"file:<ID>\", luettelotiedostonsa"
 
-msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgid "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: jaettu .NET-kokoonpano menee GAC:iin, joka ottaa vain vahvalla nimellä varustetut; allekirjoita se tai anna assembly-for = \"file:<ohjelma>\""
 
-msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgid "[file.{}]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: jaettu Win32-kokoonpano menee WinSxS:ään luettelon kanssa, joka on allekirjoitettu manifestin publicKeyToken-arvon nimeämällä avaimella; rakenna valinnalla --key (tai anna yksityiselle assembly-for = \"file:<ohjelma>\")"
 
-msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgid "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: jaetun Win32-kokoonpanon manifesti '{2}' nimeää allekirjoittajansa: publicKeyToken elementissä assemblyIdentity (sen --key-avaimen tunnus, jolla rakennetaan)"
 
-msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgid "[file.{}]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for ja manifest kuuluvat yhteen assembly = \"dotnet\" tai \"win32\" kanssa"
 
-msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgid "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version"
 msgstr "[file.{1}]: sen luettelossa '{2}' ei ole assemblyIdentity-elementtiä, jossa on name ja version"
 
-msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgid "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: sen luettelon '{2}' on oltava samassa dir- ja feature-kohteessa (ja saman when-ehdon alla): ne ovat yksi komponentti"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgid "[file.{}]: its manifest names publicKeyToken \"{}\", but the --key's token is \"{}\""
 msgstr "[file.{1}]: manifesti nimeää publicKeyToken-arvon \"{2}\", mutta --key-avaimen tunnus on \"{3}\""
 
-msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgid "[file.{}]: the manifest '{}' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: luettelo '{2}' kuuluu toiselle kokoonpanolle tai on itse kokoonpano"
 
-msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgid "[handler.{}]: Explorer loads a {} handler from a DLL; [com.{}] is a program"
 msgstr "[handler.{1}]: Resurssienhallinta lataa {2}-käsittelijän DLL:stä; [com.{3}] on ohjelma"
 
-msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgid "[handler.{}]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
 msgstr "[handler.{1}]: Windows lukee ominaisuuskäsittelijät vain koneelle; paketti tarvitsee scope = \"machine\""
 
-msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgid "[handler.{}]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.{}]"
 msgstr "[handler.{1}]: esikatselukäsittelijä toimii Windowsin prevhostissa; jätä app-id ja surrogate pois kohteesta [com.{2}]"
 
-msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgid "[handler.{}]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
 msgstr "[handler.{1}]: MSIX sisältää vain pikkukuva- ja esikatselukäsittelijät (paketoitu ominaisuuskäsittelijä ei antanut Resurssienhallinnalle arvoja); msi-only = true pitää sen MSI:lle"
 
-msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgid "[handler.{}]: an MSIX file type belongs to an application; add an [msix-app.*]"
 msgstr "[handler.{1}]: MSIX-tiedostotyyppi kuuluu sovellukselle; lisää [msix-app.*]"
 
-msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgid "[handler.{}]: class {} is not a [com.*] of this package (the handler's DLL serves it)"
 msgstr "[handler.{1}]: luokka {2} ei ole tämän paketin [com.*] (käsittelijän DLL palvelee sitä)"
 
-msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgid "[handler.{}]: in an MSIX handlers share all their types or none (a type is in one file type association)"
 msgstr "[handler.{1}]: MSIX:ssä käsittelijät jakavat kaikki tyyppinsä tai eivät mitään (tyyppi on yhdessä tiedostotyyppiliitoksessa)"
 
-msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgid "[handler.{}]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.{}] gives its window a message loop (with threading = {} the preview may stay blank)"
 msgstr "[handler.{1}]: MSIX:ssä sen luokka toimii surrogatessa; threading = \"sta\" kohteessa [com.{2}] antaa sen ikkunalle viestisilmukan (threading = {3} voi jättää esikatselun tyhjäksi)"
 
-msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgid "[handler.{}]: in an MSIX its types are all in one [assoc] file type, or none"
 msgstr "[handler.{1}]: MSIX:ssä sen tyypit ovat kaikki yhdessä [assoc]-tiedostotyypissä tai eivät missään"
 
-msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgid "[handler.{}]: its class is msi-only ([com.{}]); the MSIX would have no server for it"
 msgstr "[handler.{1}]: sen luokka on msi-only ([com.{2}]); MSIX:llä ei olisi sille palvelinta"
 
-msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgid "[handler.{}]: types is a list of file types, like [\".txt\"]"
 msgstr "[handler.{1}]: types on luettelo tiedostotyypeistä, kuten [\".txt\"]"
 
-msgid "[ini.%s] goes to %s; or msi-only = true"
+msgid "[ini.{}] goes to {}; or msi-only = true"
 msgstr "[ini.{1}] menee kohteeseen {2}; tai msi-only = true"
 
-msgid "[ini.%s] needs 'value'"
+msgid "[ini.{}] needs 'value'"
 msgstr "[ini.{1}] tarvitsee 'value'"
 
-msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[ini.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[ini.{1}] tarvitsee ominaisuuden: aseta 'feature' tähän tai sen dir-kohteeseen"
 
-msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgid "[ini.{}]: an MSIX writes all its INI entries (when); use msi-only = true"
 msgstr "[ini.{1}]: MSIX kirjoittaa kaikki INI-merkintänsä (when); käytä msi-only = true"
 
-msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgid "[ini.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
 msgstr "[ini.{1}]: sen arvossa on osa, jonka Windows Installer täyttää asennuksessa ([...]); MSIX kirjoittaa tiedoston, kun se rakennetaan"
 
-msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgid "[menu.{}] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
 msgstr "[menu.{1}] tarvitsee 'on': missä kohde näkyy, kuten [\".txt\"] tai \"folder\""
 
-msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgid "[menu.{}] needs 'target' (the program it starts), or items with parent = \"{}\" (a sub-menu)"
 msgstr "[menu.{1}] tarvitsee 'target' (ohjelma, jonka se käynnistää) tai kohteita, joilla parent = \"{2}\" (alivalikko)"
 
-msgid "[menu.%s] needs 'target': the program the item starts"
+msgid "[menu.{}] needs 'target': the program the item starts"
 msgstr "[menu.{1}] tarvitsee 'target': ohjelma, jonka kohde käynnistää"
 
-msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgid "[menu.{}]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
 msgstr "[menu.{1}]: Windows 11:n valikko hyväksyy vain kirjaimista ja numeroista koostuvan ID:n (ei '_'): nimeä se uudelleen tai käytä windows11 = false"
 
-msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgid "[menu.{}]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: alivalikko ei käynnistä mitään: jätä 'args' pois"
 
-msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgid "[menu.{}]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
 msgstr "[menu.{1}]: alivalikon kohde näkyy siellä, missä sen alivalikko näkyy: jätä 'on' pois"
 
-msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: argsissa on osa, jonka Windows Installer täyttää asennuksessa ([...]); MSIX sisältää vain kiinteää tekstiä"
 
-msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgid "[menu.{}]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
 msgstr "[menu.{1}]: hide-when on \"HKCU\\\\key\\\\value\" tai \"HKLM\\\\...\", Windows 11 -valikon kohteessa, joka ei ole alivalikossa"
 
-msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgid "[menu.{}]: hide-when names a value this package writes ([registry.{}]): the item would never show"
 msgstr "[menu.{1}]: hide-when osoittaa arvoon, jonka tämä paketti itse kirjoittaa ([registry.{2}]): kohde ei näkyisi koskaan"
 
-msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgid "[menu.{}]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: sen ohjelma ei ole MSIX:ssä (msi-only?)"
 
-msgid "[menu.%s]: its values cannot go into the package's registry"
+msgid "[menu.{}]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: sen arvot eivät mahdu paketin rekisteriin"
 
-msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgid "[menu.{}]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: listissa on osa, jonka Windows Installer täyttää asennuksessa ([...]); MSIX sisältää vain kiinteää tekstiä"
 
-msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgid "[menu.{}]: list stands for {} when the paths do not fit a command line: it needs multi = \"one\", {} in args and {} (the list file) in list"
 msgstr "[menu.{1}]: list korvaa {2}:n, kun polut eivät mahdu komentoriville: tarvitaan multi = \"one\", {3} args-arvossa ja {4} (luettelotiedosto) list-arvossa"
 
-msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgid "[menu.{}]: on = \"{}\": there is no [assoc.{}]"
 msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] ei ole"
 
-msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgid "[menu.{}]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
 msgstr "[menu.{1}]: on on tiedostotyyppi tai luettelo niistä, kuten [\".txt\", \"folder\"]"
 
-msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgid "[menu.{}]: parent '{}' is not a [menu.*]"
 msgstr "[menu.{1}]: parent '{2}' ei ole [menu.*]"
 
-msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgid "[menu.{}]: parent '{}' must be a sub-menu: a [menu.*] without target and without a parent of its own"
 msgstr "[menu.{1}]: parent '{2}' on oltava alivalikko: [menu.*] ilman targetia ja ilman omaa parentia"
 
-msgid "[merge.%s] goes to %s; or msi-only = true"
+msgid "[merge.{}] goes to {}; or msi-only = true"
 msgstr "[merge.{1}] menee kohteeseen {2}; tai msi-only = true"
 
-msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[merge.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[merge.{1}] tarvitsee ominaisuuden: aseta 'feature' tähän tai sen dir-kohteeseen"
 
-msgid "[merge.%s]: '%s' %s"
+msgid "[merge.{}]: '{}' {}"
 msgstr "[merge.{1}]: '{2}' {3}"
 
-msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgid "[merge.{}]: '{}' {}; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; tai msi-only = true"
 
-msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgid "[move.{}] needs a feature (or with = \"file:<ID>\")"
 msgstr "[move.{1}] tarvitsee feature-arvon (tai with = \"file:<ID>\")"
 
-msgid "[move.%s]: feature goes with a component of its own, not with"
+msgid "[move.{}]: feature goes with a component of its own, not with"
 msgstr "[move.{1}]: feature kuuluu omaan komponenttiin, ei with-arvoon"
 
-msgid "[move.%s]: new-name names one file; name has wildcards"
+msgid "[move.{}]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name nimeää yhden tiedoston; name sisältää yleismerkkejä"
 
-msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgid "[msix-extension.{}]: a share target needs types, formats or both"
 msgstr "[msix-extension.{1}]: jakokohde tarvitsee types, formats tai molemmat"
 
-msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgid "[msix-extension.{}]: an autoplay handler needs content-events, device-events or both"
 msgstr "[msix-extension.{1}]: automaattisen toiston käsittelijä tarvitsee content-events, device-events tai molemmat"
 
-msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgid "[msix-extension.{}]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: argsin on oltava pelkkää tekstiä (ei asennuksessa täytettäviä [...])"
 
-msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgid "[msix-extension.{}]: device-events need class (the program's IHWEventHandler COM class)"
 msgstr "[msix-extension.{1}]: device-events tarvitsevat class:n (ohjelman IHWEventHandler-COM-luokka)"
 
-msgid "[msix-extension.%s]: file must be %s"
+msgid "[msix-extension.{}]: file must be {}"
 msgstr "[msix-extension.{1}]: filen on oltava {2}"
 
-msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgid "[msix-extension.{}]: file must name a file that goes into the package"
 msgstr "[msix-extension.{1}]: filen on nimettävä pakettiin menevä tiedosto"
 
-msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgid "[msix-extension.{}]: file must name a program that goes into the package"
 msgstr "[msix-extension.{1}]: filen on nimettävä pakettiin menevä ohjelma"
 
-msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgid "[msix-extension.{}]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types on luettelo tiedostotyypeistä, kuten [\".txt\", \"*\"]"
 
-msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgid "[msix-extension.{}]: verb '{}': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows hyväksyy vain kirjaimia ja numeroita"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
@@ -1173,127 +1173,127 @@ msgstr "[msix-psf] ei sovi yhteen external-location = true:n eikä [env.*]:n (ru
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
 msgstr "[msix-psf] käynnistää sovellukset PSF-käynnistimen kautta: se tarvitsee [msix-app.ID]:n"
 
-msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgid "[msix-psf]: config '{}' does not name the application '{}' in its \"applications\""
 msgstr "[msix-psf]: config '{1}' ei nimeä sovellusta '{2}' kohdassa \"applications\""
 
-msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgid "[msix-psf]: files has no '{}' (the launcher)"
 msgstr "[msix-psf]: kansiossa files ei ole '{1}' (käynnistintä)"
 
-msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgid "[odbc-driver.{}]: file '{}' is not a DLL"
 msgstr "[odbc-driver.{1}]: tiedosto '{2}' ei ole DLL"
 
-msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgid "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name"
 msgstr "[odbc-source.{1}] nimeää ohjaimensa kerran: driver (yksi [odbc-driver]) tai driver-name"
 
-msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgid "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with"
 msgstr "[odbc-source.{1}] driver-name-arvon kanssa tarvitsee with = \"file:<ID>\": komponentin, jonka kanssa se asennetaan"
 
-msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgid "[odbc-source.{}]: a per-machine package registers data sources for the machine"
 msgstr "[odbc-source.{1}]: konekohtainen paketti rekisteröi tietolähteet koneelle"
 
-msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgid "[other-copy.{}] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] nimeää yhden kopion: msix (ja publisher) tai upgrade-code"
 
-msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgid "[other-copy.{}]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
 msgstr "[other-copy.{1}]: msix on paketin tunnusnimi (3–50 kirjainta, numeroa, '.' tai '-') ja vaatii publisher-arvon (\"CN=...\"), kuten ne ovat sen luettelossa"
 
-msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgid "[other-copy.{}]: the preflight looks for the other copy: it needs preflight = true"
 msgstr "[other-copy.{1}]: toista kopiota etsii esitarkistus: tarvitaan preflight = true"
 
-msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgid "[other-copy.{}]: upgrade-code is this package's own (that is an upgrade, not another copy)"
 msgstr "[other-copy.{1}]: upgrade-code on tämän paketin oma (se on päivitys, ei toinen kopio)"
 
-msgid "[permission.%s] needs its dir to have a feature"
+msgid "[permission.{}] needs its dir to have a feature"
 msgstr "[permission.{1}] tarvitsee, että sen dir-kohteella on ominaisuus"
 
-msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[protocol.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[protocol.{1}]: MSIX:n argsin on oltava pelkkää tekstiä (ei asennuksessa täytettäviä [...])"
 
-msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgid "[protocol.{}]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
 msgstr "[protocol.{1}]: MSIX:ssä skeema avaa sovelluksen: targetin on oltava [msix-app.*]-suoritettava tiedosto"
 
-msgid "[registry.%s] needs 'value' (or remove = true)"
+msgid "[registry.{}] needs 'value' (or remove = true)"
 msgstr "[registry.{1}] tarvitsee 'value' (tai remove = true)"
 
-msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgid "[registry.{}]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
 msgstr "[registry.{1}]: HKCR ei ulotu MSIX:n ulkopuolelle; käytä [assoc.*], [protocol.*], [com.*] tai [handler.*], tai msi-only = true"
 
-msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: qword-arvo tarvitsee rubrapackin apu-DLL:n, jota yhdistämismoduuli ei sisällä"
 
-msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgid "[registry.{}]: an MSIX carries values under {}\\Software only"
 msgstr "[registry.{1}]: MSIX sisältää arvoja vain kohteen {2}\\Software alla"
 
-msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgid "[registry.{}]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
 msgstr "[registry.{1}]: MSIX ei poista arvoja eikä jätä niitä jälkeensä (remove, keep); käytä msi-only = true"
 
-msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgid "[registry.{}]: an MSIX writes all its values (when); use msi-only = true"
 msgstr "[registry.{1}]: MSIX kirjoittaa kaikki arvonsa (when); käytä msi-only = true"
 
-msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgid "[registry.{}]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
 msgstr "[registry.{1}]: sen arvossa on osa, jonka Windows Installer täyttää asennuksessa ([...]); MSIX sisältää vain kiinteitä arvoja"
 
-msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[registry.{}]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[registry.{1}]: on = \"uninstall\" tarvitsee rubrapackin apu-DLL:n, jota yhdistämismoduuli ei sisällä"
 
-msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgid "[registry.{}]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: avaimen tai arvon nimi ei mahdu rekisteripesään"
 
-msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgid "[registry.{}]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
 msgstr "[registry.{1}]: users = \"all\" on asetukselle root = \"HKCU\" yhdessä asetuksen on = \"uninstall\" kanssa, koko tietokoneen paketissa"
 
-msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgid "[remove.{}] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] tarvitsee ominaisuuden: aseta 'feature' tähän tai sen dir-kohteeseen"
 
-msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgid "[remove.{}]: recursive = true is not for a folder below {}"
 msgstr "[remove.{1}]: recursive = true ei ole kansiolle kohteen {2} alla"
 
-msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgid "[remove.{}]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true tarvitsee rubrapackin apu-DLL:n, jota yhdistämismoduuli ei sisällä"
 
-msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgid "[remove.{}]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
 msgstr "[remove.{1}]: users = \"all\" on asetukselle recursive = true AppData- tai LocalAppData-kansiossa, koko tietokoneen paketissa"
 
-msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[service.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX:n argsin on oltava pelkkää tekstiä (ei asennuksessa täytettäviä [...])"
 
-msgid "[service.%s]: file must name a program that goes into the package"
+msgid "[service.{}]: file must name a program that goes into the package"
 msgstr "[service.{1}]: filen on nimettävä pakettiin menevä ohjelma"
 
-msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgid "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\""
 msgstr "[shortcut.{1}] mainostaa ominaisuutta '{2}', jolla on advertise = \"disallow\""
 
-msgid "[shortcut.%s]: advertise is not combined with when"
+msgid "[shortcut.{}]: advertise is not combined with when"
 msgstr "[shortcut.{1}]: advertise ei yhdisty when-ehtoon"
 
-msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgid "[shortcut.{}]: an MSIX has shortcuts on the desktop and in the Start menu only{}"
 msgstr "[shortcut.{1}]: MSIX:llä on pikakuvakkeita vain työpöydällä ja Käynnistä-valikossa{2}"
 
-msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgid "[shortcut.{}]: an MSIX shortcut has no working-dir"
 msgstr "[shortcut.{1}]: MSIX-pikakuvakkeella ei ole working-dir-arvoa"
 
-msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgid "[shortcut.{}]: an MSIX shortcut is always there (when is for an MSI)"
 msgstr "[shortcut.{1}]: MSIX-pikakuvake on aina olemassa (when on MSI:lle)"
 
-msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgid "[shortcut.{}]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX-pikakuvake näyttää sovelluksensa logon; icon on MSI:lle"
 
-msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgid "[shortcut.{}]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
 msgstr "[shortcut.{1}]: mainostettu pikakuvake on MSI:tä varten (MSIX asentaa koko paketin)"
 
-msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgid "[shortcut.{}]: an advertised shortcut needs an icon"
 msgstr "[shortcut.{1}]: mainostettu pikakuvake tarvitsee kuvakkeen"
 
-msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgid "[shortcut.{}]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: MSIX:n argsin on oltava pelkkää tekstiä (ei asennuksessa täytettäviä [...])"
 
-msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgid "[shortcut.{}]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
 msgstr "[shortcut.{1}]: MSIX:ssä pikakuvake käynnistää sovelluksen: targetin on oltava [msix-app.*]-suoritettava tiedosto"
 
-msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgid "[shortcut.{}]: the Start menu entry of an MSIX is its application, which takes no args"
 msgstr "[shortcut.{1}]: MSIX:n Käynnistä-valikon kohde on sen sovellus, joka ei ota argseja"
 
-msgid "[ui-text.%s]: no dialog text has this ID"
+msgid "[ui-text.{}]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: millään valintaikkunan tekstillä ei ole tätä tunnusta"
 
 msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
@@ -1302,7 +1302,7 @@ msgstr "[ui] embedded on MSI:tä varten; MSIX:llä ei ole omaa asennuskäyttöli
 msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
 msgstr "[ui] tarvitsee ui = \"basic\" tai muun valintaikkunajoukon kohdassa [package] (tai embedded = \"....dll\")"
 
-msgid "\\%c escape is not a Unicode scalar value"
+msgid "\\{} escape is not a Unicode scalar value"
 msgstr "koodinvaihtojakso \\{1} ei ole Unicode-skalaariarvo"
 
 msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
@@ -1314,16 +1314,16 @@ msgstr "paketin `lint`: valintaikkunat, koodisivu, tekstin normalisointi"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX-paketin tai -nipun `lint`"
 
-msgid "a %s control has no property"
+msgid "a {} control has no property"
 msgstr "{1}-ohjausobjektilla ei ole property-arvoa"
 
-msgid "a %s control has no text; put a text control beside it"
+msgid "a {} control has no text; put a text control beside it"
 msgstr "{1}-ohjausobjektilla ei ole tekstiä; lisää sen viereen teksti-ohjausobjekti"
 
-msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgid "a {} control needs [property.{}] with one of its values as the default (a silent installation uses it)"
 msgstr "{1}-ohjausobjekti tarvitsee [property.{2}], jonka oletuksena on jokin sen arvoista (hiljainen asennus käyttää sitä)"
 
-msgid "a %s package cannot write HKLM; use HKMU"
+msgid "a {} package cannot write HKLM; use HKMU"
 msgstr "{1}-paketti ei voi kirjoittaa HKLM:ään; käytä HKMU:ta"
 
 msgid "a .msix output needs an [msix-app.ID] table naming the executable"
@@ -1377,10 +1377,10 @@ msgstr "polun varmenteella on kriittinen laajennus, jota rubrapack ei ymmärrä"
 msgid "a certificate in the path is signed by a certificate that is not a CA"
 msgstr "polun varmenteen on allekirjoittanut varmenne, joka ei ole CA"
 
-msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [{}]; the packages are built from their own sources"
 msgstr "ketju sisältää vain [chain]-, [chain-package.ID]- ja [define]-kohteita, ei [{1}]; paketit rakennetaan omista lähteistään"
 
-msgid "a chain holds at most %d packages"
+msgid "a chain holds at most {} packages"
 msgstr "ketjussa on enintään {1} pakettia"
 
 msgid "a chain needs [chain]"
@@ -1392,7 +1392,7 @@ msgstr "ketju tarvitsee vähintään yhden [chain-package.ID]-kohteen"
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "merkki, jota Windows ei salli nimessä (/ \\ : * ? \" < > |)"
 
-msgid "a container holds at most %u package families"
+msgid "a container holds at most {} package families"
 msgstr "säilössä on enintään {1} pakettiperhettä"
 
 msgid "a control character"
@@ -1434,7 +1434,7 @@ msgstr "ominaisuus, jota tämä rubrapack ei tarjoa (tai jota ilman se käännet
 msgid "a file larger than allowed"
 msgstr "sallittua suurempi tiedosto"
 
-msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgid "a file name under '{}' is not valid Unicode and cannot be packaged"
 msgstr "tiedostonimi kohteen '{1}' alla ei ole kelvollista Unicodea eikä sitä voi paketoida"
 
 msgid "a file name without / \\ : * ? \" < > | $"
@@ -1446,7 +1446,7 @@ msgstr "tiedoston komponentti- tai hakemistoketju on rikki"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "fontti menee MSIX:ään sen nimeävän [font.*]-kohteen kautta"
 
-msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgid "a framework package has no applications, capabilities or dependencies of its own ({})"
 msgstr "kehyspaketilla ei ole omia sovelluksia, ominaisuuksia eikä riippuvuuksia ({1})"
 
 msgid "a hash the token signing does not know"
@@ -1458,7 +1458,7 @@ msgstr "pesän solu ylittää lohkonsa"
 msgid "a hive version or type rubrapack does not read"
 msgstr "pesän versio tai tyyppi, jota rubrapack ei lue"
 
-msgid "a known folder itself ('%s') cannot get permissions"
+msgid "a known folder itself ('{}') cannot get permissions"
 msgstr "tunnettu kansio itse ('{1}') ei voi saada käyttöoikeuksia"
 
 msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
@@ -1521,7 +1521,7 @@ msgstr "välityspalvelinta käyttäjänimellä tai salasanalla ei tueta"
 msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
 msgstr "qword-arvo on kokonaisluku tai \"0x\" ja 1-16 heksadesimaalinumeroa"
 
-msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgid "a radio control stacks its buttons: height must be at least 12 per value ({})"
 msgstr "valintanappiohjausobjekti pinoaa painikkeensa: korkeuden on oltava vähintään 12 arvoa kohden ({1})"
 
 msgid "a record has more columns than its table"
@@ -1539,7 +1539,7 @@ msgstr "varattu laitenimi"
 msgid "a rollback action cannot be asynchronous"
 msgstr "palautustoiminto ei voi olla asynkroninen"
 
-msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '{}')"
 msgstr "skeema on pieni kirjain, jota seuraa pieniä kirjaimia, numeroita, '+', '-' tai '.' (saatiin '{1}')"
 
 msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
@@ -1551,7 +1551,7 @@ msgstr "osio on tiedoston ulkopuolella"
 msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
 msgstr "palvelun nimessä ei saa olla '/' tai '\\' (enintään 256 merkkiä)"
 
-msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgid "a setup .exe is built from a source with [chain]; '{}' builds a package (.msi, .msix)"
 msgstr "asennus-.exe rakennetaan lähteestä, jossa on [chain]; '{1}' rakentaa paketin (.msi, .msix)"
 
 msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
@@ -1587,28 +1587,28 @@ msgstr "versio on 3 tai 4 pisteillä erotettua lukua, kuten 1.0.0"
 msgid "account must be LocalSystem, LocalService or NetworkService"
 msgstr "accountin on oltava LocalSystem, LocalService tai NetworkService"
 
-msgid "action '%s' is already defined"
+msgid "action '{}' is already defined"
 msgstr "toiminto '{1}' on jo määritetty"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "toiminto ei ole vakiotoiminto eikä CustomAction-taulukossa"
 
-msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgid "action must be \"warn\" or \"refuse\" (got '{}')"
 msgstr "action on \"warn\" tai \"refuse\" (saatiin '{1}')"
 
 msgid "adds too many tables"
 msgstr "lisää liian monta taulukkoa"
 
-msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgid "advertise is \"allow\" or \"disallow\" (got '{}')"
 msgstr "advertise on oltava \"allow\" tai \"disallow\" (saatiin '{1}')"
 
-msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgid "after = '{}' is not a page of this dialog set (RpWelcomeDlg{}{}{}) or a [dialog.*]"
 msgstr "after = '{1}' ei ole tämän valintaikkunasarjan sivu (RpWelcomeDlg{2}{3}{4}) eikä [dialog.*]"
 
 msgid "alias belongs to kind = \"alias\""
 msgstr "alias kuuluu kohteeseen kind = \"alias\""
 
-msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '{}')"
 msgstr "aliaksen on oltava .exe-päätteinen tiedostonimi: kirjaimia, numeroita, '.', '_', '-' (saatiin '{1}')"
 
 msgid "an INI section may not contain ']' and a key may not contain '='"
@@ -1617,10 +1617,10 @@ msgstr "INI-osio ei saa sisältää ']' eikä avain '='"
 msgid "an MSIX cannot place files in the temporary folder"
 msgstr "MSIX ei voi sijoittaa tiedostoja tilapäiskansioon"
 
-msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgid "an application has one alias ([msix-extension.{}] is one already)"
 msgstr "sovelluksella on yksi alias ([msix-extension.{1}] on jo sellainen)"
 
-msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgid "an application has one share target ([msix-extension.{}] is one already)"
 msgstr "sovelluksella on yksi jakokohde ([msix-extension.{1}] on jo sellainen)"
 
 msgid "an empty name"
@@ -1641,22 +1641,22 @@ msgstr "valinnainen tai muokkauspaketti ei ilmoita valmiuksia eikä virtualisoin
 msgid "an x86 package writes the 32-bit registry view only"
 msgstr "x86-paketti kirjoittaa vain 32-bittiseen rekisterinäkymään"
 
-msgid "app '%s' is not an [msix-app.*]"
+msgid "app '{}' is not an [msix-app.*]"
 msgstr "sovellus '{1}' ei ole [msix-app.*]"
 
 msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
 msgstr "appinstaller-uri ja package-uri kuuluvat yhteen: missä .appinstaller-tiedosto ja paketti tulevat olemaan"
 
-msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '{}')"
 msgstr "archin on oltava \"x64\", \"arm64\" tai \"x86\" (saatiin '{1}')"
 
 msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
 msgstr "archin on oltava \"x64\", \"x86\" tai \"arm64\" (asennusohjelman oma)"
 
-msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgid "argument {} is not valid UTF-8 (byte {})"
 msgstr "argumentti {1} ei ole kelvollista UTF-8:aa (tavu {2})"
 
-msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgid "argument {} is not valid Unicode (UTF-16 unit {})"
 msgstr "argumentti {1} ei ole kelvollista Unicodea (UTF-16-yksikkö {2})"
 
 msgid "array is not closed"
@@ -1668,19 +1668,19 @@ msgstr "taulukoita taulukoiden sisällä ei tueta"
 msgid "arrays must hold only strings or only integers"
 msgstr "taulukoissa saa olla vain merkkijonoja tai vain kokonaislukuja"
 
-msgid "as must be \"system\" or \"user\" (got '%s')"
+msgid "as must be \"system\" or \"user\" (got '{}')"
 msgstr "as on oltava \"system\" tai \"user\" (saatiin '{1}')"
 
 msgid "assembly must be \"dotnet\" or \"win32\""
 msgstr "assemblyn on oltava \"dotnet\" tai \"win32\""
 
-msgid "at most %d languages besides English"
+msgid "at most {} languages besides English"
 msgstr "enintään {1} kieltä englannin lisäksi"
 
 msgid "at most 100 [msix-app.*] tables"
 msgstr "enintään 100 [msix-app.*]-taulukkoa"
 
-msgid "at most 50 [action.*] tables (this file has %zu)"
+msgid "at most 50 [action.*] tables (this file has {})"
 msgstr "enintään 50 [action.*]-taulukkoa (tässä tiedostossa on {1})"
 
 msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
@@ -1695,7 +1695,7 @@ msgstr "bannerin on oltava .bmp-tiedosto (Windows Installer näyttää vain BMP:
 msgid "build a package from a source file"
 msgstr "rakenna paketti lähdetiedostosta"
 
-msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgid "building {} from a {} source needs its own upgrade family: add {} = \"{{...}}\" to [package]"
 msgstr "{1}:n rakentaminen {2}-lähteestä tarvitsee oman päivitysperheen: lisää {3} = \"{...}\" kohteeseen [package]"
 
 msgid "cab must be \"embed\" or \"external\""
@@ -1704,106 +1704,106 @@ msgstr "cabin on oltava \"embed\" tai \"external\""
 msgid "cannot be read"
 msgstr "ei voi lukea"
 
-msgid "cannot bundle the packages: %s"
+msgid "cannot bundle the packages: {}"
 msgstr "paketteja ei voi niputtaa: {1}"
 
-msgid "cannot compare '%s' and '%s'"
+msgid "cannot compare '{}' and '{}'"
 msgstr "'{1}' ja '{2}' ei voi verrata"
 
-msgid "cannot create '%s'"
+msgid "cannot create '{}'"
 msgstr "'{1}':tä ei voi luoda"
 
-msgid "cannot create '%s'%s"
+msgid "cannot create '{}'{}"
 msgstr "'{1}':tä ei voi luoda{2}"
 
-msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgid "cannot find '{}'; make one with `rubrapack new {}`"
 msgstr "'{1}':tä ei löydy; luo sellainen komennolla `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "oletuslogoa ei voi tehdä"
 
-msgid "cannot make a patch from '%s' to '%s'"
+msgid "cannot make a patch from '{}' to '{}'"
 msgstr "korjaustiedostoa ei voi tehdä '{1}':stä '{2}':een"
 
-msgid "cannot make a transform from '%s' to '%s'"
+msgid "cannot make a transform from '{}' to '{}'"
 msgstr "muunnosta ei voi tehdä '{1}':stä '{2}':een"
 
 msgid "cannot open the certificate store"
 msgstr "varmennesäilöä ei voi avata"
 
-msgid "cannot read '%s'"
+msgid "cannot read '{}'"
 msgstr "'{1}':tä ei voi lukea"
 
-msgid "cannot read '%s' (%s)"
+msgid "cannot read '{}' ({})"
 msgstr "'{1}':tä ei voi lukea ({2})"
 
-msgid "cannot read package '%s'"
+msgid "cannot read package '{}'"
 msgstr "pakettia '{1}' ei voi lukea"
 
-msgid "cannot read source file '%s'"
+msgid "cannot read source file '{}'"
 msgstr "lähdetiedostoa '{1}' ei voi lukea"
 
 msgid "cannot read that folder"
 msgstr "sitä kansiota ei voi lukea"
 
-msgid "cannot read the %s file '%s'"
+msgid "cannot read the {} file '{}'"
 msgstr "{1}-tiedostoa '{2}' ei voi lukea"
 
-msgid "cannot read the PIN file '%s'"
+msgid "cannot read the PIN file '{}'"
 msgstr "PIN-tiedostoa '{1}' ei voi lukea"
 
-msgid "cannot read the cabinet '%s' next to '%s'"
+msgid "cannot read the cabinet '{}' next to '{}'"
 msgstr "cabinetia '{1}' '{2}':n vieressä ei voi lukea"
 
-msgid "cannot read the certificate file '%s'"
+msgid "cannot read the certificate file '{}'"
 msgstr "varmennetiedostoa '{1}' ei voi lukea"
 
-msgid "cannot read the certificates in '%s'"
+msgid "cannot read the certificates in '{}'"
 msgstr "'{1}':n varmenteita ei voi lukea"
 
-msgid "cannot read the certificates in '%s': %s"
+msgid "cannot read the certificates in '{}': {}"
 msgstr "'{1}':n varmenteita ei voi lukea: {2}"
 
-msgid "cannot read the key file '%s'"
+msgid "cannot read the key file '{}'"
 msgstr "avaintiedostoa '{1}' ei voi lukea"
 
-msgid "cannot read the password file '%s'"
+msgid "cannot read the password file '{}'"
 msgstr "salasanatiedostoa '{1}' ei voi lukea"
 
-msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgid "cannot read the uncompressed file '{}' next to '{}'"
 msgstr "pakkaamatonta tiedostoa '{1}' '{2}':n vieressä ei voi lukea"
 
-msgid "cannot write %s"
+msgid "cannot write {}"
 msgstr "{1}:tä ei voi kirjoittaa"
 
-msgid "cannot write '%s'"
+msgid "cannot write '{}'"
 msgstr "'{1}':tä ei voi kirjoittaa"
 
-msgid "cannot write '%s' to check it"
+msgid "cannot write '{}' to check it"
 msgstr "'{1}':tä ei voi kirjoittaa sen tarkistamiseksi"
 
 msgid "cannot write resources.pri"
 msgstr "resources.pri-tiedostoa ei voi kirjoittaa"
 
-msgid "cannot write the menu files beside '%s'"
+msgid "cannot write the menu files beside '{}'"
 msgstr "valikkotiedostoja ei voi kirjoittaa '{1}':n viereen"
 
-msgid "cannot write the resource package of %s"
+msgid "cannot write the resource package of {}"
 msgstr "{1}:n resurssipakettia ei voi kirjoittaa"
 
 msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
 msgstr "capabilities on nimien taulukko, kuten [\"internetClient\", \"allowElevation\"]"
 
-msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgid "capability '{}' is not one rubrapack knows (the manual lists them)"
 msgstr "valmius '{1}' ei ole rubrapackin tuntema (käsikirja luettelee ne)"
 
-msgid "capability '%s' needs Windows build 17763 or later"
+msgid "capability '{}' needs Windows build 17763 or later"
 msgstr "valmius '{1}' vaatii Windowsin koontiversion 17763 tai uudemman"
 
 msgid "carriage return without a line feed"
 msgstr "rivinalku ilman rivinvaihtoa"
 
-msgid "certificate file '%s': %s"
+msgid "certificate file '{}': {}"
 msgstr "varmennetiedosto '{1}': {2}"
 
 msgid "change a source in place: through a menu of questions, or with the options"
@@ -1821,52 +1821,52 @@ msgstr "tarkista lähdepolut (suhteessa lähdetiedostoon); aseta any-arch = true
 msgid "check the spelling (the message suggests the nearest name) and the table's keys"
 msgstr "tarkista kirjoitusasu (viesti ehdottaa lähintä nimeä) ja taulukon avaimet"
 
-msgid "class %s is already served by [com.%s]"
+msgid "class {} is already served by [com.{}]"
 msgstr "luokkaa {1} palvelee jo [com.{2}]"
 
-msgid "class %s is also in [msix-extension.%s]"
+msgid "class {} is also in [msix-extension.{}]"
 msgstr "luokka {1} on myös kohteessa [msix-extension.{2}]"
 
-msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgid "class must be a GUID like {{12345678-...}} (got '{}')"
 msgstr "classin on oltava GUID, kuten {12345678-...} (saatiin '{1}')"
 
 msgid "close-programs has no effect with preflight = false"
 msgstr "close-programs ei vaikuta, kun preflight = false"
 
-msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '{}')"
 msgstr "close-programsin on oltava \"ask\", \"always\" tai \"never\" (saatiin '{1}')"
 
-msgid "column %s holds the wrong kind of value"
+msgid "column {} holds the wrong kind of value"
 msgstr "sarakkeessa {1} on väärän tyyppinen arvo"
 
-msgid "column %s is not valid UTF-8"
+msgid "column {} is not valid UTF-8"
 msgstr "sarake {1} ei ole kelvollista UTF-8:aa"
 
-msgid "column %s may not be null"
+msgid "column {} may not be null"
 msgstr "sarake {1} ei saa olla tyhjäarvo (null)"
 
-msgid "column %s: %ld is outside the column's range"
+msgid "column {}: {} is outside the column's range"
 msgstr "sarake {1}: {2} on sarakkeen alueen ulkopuolella"
 
-msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgid "column {}: {} UTF-16 units, the column holds {}"
 msgstr "sarake {1}: {2} UTF-16-yksikköä, sarakkeeseen mahtuu {3}"
 
-msgid "column %s: %zu characters, the column holds %u"
+msgid "column {}: {} characters, the column holds {}"
 msgstr "sarake {1}: {2} merkkiä, sarakkeeseen mahtuu {3}"
 
-msgid "command '%s' is not implemented yet"
+msgid "command '{}' is not implemented yet"
 msgstr "komentoa '{1}' ei ole vielä toteutettu"
 
 msgid "command-line"
 msgstr "komentorivi"
 
-msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgid "component {} {} changed between 32 and 64 bits: the component rules want a new GUID"
 msgstr "komponentti {1} {2} vaihtui 32 ja 64 bitin välillä: komponenttisäännöt vaativat uuden GUID:n"
 
-msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgid "component {} {} is gone (its resources are removed with the previous version)"
 msgstr "komponentti {1} {2} on poissa (sen resurssit poistetaan edellisen version mukana)"
 
-msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgid "component {} {} now has the key path {} instead of {}: the component rules want a new GUID"
 msgstr "komponentilla {1} {2} on nyt avainpolku {3} eikä {4}: komponenttisäännöt vaativat uuden GUID:n"
 
 msgid "component-guid must be a GUID"
@@ -1881,7 +1881,7 @@ msgstr "conditionissa on sulkematon lainausmerkki tai epätasapainoiset sulkeet"
 msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
 msgstr "condition on pidempi kuin 240 merkkiä (rubrapack lisää \"Installed OR ( )\")"
 
-msgid "config holds \"Name=value\" strings (got '%s')"
+msgid "config holds \"Name=value\" strings (got '{}')"
 msgstr "config sisältää \"Nimi=arvo\"-merkkijonoja (saatiin '{1}')"
 
 msgid "config is an array of \"Name=value\" strings"
@@ -1893,7 +1893,7 @@ msgstr "sisältää ohjausmerkin"
 msgid "contains one of < > : \" / \\ | ? *"
 msgstr "sisältää jonkin merkeistä < > : \" / \\ | ? *"
 
-msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgid "content-type is a media type, like \"image/png\" (got '{}')"
 msgstr "content-type on mediatyyppi, kuten \"image/png\" (saatiin '{1}')"
 
 msgid "control character"
@@ -1914,28 +1914,28 @@ msgstr "default-when tarvitsee levelin yli 1 (level 1 -ominaisuus asennetaan jok
 msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
 msgstr "määritä muuttuja ([define] tai -D NIMI=arvo), tai kirjoita $$ kirjaimelliselle $:lle"
 
-msgid "dialog '%s' is not a [dialog.*]"
+msgid "dialog '{}' is not a [dialog.*]"
 msgstr "valintaikkuna '{1}' ei ole [dialog.*]"
 
 msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
 msgstr "'Rp'-alkuiset valintaikkunatunnukset (ja FilesInUse) ovat rubrapackin omia"
 
-msgid "dir '%s' is inside itself (path loop)"
+msgid "dir '{}' is inside itself (path loop)"
 msgstr "dir '{1}' on itsensä sisällä (polkusilmukka)"
 
-msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgid "dir '{}' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
 msgstr "dir '{1}' ei ole dir-tunnus eikä Programs, Desktop, StartMenu tai Startup"
 
-msgid "dir '%s' is not a dir ID"
+msgid "dir '{}' is not a dir ID"
 msgstr "dir '{1}' ei ole dir-tunnus"
 
-msgid "dir '%s' is not defined"
+msgid "dir '{}' is not defined"
 msgstr "dir '{1}' ei ole määritetty"
 
 msgid "dir ID"
 msgstr "dir-tunnus"
 
-msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgid "direction must be \"in\" or \"out\" (got '{}')"
 msgstr "directionin on oltava \"in\" tai \"out\" (saatiin '{1}')"
 
 msgid "do/undo arguments are longer than 255 characters"
@@ -1944,7 +1944,7 @@ msgstr "do/undo-argumentit ovat pidempiä kuin 255 merkkiä"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "pisteelliset avaimet eivät ole tuettuja; laita avain omaan taulukkoonsa"
 
-msgid "driver '%s' is not an [odbc-driver.*]"
+msgid "driver '{}' is not an [odbc-driver.*]"
 msgstr "ohjain '{1}' ei ole [odbc-driver.*]"
 
 msgid "dump a package (MSI tables as IDT)"
@@ -1965,7 +1965,7 @@ msgstr "päättyy välilyöntiin tai pisteeseen"
 msgid "error"
 msgstr "virhe"
 
-msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgid "executable = \"{}\" must name a [file.*] that goes into the package"
 msgstr "executable = \"{1}\" on nimettävä pakettiin menevä [file.*]"
 
 msgid "expected ',' or ']' in the array"
@@ -1980,10 +1980,10 @@ msgstr "taulukon nimen sulkemiseen odotettiin ']'"
 msgid "expected a key, a [table] or a comment"
 msgstr "odotettiin avainta, [taulukkoa] tai kommenttia"
 
-msgid "extension '%s' already has a program ([assoc.%s])"
+msgid "extension '{}' already has a program ([assoc.{}])"
 msgstr "tunnisteella '{1}' on jo ohjelma ([assoc.{2}])"
 
-msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "extensionin on oltava '.' ja pieniä kirjaimia, numeroita, '_' tai '-' (saatiin '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
@@ -1995,49 +1995,49 @@ msgstr "external-location = true vaatii Windowsin koontiversion 19041 tai uudemm
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files ei vaikuta, kun preflight = false"
 
-msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '{}')"
 msgstr "extra-filesin on oltava \"ask\", \"keep\" tai \"delete\" (saatiin '{1}')"
 
-msgid "feature %s is gone: installations that had it lose what it held"
+msgid "feature {} is gone: installations that had it lose what it held"
 msgstr "ominaisuus {1} on poissa: asennukset, joissa se oli, menettävät sen sisällön"
 
-msgid "feature '%s' is its own ancestor"
+msgid "feature '{}' is its own ancestor"
 msgstr "ominaisuus '{1}' on oma esivanhempansa"
 
-msgid "feature '%s' is not defined"
+msgid "feature '{}' is not defined"
 msgstr "ominaisuutta '{1}' ei ole määritetty"
 
-msgid "feature parent '%s' is not defined"
+msgid "feature parent '{}' is not defined"
 msgstr "ominaisuuden yläkohtaa '{1}' ei ole määritetty"
 
-msgid "file '%s' already runs service '%s'"
+msgid "file '{}' already runs service '{}'"
 msgstr "tiedosto '{1}' suorittaa jo palvelua '{2}'"
 
-msgid "file '%s' is already registered as a font"
+msgid "file '{}' is already registered as a font"
 msgstr "tiedosto '{1}' on jo rekisteröity fontiksi"
 
-msgid "file '%s' is not a [file.*] of this package"
+msgid "file '{}' is not a [file.*] of this package"
 msgstr "tiedosto '{1}' ei ole tämän paketin [file.*]"
 
-msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgid "file '{}' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
 msgstr "tiedosto '{1}' on asennettava itse Fonts-kansioon ([dir.*], jossa path = \"Fonts\")"
 
-msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgid "file '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "tiedosto '{1}' tarvitsee ominaisuuden: aseta 'feature' tähän tai sen dir-kohteeseen"
 
 msgid "file must be \"file:<ID>\""
 msgstr "filen on oltava \"file:<ID>\""
 
-msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "tiedostonimi on {1} UTF-16-yksikköä; 8.3-lyhytnimen kanssa MSI sallii enintään {2}"
 
 msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
 msgstr "file-system-virtualization ja registry-virtualization = false vaativat Windowsin koontiversion 18362 tai uudemman: aseta [msix] min-version = \"10.0.18362.0\""
 
-msgid "file: '%s' is not a [file.*] of this package"
+msgid "file: '{}' is not a [file.*] of this package"
 msgstr "file: '{1}' ei ole tämän paketin [file.*]"
 
-msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgid "file: '{}' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' palvelee COM-luokkia vain .exe- tai .dll-tiedostona"
 
 msgid "files but no Media row"
@@ -2049,22 +2049,22 @@ msgstr "korjaa viestin mainitsema arvo; tunnukset ovat kirjaimia, numeroita ja '
 msgid "floating-point numbers are not supported"
 msgstr "liukulukuja ei tueta"
 
-msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgid "folder '{}' needs a feature: set 'feature' here or on its dir"
 msgstr "kansio '{1}' tarvitsee ominaisuuden: aseta 'feature' tähän tai sen dir-kohteeseen"
 
-msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "kansion nimi on {1} UTF-16-yksikköä; 8.3-lyhytnimen kanssa MSI sallii enintään {2}"
 
 msgid "follow-parent needs a parent"
 msgstr "follow-parent tarvitsee parentin"
 
-msgid "fonts need scope = \"machine\" (this is %s)"
+msgid "fonts need scope = \"machine\" (this is {})"
 msgstr "fontit tarvitsevat scope = \"machine\" (tämä on {1})"
 
-msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgid "format {} needs a newer rubrapack (this one reads format {})"
 msgstr "format {1} tarvitsee uudemman rubrapackin (tämä lukee formatia {2})"
 
-msgid "format is a whole number: format = %d"
+msgid "format is a whole number: format = {}"
 msgstr "format on kokonaisluku: format = {1}"
 
 msgid "give --pass-env or --pass-file, not both"
@@ -2097,10 +2097,10 @@ msgstr "anna yksi valitsimista --key, --pkcs11 ja --key-store"
 msgid "give sub folders of the program folder, separated by commas, or - for none"
 msgstr "anna ohjelmakansion alikansiot pilkuin erotettuina, tai - ei mitään"
 
-msgid "glob '%s' matches no file"
+msgid "glob '{}' matches no file"
 msgstr "glob '{1}' ei vastaa mitään tiedostoa"
 
-msgid "glob '%s' matches the output file '%s'"
+msgid "glob '{}' matches the output file '{}'"
 msgstr "glob '{1}' vastaa tulostetiedostoa '{2}'"
 
 msgid "has a MergeModule.CABinet stream that cannot be read"
@@ -2181,16 +2181,16 @@ msgstr "sisältää ASCII:n ulkopuolista tekstiä muulla koodisivulla kuin 65001
 msgid "icon must be an .ico file"
 msgstr "iconin on oltava .ico-tiedosto"
 
-msgid "icon: file '%s' is not a [file.*] of this package"
+msgid "icon: file '{}' is not a [file.*] of this package"
 msgstr "icon: tiedosto '{1}' ei ole tämän paketin [file.*]"
 
-msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgid "id must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}: the module's own, kept in every version"
 msgstr "idn on oltava GUID, kuten {12345678-1234-1234-1234-123456789ABC}: moduulin oma, sama jokaisessa versiossa"
 
-msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '{}')"
 msgstr "identifier on wingetin Publisher.Package: 2–8 osaa, kukin 1–32 merkkiä, ei välilyöntejä eikä \\ / : * ? \" < > | (saatiin '{1}')"
 
-msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '{}')"
 msgstr "identity-namen on oltava 3-50 merkkiä joukosta A-Z, a-z, 0-9, '.' ja '-' (saatiin '{1}')"
 
 msgid "image must be a .bmp file (Windows Installer shows BMP only)"
@@ -2202,7 +2202,7 @@ msgstr "sisäkkäisiä taulukoita (inline) ei tueta; käytä [kind.ID]-taulukkoa
 msgid "installed asks Windows what is installed; it runs on Windows only"
 msgstr "installed kysyy Windowsilta, mitä on asennettu; toimii vain Windowsissa"
 
-msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgid "installs to the same path as line {} (Windows ignores case in names{})"
 msgstr "asentuu samaan polkuun kuin rivi {1} (Windows ei erottele kirjainkokoa nimissä{2})"
 
 msgid "instances is for a per-machine package (scope = \"machine\")"
@@ -2217,13 +2217,13 @@ msgstr "sisäinen virhe: sisäänrakennetun valintaikkunan sarkainjärjestys on 
 msgid "internal: a module table has no _Validation rule"
 msgstr "sisäinen: moduulitaulukolla ei ole _Validation-sääntöä"
 
-msgid "internal: no _Validation rule for a column of %s"
+msgid "internal: no _Validation rule for a column of {}"
 msgstr "sisäinen: ei _Validation-sääntöä taulukon {1} sarakkeelle"
 
 msgid "invalid"
 msgstr "virheellinen"
 
-msgid "invalid - %s"
+msgid "invalid - {}"
 msgstr "virheellinen - {1}"
 
 msgid "is '.' or '..'"
@@ -2253,28 +2253,28 @@ msgstr "ei ole kelvollinen MSIX-paketti"
 msgid "is not valid UTF-8"
 msgstr "ei ole kelvollista UTF-8:aa"
 
-msgid "isolate-for: '%s' is not a program (.exe)"
+msgid "isolate-for: '{}' is not a program (.exe)"
 msgstr "isolate-for: '{1}' ei ole ohjelma (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "säilytä päivityskoodi, nosta versiota, säilytä pysyvien tiedostojen komponenttikoodit"
 
-msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgid "key '{}' is set twice in this table (first at line {})"
 msgstr "avain '{1}' on asetettu tässä taulukossa kahdesti (ensin rivillä {2})"
 
-msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgid "key '{}' must not start or end with '\\' or contain an empty part"
 msgstr "avain '{1}' ei saa alkaa tai päättyä '\\'-merkkiin eikä sisältää tyhjää osaa"
 
-msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgid "key '{}' outside a table; only 'format' comes before the first table"
 msgstr "avain '{1}' taulukon ulkopuolella; vain 'format' tulee ennen ensimmäistä taulukkoa"
 
-msgid "key file '%s': %s"
+msgid "key file '{}': {}"
 msgstr "avaintiedosto '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '{}')"
 msgstr "kindin on oltava \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" tai \"autoplay\" (saatiin '{1}')"
 
-msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '{}')"
 msgstr "kindin on oltava \"preview\", \"thumbnail\" tai \"property\" (saatiin '{1}')"
 
 msgid "kind must be registry, file, dir or component"
@@ -2283,22 +2283,22 @@ msgstr "kindin on oltava registry, file, dir tai component"
 msgid "labels is an array of strings, one per value"
 msgstr "labels on merkkijonotaulukko, yksi arvoa kohden"
 
-msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgid "language '{}' has no language pack (lang/{}.po beside the source, or RUBRAPACK_LANG_DIR)"
 msgstr "kielellä '{1}' ei ole kielipakettia (lang/{2}.po lähteen vieressä, tai RUBRAPACK_LANG_DIR)"
 
-msgid "language '%s' is listed twice"
+msgid "language '{}' is listed twice"
 msgstr "kieli '{1}' on luettelossa kahdesti"
 
-msgid "language '%s' is not in [ui] languages"
+msgid "language '{}' is not in [ui] languages"
 msgstr "kieli '{1}' ei ole kohdassa [ui] languages"
 
-msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgid "language '{}' lacks {} text(s), the first is {}: add them to its language pack (lang/{}.po) or give [ui-text.ID] text-{}"
 msgstr "kieleltä '{1}' puuttuu {2} tekstiä, ensimmäinen on {3}: lisää ne sen kielipakettiin (lang/{4}.po) tai anna [ui-text.ID] text-{5}"
 
-msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgid "language '{}' needs [ui] langid-{} (its LANGIDs, for the automatic choice)"
 msgstr "kieli '{1}' tarvitsee [ui] langid-{2} (sen LANGID-arvot automaattista valintaa varten)"
 
-msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgid "language '{}' needs [ui] name-{} (its name on the language page)"
 msgstr "kieli '{1}' tarvitsee [ui] name-{2} (sen nimi kielisivulla)"
 
 msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
@@ -2313,7 +2313,7 @@ msgstr "languagen on oltava \"neutral\", \"en-US\" tai \"ko-KR\""
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
 msgstr "languages = \"all\" kirjoitetaan yksin, ei taulukkoon: se ottaa mukaan kaikki sisäänrakennetut kielet"
 
-msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '{}')"
 msgstr "languages sisältää koodeja kuten \"ko\" tai \"zh_TW\" (2 tai 3 pientä kirjainta sekä _ ja alueen kaksi isoa kirjainta) (saatiin '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
@@ -2334,13 +2334,13 @@ msgstr "launcher on PSF-käynnistimen tiedostonimi kansiossa files, esimerkiksi 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "licensen on oltava .txt-, .md- (näytetään pelkkänä tekstinä) tai .rtf-tiedosto"
 
-msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgid "lint: {} row {}: column {} is not in NFC ({} row{}); build --nfc puts folder, file and shortcut names in NFC"
 msgstr "lint: {1} rivi {2}: sarake {3} ei ole NFC-muodossa ({4} riviä{-5}); build --nfc muuttaa kansio-, tiedosto- ja pikakuvakenimet NFC-muotoon"
 
-msgid "lint: %s%s"
+msgid "lint: {}{}"
 msgstr "lint: {1}{2}"
 
-msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgid "lint: code page {}, not 65001: text is not checked as UTF-8, widths only for ASCII"
 msgstr "lint: koodisivu {1}, ei 65001: tekstiä ei tarkisteta UTF-8:na, leveydet vain ASCII:lle"
 
 msgid "lint: no problems\n"
@@ -2352,34 +2352,34 @@ msgstr "lint: katso yllä olevat ongelmat\n"
 msgid "list the keys a token or the Windows certificate store can sign with"
 msgstr "luettele avaimet, joilla tunnus tai Windowsin varmennesäilö voi allekirjoittaa"
 
-msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgid "logo '{}' and its .scale-100 variant are both there: keep one"
 msgstr "logo '{1}' ja sen .scale-100-versio ovat molemmat olemassa: säilytä yksi"
 
-msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' at scale {} is {}x{} pixels; it must be {}x{}"
 msgstr "logo '{1}' skaalassa {2} on {3}x{4} kuvapistettä; sen on oltava {5}x{6}"
 
-msgid "logo '%s' at scale %s is not a PNG file"
+msgid "logo '{}' at scale {} is not a PNG file"
 msgstr "logo '{1}' skaalassa {2} ei ole PNG-tiedosto"
 
-msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgid "logo '{}' is {}x{} pixels; a file type's logo is square"
 msgstr "logo '{1}' on {2}x{3} pikseliä; tiedostotyypin logon on oltava neliö"
 
-msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgid "logo '{}' is {}x{} pixels; it must be {}x{}"
 msgstr "logo '{1}' on {2}x{3} kuvapistettä; sen on oltava {4}x{5}"
 
-msgid "logo '%s' is not a PNG file"
+msgid "logo '{}' is not a PNG file"
 msgstr "logo '{1}' ei ole PNG-tiedosto"
 
-msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgid "logo '{}' not found (nor as .scale-100 ... .scale-400 variants)"
 msgstr "logoa '{1}' ei löytynyt (ei myöskään .scale-100 ... .scale-400 -versioina)"
 
-msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgid "logo '{}': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': skaalaversioilla varustettu logo tarvitsee ASCII-tiedostonimen tunnisteineen"
 
 msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
 msgstr "logo on 8-bittinen RGB- tai RGBA-.png, ei lomitettu, enintään 1024 pikseliä sivultaan"
 
-msgid "main-package is the main package's identity name (got '%s')"
+msgid "main-package is the main package's identity name (got '{}')"
 msgstr "main-package on pääpaketin identiteettinimi (saatiin '{1}')"
 
 msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
@@ -2394,7 +2394,7 @@ msgstr "ei saa sisältää ohjausmerkkejä eikä merkkejä / \\ : * ? \" < > | $
 msgid "may not start with a space or end with a space or a dot"
 msgstr "ei saa alkaa välilyönnillä eikä päättyä välilyöntiin tai pisteeseen"
 
-msgid "merge module '%s' not found"
+msgid "merge module '{}' not found"
 msgstr "yhdistämismoduulia '{1}' ei löytynyt"
 
 msgid "min-version must be a version like 1.2.3"
@@ -2430,7 +2430,7 @@ msgstr "yli 3 uudelleenohjausta"
 msgid "more than 96 sections"
 msgstr "yli 96 osiota"
 
-msgid "more than one source file ('%s')"
+msgid "more than one source file ('{}')"
 msgstr "useampi kuin yksi lähdetiedosto ('{1}')"
 
 msgid "more than one token is present: name one with --token-label"
@@ -2439,7 +2439,7 @@ msgstr "tunnuksia on useampi kuin yksi: nimeä yksi --token-label-valitsimella"
 msgid "msix-packages"
 msgstr "msix-packages"
 
-msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgid "multi must be \"each\", \"one\" or \"single\" (got '{}')"
 msgstr "multin on oltava \"each\", \"one\" tai \"single\" (saatiin '{1}')"
 
 msgid "multi-line strings are not supported"
@@ -2454,7 +2454,7 @@ msgstr "on oltava 1-64 tavua"
 msgid "name contains a control character"
 msgstr "nimi sisältää ohjausmerkin"
 
-msgid "name is a package's identity name (got '%s')"
+msgid "name is a package's identity name (got '{}')"
 msgstr "name on paketin identiteettinimi (saatiin '{1}')"
 
 msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
@@ -2466,7 +2466,7 @@ msgstr "nimeää kansion, jota sen Directory-taulukossa ei ole"
 msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
 msgstr "new msix ei ole vielä toteutettu: tee MSI-lähde ja lisää [msix] (katso käsikirja)"
 
-msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgid "no 'format = {}' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
 msgstr "ei riviä 'format = {1}': lähde rubrapack 0.18:n tai vanhemman muodossa, jota tämä versio ei lue (polut alkavat nyt $(ProgramFiles)- tai $(INSTALLDIR)-kohdasta); katso käsikirjan Source format"
 
 msgid "no --trust given: the signature verifies but nothing says whom to trust"
@@ -2490,7 +2490,7 @@ msgstr "ei palvelimen nimeä tai yli 255 tavun nimi"
 msgid "no string pool: not a transform"
 msgstr "ei merkkijonopoolia: ei muunnos"
 
-msgid "no table '%s' in '%s'"
+msgid "no table '{}' in '{}'"
 msgstr "taulukkoa '{1}' ei ole kohteessa '{2}'"
 
 msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
@@ -2553,10 +2553,10 @@ msgstr "oktaali- ja binaarilukuja ei tueta; käytä desimaalia tai 0x"
 msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
 msgstr "on = \"uninstall\" on HKLM:lle, HKCU:lle ja HKMU:lle (luokat kuuluvat [assoc.*]-, [com.*]- ym. kohteisiin)"
 
-msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgid "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software"
 msgstr "on = \"uninstall\" poistaa avaimen kaikkineen: '{1}' ei ole tuotteen oma avain Softwaren alla"
 
-msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '{}'"
 msgstr "on = \"uninstall\" poistaa koko avaimen poistettaessa; se ei ota '{1}'-arvoa"
 
 msgid "on Windows `keys list` shows the certificate store"
@@ -2574,7 +2574,7 @@ msgstr "onin on oltava \"install\" tai \"uninstall\""
 msgid "on must be \"install\", \"uninstall\" or \"both\""
 msgstr "onin on oltava \"install\", \"uninstall\" tai \"both\""
 
-msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '{}')"
 msgstr "on: kukin on tiedostotyyppi ('.' ja pieniä kirjaimia, numeroita, '_' tai '-'), \"*\" (jokainen tiedosto), \"folder\", \"background\" (kansion tyhjä osa), \"drive\" tai \"assoc:<ID>\" (saatiin '{1}')"
 
 msgid "only a bitmap control takes an image"
@@ -2589,19 +2589,19 @@ msgstr "vain radio-, combo- ja listbox-ohjausobjektit ottavat values-arvon"
 msgid "out of memory"
 msgstr "muisti loppui"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgid "output '{}': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
 msgstr "tuloste '{1}': rubrapack kirjoittaa .msi-, .msm-, .msix-, .msixbundle-, .msixupload-tiedostoja ja ketjun asennus-.exe:n"
 
-msgid "package '%s' %s"
+msgid "package '{}' {}"
 msgstr "paketti '{1}' {2}"
 
-msgid "package '%s' not found"
+msgid "package '{}' not found"
 msgstr "pakettia '{1}' ei löytynyt"
 
 msgid "parent must be another product's upgrade-code, not this package's own"
 msgstr "parentin on oltava toisen tuotteen upgrade-code, ei tämän paketin oma"
 
-msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "parent must be the main product's upgrade-code, a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "parentin on oltava päätuotteen upgrade-code, GUID kuten {12345678-1234-1234-1234-123456789ABC}"
 
 msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
@@ -2613,16 +2613,16 @@ msgstr "pathin on alettava Windowsin kansiolla (kuten $(ProgramFiles) tai $(Syst
 msgid "paths"
 msgstr "polut"
 
-msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '{}')"
 msgstr "perceived-typen on oltava \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" tai \"application\" (saatiin '{1}')"
 
-msgid "permissions need scope = \"machine\" (this is %s)"
+msgid "permissions need scope = \"machine\" (this is {})"
 msgstr "käyttöoikeudet tarvitsevat scope = \"machine\" (tämä on {1})"
 
-msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '{}')"
 msgstr "phase on oltava \"immediate\", \"deferred\", \"commit\" tai \"rollback\" (saatiin '{1}')"
 
-msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '{}')"
 msgstr "portsin on oltava portti tai alue kuten \"8000-8100\" väliltä 1-65535 (saatiin '{1}')"
 
 msgid "print a random GUID, or the one rubrapack derives from a text"
@@ -2640,52 +2640,52 @@ msgstr "tulosta tämä ohje tai yhden komennon käyttö"
 msgid "product-code must be a GUID"
 msgstr "product-coden on oltava GUID"
 
-msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '{}')"
 msgstr "profilen on oltava \"all\", \"domain\", \"private\" tai \"public\" (saatiin '{1}')"
 
-msgid "prog-id '%s' is already [com.%s]'s"
+msgid "prog-id '{}' is already [com.{}]'s"
 msgstr "prog-id '{1}' kuuluu jo kohteelle [com.{2}]"
 
-msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgid "prog-id '{}' is also [assoc.{}]'s: a file type and a COM class need two names"
 msgstr "prog-id '{1}' kuuluu myös kohteelle [assoc.{2}]: tiedostotyyppi ja COM-luokka tarvitsevat kaksi nimeä"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgid "prog-id '{}' is also in [assoc.{}] with another description, target, icon or args"
 msgstr "prog-id '{1}' on myös kohteessa [assoc.{2}] eri descriptionilla, targetilla, iconilla tai argsilla"
 
-msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgid "prog-id '{}' is also in [assoc.{}] with another logo"
 msgstr "prog-id '{1}' on myös kohdassa [assoc.{2}] eri logolla"
 
-msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '{}')"
 msgstr "prog-idn on oltava kirjaimia, numeroita, '.', '_' tai '-', ei ala numerolla, enintään 39 (saatiin '{1}')"
 
 msgid "properties are for Windows Installer packages; an MSIX takes none"
 msgstr "properties on Windows Installer -paketeille; MSIX ei ota niitä"
 
-msgid "property '%s' already belongs to control '%s'"
+msgid "property '{}' already belongs to control '{}'"
 msgstr "ominaisuus '{1}' kuuluu jo ohjausobjektille '{2}'"
 
-msgid "property '%s' has the name of a dir or feature"
+msgid "property '{}' has the name of a dir or feature"
 msgstr "ominaisuudella '{1}' on dir-kohteen tai ominaisuuden nimi"
 
-msgid "property '%s' is already defined (line %u)"
+msgid "property '{}' is already defined (line {})"
 msgstr "ominaisuus '{1}' on jo määritetty (rivi {2})"
 
-msgid "property '%s' is already searched (line %u)"
+msgid "property '{}' is already searched (line {})"
 msgstr "ominaisuutta '{1}' haetaan jo (rivi {2})"
 
-msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgid "property '{}' is set by rubrapack or the installer and cannot be defined here"
 msgstr "ominaisuuden '{1}' asettaa rubrapack tai asennusohjelma, eikä sitä voi määrittää tässä"
 
-msgid "property '%s' must be a public name of your own (upper case)"
+msgid "property '{}' must be a public name of your own (upper case)"
 msgstr "ominaisuuden '{1}' on oltava oma julkinen nimi (isoin kirjaimin)"
 
-msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgid "property '{}' must be a public name: upper-case letters, digits and '_'"
 msgstr "ominaisuuden '{1}' on oltava julkinen nimi: isoja kirjaimia, numeroita ja '_'"
 
-msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgid "protocol must be \"tcp\" or \"udp\" (got '{}')"
 msgstr "protocolin on oltava \"tcp\" tai \"udp\" (saatiin '{1}')"
 
-msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgid "public-folder must be a folder of the package, like \"Public\" (got '{}')"
 msgstr "public-folderin on oltava paketin kansio, esimerkiksi \"Public\" (saatiin '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
@@ -2715,25 +2715,25 @@ msgstr "recursive = true ei koskaan suoritu, kun päivitys poistaa tämän versi
 msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
 msgstr "recursive = true poistaa kansion kaikkineen; se ei ota 'name'-arvoa"
 
-msgid "refuse-upgrade-below %s is above this package's version %s"
+msgid "refuse-upgrade-below {} is above this package's version {}"
 msgstr "refuse-upgrade-below {1} on suurempi kuin tämän paketin versio {2}"
 
-msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgid "refuse-upgrade-below '{}' must be a version like 1.2.3"
 msgstr "refuse-upgrade-below '{1}' on oltava versio, kuten 1.2.3"
 
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message tarvitsee refuse-upgrade-below-arvon"
 
-msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgid "region {} of the language page holds {} languages, at most {} (X-Rubrapack-Group of their packs)"
 msgstr "kielisivun alueella {1} on {2} kieltä, enintään {3} (pakettien X-Rubrapack-Group)"
 
-msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgid "registration must be \"machine\" or \"user\" (got '{}')"
 msgstr "registration on oltava \"machine\" tai \"user\" (saatiin '{1}')"
 
-msgid "registry '%s' removes a value; it has nothing to protect"
+msgid "registry '{}' removes a value; it has nothing to protect"
 msgstr "rekisteri '{1}' poistaa arvon; sillä ei ole mitään suojattavaa"
 
-msgid "registry value '%s' needs a feature"
+msgid "registry value '{}' needs a feature"
 msgstr "rekisteriarvo '{1}' tarvitsee ominaisuuden"
 
 msgid "remove = true removes the value at install; it takes no 'value'"
@@ -2745,28 +2745,28 @@ msgstr "remove-addons tarvitsee siivoustehtävän: poista cleanup = false"
 msgid "replaces holds at most 16 upgrade codes"
 msgstr "replaces sisältää enintään 16 päivityskoodia"
 
-msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgid "replaces holds upgrade codes, GUIDs like {{12345678-1234-1234-1234-123456789ABC}} (got '{}')"
 msgstr "replaces sisältää päivityskoodeja, GUID-arvoja kuten {12345678-1234-1234-1234-123456789ABC} (saatiin '{1}')"
 
-msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgid "replaces is an array of upgrade codes, like [\"{{12345678-1234-1234-1234-123456789ABC}}\"]"
 msgstr "replaces on päivityskoodien taulukko, kuten [\"{12345678-1234-1234-1234-123456789ABC}\"]"
 
-msgid "replaces lists %s twice"
+msgid "replaces lists {} twice"
 msgstr "replaces luettelee {1}:n kahdesti"
 
-msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgid "replaces names {}, which is this package's own upgrade-code or its parent"
 msgstr "replaces nimeää {1}:n, joka on tämän paketin oma upgrade-code tai sen parent"
 
-msgid "required property %s is missing"
+msgid "required property {} is missing"
 msgstr "pakollinen ominaisuus {1} puuttuu"
 
-msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgid "rollback twin must come before {} ({} <= {})"
 msgstr "palautuskaksosen on tultava ennen {1}:tä ({2} <= {3})"
 
 msgid "root must be HKLM, HKCR or HKCU"
 msgstr "rootin on oltava HKLM, HKCR tai HKCU"
 
-msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '{}')"
 msgstr "rootin on oltava HKLM, HKCU, HKCR tai HKMU (saatiin '{1}')"
 
 msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
@@ -2778,13 +2778,13 @@ msgstr "rubrapack new: muutama kysymys tekee lähteen (Enter ottaa arvon kohdast
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "suorita `rubrapack help <komento>`; tarkista polut ja että tulostekansio on olemassa"
 
-msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgid "run: '{}' (machine 0x{:04X}) cannot run on this package's machines"
 msgstr "run: '{1}' (kone 0x{2}) ei voi toimia tämän paketin koneissa"
 
-msgid "run: '%s' is not a program (.exe)"
+msgid "run: '{}' is not a program (.exe)"
 msgstr "run: '{1}' ei ole ohjelma (.exe)"
 
-msgid "run: file '%s' is not a [file.*] of this package"
+msgid "run: file '{}' is not a [file.*] of this package"
 msgstr "run: tiedosto '{1}' ei ole tämän paketin [file.*]"
 
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
@@ -2793,7 +2793,7 @@ msgstr "tallenna lähde UTF-8:na (tai UTF-16:na BOM:lla), LF- tai CRLF-rivinvaih
 msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
 msgstr "kertoo, onko tähän Windowsiin asennettu tuote, jolla on se päivityskoodi, tai sen perheen sovelluspaketti"
 
-msgid "scheme '%s' already has a program ([protocol.%s])"
+msgid "scheme '{}' already has a program ([protocol.{}])"
 msgstr "skeemalla '{1}' on jo ohjelma ([protocol.{2}])"
 
 msgid "scope must be \"machine\", \"user\" or \"dual\""
@@ -2802,25 +2802,25 @@ msgstr "scopen on oltava \"machine\", \"user\" tai \"dual\""
 msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
 msgstr "sddl:n on oltava SDDL-merkkijono, kuten \"D:PAI(A;OICI;FA;;;BA)\""
 
-msgid "search property '%s' must be a public name of your own (upper case)"
+msgid "search property '{}' must be a public name of your own (upper case)"
 msgstr "hakuominaisuuden '{1}' on oltava oma julkinen nimi (isoin kirjaimin)"
 
 msgid "see the message; rebuilding with rubrapack fixes most of these"
 msgstr "katso viesti; uudelleenrakentaminen rubrapackilla korjaa useimmat näistä"
 
-msgid "sequence %ld is not after %s (%ld)"
+msgid "sequence {} is not after {} ({})"
 msgstr "järjestys {1} ei ole {2}:n ({3}) jälkeen"
 
 msgid "sequences an action next to one that neither the package nor the module runs"
 msgstr "järjestää toiminnon sellaisen viereen, jota paketti tai moduuli ei suorita"
 
-msgid "service name '%s' is already used"
+msgid "service name '{}' is already used"
 msgstr "palvelun nimi '{1}' on jo käytössä"
 
-msgid "services need scope = \"machine\" (this is %s)"
+msgid "services need scope = \"machine\" (this is {})"
 msgstr "palvelut tarvitsevat scope = \"machine\" (tämä on {1})"
 
-msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgid "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}"
 msgstr "pikakuvakkeen nimi on {1} UTF-16-yksikköä; 8.3-lyhytnimen kanssa MSI sallii enintään {2}"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
@@ -2829,25 +2829,25 @@ msgstr "näyttää, miten kaksi pakettia eroavat: taulut, rivit, solut ja yhteen
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "allekirjoita PE-tiedosto, MSI-paketti, MSIX-paketti tai -nippu"
 
-msgid "signed %s\n"
+msgid "signed {}\n"
 msgstr "allekirjoitettu {1}\n"
 
-msgid "source '%s' is a directory; use [files.ID] for many files"
+msgid "source '{}' is a directory; use [files.ID] for many files"
 msgstr "lähde '{1}' on hakemisto; käytä [files.ID]:tä monille tiedostoille"
 
-msgid "source '%s' is a symbolic link; links are not followed"
+msgid "source '{}' is a symbolic link; links are not followed"
 msgstr "lähde '{1}' on symbolinen linkki; linkkejä ei seurata"
 
-msgid "source '%s' is not a regular file"
+msgid "source '{}' is not a regular file"
 msgstr "lähde '{1}' ei ole tavallinen tiedosto"
 
-msgid "source file '%s' changed while the package was being built"
+msgid "source file '{}' changed while the package was being built"
 msgstr "lähdetiedosto '{1}' muuttui paketin rakentamisen aikana"
 
-msgid "source file '%s' is larger than 2 GiB"
+msgid "source file '{}' is larger than 2 GiB"
 msgstr "lähdetiedosto '{1}' on suurempi kuin 2 GiB"
 
-msgid "source file '%s' not found"
+msgid "source file '{}' not found"
 msgstr "lähdetiedostoa '{1}' ei löytynyt"
 
 msgid "source must be \"file:<ID>\""
@@ -2856,16 +2856,16 @@ msgstr "sourcen on oltava \"file:<ID>\""
 msgid "source must be an .msi, .msix, .msixbundle or .msp package"
 msgstr "sourcen on oltava .msi-, .msix-, .msixbundle- tai .msp-paketti"
 
-msgid "source path '%s' must be relative to the source file"
+msgid "source path '{}' must be relative to the source file"
 msgstr "lähdepolun '{1}' on oltava suhteellinen lähdetiedostoon nähden"
 
-msgid "source paths use '/', not '\\\\' (got '%s')"
+msgid "source paths use '/', not '\\\\' (got '{}')"
 msgstr "lähdepoluissa käytetään '/'-merkkiä, ei '\\\\' (saatiin '{1}')"
 
 msgid "source-format"
 msgstr "source-format"
 
-msgid "source: file '%s' is not a [file.*] of this package"
+msgid "source: file '{}' is not a [file.*] of this package"
 msgstr "source: tiedosto '{1}' ei ole tämän paketin [file.*]"
 
 msgid "start must be auto, demand or disabled"
@@ -2886,13 +2886,13 @@ msgstr "summary-namen on oltava ASCII:ta (yhteenvetotiedot sisältävät vain AS
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
 msgstr "symbols on luettelo .pdb-tiedostoista, esimerkiksi [\"build/$(ARCH)/app.pdb\"]"
 
-msgid "table %s %s"
+msgid "table {} {}"
 msgstr "taulukko {1} {2}"
 
-msgid "table '%s' is unreadable"
+msgid "table '{}' is unreadable"
 msgstr "taulukko '{1}' on lukukelvoton"
 
-msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgid "table [{}{}{}] is defined twice (first at line {})"
 msgstr "taulukko [{1}{2}{3}] on määritetty kahdesti (ensin rivillä {4})"
 
 msgid "table name expected"
@@ -2913,7 +2913,7 @@ msgstr "tags on enintään 16 hakusanan luettelo, esimerkiksi [\"editor\", \"tex
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "ei ota määritystä (siinä ei ole ModuleConfigurationia)"
 
-msgid "target '%s' does not exist"
+msgid "target '{}' does not exist"
 msgstr "kohdetta '{1}' ei ole"
 
 msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
@@ -2922,13 +2922,13 @@ msgstr "targetin on oltava \"dir:<ID>\", \"file:<ID>\" tai \"registry:<ID>\""
 msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "targetin on oltava \"file:<ID>\", joka nimeää tämän paketin [file.*]-taulukon"
 
-msgid "target name '%s' %s"
+msgid "target name '{}' {}"
 msgstr "kohdenimi '{1}' {2}"
 
-msgid "target: file '%s' is not a [file.*] of this package"
+msgid "target: file '{}' is not a [file.*] of this package"
 msgstr "target: tiedosto '{1}' ei ole tämän paketin [file.*]"
 
-msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgid "task-id '{}' is already used by [msix-extension.{}]"
 msgstr "task-id '{1}' on jo kohteen [msix-extension.{2}] käytössä"
 
 msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
@@ -2961,7 +2961,7 @@ msgstr "UTF-16-tiedosto ei ole kelvollista UTF-16:ta"
 msgid "the ZIP central directory lies outside the file"
 msgstr "ZIP-keskushakemisto on tiedoston ulkopuolella"
 
-msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgid "the application ID '{}' becomes Application Id: letters and digits only, not starting with a digit"
 msgstr "sovellustunnuksesta '{1}' tulee Application Id: vain kirjaimia ja numeroita, ei ala numerolla"
 
 msgid "the archive does not end in ZIP64 end records as MSIX packages do"
@@ -3030,10 +3030,10 @@ msgstr "upotetut cabinetit tekevät paketista vähintään 2 GiB, jota Windows I
 msgid "the entry is not in the central directory"
 msgstr "merkintä ei ole keskushakemistossa"
 
-msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgid "the error dialog '{}' needs a {} control named {} (error 2835)"
 msgstr "virhevalintaikkuna '{1}' tarvitsee {2}-ohjausobjektin nimeltä {3} (virhe 2835)"
 
-msgid "the executable '%s' must be an .exe"
+msgid "the executable '{}' must be an .exe"
 msgstr "suoritettavan tiedoston '{1}' on oltava .exe"
 
 msgid "the executable's folder does not lead to a known location"
@@ -3090,13 +3090,13 @@ msgstr "manifestissa ei ole Identity Publisheria"
 msgid "the manifest's Identity cannot be read for the package full name"
 msgstr "manifestin Identityä ei voi lukea paketin koko nimeä varten"
 
-msgid "the merge module %s"
+msgid "the merge module {}"
 msgstr "yhdistämismoduuli {1}"
 
-msgid "the name %s"
+msgid "the name {}"
 msgstr "nimi {1}"
 
-msgid "the package family %s is in the container twice"
+msgid "the package family {} is in the container twice"
 msgstr "pakettiperhe {1} on säilössä kahdesti"
 
 msgid "the package is not signed"
@@ -3120,7 +3120,7 @@ msgstr "paketin sisältö ei vastaa sen allekirjoitusta (sitä muutettiin alleki
 msgid "the package's directory cannot be read"
 msgstr "paketin hakemistoa ei voi lukea"
 
-msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgid "the package's file name must not hold quotes or a percent sign: '{}'"
 msgstr "paketin tiedostonimessä ei saa olla lainausmerkkejä eikä prosenttimerkkiä: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
@@ -3153,7 +3153,7 @@ msgstr "vastaus on suurempi kuin 4 MiB"
 msgid "the response uses a transfer coding other than chunked"
 msgstr "vastaus käyttää muuta siirtokoodausta kuin chunked"
 
-msgid "the same condition is already required (line %u)"
+msgid "the same condition is already required (line {})"
 msgstr "sama ehto vaaditaan jo (rivi {1})"
 
 msgid "the same without questions:\n  rubrapack new "
@@ -3198,7 +3198,7 @@ msgstr "lähdetiedoston merkistökoodaus"
 msgid "the system random source failed"
 msgstr "järjestelmän satunnaislähde epäonnistui"
 
-msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgid "the tab order (Control_Next) is not one cycle through its {} controls from Control_First (Windows Installer stops with error 2809 or 2810)"
 msgstr "sarkainjärjestys (Control_Next) ei ole yksi kierros sen {1} ohjausobjektin läpi Control_Firstista (Windows Installer pysähtyy virheeseen 2809 tai 2810)"
 
 msgid "the timestamp server answered with an HTTP error"
@@ -3246,7 +3246,7 @@ msgstr "tämä rubrapack käännettiin ilman valikko-osaansa: [menu.*]-kohteet e
 msgid "this rubrapack was built without the setup program (nob parts)"
 msgstr "tämä rubrapack käännettiin ilman asennusohjelmaa (nob parts)"
 
-msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '{}')"
 msgstr "threadingin on oltava \"sta\", \"mta\", \"both\" tai \"neutral\" (saatiin '{1}')"
 
 msgid "timestamp: "
@@ -3261,13 +3261,13 @@ msgstr "liian monta lokalisoitua tekstiä ja logoskaalaa resources.pri-tiedostol
 msgid "too many packages in the bundle"
 msgstr "liian monta pakettia nipussa"
 
-msgid "transform '%s' in '%s' cannot be read: %s"
+msgid "transform '{}' in '{}' cannot be read: {}"
 msgstr "muunnosta '{1}' kohteessa '{2}' ei voi lukea: {3}"
 
 msgid "trusted"
 msgstr "luotettu"
 
-msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgid "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after"
 msgstr "kaksi toimintoa jakaa sequence-arvon {1} ({2} ja {3}); anna yhdelle [action]-toiminnolle toinen sequence, before tai after"
 
 msgid "two packages of one architecture in a bundle"
@@ -3279,16 +3279,16 @@ msgstr "kaksi samannimistä pakettia nipussa"
 msgid "two resource packages of one ResourceId in a bundle"
 msgstr "kaksi saman ResourceId:n resurssipakettia nipussa"
 
-msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgid "type must be string, expand, dword, qword, binary or multi (got '{}')"
 msgstr "typen on oltava string, expand, dword, qword, binary tai multi (saatiin '{1}')"
 
-msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '{}')"
 msgstr "type on oltava text, checkbox, edit, radio, combo, listbox tai bitmap (saatiin '{1}')"
 
-msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgid "typelib-file: '{}' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' ei ole tämän paketin [file.*]"
 
-msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '{}')"
 msgstr "typelib-version on major.minor heksadesimaalinumeroin, kuten \"1.0\" (saatiin '{1}')"
 
 msgid "types and verb belong to kind = \"context-menu\""
@@ -3297,49 +3297,49 @@ msgstr "types ja verb kuuluvat kohteeseen kind = \"context-menu\""
 msgid "types: each is \".ext\" or \"*\" (every file)"
 msgstr "types: kukin on \".ext\" tai \"*\" (jokainen tiedosto)"
 
-msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '{}')"
 msgstr "types: kukin on '.' ja pieniä kirjaimia, numeroita, '_' tai '-' (saatiin '{1}')"
 
-msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgid "ui = \"{}\" lets the user choose the folder of dir '{}', which does not exist (set [ui] install-dir)"
 msgstr "ui = \"{1}\" antaa käyttäjän valita dir-kohteen '{2}' kansion, jota ei ole (aseta [ui] install-dir)"
 
 msgid "ui = \"features\" needs [feature.*] tables to choose from"
 msgstr "ui = \"features\" tarvitsee [feature.*]-taulukoita, joista valita"
 
-msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgid "ui must be none, basic, minimal, installdir or features (got '{}')"
 msgstr "uin on oltava none, basic, minimal, installdir tai features (saatiin '{1}')"
 
 msgid "unexpected text after the value"
 msgstr "odottamatonta tekstiä arvon jälkeen"
 
-msgid "unknown command '%s' (see 'rubrapack help')"
+msgid "unknown command '{}' (see 'rubrapack help')"
 msgstr "tuntematon komento '{1}' (katso 'rubrapack help')"
 
-msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgid "unknown escape \\{} (use '...' for text with backslashes)"
 msgstr "tuntematon koodinvaihtojakso \\{1} (käytä '...' kenoviivoja sisältävälle tekstille)"
 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "tuntematon inspect-valitsin (käytä taulukon nimeä, --summary, --files tai --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]"
+msgid "unknown key '{}' in [{}{}{}]"
 msgstr "tuntematon avain '{1}' kohteessa [{2}{3}{4}]"
 
-msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgid "unknown key '{}' in [{}{}{}] (did you mean '{}'?)"
 msgstr "tuntematon avain '{1}' kohteessa [{2}{3}{4}] (tarkoititko '{5}'?)"
 
-msgid "unknown or incomplete %s option '%s'"
+msgid "unknown or incomplete {} option '{}'"
 msgstr "tuntematon tai keskeneräinen {1}-valitsin '{2}'"
 
-msgid "unknown table [%s%s%s]"
+msgid "unknown table [{}{}{}]"
 msgstr "tuntematon taulukko [{1}{2}{3}]"
 
-msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgid "unknown table [{}{}{}] (did you mean [{}]?)"
 msgstr "tuntematon taulukko [{1}{2}{3}] (tarkoititko [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "pura paketti uuteen hakemistoon sellaisena kuin se asentuu"
 
-msgid "unsupported - %s"
+msgid "unsupported - {}"
 msgstr "ei tuettu - {1}"
 
 msgid "untrusted"
@@ -3351,13 +3351,13 @@ msgstr "update-*-avaimet tarvitsevat appinstaller-urin ja package-urin"
 msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
 msgstr "upgrade = false on valinnoille on = \"uninstall\" tai \"both\" (asennus ei ole koskaan päivityksen poisto)"
 
-msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgid "upgrade-code must be a GUID like {{12345678-1234-1234-1234-123456789ABC}}"
 msgstr "upgrade-coden on oltava GUID, kuten {12345678-1234-1234-1234-123456789ABC}"
 
-msgid "usage: rubrapack %s"
+msgid "usage: rubrapack {}"
 msgstr "käyttö: rubrapack {1}"
 
-msgid "usage: rubrapack %s\n\n%s%s\n"
+msgid "usage: rubrapack {}\n\n{}{}\n"
 msgstr "käyttö: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
@@ -3390,10 +3390,10 @@ msgstr "käytä täyttä rubrapack-koontia tai muuta tapaa"
 msgid "used by more than one component"
 msgstr "useamman kuin yhden komponentin käytössä"
 
-msgid "users must be \"all\" (got '%s')"
+msgid "users must be \"all\" (got '{}')"
 msgstr "users-arvon on oltava \"all\" (saatiin '{1}')"
 
-msgid "value '%s' is listed twice"
+msgid "value '{}' is listed twice"
 msgstr "arvo '{1}' on luettelossa kahdesti"
 
 msgid "value missing"
@@ -3408,10 +3408,10 @@ msgstr "values on 1-32 merkkijonon taulukko"
 msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
 msgstr "arvot: tunnukset, GUID:t, versiot, alueen ulkopuoliset luvut, viittaukset olemattomiin"
 
-msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgid "variable '{}' is not defined ([define] or -D {}=...){}"
 msgstr "muuttujaa '{1}' ei ole määritetty ([define] tai -D {2}=...){3}"
 
-msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgid "variable name '{}' may not contain '=' or start with = + - ! *"
 msgstr "muuttujan nimi '{1}' ei saa sisältää '='-merkkiä eikä alkaa merkillä = + - ! *"
 
 msgid "variables"
@@ -3420,10 +3420,10 @@ msgstr "muuttujat"
 msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
 msgstr "muuttujat: $(NIMI) ilman arvoa, sulkematon $(, Windowsin nimi tai dir-tunnus paikassa, jossa se ei voi olla"
 
-msgid "version '%s' must be a.b.c or a.b.c.d"
+msgid "version '{}' must be a.b.c or a.b.c.d"
 msgstr "version '{1}' on oltava a.b.c tai a.b.c.d"
 
-msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgid "version '{}' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
 msgstr "version '{1}' on oltava a.b.c tai a.b.c.d, jossa a, b <= 255 ja c, d <= 65535"
 
 msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
@@ -3441,13 +3441,13 @@ msgstr "mitä diagnostiikkakoodi tarkoittaa, sitä kantavat viestit, mitä tehd�
 msgid "with must be \"file:<ID>\""
 msgstr "within on oltava \"file:<ID>\""
 
-msgid "with: file '%s' is not a [file.*] of this package"
+msgid "with: file '{}' is not a [file.*] of this package"
 msgstr "with: tiedosto '{1}' ei ole tämän paketin [file.*]"
 
 msgid "without --pkcs11, `keys list` shows the Windows certificate store"
 msgstr "ilman --pkcs11-valitsinta `keys list` näyttää Windowsin varmennesäilön"
 
-msgid "working-dir '%s' is not a dir ID"
+msgid "working-dir '{}' is not a dir ID"
 msgstr "working-dir '{1}' ei ole dir-tunnus"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
@@ -3471,7 +3471,7 @@ msgstr "kirjoita taulukko tai arvo yksinkertaisesti niin kuin käsikirja näytt�
 msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
 msgstr "kirjoita arvo ilman '[~]'; mode = \"append\" tai \"prepend\" lisää sen"
 
-msgid "wrote %s\n"
+msgid "wrote {}\n"
 msgstr "kirjoitettu {1}\n"
 
 msgid "x + width must be at most 370 (the page width)"

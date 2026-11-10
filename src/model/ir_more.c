@@ -13,7 +13,7 @@ static char *file_ref(ctx_t *c, const rp_ttable_t *t, const char *key, bool requ
     char *v = ir_get_str(c, t, key, required, NULL);
     if (v == NULL) return NULL;
     char *id = NULL;
-    if (strncmp(v, "file:", 5) != 0 || v[5] == '\0') ERR(c, ir_key_pos(t, key), "RP1315", "%s must be \"file:<ID>\" naming a [file.*] of this package", key);
+    if (strncmp(v, "file:", 5) != 0 || v[5] == '\0') ERR(c, ir_key_pos(t, key), "RP1315", "{} must be \"file:<ID>\" naming a [file.*] of this package", proven_arg_cstr(key));
     else id = ir_dup(c, v + 5);
     rp_mem_free(c->alloc, v);
     return id;
@@ -26,7 +26,7 @@ static void key_values(ctx_t *c, const rp_ttable_t *t, const char *key, char ***
     *count = 0;
     if (tk == NULL) return;
     if (tk->val.kind != RP_TV_ARRAY) {
-        ERR(c, tk->pos, "RP1316", "%s is a list of \"Key=Value\" texts", key);
+        ERR(c, tk->pos, "RP1316", "{} is a list of \"Key=Value\" texts", proven_arg_cstr(key));
         return;
     }
     *out = rp_mem_alloc(c->alloc, tk->val.count + 1, sizeof **out);
@@ -38,7 +38,7 @@ static void key_values(ctx_t *c, const rp_ttable_t *t, const char *key, char ***
         char *v = tk->val.items[i].kind == RP_TV_STRING ? ir_subst(c, &tk->val.items[i]) : NULL;
         const char *eq = v ? strchr(v, '=') : NULL;
         if (v == NULL || eq == NULL || eq == v) {
-            ERR(c, tk->pos, "RP1316", "%s is a list of \"Key=Value\" texts", key);
+            ERR(c, tk->pos, "RP1316", "{} is a list of \"Key=Value\" texts", proven_arg_cstr(key));
             rp_mem_free(c->alloc, v);
             continue;
         }
@@ -61,11 +61,11 @@ void ir_parse_move(ctx_t *c, const rp_ttable_t *t, rp_ir_move_t *x) {
     x->new_name = RP_V(ir_get_str(c, t, "new-name", false, NULL));
     if (x->new_name.ptr) ir_target_name_ok(c, rp_cs(x->new_name), ir_key_pos(t, "new-name"));
     if (x->new_name.ptr && x->name.ptr && strpbrk(rp_cs(x->name), "*?"))
-        ERR(c, ir_key_pos(t, "new-name"), "RP1316", "[move.%s]: new-name names one file; name has wildcards", rp_cs(t->id));
+        ERR(c, ir_key_pos(t, "new-name"), "RP1316", "[move.{}]: new-name names one file; name has wildcards", proven_arg_cstr(rp_cs(t->id)));
     x->copy = ir_get_bool(c, t, "copy", false);
     x->with_file = RP_V(file_ref(c, t, "with", false));
     x->feature = RP_V(ir_get_str(c, t, "feature", false, NULL));
-    if (x->with_file.ptr && x->feature.ptr) ERR(c, ir_key_pos(t, "feature"), "RP1316", "[move.%s]: feature goes with a component of its own, not with", rp_cs(t->id));
+    if (x->with_file.ptr && x->feature.ptr) ERR(c, ir_key_pos(t, "feature"), "RP1316", "[move.{}]: feature goes with a component of its own, not with", proven_arg_cstr(rp_cs(t->id)));
 }
 
 void ir_parse_odbc_driver(ctx_t *c, const rp_ttable_t *t, rp_ir_odbc_driver_t *x) {
@@ -92,15 +92,15 @@ void ir_parse_odbc_source(ctx_t *c, const rp_ttable_t *t, rp_ir_odbc_source_t *x
     char *reg = ir_get_str(c, t, "registration", false, NULL);
     if (reg && strcmp(reg, "user") == 0) x->user = true;
     else if (reg && strcmp(reg, "machine") == 0) x->user = false;
-    else if (reg) ERR(c, ir_key_pos(t, "registration"), "RP1316", "registration must be \"machine\" or \"user\" (got '%s')", reg);
+    else if (reg) ERR(c, ir_key_pos(t, "registration"), "RP1316", "registration must be \"machine\" or \"user\" (got '{}')", proven_arg_cstr(reg));
     else x->user = c->ir->scope != 0;        // a per-user or dual package registers for the user by default
     rp_mem_free(c->alloc, reg);
     key_values(c, t, "attributes", &x->attributes, &x->attribute_count);
     x->with_file = RP_V(file_ref(c, t, "with", false));
     if ((x->driver.ptr == NULL) == (x->driver_name.ptr == NULL))
-        ERR(c, t->pos, "RP1316", "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name", rp_cs(t->id));
+        ERR(c, t->pos, "RP1316", "[odbc-source.{}] names its driver once: driver (an [odbc-driver]) or driver-name", proven_arg_cstr(rp_cs(t->id)));
     else if (x->driver_name.ptr && x->with_file.ptr == NULL)
-        ERR(c, t->pos, "RP1202", "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with", rp_cs(t->id));
+        ERR(c, t->pos, "RP1202", "[odbc-source.{}] with driver-name needs with = \"file:<ID>\": the component it is installed with", proven_arg_cstr(rp_cs(t->id)));
 }
 
 void ir_parse_publish(ctx_t *c, const rp_ttable_t *t, rp_ir_publish_t *x) {
@@ -112,7 +112,7 @@ void ir_parse_publish(ctx_t *c, const rp_ttable_t *t, rp_ir_publish_t *x) {
     x->file = RP_V(file_ref(c, t, "file", true));
     x->category = RP_V(ir_get_str(c, t, "category", true, NULL));
     if (x->category.ptr && !ir_guid_ok(rp_ws(x->category)))
-        ERR(c, ir_key_pos(t, "category"), "RP1308", "%s must be a GUID like {12345678-...} (got '%s')", "category", rp_cs(x->category));
+        ERR(c, ir_key_pos(t, "category"), "RP1308", "{} must be a GUID like {{12345678-...}} (got '{}')", proven_arg_cstr("category"), proven_arg_cstr(rp_cs(x->category)));
     x->qualifier = RP_V(ir_get_str(c, t, "qualifier", true, NULL));
     x->data = RP_V(ir_get_str(c, t, "data", false, NULL));
 }
@@ -155,13 +155,13 @@ void ir_action_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->action_count; ++k) {
         const rp_ir_action_t *a = &ir->actions[k];
         if (a->kind == RP_ACT_PAIR) continue;
-        if (a->before.ptr && !standard_action(rp_cs(a->before))) ERR(c, a->pos, "RP1316", "%s: '%s' is not a standard action rubrapack places", "before", rp_cs(a->before));
-        if (a->after.ptr && !standard_action(rp_cs(a->after))) ERR(c, a->pos, "RP1316", "%s: '%s' is not a standard action rubrapack places", "after", rp_cs(a->after));
+        if (a->before.ptr && !standard_action(rp_cs(a->before))) ERR(c, a->pos, "RP1316", "{}: '{}' is not a standard action rubrapack places", proven_arg_cstr("before"), proven_arg_cstr(rp_cs(a->before)));
+        if (a->after.ptr && !standard_action(rp_cs(a->after))) ERR(c, a->pos, "RP1316", "{}: '{}' is not a standard action rubrapack places", proven_arg_cstr("after"), proven_arg_cstr(rp_cs(a->after)));
         // A deferred action that runs an installed program or DLL cannot be placed before the files
         // are installed (sequence 4000); use before = "InstallFiles" or a later number.
         bool deferred = a->phase != RP_PHASE_IMMEDIATE;
         if (deferred && a->kind != RP_ACT_BINARY && a->sequence != 0 && a->sequence <= 4000)
-            ERR(c, a->pos, "RP1316", "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)", rp_cs(a->id));
+            ERR(c, a->pos, "RP1316", "[action.{}]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)", proven_arg_cstr(rp_cs(a->id)));
     }
 }
 
@@ -176,30 +176,30 @@ void ir_more_checks(ctx_t *c) {
             for (size_t f = 0; f < ir->feature_count; ++f) declared |= !ir->features[f].implicit;
             if (d && d->feature.ptr) x->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
             else if (!declared) x->feature = RP_V(ir_dup(c, "Main"));
-            else ERR(c, x->pos, "RP1202", "[move.%s] needs a feature (or with = \"file:<ID>\")", rp_cs(x->id));
+            else ERR(c, x->pos, "RP1202", "[move.{}] needs a feature (or with = \"file:<ID>\")", proven_arg_cstr(rp_cs(x->id)));
         }
-        if (x->from_dir.ptr && !rp_ir_find_dir(ir, x->from_dir)) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->from_dir));
-        if (x->to_dir.ptr && !rp_ir_find_dir(ir, x->to_dir)) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->to_dir));
-        if (x->with_file.ptr && !find_file(ir, x->with_file)) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "with", rp_cs(x->with_file));
-        if (x->feature.ptr && !find_feature(ir, x->feature)) ERR(c, x->pos, "RP1307", "feature '%s' is not defined", rp_cs(x->feature));
+        if (x->from_dir.ptr && !rp_ir_find_dir(ir, x->from_dir)) ERR(c, x->pos, "RP1315", "dir '{}' is not a dir ID", proven_arg_cstr(rp_cs(x->from_dir)));
+        if (x->to_dir.ptr && !rp_ir_find_dir(ir, x->to_dir)) ERR(c, x->pos, "RP1315", "dir '{}' is not a dir ID", proven_arg_cstr(rp_cs(x->to_dir)));
+        if (x->with_file.ptr && !find_file(ir, x->with_file)) ERR(c, x->pos, "RP1315", "{}: file '{}' is not a [file.*] of this package", proven_arg_cstr("with"), proven_arg_cstr(rp_cs(x->with_file)));
+        if (x->feature.ptr && !find_feature(ir, x->feature)) ERR(c, x->pos, "RP1307", "feature '{}' is not defined", proven_arg_cstr(rp_cs(x->feature)));
     }
     for (size_t k = 0; k < ir->odbc_driver_count; ++k) {
         const rp_ir_odbc_driver_t *x = &ir->odbc_drivers[k];
         const rp_ir_file_t *f = find_file(ir, x->file);
-        if (x->file.ptr && f == NULL) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "file", rp_cs(x->file));
-        if (x->setup.ptr && find_file(ir, x->setup) == NULL) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "setup", rp_cs(x->setup));
+        if (x->file.ptr && f == NULL) ERR(c, x->pos, "RP1315", "{}: file '{}' is not a [file.*] of this package", proven_arg_cstr("file"), proven_arg_cstr(rp_cs(x->file)));
+        if (x->setup.ptr && find_file(ir, x->setup) == NULL) ERR(c, x->pos, "RP1315", "{}: file '{}' is not a [file.*] of this package", proven_arg_cstr("setup"), proven_arg_cstr(rp_cs(x->setup)));
     }
     for (size_t k = 0; k < ir->odbc_source_count; ++k) {
         const rp_ir_odbc_source_t *x = &ir->odbc_sources[k];
         bool found = x->driver.ptr == NULL;
         for (size_t j = 0; x->driver.ptr && j < ir->odbc_driver_count; ++j) found |= RP_EQ(ir->odbc_drivers[j].id, x->driver);
-        if (!found) ERR(c, x->pos, "RP1307", "driver '%s' is not an [odbc-driver.*]", rp_cs(x->driver));
-        if (x->with_file.ptr && !find_file(ir, x->with_file)) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "with", rp_cs(x->with_file));
-        if (x->user && ir->scope == 0) ERR(c, x->pos, "RP1316", "[odbc-source.%s]: a per-machine package registers data sources for the machine", rp_cs(x->id));
+        if (!found) ERR(c, x->pos, "RP1307", "driver '{}' is not an [odbc-driver.*]", proven_arg_cstr(rp_cs(x->driver)));
+        if (x->with_file.ptr && !find_file(ir, x->with_file)) ERR(c, x->pos, "RP1315", "{}: file '{}' is not a [file.*] of this package", proven_arg_cstr("with"), proven_arg_cstr(rp_cs(x->with_file)));
+        if (x->user && ir->scope == 0) ERR(c, x->pos, "RP1316", "[odbc-source.{}]: a per-machine package registers data sources for the machine", proven_arg_cstr(rp_cs(x->id)));
     }
     for (size_t k = 0; k < ir->publish_count; ++k) {
         const rp_ir_publish_t *x = &ir->publishes[k];
-        if (x->file.ptr && !find_file(ir, x->file)) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "file", rp_cs(x->file));
+        if (x->file.ptr && !find_file(ir, x->file)) ERR(c, x->pos, "RP1315", "{}: file '{}' is not a [file.*] of this package", proven_arg_cstr("file"), proven_arg_cstr(rp_cs(x->file)));
     }
     // RFC-0031 B12: the Windows 11 menu's identity package has one build-time family name, which an
     // instance transform does not change, so two instances would register the same menu package.
@@ -209,7 +209,7 @@ void ir_more_checks(ctx_t *c) {
     // RFC-0031 B10: a billboard names the feature whose installation shows it.
     for (size_t k = 0; k < ir->billboard_count; ++k) {
         const rp_ir_billboard_t *x = &ir->billboards[k];
-        if (x->feature.ptr && !find_feature(ir, x->feature)) ERR(c, x->pos, "RP1307", "feature '%s' is not defined", rp_cs(x->feature));
+        if (x->feature.ptr && !find_feature(ir, x->feature)) ERR(c, x->pos, "RP1307", "feature '{}' is not defined", proven_arg_cstr(rp_cs(x->feature)));
     }
     // RFC-0031 B8: an advertised shortcut advertises its target file's feature; that feature may
     // not be one marked advertise = "disallow".
@@ -219,15 +219,15 @@ void ir_more_checks(ctx_t *c) {
         const rp_ir_file_t *tf = find_file(ir, s->target_file);
         const rp_ir_feature_t *f = tf ? find_feature_ptr(ir, rp_cs(tf->feature)) : NULL;
         if (f && f->no_advertise)
-            ERR(c, s->pos, "RP1316", "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\"", rp_cs(s->id), rp_cs(f->id));
+            ERR(c, s->pos, "RP1316", "[shortcut.{}] advertises feature '{}', which is advertise = \"disallow\"", proven_arg_cstr(rp_cs(s->id)), proven_arg_cstr(rp_cs(f->id)));
     }
     for (size_t k = 0; k < ir->file_count; ++k) {
         const rp_ir_file_t *f = &ir->files[k];
         if (f->isolate_for.ptr == NULL) continue;
         const rp_ir_file_t *app = find_file(ir, f->isolate_for);
-        if (app == NULL) ERR(c, f->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "isolate-for", rp_cs(f->isolate_for));
+        if (app == NULL) ERR(c, f->pos, "RP1315", "{}: file '{}' is not a [file.*] of this package", proven_arg_cstr("isolate-for"), proven_arg_cstr(rp_cs(f->isolate_for)));
         if (app && f->dir.ptr && app->dir.ptr && RP_EQ(f->dir, app->dir))     // a file without dir is refused elsewhere
-            ERR(c, f->pos, "RP1316", "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere", rp_cs(f->id));
+            ERR(c, f->pos, "RP1316", "[file.{}] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere", proven_arg_cstr(rp_cs(f->id)));
     }
 }
 
@@ -248,8 +248,8 @@ static void asm_identity(ctx_t *c, rp_ir_file_t *f) {
     if (f->assembly == RP_ASM_NONE || f->source_path.ptr == NULL) return;
     if (f->assembly_for.ptr) {
         const rp_ir_file_t *app = find_file(ir, f->assembly_for);
-        if (app == NULL) ERR(c, f->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "assembly-for", rp_cs(f->assembly_for));
-        else if (app->pe_machine == 0 || app->pe_is_dll) ERR(c, f->pos, "RP1316", "%s: '%s' is not a program (.exe)", "assembly-for", rp_cs(f->assembly_for));
+        if (app == NULL) ERR(c, f->pos, "RP1315", "{}: file '{}' is not a [file.*] of this package", proven_arg_cstr("assembly-for"), proven_arg_cstr(rp_cs(f->assembly_for)));
+        else if (app->pe_machine == 0 || app->pe_is_dll) ERR(c, f->pos, "RP1316", "{}: '{}' is not a program (.exe)", proven_arg_cstr("assembly-for"), proven_arg_cstr(rp_cs(f->assembly_for)));
     }
     size_t n = 0;
     if (f->assembly == RP_ASM_DOTNET) {
@@ -257,9 +257,9 @@ static void asm_identity(ctx_t *c, rp_ir_file_t *f) {
         size_t len = 0;
         rp_pe_assembly_t a;
         if (rp_pal_read_file(c->alloc, rp_cs(f->source_path), 1u << 30, &d, &len) != PROVEN_OK || rp_pe_assembly(d, len, &a) != PROVEN_OK || !a.is_assembly) {
-            ERR(c, f->pos, "RP1316", "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)", rp_cs(f->id), rp_cs(f->source));
+            ERR(c, f->pos, "RP1316", "[file.{}]: '{}' is not a .NET assembly (no CLI header with an Assembly row)", proven_arg_cstr(rp_cs(f->id)), proven_arg_cstr(rp_cs(f->source)));
         } else if (f->assembly_for.ptr == NULL && !a.has_token) {
-            ERR(c, f->pos, "RP1316", "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\"", rp_cs(f->id));
+            ERR(c, f->pos, "RP1316", "[file.{}]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\"", proven_arg_cstr(rp_cs(f->id)));
         } else {
             char ver[32], tok[17];
             (void)proven_fmt_to(ver, sizeof ver, "{}.{}.{}.{}", proven_arg_u32(a.version[0]), proven_arg_u32(a.version[1]), proven_arg_u32(a.version[2]), proven_arg_u32(a.version[3]));
@@ -279,16 +279,16 @@ static void asm_identity(ctx_t *c, rp_ir_file_t *f) {
         if (ir->files[k].id.ptr && RP_EQ(ir->files[k].id, f->manifest)) m = &ir->files[k];
     }
     if (m == NULL) {
-        ERR(c, f->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "manifest", rp_cs(f->manifest));
+        ERR(c, f->pos, "RP1315", "{}: file '{}' is not a [file.*] of this package", proven_arg_cstr("manifest"), proven_arg_cstr(rp_cs(f->manifest)));
         return;
     }
     if (m->manifest_of.ptr || m->assembly != RP_ASM_NONE || m == f) {
-        ERR(c, f->pos, "RP1316", "[file.%s]: the manifest '%s' is another assembly's or an assembly itself", rp_cs(f->id), rp_cs(f->manifest));
+        ERR(c, f->pos, "RP1316", "[file.{}]: the manifest '{}' is another assembly's or an assembly itself", proven_arg_cstr(rp_cs(f->id)), proven_arg_cstr(rp_cs(f->manifest)));
         return;
     }
     if (!f->dir.ptr || !m->dir.ptr || !RP_EQ(f->dir, m->dir) || !f->feature.ptr || !m->feature.ptr || !RP_EQ(f->feature, m->feature) ||
         (f->when.ptr == NULL) != (m->when.ptr == NULL) || (f->when.ptr && !RP_EQ(f->when, m->when))) {
-        ERR(c, f->pos, "RP1316", "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component", rp_cs(f->id), rp_cs(f->manifest));
+        ERR(c, f->pos, "RP1316", "[file.{}]: its manifest '{}' must be in the same dir and feature (and under the same when): the two are one component", proven_arg_cstr(rp_cs(f->id)), proven_arg_cstr(rp_cs(f->manifest)));
         return;
     }
     m->manifest_of = RP_V(ir_dup(c, rp_cs(f->id)));
@@ -300,7 +300,7 @@ static void asm_identity(ctx_t *c, rp_ir_file_t *f) {
     if (m->source_path.ptr == NULL || rp_pal_read_file(c->alloc, rp_cs(m->source_path), 1u << 20, &x, &len) != PROVEN_OK ||
         !rp_xml_attr((const char *)x, len, "assemblyIdentity", "name", v, sizeof v) ||
         !rp_xml_attr((const char *)x, len, "assemblyIdentity", "version", v, sizeof v)) {
-        ERR(c, f->pos, "RP1316", "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version", rp_cs(f->id), rp_cs(f->manifest));
+        ERR(c, f->pos, "RP1316", "[file.{}]: its manifest '{}' has no assemblyIdentity with a name and a version", proven_arg_cstr(rp_cs(f->id)), proven_arg_cstr(rp_cs(f->manifest)));
     } else {
         for (size_t i = 0; i < sizeof attrs / sizeof attrs[0]; ++i) {
             if (rp_xml_attr((const char *)x, len, "assemblyIdentity", attrs[i][0], v, sizeof v)) asm_name(c, f, &n, attrs[i][1], v);
@@ -309,7 +309,7 @@ static void asm_identity(ctx_t *c, rp_ir_file_t *f) {
         // A shared one goes into WinSxS with a catalog the build makes and signs (rp_ir_add_sxs_catalog):
         // the manifest names the signer by its public key token.
         if (f->assembly_for.ptr == NULL && !rp_xml_attr((const char *)x, len, "assemblyIdentity", "publicKeyToken", v, sizeof v)) {
-            ERR(c, f->pos, "RP1316", "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)", rp_cs(f->id), rp_cs(f->manifest));
+            ERR(c, f->pos, "RP1316", "[file.{}]: a shared Win32 assembly's manifest '{}' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)", proven_arg_cstr(rp_cs(f->id)), proven_arg_cstr(rp_cs(f->manifest)));
         }
     }
     rp_mem_free(c->alloc, x);
@@ -366,11 +366,11 @@ void ir_more_pe_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->odbc_driver_count; ++k) {
         const rp_ir_odbc_driver_t *x = &ir->odbc_drivers[k];
         const rp_ir_file_t *f = find_file(ir, x->file);
-        if (f && !f->pe_is_dll) ERR(c, x->pos, "RP1316", "[odbc-driver.%s]: file '%s' is not a DLL", rp_cs(x->id), rp_cs(x->file));
+        if (f && !f->pe_is_dll) ERR(c, x->pos, "RP1316", "[odbc-driver.{}]: file '{}' is not a DLL", proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(rp_cs(x->file)));
     }
     for (size_t k = 0; k < ir->file_count; ++k) {
         const rp_ir_file_t *f = &ir->files[k], *app = f->isolate_for.ptr ? find_file(ir, f->isolate_for) : NULL;
-        if (app && (app->pe_machine == 0 || app->pe_is_dll)) ERR(c, f->pos, "RP1316", "isolate-for: '%s' is not a program (.exe)", rp_cs(f->isolate_for));
+        if (app && (app->pe_machine == 0 || app->pe_is_dll)) ERR(c, f->pos, "RP1316", "isolate-for: '{}' is not a program (.exe)", proven_arg_cstr(rp_cs(f->isolate_for)));
     }
     for (size_t k = 0; k < ir->file_count; ++k) asm_identity(c, &ir->files[k]);
 }

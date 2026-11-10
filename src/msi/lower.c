@@ -1549,11 +1549,11 @@ static void lower_helper_actions(pkg_t *pk) {
     bool lang_table = ir->ui != RP_UI_NONE && ir->ui_lang_count > RP_UI_LANG_ACTIONS;
     if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain || details || lang_table || report) {
         if (part_len == 0) {
-            rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
-                           "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
-                           pk->any_qword ? "type = \"qword\"" : pk->any_rplan ? "upgrade = false" : pk->any_purge ? "recursive = true" : guard ? "guard = true"
-                           : lang_table ? "[ui] languages past seven" : "[ui] save-log",
-                           arch_text(ir->arch));
+            rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP1901", false,
+                           "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without",
+                           proven_arg_cstr(pk->any_qword ? "type = \"qword\"" : pk->any_rplan ? "upgrade = false" : pk->any_purge ? "recursive = true" : guard ? "guard = true"
+                           : lang_table ? "[ui] languages past seven" : "[ui] save-log"),
+                           proven_arg_cstr(arch_text(ir->arch)));
             pk->reg_bad = true;
         }
         s_(&pk->binary, PROVEN_LIT("RpCa")); b_(&pk->binary, part, part_len);
@@ -2263,7 +2263,7 @@ static proven_err_t lower_cabinets(pkg_t *pk, const char *cab_stem, const rp_lim
             size_t pl = 0, sl = 0;
             const char *why = NULL;
             if (g >= RP_CAB_SIGNED_MAX) {
-                rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1516", false, "--key signs at most %d external cabinets; raise cab-max-size", RP_CAB_SIGNED_MAX);
+                rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP1516", false, "--key signs at most {} external cabinets; raise cab-max-size", proven_arg_i32(RP_CAB_SIGNED_MAX));
                 err = PROVEN_ERR_OUT_OF_BOUNDS;
             }
             if (err == PROVEN_OK) err = rp_cab_prepare(alloc, cab, cab_len, &prep, &pl, &why);
@@ -2314,7 +2314,7 @@ static proven_err_t lower_cabinets(pkg_t *pk, const char *cab_stem, const rp_lim
     }
     // Windows Installer does not open a package of 2 GiB or more (RFC-0013 E4).
     if (err == PROVEN_OK && embedded >= (2ull << 30) - (16ull << 20)) {
-        rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1516", false,
+        rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP1516", false,
                        "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\"");
         err = PROVEN_ERR_OUT_OF_BOUNDS;
     }
@@ -2510,9 +2510,9 @@ static void lower_single_action(pkg_t *pk, const rp_ir_action_t *a) {
             : 6597 + (int32_t)idx;
     } else if (!deferred && own_file && seq < 6600 && !(a->when.ptr && strstr(rp_cs(a->when), "Installed"))) {
         rp_srcdiag_add(pk->diags, a->pos, "RP1313", true,
-                       "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet "
+                       "[action.{}] runs a file of this package before InstallFinalize, where a first installation does not have it yet "
                        "(Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred",
-                       rp_cs(a->id));
+                       proven_arg_cstr(rp_cs(a->id)));
     }
     if (deferred && a->data.ptr) { s_(&pk->iexec, RP_V(kprintf(k, "RP_ActData_{}", rp_cs(a->id), NULL))); s_(&pk->iexec, RP_V(when)); i_(&pk->iexec, seq - 1); }
     s_(&pk->iexec, RP_V(name)); s_(&pk->iexec, RP_V(when)); i_(&pk->iexec, seq);
@@ -2751,10 +2751,10 @@ static proven_err_t lower_sequences(pkg_t *pk) {
             if (q->cells[a + 2].kind != RP_MSI_INT) continue;
             for (size_t b = a + 3; b + 3 <= q->filled; b += 3) {
                 if (q->cells[b + 2].kind == RP_MSI_INT && q->cells[b + 2].i == q->cells[a + 2].i) {
-                    rp_srcdiag_add(pk->diags, (rp_pos_t){ 1, 1 }, "RP1313", false,
-                                   "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after",
-                                   (int)q->cells[a + 2].i, (int)q->cells[a].len, (const char *)q->cells[a].bytes,
-                                   (int)q->cells[b].len, (const char *)q->cells[b].bytes);
+                    rp_srcdiag_add(pk->diags, ((rp_pos_t){ 1, 1 }), "RP1313", false,
+                                   "two actions share sequence {} ({} and {}); give an [action] a different sequence, before or after",
+                                   proven_arg_i32((int)q->cells[a + 2].i), proven_arg_cstr_n((const char *)q->cells[a].bytes, (size_t)((int)q->cells[a].len)),
+                                   proven_arg_cstr_n((const char *)q->cells[b].bytes, (size_t)((int)q->cells[b].len)));
                     err = PROVEN_ERR_INVALID_FORMAT;
                 }
             }
@@ -3015,7 +3015,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         if (err == PROVEN_OK) {
             err = rp_msm_write(alloc, ir, tables, nt, cf, pk->nfiles, jobs ? jobs : rp_pal_cpu_count(), limits, sink, out, len, &why);
             if (err != PROVEN_OK && err != PROVEN_ERR_NOMEM) {
-                rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1518", false, "the merge module %s", why ? why : "cannot be written");
+                rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP1518", false, "the merge module {}", proven_arg_cstr(why ? why : "cannot be written"));
                 err = PROVEN_ERR_INVALID_FORMAT;
             }
         }
@@ -3059,8 +3059,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                           (unsigned)k + 1, &cab, &why);
             }
             if (err != PROVEN_OK) {
-                rp_srcdiag_add(diags, x->pos, "RP1517", false, "[merge.%s]: '%s' %s", rp_cs(x->id), x->shown.ptr ? rp_cs(x->shown) : "",
-                               why ? why : "cannot be merged");
+                rp_srcdiag_add(diags, x->pos, "RP1517", false, "[merge.{}]: '{}' {}", proven_arg_cstr(rp_cs(x->id)), proven_arg_cstr(x->shown.ptr ? rp_cs(x->shown) : ""),
+                               proven_arg_cstr(why ? why : "cannot be merged"));
                 err = PROVEN_ERR_INVALID_FORMAT;
                 break;
             }
@@ -3071,7 +3071,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         const char *missing = NULL;
         if (err == PROVEN_OK) err = rp_msi_validation(alloc, tables, nt, extra, nextra, &tables[nt], &missing);
         if (err == PROVEN_ERR_NOT_FOUND) {
-            rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP2020", false, "internal: no _Validation rule for a column of %s", missing);
+            rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP2020", false, "internal: no _Validation rule for a column of {}", proven_arg_cstr(missing));
         }
         if (err == PROVEN_OK) {
             rp_msi_wdb_t db = { 65001, tables, nt + 1, summary, summary_len, streams, nstreams };
@@ -3364,7 +3364,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         if (f->data) {
             lf->data = f->data;             // made by rubrapack (a shared Win32 assembly's catalog)
         } else if (rp_pal_map_file(alloc, rp_cs(f->source_path), limits->max_output, &lf->data, &n, &lf->map) != PROVEN_OK) {
-            rp_srcdiag_add(diags, f->pos, "RP1509", false, "cannot read source file '%s'", rp_cs(f->source));
+            rp_srcdiag_add(diags, f->pos, "RP1509", false, "cannot read source file '{}'", proven_arg_cstr(rp_cs(f->source)));
             err = PROVEN_ERR_IO;
             break;
         }
@@ -3375,12 +3375,12 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         rp_pe_info_t snap;
         uint16_t machine = rp_pe_read(lf->data, n, &snap) == PROVEN_OK && snap.is_pe ? snap.machine : 0;
         if ((uint64_t)n != f->size || machine != f->pe_machine) {
-            rp_srcdiag_add(diags, f->pos, "RP1515", false, "source file '%s' changed while the package was being built", rp_cs(f->source));
+            rp_srcdiag_add(diags, f->pos, "RP1515", false, "source file '{}' changed while the package was being built", proven_arg_cstr(rp_cs(f->source)));
             err = PROVEN_ERR_IO;
             break;
         }
         if (n > INT32_MAX) {
-            rp_srcdiag_add(diags, f->pos, "RP1509", false, "source file '%s' is larger than 2 GiB", rp_cs(f->source));
+            rp_srcdiag_add(diags, f->pos, "RP1509", false, "source file '{}' is larger than 2 GiB", proven_arg_cstr(rp_cs(f->source)));
             err = PROVEN_ERR_OUT_OF_BOUNDS;
         }
     }
@@ -3482,7 +3482,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     for (size_t i = 0, units, most; err == PROVEN_OK && i < ir->file_count; ++i) {
         if ((units = name_cell_excess(files[i].short_name, rp_cs(files[i].f->name), &most)) != 0) {
             rp_srcdiag_add(diags, files[i].f->pos, "RP1514", false,
-                           "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu", units, most);
+                           "file name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}", proven_arg_u64(units), proven_arg_u64(most));
             err = PROVEN_ERR_INVALID_FORMAT;
         }
     }
@@ -3490,7 +3490,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         const rp_ir_shortcut_t *sc = &ir->shortcuts[i];
         if (dirs.sc_short[i] && (units = name_cell_excess_w(dirs.sc_short[i], rp_cs(sc->name), 128, &most)) != 0) {
             rp_srcdiag_add(diags, sc->pos, "RP1514", false,
-                           "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu", units, most);
+                           "shortcut name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}", proven_arg_u64(units), proven_arg_u64(most));
             err = PROVEN_ERR_INVALID_FORMAT;
         }
     }
@@ -3498,7 +3498,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         const dnode_t *n = &dirs.v[i];
         if (n->long_name && n->short_name && (units = name_cell_excess(n->short_name, n->long_name, &most)) != 0) {
             rp_srcdiag_add(diags, n->pos, "RP1514", false,
-                           "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu", units, most);
+                           "folder name is {} UTF-16 units; with its 8.3 short name MSI holds at most {}", proven_arg_u64(units), proven_arg_u64(most));
             err = PROVEN_ERR_INVALID_FORMAT;
         }
     }
@@ -3571,7 +3571,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
                             stem, cabs, cab_count, opt->jobs, bsink, 0, opt->cab_signer);
     }
     if (err == PROVEN_OK && ir->summary_name.ptr == NULL && !rp_is_ascii(rp_cs(ir->name))) {
-        rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1203", true,
+        rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP1203", true,
                        "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'");
     }
     // RFC-0031 B12: the base is on the heap (bsink was NULL); embed the instance transforms and move
@@ -3604,8 +3604,8 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         uint8_t again[16];
         proven_md5((proven_mem_view_t){ (const proven_byte_t *)(files[i].data), files[i].size }, again);
         if (memcmp(again, files[i].md5, sizeof again) != 0) {
-            rp_srcdiag_add(diags, files[i].f->pos, "RP1515", false, "source file '%s' changed while the package was being built",
-                           rp_cs(files[i].f->source));
+            rp_srcdiag_add(diags, files[i].f->pos, "RP1515", false, "source file '{}' changed while the package was being built",
+                           proven_arg_cstr(rp_cs(files[i].f->source)));
             err = PROVEN_ERR_IO;
         }
     }

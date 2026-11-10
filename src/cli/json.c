@@ -91,7 +91,7 @@ int rp_inspect_json(const char *path, const char *what) {
     if (what && strcmp(what, "--summary") == 0) {
         rp_suminfo_t si;
         if (db->summary == NULL || rp_suminfo_parse(db->summary, db->summary_len, &si) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' has no readable summary information", path);
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'{}' has no readable summary information", proven_arg_cstr(path));
             rc = RP_EXIT_IO;
         } else {
             rp_buf_puts(&b, "{\"summary\": [");
@@ -119,7 +119,7 @@ int rp_inspect_json(const char *path, const char *what) {
             if (strcmp(db->tables[i].name, what) == 0) t = &db->tables[i];
         }
         if (t == NULL) {
-            rp_diag_error(RP_DIAG_NO_TABLE, "no table '%s' in '%s'", what, path);
+            rp_diag_error(RP_DIAG_NO_TABLE, "no table '{}' in '{}'", proven_arg_cstr(what), proven_arg_cstr(path));
             rc = RP_EXIT_USAGE;
         } else {
             table_json(&b, t);
