@@ -679,6 +679,7 @@ typedef struct {
     uint8_t         *act_bin[64];      // RFC-0031 B6: Binary-table DLLs of single actions, freed at the end
     size_t           act_bin_count;
     int              instance;         // RFC-0031 B12: 0 = the base package, K >= 1 = the K-th instance variant
+    size_t           folder_searches;  // lower_profile_dirs' AppSearch rows
 } pkg_t;
 
 // RFC-0031 B12: the UUID namespace for a component GUID. The base (instance 0) keeps the original
@@ -854,16 +855,21 @@ static bool dir_in_profile(const rp_ir_t *ir, proven_u8str_view_t id) {
     return false;
 }
 
+#define PROFILE_COMPONENTS "Software\\[Manufacturer]\\[ProductName]\\Components"
+
 // A component in the user's profile (RFC-0029): its key path is an HKCU value, as a shortcut's is
-// (ICE38) - Software\[Manufacturer]\[ProductName]\Components, named after the component, value 1.
+// (ICE38) - Software\[Manufacturer]\[ProductName]\Components, named after the component. The value
+// is the component's folder, [dir_key] (2026-11-10): an HKCU value tells Windows nothing about where
+// the files are, so the parts read it to know which folders an installed product has files in, and
+// lower_profile_dirs finds the profile components by these rows. (0.47.0-0.52.0 wrote 1.)
 // Returns the Registry row's key; the caller puts it in KeyPath and 4 in Attributes.
-static const char *profile_keypath(pkg_t *pk, const char *ckey) {
+static const char *profile_keypath(pkg_t *pk, const char *ckey, const char *dir_key) {
     keep_t *k = pk->k;
     char rk[23];
     rp_key_derive('R', kprintf(k, "component-keypath:{}", ckey, NULL), rk);
     const char *rkey = kdup(k, rk);
-    s_(&pk->registry, RP_V(rkey)); i_(&pk->registry, 1); s_(&pk->registry, PROVEN_LIT("Software\\[Manufacturer]\\[ProductName]\\Components"));
-    s_(&pk->registry, RP_V(ckey)); s_(&pk->registry, PROVEN_LIT("1")); s_(&pk->registry, RP_V(ckey));
+    s_(&pk->registry, RP_V(rkey)); i_(&pk->registry, 1); s_(&pk->registry, PROVEN_LIT(PROFILE_COMPONENTS));
+    s_(&pk->registry, RP_V(ckey)); s_(&pk->registry, RP_V(kprintf(k, "[{}]", dir_key, NULL))); s_(&pk->registry, RP_V(ckey));
     pk->any_write = true;
     return rkey;
 }
@@ -876,6 +882,96 @@ static bool comp_removed(const pkg_t *pk, const char *ckey) {
         if (c->len == strlen(ckey) && memcmp(c->bytes, ckey, c->len) == 0) return !(t->cells[r + 3].i & 16) && t->cells[r + 4].kind == RP_MSI_NULL;
     }
     return false;
+}
+
+// A cell holds exactly the `n` bytes at `p`.
+static bool cell_is(const rp_msi_cell_t *c, const char *p, size_t n) {
+    return c->kind == RP_MSI_STR && c->len == n && memcmp(c->bytes, p, n) == 0;
+}
+
+// Directory `dir` (n bytes) is the Directory row `top` or lies below it.
+static bool dir_at_or_below(const pkg_t *pk, const uint8_t *dir, size_t n, const rp_msi_cell_t *top) {
+    const rows_t *d = &pk->directory;
+    for (size_t depth = 0; depth <= d->filled / 3; ++depth) {
+        if (cell_is(top, (const char *)dir, n)) return true;
+        const rp_msi_cell_t *parent = NULL;
+        for (size_t r = 0; r + 3 <= d->filled && parent == NULL; r += 3) {
+            if (cell_is(&d->cells[r], (const char *)dir, n)) parent = &d->cells[r + 1];
+        }
+        if (parent == NULL || parent->kind != RP_MSI_STR) return false;
+        dir = parent->bytes;
+        n = parent->len;
+    }
+    return false;
+}
+
+// A Directory key a user can set on the command line or the folder page: a public property
+// (upper-case letters, digits, '_' and '.'), not TARGETDIR.
+static bool public_dir(const rp_msi_cell_t *c) {
+    if (c->kind != RP_MSI_STR || c->len == 0 || c->len > 60 || cell_is(c, "TARGETDIR", 9)) return false;
+    bool letter = false;
+    for (size_t i = 0; i < c->len; ++i) {
+        uint8_t b = c->bytes[i];
+        if (b >= 'A' && b <= 'Z') letter = true;
+        else if (!(b >= '0' && b <= '9') && b != '_' && b != '.') return false;
+    }
+    return letter;
+}
+
+// RFC-0029 as amended 2026-11-10: Windows finds an installed component's folder from its key path;
+// an HKCU value names none, so a per-user product installed elsewhere than its default folder was
+// removed and repaired at the default one (observed: x54's inner product, 1721). Each public
+// directory with a profile component at or below it keeps its path in
+// HKCU\Software\[Manufacturer]\[ProductName]\Folders (a row of such a component, one removed with
+// the product when there is one), and AppSearch gives it back at the installed product's own
+// maintenance - not to a new version, which goes to its default folder as a per-machine package's
+// does (observed). A value on the command line wins. 0.47.0-0.52.0 products have no Folders value.
+static void lower_profile_dirs(pkg_t *pk) {
+    keep_t *k = pk->k;
+    const rows_t *d = &pk->directory;
+    const size_t nreg = pk->registry.filled;        // the Components rows; ours are added after
+    const size_t pcn = strlen(PROFILE_COMPONENTS);
+    for (size_t r = 0; r + 3 <= d->filled; r += 3) {
+        const rp_msi_cell_t *top = &d->cells[r];
+        if (!public_dir(top)) continue;
+        const rp_msi_cell_t *comp = NULL;
+        for (size_t g = 0; g + 6 <= nreg; g += 6) {
+            const rp_msi_cell_t *c = &pk->registry.cells[g];
+            if (!cell_is(&c[2], PROFILE_COMPONENTS, pcn) || c[4].kind != RP_MSI_STR || c[4].len < 3) continue;
+            if (!dir_at_or_below(pk, c[4].bytes + 1, c[4].len - 2, top)) continue;      // "[dir]"
+            char ckey[80];
+            if (c[5].len >= sizeof ckey) continue;
+            memcpy(ckey, c[5].bytes, c[5].len);
+            ckey[c[5].len] = 0;
+            if (comp == NULL || comp_removed(pk, ckey)) comp = &c[5];
+            if (comp_removed(pk, ckey)) break;
+        }
+        if (comp == NULL || pk->folder_searches >= 40) continue;        // sequences 52-91, before LaunchConditions
+        char kb[80], cb[80];
+        if (comp->len >= sizeof cb) continue;
+        memcpy(kb, top->bytes, top->len);           // public_dir: at most 60 bytes
+        kb[top->len] = 0;
+        memcpy(cb, comp->bytes, comp->len);
+        cb[comp->len] = 0;
+        const char *key = kdup(k, kb), *ckey = kdup(k, cb);
+        char rk[23];
+        rp_key_derive('R', kprintf(k, "profile-folder:{}", key, NULL), rk);
+        s_(&pk->registry, RP_V(kdup(k, rk))); i_(&pk->registry, 1); s_(&pk->registry, PROVEN_LIT("Software\\[Manufacturer]\\[ProductName]\\Folders"));
+        s_(&pk->registry, RP_V(key)); s_(&pk->registry, RP_V(kprintf(k, "[{}]", key, NULL))); s_(&pk->registry, RP_V(ckey));
+        const char *found = kprintf(k, "RpFolder_{}", key, NULL);
+        s_(&pk->appsearch, RP_V(found)); s_(&pk->appsearch, RP_V(found));
+        // type 0: a folder that must exist (a 0.47.0-0.52.0 value of 1 is none); +16 the 64-bit view
+        s_(&pk->reglocator, RP_V(found)); i_(&pk->reglocator, 1); s_(&pk->reglocator, PROVEN_LIT("Software\\[Manufacturer]\\[ProductName]\\Folders"));
+        s_(&pk->reglocator, RP_V(key)); i_(&pk->reglocator, pk->ir->arch != RP_ARCH_X86 ? 16 : 0);
+        const char *act = kprintf(k, "RpKeepDir_{}", key, NULL);
+        s_(&pk->customaction, RP_V(act)); i_(&pk->customaction, 51); s_(&pk->customaction, RP_V(key)); s_(&pk->customaction, RP_V(kprintf(k, "[{}]", found, NULL)));
+        const char *cnd = kprintf(k, "Installed AND {} AND NOT {}", found, key);
+        const int32_t seq = 52 + (int32_t)pk->folder_searches;      // one each (RP1313)
+        s_(&pk->iexec, RP_V(act)); s_(&pk->iexec, RP_V(cnd)); i_(&pk->iexec, seq);
+        s_(&pk->iui, RP_V(act)); s_(&pk->iui, RP_V(cnd)); i_(&pk->iui, seq);
+        pk->any_write = true;
+        ++pk->folder_searches;
+    }
 }
 
 // The folders of the user's profile a component of `ckey` lies in, from `dir_key` up to the known
@@ -952,7 +1048,7 @@ static void lower_files(pkg_t *pk) {
             // users (SharedDllRefCount, ICE62).
             i_(&pk->component, pk->comp_attr | (lf->f->keep ? 16 : 0) | (profile ? 4 : 0) | (lf->f->isolate_for.ptr ? 8 : 0));
             s_(&pk->component, lf->f->when);                            // RFC-0013 A2
-            s_(&pk->component, RP_V(profile ? profile_keypath(pk, lf->comp) : lf->key));
+            s_(&pk->component, RP_V(profile ? profile_keypath(pk, lf->comp, lf->dir_key) : lf->key));
             if (profile || dir_in_profile(ir, lf->f->dir)) profile_folders(pk, lf->dir_key, lf->comp);      // ICE64, a fixed GUID too
 
             s_(&pk->featurecomp, lf->f->feature);
@@ -1233,7 +1329,7 @@ static void lower_removes(pkg_t *pk) {
         const char *ckey = kdup(k, comp);
         s_(&pk->component, RP_V(ckey)); s_(&pk->component, RP_V(kdup(k, guid))); s_(&pk->component, RP_V(aside ? "TARGETDIR" : dkey(ir, r->dir)));
         i_(&pk->component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (profile ? 4 : 0)); null_(&pk->component);
-        if (profile) s_(&pk->component, RP_V(profile_keypath(pk, ckey))); else null_(&pk->component);
+        if (profile) s_(&pk->component, RP_V(profile_keypath(pk, ckey, dkey(ir, r->dir)))); else null_(&pk->component);
         s_(&pk->featurecomp, r->feature); s_(&pk->featurecomp, RP_V(ckey));
         if (!aside) { s_(&pk->createfolder, RP_V(dkey(ir, r->dir))); s_(&pk->createfolder, RP_V(ckey)); }       // its key path is the folder (ICE18)
         if (profile) profile_folders(pk, dkey(ir, r->dir), ckey);
@@ -1309,7 +1405,7 @@ static void lower_ini(pkg_t *pk) {
         const char *ckey = kdup(k, comp);
         s_(&pk->component, RP_V(ckey)); s_(&pk->component, RP_V(kdup(k, guid))); s_(&pk->component, RP_V(dkey(ir, x->dir)));
         i_(&pk->component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (profile ? 4 : 0)); s_(&pk->component, x->when);
-        if (profile) s_(&pk->component, RP_V(profile_keypath(pk, ckey))); else null_(&pk->component);
+        if (profile) s_(&pk->component, RP_V(profile_keypath(pk, ckey, dkey(ir, x->dir)))); else null_(&pk->component);
         s_(&pk->featurecomp, x->feature); s_(&pk->featurecomp, RP_V(ckey));
         s_(&pk->createfolder, RP_V(dkey(ir, x->dir))); s_(&pk->createfolder, RP_V(ckey));     // its key path is the folder (ICE18)
         if (profile) profile_folders(pk, dkey(ir, x->dir), ckey);
@@ -2101,7 +2197,7 @@ static void lower_folders(pkg_t *pk) {
         s_(&pk->component, f->id);
         i_(&pk->component, pk->comp_attr | (f->keep ? 16 : 0) | (profile ? 4 : 0));
         null_(&pk->component);
-        if (profile) s_(&pk->component, RP_V(profile_keypath(pk, ckey))); else null_(&pk->component);
+        if (profile) s_(&pk->component, RP_V(profile_keypath(pk, ckey, rp_cs(f->id)))); else null_(&pk->component);
         s_(&pk->featurecomp, f->feature);
         s_(&pk->featurecomp, RP_V(ckey));
         s_(&pk->createfolder, f->id);
@@ -2456,7 +2552,7 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, PROVEN_LIT("InstallServices")); null_(&pk->iexec); i_(&pk->iexec, 5800);
         s_(&pk->iexec, PROVEN_LIT("StartServices")); null_(&pk->iexec); i_(&pk->iexec, 5900);
     }
-    if (ir->search_count) {         // before the launch conditions, which may test the results
+    if (ir->search_count || pk->folder_searches) {      // before the launch conditions, which may test the results
         s_(&pk->iexec, PROVEN_LIT("AppSearch")); null_(&pk->iexec); i_(&pk->iexec, 50);
         s_(&pk->iui, PROVEN_LIT("AppSearch")); null_(&pk->iui); i_(&pk->iui, 50);
     }
@@ -2867,6 +2963,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     lower_searches(pk);
     lower_copies(pk);
     lower_folders(pk);
+    lower_profile_dirs(pk);
     proven_err_t err = ir->module ? PROVEN_OK : lower_cabinets(pk, cab_stem, limits, jobs);     // a module writes its own (rp_msm_write)
     lower_upgrade(pk);
     proven_err_t seq_err = lower_sequences(pk);
@@ -2931,7 +3028,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             // AppSearch looks every locator up in Signature, which must then exist even when empty
             // (error 2228 otherwise: RFC-0012 V5 on the VM for a folder; x69 for a registry value,
             // whose package then failed to install).
-            bool need = all[i] == &pk->signature && pk->ir->search_count;
+            bool need = all[i] == &pk->signature && (pk->ir->search_count || pk->folder_searches);
             if (i < always || all[i]->t.row_count > 0 || need) tables[nt++] = all[i]->t;
         }
         for (size_t t = 0; pk->ui && t < pk->ui->table_count; ++t) {

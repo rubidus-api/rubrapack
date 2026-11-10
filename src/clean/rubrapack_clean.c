@@ -42,6 +42,7 @@
 #include <shellapi.h>
 
 #include "../ca/rp_wstr.h"
+#include "keypath.h"
 #include "pfro.h"
 
 enum { MAX_ITEMS = 256, PATH_CAP = 32768 };
@@ -310,13 +311,8 @@ static void scan_product(const wchar_t *code) {
                 if (!rp_weq(cid, comp)) {            // a new component: where its key path is
                     (void)RP_WCPY(comp, cid);
                     DWORD kn = PATH_CAP;
-                    have_dir = MsiGetComponentPathW(code, cid, keypath, &kn) == INSTALLSTATE_LOCAL && keypath[0] && keypath[1] == L':';
-                    if (have_dir) {
-                        (void)RP_WCPY(dir, keypath);
-                        wchar_t *slash = rp_wrchr(dir, L'\\');
-                        if (slash) slash[1] = 0;
-                        else have_dir = false;
-                    }
+                    // keypath.h: a file's or folder's key path, or a registry one holding the folder
+                    have_dir = MsiGetComponentPathW(code, cid, keypath, &kn) == INSTALLSTATE_LOCAL && keypath_dir(keypath, dir, sizeof dir / sizeof *dir);
                 }
                 if (have_dir) {
                     wchar_t *bar = rp_wchr(fname, L'|');      // "SHORT|Long name"

@@ -1284,7 +1284,13 @@ and the machine folders (`SystemRoot`, `System`, `Fonts`, `ProgramData`) need `s
 A file, `[folder]`, `[ini]` or `[remove]` in a folder of the user's profile (`AppData`,
 `LocalAppData`, `StartMenu`, `Programs`, `Desktop`, `Startup` and below them, in any scope) gets a
 component keyed by an `HKCU` value, as shortcuts are: `Software\<manufacturer>\<name>\Components`,
-one value per component, written and removed with it (Windows' rule ICE38). Each of those profile
+one value per component holding its folder, written and removed with it (Windows' rule ICE38).
+Windows cannot find a product's folders from such values, so each folder a user may choose
+(`INSTALLDIR` and other upper-case `[dir]` ids) with those components in or below it is kept in
+`Software\<manufacturer>\<name>\Folders` too and looked up again when the installed product is
+repaired, changed or removed; a folder given on the command line wins, and a new version goes to its
+default folder unless one is given, as a per-machine package's does. (0.47.0 to 0.52.0 did not keep
+them: a product they installed into another folder is removed with `INSTALLDIR=<its folder>`.) Each of those profile
 folders, up to the known folder, is removed at removal when it is empty (ICE64), the shared
 `%LOCALAPPDATA%\Programs` too when nothing else is in it. rubrapack 0.46.0 and earlier keyed these
 components by their files, under other GUIDs: from a package built by one of those, the upgrade has

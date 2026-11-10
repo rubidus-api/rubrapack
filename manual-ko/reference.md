@@ -1174,8 +1174,13 @@ name = "InstallDir"
 
 사용자 프로필의 폴더(`AppData`, `LocalAppData`, `StartMenu`, `Programs`, `Desktop`, `Startup` 과 그 아래,
 범위와 관계없이)에 두는 파일, `[folder]`, `[ini]`, `[remove]` 는 바로 가기처럼 `HKCU` 값을 키 경로로 하는
-구성 요소에 든다: `Software\<manufacturer>\<name>\Components` 에 구성 요소마다 값 하나를 두고, 구성
-요소와 함께 쓰고 지운다(Windows 규칙 ICE38). 그 프로필 폴더들은 알려진 폴더까지 제거 때 비어 있으면
+구성 요소에 든다: `Software\<manufacturer>\<name>\Components` 에 구성 요소마다 그 폴더를 값으로 하나 두고, 구성
+요소와 함께 쓰고 지운다(Windows 규칙 ICE38). Windows 는 이런 값으로는 제품의 폴더를 찾지 못하므로, 사용자가
+고를 수 있는 폴더(`INSTALLDIR` 와 다른 대문자 `[dir]` id) 가운데 그 안이나 아래에 이 구성 요소가 있는 것은
+`Software\<manufacturer>\<name>\Folders` 에도 적어 두고, 설치된 제품을 고치거나 바꾸거나 지울 때 다시
+찾는다. 명령줄에 준 폴더가 우선하고, 새 판은 폴더를 주지 않으면 컴퓨터 전체용 패키지처럼 기본 폴더로
+간다. (0.47.0 에서 0.52.0 까지는 적어 두지 않았다: 그 판들이 다른 폴더에 설치한 제품은
+`INSTALLDIR=<그 폴더>` 를 주고 지운다.) 그 프로필 폴더들은 알려진 폴더까지 제거 때 비어 있으면
 지운다(ICE64). 함께 쓰는 `%LOCALAPPDATA%\Programs` 도 다른 것이 없으면 지운다. rubrapack 0.46.0 까지는
 이 구성 요소를 파일로 키 삼았고 GUID 도 달랐다. 그런 판으로 만든 패키지에서 올릴 때는 메이저
 업그레이드여야 하고(rubrapack 이 만드는 업그레이드는 옛 판을 먼저 지운다), `lint --previous` 는 옛

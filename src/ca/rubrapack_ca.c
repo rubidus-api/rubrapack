@@ -83,6 +83,7 @@
 
 #include "proven/utf.h"
 
+#include "../clean/keypath.h"
 #include "../clean/pfro.h"
 #include "rp_appx.h"
 #include "rp_ask.h"
@@ -1689,20 +1690,56 @@ static const wchar_t *purge_refused(MSIHANDLE h, const wchar_t *dir) {
     return why;
 }
 
-// Whether a product other than `self` has a component whose key path is inside `dir`.
-static bool other_product_in(const wchar_t *dir, const wchar_t *self, wchar_t found[39]) {
-    static wchar_t path[MAX_PATH * 4];
+// The folders other installed products have components in (keypath.h: a file's or folder's key
+// path, or a registry key path whose value is a folder), as "{product}\0folder\0" pairs; built once
+// per action and per `self` (one pass over every component, instead of one per folder asked about).
+static wchar_t *others_buf, others_self[39];
+static size_t others_len, others_cap;
+static bool others_built;
+
+static void others_add(const wchar_t *prod, const wchar_t *dir) {
+    size_t pn = rp_wlen(prod), dn = rp_wlen(dir), need = others_len + pn + dn + 3;
+    if (need > others_cap) {
+        size_t cap = need * 2 + 4096;
+        wchar_t *b = others_buf ? HeapReAlloc(GetProcessHeap(), 0, others_buf, cap * sizeof *b) : HeapAlloc(GetProcessHeap(), 0, cap * sizeof *b);
+        if (b == NULL) return;
+        others_buf = b;
+        others_cap = cap;
+    }
+    memcpy(others_buf + others_len, prod, (pn + 1) * sizeof *others_buf);
+    others_len += pn + 1;
+    memcpy(others_buf + others_len, dir, (dn + 1) * sizeof *others_buf);
+    others_len += dn + 1;
+    others_buf[others_len] = 0;
+}
+
+static void others_build(const wchar_t *self) {
+    static wchar_t path[MAX_PATH * 4], dir[MAX_PATH * 4];
     wchar_t cid[39], prod[39];
+    others_len = 0;
+    if (others_buf) others_buf[0] = 0;
     for (DWORD i = 0; MsiEnumComponentsW(i, cid) == ERROR_SUCCESS; ++i) {
         for (DWORD j = 0; MsiEnumClientsW(cid, j, prod) == ERROR_SUCCESS; ++j) {
             if (self && lstrcmpiW(prod, self) == 0) continue;
             DWORD n = MAX_PATH * 4;
             INSTALLSTATE st = MsiGetComponentPathW(prod, cid, path, &n);
-            if ((st == INSTALLSTATE_LOCAL || st == INSTALLSTATE_SOURCE) && path[0] && path[1] == L':' && starts_with_i(path, dir)) {
-                (void)rp_wcpy(found, 39, prod);
-                return true;
-            }
+            if ((st == INSTALLSTATE_LOCAL || st == INSTALLSTATE_SOURCE) && keypath_dir(path, dir, MAX_PATH * 4) && rp_wlen(dir) > 3) others_add(prod, dir);
         }
+    }
+    others_built = true;
+    (void)RP_WCPY(others_self, self ? self : L"");
+}
+
+// Whether a product other than `self` has a component in `dir` (ending in '') or below it.
+static bool other_product_in(const wchar_t *dir, const wchar_t *self, wchar_t found[39]) {
+    if (!others_built || !rp_wieq(others_self, self ? self : L"")) others_build(self);
+    for (const wchar_t *p = others_buf; p && *p;) {
+        const wchar_t *d = p + rp_wlen(p) + 1;
+        if (starts_with_i(d, dir)) {
+            (void)rp_wcpy(found, 39, p);
+            return true;
+        }
+        p = d + rp_wlen(d) + 1;
     }
     return false;
 }
@@ -2336,10 +2373,18 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
     writer_t list = { 0 };
     unsigned count = 0;
     static wchar_t full[MAX_PATH * 4];
+    wchar_t *self = get_property(h, L"ProductCode");
     for (size_t i = 0; i < ndirs; ++i) {
         bool skip = false;
         for (size_t w = 0; w < nwiped && !skip; ++w) skip = starts_with_i(paths[i], wiped[w]);
         if (skip) continue;
+        // A folder shared with another installed product (a pack in a product's folder, x40): what
+        // is there is that product's, not something left behind.
+        wchar_t other[39];
+        if (other_product_in(paths[i], self, other)) {
+            log_line(h, L"rubrapack: preflight: %ls is shared with the installed product %ls: not checked", paths[i], other);
+            continue;
+        }
         size_t len = rp_wlen(paths[i]);
         if (len + 2 >= MAX_PATH * 4) continue;
         (void)(RP_WCPY(full, paths[i]) && RP_WCAT(full, L"*"));
@@ -2362,6 +2407,12 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
                 }
             }
             if (mine) continue;
+            // A file another installation queued for deletion at the next restart goes anyway.
+            full[len] = 0;
+            if (RP_WCAT(full, fd.cFileName) && pfro_has(full)) {
+                log_line(h, L"rubrapack: preflight: %ls is queued for deletion at restart: not counted", full);
+                continue;
+            }
             has_extra[i] = true;
             ++count;
             log_line(h, L"rubrapack: preflight: not installed with the product: %ls%ls%ls", paths[i], fd.cFileName,
@@ -2410,6 +2461,7 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
         }
     }
     if (plan) HeapFree(GetProcessHeap(), 0, plan);
+    if (self) HeapFree(GetProcessHeap(), 0, self);
     if (list.buf) HeapFree(GetProcessHeap(), 0, list.buf);
     return rc;
 }

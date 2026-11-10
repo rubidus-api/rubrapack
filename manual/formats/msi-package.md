@@ -267,6 +267,18 @@ installed the engine deletes `MSIINSTALLPERUSER`, so a launch condition that tes
 `Installed OR ...` or the product can no longer be removed; in general, write every launch
 condition as `Installed OR (...)`. [observed]
 
+A component whose key path is a registry value tells the engine nothing about where its files are:
+at a repair or a removal it resolves the directories as at a first installation, so a product
+installed into a folder given on the command line (`INSTALLDIR=...`) is looked for in the default
+one - files are left behind and an action that runs an installed program fails (1721). Components
+keyed by their files do not have this problem. rubrapack's per-user components (keyed by `HKCU`
+values, ICE38) write each user-settable directory to a registry value
+(`Software\[Manufacturer]\[ProductName]\Folders`, name and value `[INSTALLDIR]`) and read it back with
+AppSearch (a `RegLocator` of type 0, a folder that must exist) and a type-51 action,
+`Installed AND <found> AND NOT INSTALLDIR`, before `CostInitialize`. A major upgrade's new product
+is not `Installed`: like a per-machine package, it goes to its default folder unless given one.
+[observed]
+
 ## Files in use
 
 When a file to be replaced or removed is held by a running program (a DLL loaded into it):
