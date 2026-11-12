@@ -54,8 +54,9 @@ enum {
     APPX_URI_CREATE = 6,            // IUriRuntimeClassFactory::CreateUri
     APPX_INFO_STATUS = 7,           // IAsyncInfo::get_Status (0 started, 1 completed, 2 canceled, 3 error)
     APPX_INFO_ERROR = 8,            // IAsyncInfo::get_ErrorCode
+    APPX_INFO_CANCEL = 9,           // IAsyncInfo::Cancel
     APPX_REMOVE_FOR_ALL_USERS = 0x80000,
-    APPX_WAIT_MS = 180000,
+    APPX_WAIT_MS = 60 * 60 * 1000,  // a package of several GB is added within this; then it is cancelled
 };
 
 // The method at `slot` of a COM object.
@@ -132,19 +133,28 @@ static HRESULT appx_uri(const wchar_t *path, void **out) {
     return hr;
 }
 
-// Waits for an asynchronous operation and releases it; its result as an HRESULT.
+// Waits for an asynchronous operation and releases it; its result as an HRESULT. One that has not
+// finished within APPX_WAIT_MS (by the clock) is cancelled, and waited for until it has stopped,
+// however long that takes: the caller (the chain's setup program deletes the package file next)
+// never goes on while it still runs.
 static HRESULT appx_wait(void *op) {
     if (op == NULL) return E_FAIL;
     void *info = NULL;
     HRESULT hr = appx_query(op, &APPX_IID_ASYNC_INFO, &info);
     if (SUCCEEDED(hr)) {
         int status = 0;
-        for (DWORD waited = 0; waited < APPX_WAIT_MS; waited += 100) {
+        bool cancelled = false;
+        const ULONGLONG start = GetTickCount64();
+        for (;;) {
             hr = ((HRESULT(STDMETHODCALLTYPE *)(void *, int *))APPX_SLOT(info, APPX_INFO_STATUS))(info, &status);
             if (FAILED(hr) || status != 0) break;
+            if (!cancelled && GetTickCount64() - start >= APPX_WAIT_MS) {
+                ((HRESULT(STDMETHODCALLTYPE *)(void *))APPX_SLOT(info, APPX_INFO_CANCEL))(info);
+                cancelled = true;
+            }
             Sleep(100);
         }
-        if (SUCCEEDED(hr) && status == 0) hr = HRESULT_FROM_WIN32(ERROR_TIMEOUT);
+        if (SUCCEEDED(hr) && (status == 0 || status == 2)) hr = HRESULT_FROM_WIN32(ERROR_TIMEOUT);
         else if (SUCCEEDED(hr) && status != 1) {
             HRESULT code = E_FAIL;
             ((HRESULT(STDMETHODCALLTYPE *)(void *, HRESULT *))APPX_SLOT(info, APPX_INFO_ERROR))(info, &code);

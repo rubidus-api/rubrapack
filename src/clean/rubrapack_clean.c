@@ -42,6 +42,7 @@
 #include <shellapi.h>
 
 #include "../ca/rp_wstr.h"
+#include "fileop.h"
 #include "keypath.h"
 #include "pfro.h"
 
@@ -149,45 +150,99 @@ static bool read_list(const wchar_t *path) {
     return task[0] != 0;
 }
 
-// Whether `path` is inside folder `root` (not the root itself), ignoring case.
-static bool under(const wchar_t *path, const wchar_t *root) {
-    size_t n = rp_wlen(root);
-    while (n && root[n - 1] == L'\\') --n;
-    return n && CompareStringOrdinal(path, (int)n, root, (int)n, TRUE) == CSTR_EQUAL && path[n] == L'\\' && path[n + 1];
-}
+// Whether `path` is inside folder `root` (not the root itself), ignoring case (keypath.h).
+static bool under(const wchar_t *path, const wchar_t *root) { return keypath_inside(path, root); }
 
-// <volume>\Config.Msi\<name>.rbf, one level down.
-static bool installer_backup(const wchar_t *path) {
-    const wchar_t *dir = path + 2;
-    if (!(path[0] && path[1] == L':')) return false;
-    if (CompareStringOrdinal(dir, 12, L"\\Config.Msi\\", 12, TRUE) != CSTR_EQUAL) return false;
-    const wchar_t *name = dir + 12;
-    size_t n = rp_wlen(name);
-    return n > 4 && !rp_wchr(name, L'\\') && CompareStringOrdinal(name + n - 4, 4, L".rbf", 4, TRUE) == CSTR_EQUAL;
-}
+// <volume>\Config.Msi\<name>.rbf, one level down (keypath.h).
+static bool installer_backup(const wchar_t *path) { return keypath_is_backup(path); }
 
-// No part of `path` below `root` (or below the volume, without a root) is a link.
-static bool no_links(const wchar_t *path, const wchar_t *root) {
-    static wchar_t part[PATH_CAP];
-    size_t start = root ? rp_wlen(root) : 3, n = rp_wlen(path);
-    if (n >= PATH_CAP) return false;
-    for (size_t i = start; i <= n; ++i) {
-        if (i < n && path[i] != L'\\') continue;
-        memcpy(part, path, i * sizeof *part);
-        part[i] = 0;
-        DWORD a = GetFileAttributesW(part);
-        if (a != INVALID_FILE_ATTRIBUTES && (a & FILE_ATTRIBUTE_REPARSE_POINT)) return false;
-    }
+// `path` in fileop.h's form ("\\?\C:\..." without a '\' at the end, as a handle names it), into
+// `out`; false when it is not a path on a drive.
+static bool long_form(const wchar_t *path, wchar_t *out, size_t cap) {
+    if (!keypath_is_drive_path(path) || !rp_wcpy(out, cap, L"\\\\?\\") || !rp_wcat(out, cap, path)) return false;
+    size_t n = rp_wlen(out);
+    while (n > 7 && out[n - 1] == L'\\') out[--n] = 0;      // "\\?\C:\" keeps its own
     return true;
 }
 
-// Tries to delete a file or an empty folder; true when it is gone (or was not there).
-static bool gone(const wchar_t *path) {
-    DWORD a = GetFileAttributesW(path);
-    if (a == INVALID_FILE_ATTRIBUTES) return true;
-    if (a & FILE_ATTRIBUTE_DIRECTORY) return RemoveDirectoryW(path) != 0;
-    if (a & FILE_ATTRIBUTE_READONLY) SetFileAttributesW(path, a & ~FILE_ATTRIBUTE_READONLY);
-    return DeleteFileW(path) != 0;
+// Where folder `dir` is, as Windows finds it (links on the way followed), into `out`.
+static bool real_place(const wchar_t *dir, wchar_t *out, size_t cap) {
+    static wchar_t lp[PATH_CAP];
+    if (!long_form(dir, lp, PATH_CAP)) return false;
+    HANDLE d = CreateFileW(lp, FILE_READ_ATTRIBUTES | SYNCHRONIZE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL,
+                           OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+    if (d == INVALID_HANDLE_VALUE) return false;
+    DWORD n = GetFinalPathNameByHandleW(d, out, (DWORD)cap, FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
+    CloseHandle(d);
+    return n != 0 && n < cap;
+}
+
+// Where `path` is when nothing below its root is a link: the root's own place (it may be reached
+// through a link above it - a profile moved to another drive) and the rest of `path` as written.
+// For a root itself, or a path under no root (an installer backup), its folder's place and its
+// name: a link above it is followed, the entry itself is opened as itself. False when it cannot
+// be told.
+static bool expected_place(const wchar_t *path, wchar_t *out, size_t cap) {
+    const wchar_t *root = NULL;
+    for (size_t r = 0; r < nroots; ++r) {
+        if (under(path, roots[r]) && (root == NULL || rp_wlen(roots[r]) > rp_wlen(root))) root = roots[r];
+    }
+    static wchar_t base[PATH_CAP];
+    size_t bl;
+    if (root) {
+        bl = rp_wlen(root);
+        while (bl && root[bl - 1] == L'\\') --bl;
+    } else {
+        bl = rp_wlen(path);
+        while (bl && path[bl - 1] == L'\\') --bl;      // the entry's own name, without a '\\' after it
+        size_t end = bl;
+        while (bl && path[bl - 1] != L'\\') --bl;
+        if (bl < 3 || end == bl) return long_form(path, out, cap);       // a volume's root
+        --bl;                                                              // its folder, without the '\\'
+        root = path;
+    }
+    if (bl == 0 || bl >= PATH_CAP) return false;
+    memcpy(base, root, bl * sizeof *base);
+    base[bl] = 0;
+    if (bl == 2) (void)rp_wcat(base, PATH_CAP, L"\\");             // "C:" is "C:\\"
+    if (!real_place(base, out, cap)) return false;
+    size_t on = rp_wlen(out);
+    if (on && out[on - 1] == L'\\') out[--on] = 0;
+    // The rest, without a '\\' at its end (a handle names a folder without one).
+    static wchar_t rest[PATH_CAP];
+    if (!rp_wcpy(rest, PATH_CAP, path + bl)) return false;
+    size_t rn = rp_wlen(rest);
+    while (rn > 1 && rest[rn - 1] == L'\\') rest[--rn] = 0;
+    return rp_wcat(out, cap, rest);
+}
+
+// Opens `path` as itself with `access` (fileop.h), where it is expected to be (expected_place:
+// nothing below its root is a link); INVALID_HANDLE_VALUE otherwise - and *missing when there is
+// nothing there at all.
+static HANDLE open_here(const wchar_t *path, DWORD access, DWORD *attr, bool *missing) {
+    static wchar_t lp[PATH_CAP], want[PATH_CAP], real[PATH_CAP];
+    *missing = false;
+    if (!long_form(path, lp, PATH_CAP)) return INVALID_HANDLE_VALUE;
+    HANDLE f = fileop_open_as(lp, access, real, PATH_CAP, attr);
+    if (f == INVALID_HANDLE_VALUE) {
+        DWORD e = GetLastError();
+        *missing = e == ERROR_FILE_NOT_FOUND || e == ERROR_PATH_NOT_FOUND;
+        return f;
+    }
+    if (!expected_place(path, want, PATH_CAP) || CompareStringOrdinal(real, -1, want, -1, TRUE) != CSTR_EQUAL) {
+        say(L"%ls: it is at %ls, not where its name says", path, real);
+        CloseHandle(f);
+        return INVALID_HANDLE_VALUE;
+    }
+    return f;
+}
+
+// The identity of the file `f` is open on ("" when it cannot be read).
+static void handle_id(HANDLE f, wchar_t id[40]) {
+    id[0] = 0;
+    BY_HANDLE_FILE_INFORMATION fi;
+    if (GetFileInformationByHandle(f, &fi))
+        wfmt(id, 40, L"%08lX%08lX%08lX", (unsigned long)fi.dwVolumeSerialNumber, (unsigned long)fi.nFileIndexHigh, (unsigned long)fi.nFileIndexLow);
 }
 
 // What this installation left: found once, on the first run - the queued deletions that were not
@@ -206,16 +261,38 @@ static own_t own[MAX_ITEMS];
 static size_t nown;
 static bool scanned;
 
-// The identity of the file at `path` ("" when there is none).
+// The identity of the file at `path` ("" when there is none, when it is not where its name says -
+// a folder above it put elsewhere by a link - or when it is a link itself: never this installation's).
 static void file_id(const wchar_t *path, wchar_t id[40]) {
     id[0] = 0;
-    HANDLE h = CreateFileW(path, FILE_READ_ATTRIBUTES, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING,
-                           FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, NULL);
-    if (h == INVALID_HANDLE_VALUE) return;
-    BY_HANDLE_FILE_INFORMATION fi;
-    if (GetFileInformationByHandle(h, &fi))
-        wfmt(id, 40, L"%08lX%08lX%08lX", (unsigned long)fi.dwVolumeSerialNumber, (unsigned long)fi.nFileIndexHigh, (unsigned long)fi.nFileIndexLow);
-    CloseHandle(h);
+    DWORD attr = 0;
+    bool missing;
+    HANDLE f = open_here(path, FILE_READ_ATTRIBUTES, &attr, &missing);     // a held file opens too
+    if (f == INVALID_HANDLE_VALUE) return;
+    if (!(attr & FILE_ATTRIBUTE_REPARSE_POINT)) handle_id(f, id);
+    CloseHandle(f);
+}
+
+// Deletes the file or empty folder at `path` while it is the one of identity `id` (NULL: any folder
+// that is not a link), through one handle that is where `path` says: nothing between the check and
+// the deletion can put another file there. True when it is gone (or was not there).
+static bool delete_own(const wchar_t *path, const wchar_t *id) {
+    DWORD attr = 0;
+    bool missing;
+    HANDLE f = open_here(path, DELETE | FILE_READ_ATTRIBUTES | FILE_WRITE_ATTRIBUTES, &attr, &missing);
+    if (f == INVALID_HANDLE_VALUE) f = open_here(path, DELETE | FILE_READ_ATTRIBUTES, &attr, &missing);
+    if (f == INVALID_HANDLE_VALUE) return missing;
+    bool ok = !(attr & FILE_ATTRIBUTE_REPARSE_POINT);
+    if (ok && id) {
+        wchar_t now[40];
+        handle_id(f, now);
+        ok = now[0] && rp_weq(now, id);
+    } else if (ok) {
+        ok = (attr & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    }
+    ok = ok && fileop_delete(f, attr);
+    CloseHandle(f);
+    return ok;
 }
 
 // Takes `path` as this installation's when it is under a root (marking the root) or, per machine,
@@ -373,11 +450,7 @@ static int pending(bool machine) {
             o->active = false;
             continue;
         }
-        const wchar_t *root = NULL;
-        for (size_t r = 0; r < nroots; ++r) {
-            if (under(o->path, roots[r]) && (root == NULL || rp_wlen(roots[r]) > rp_wlen(root))) root = roots[r];
-        }
-        bool deleted = no_links(o->path, root) && gone(o->path);
+        bool deleted = delete_own(o->path, o->id);
         say(L"%ls: %ls (error %lu)", o->path, deleted ? L"deleted" : L"still there", (unsigned long)GetLastError());
         if (!deleted) ++left;
         else o->active = false;
@@ -598,7 +671,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
         DWORD a = GetFileAttributesW(roots[r]);
         if (a == INVALID_FILE_ATTRIBUTES || installed) continue;
         if ((a & FILE_ATTRIBUTE_REPARSE_POINT) || !seen[r]) continue;     // only folders the installer had to leave
-        if (empty_dir(roots[r])) RemoveDirectoryW(roots[r]);
+        if (empty_dir(roots[r])) (void)delete_own(roots[r], NULL);
     }
     SYSTEMTIME now;
     GetLocalTime(&now);

@@ -83,8 +83,10 @@
 
 #include "proven/utf.h"
 
+#include "../clean/fileop.h"
 #include "../clean/keypath.h"
 #include "../clean/pfro.h"
+#include "../clean/purge_rule.h"
 #include "rp_appx.h"
 #include "rp_ask.h"
 #include "rp_wstr.h"
@@ -221,16 +223,29 @@ static HKEY root_key(const wchar_t *root) {
 
 static REGSAM view_flag(const wchar_t *view) { return rp_weq(view, L"32") ? KEY_WOW64_32KEY : KEY_WOW64_64KEY; }
 
-// A deferred action's data; also for its "<action>NR" twin, which runs instead of a commit action when
-// rollback is disabled (RFC-0031 L2; harmless for an action that has no twin).
+// A deferred action's data; also for its twins: "<action>NR", which runs instead of a commit action
+// when rollback is disabled (RFC-0031 L2), and in a dual package "<action>M" (and "<action>MNR"),
+// the one that runs as SYSTEM when it is installed for all users (ALLUSERS=1). Harmless for an
+// action that has no such twin.
 static UINT set_data(MSIHANDLE h, const wchar_t *action, writer_t *w) {
     const wchar_t *v = w->bad ? L"" : (w->buf ? w->buf : L"RPQ1");
     UINT rc = MsiSetPropertyW(h, action, v);
-    wchar_t twin[96];
-    if (RP_WCPY(twin, action) && RP_WCAT(twin, L"NR")) {
-        (void)MsiSetPropertyW(h, twin, v);
+    static const wchar_t *const tails[] = { L"NR", L"M", L"MNR" };
+    for (size_t i = 0; i < sizeof tails / sizeof tails[0]; ++i) {
+        wchar_t twin[96];
+        if (RP_WCPY(twin, action) && RP_WCAT(twin, tails[i])) (void)MsiSetPropertyW(h, twin, v);
     }
     return w->bad ? ERROR_OUTOFMEMORY : rc;
+}
+
+// A dual package's "dual" (RP_REMOVES_ROOT, RP_CLEANUP_SCOPE): `machine` when it is installed for
+// all users (ALLUSERS=1), `user` otherwise; any other value as it is.
+static const wchar_t *dual_value(MSIHANDLE h, const wchar_t *value, const wchar_t *machine, const wchar_t *user) {
+    if (value == NULL || !rp_weq(value, L"dual")) return value;
+    wchar_t *all = get_property(h, L"ALLUSERS");
+    bool m = all && rp_weq(all, L"1");
+    if (all) HeapFree(GetProcessHeap(), 0, all);
+    return m ? machine : user;
 }
 
 __declspec(dllexport) UINT __stdcall RpQwordPrepare(MSIHANDLE h) {
@@ -263,20 +278,39 @@ __declspec(dllexport) UINT __stdcall RpQwordPrepare(MSIHANDLE h) {
                           : action == INSTALLSTATE_ABSENT && !keep                    ? L"d"
                                                                                        : NULL;
         if (op == NULL) continue;
-        // What is there now: the rollback puts exactly this back.
-        HKEY k;
-        uint64_t old = 0;
-        DWORD type = 0, n = sizeof old;
+        // What is there now, of whatever type: the rollback puts exactly this back ("v": its type
+        // and bytes as "<type>:<hex>"). One too large for a field fails here, before anything changed.
+        static wchar_t was[MAX_TEXT / 8];
         bool had = false;
+        HKEY k;
         if (RegOpenKeyExW(root_key(root), f[2], 0, KEY_QUERY_VALUE | view_flag(f[1]), &k) == ERROR_SUCCESS) {
-            had = RegQueryValueExW(k, f[3][0] ? f[3] : NULL, NULL, &type, (BYTE *)&old, &n) == ERROR_SUCCESS && type == REG_QWORD;
+            DWORD type = 0, size = 0;
+            const wchar_t *name = f[3][0] ? f[3] : NULL;
+            if (RegQueryValueExW(k, name, NULL, &type, NULL, &size) == ERROR_SUCCESS) {
+                BYTE *bytes = HeapAlloc(GetProcessHeap(), 0, size ? size : 1);
+                DWORD got = size;
+                int at = wfmt(was, MAX_TEXT / 8, L"%lu:", (unsigned long)type);
+                if (bytes == NULL || at <= 0 || (size_t)at + 2 * (size_t)size + 1 > MAX_TEXT / 8 ||
+                    RegQueryValueExW(k, name, NULL, &type, bytes, &got) != ERROR_SUCCESS || got != size) {
+                    log_line(h, L"rubrapack: qword %ls\\%ls\\%ls: the value there now cannot be kept for a rollback", root, f[2], f[3]);
+                    rc = ERROR_INSTALL_FAILURE;
+                } else {
+                    static const wchar_t hex[] = L"0123456789ABCDEF";
+                    for (DWORD b = 0; b < size; ++b) {
+                        was[at++] = hex[bytes[b] >> 4];
+                        was[at++] = hex[bytes[b] & 15];
+                    }
+                    was[at] = 0;
+                    had = true;
+                }
+                if (bytes) HeapFree(GetProcessHeap(), 0, bytes);
+            }
             RegCloseKey(k);
         }
-        wchar_t oldhex[24];
-        wfmt(oldhex, 24, L"%016llX", (unsigned long long)old);
+        if (rc != ERROR_SUCCESS) break;
         const wchar_t *rec[6] = { op, root, f[1], f[2], f[3], f[4] };
         for (int i = 0; i < 6; ++i) w_field(&apply, rec[i]);
-        const wchar_t *back[6] = { had ? L"w" : L"d", root, f[1], f[2], f[3], oldhex };
+        const wchar_t *back[6] = { had ? L"v" : L"d", root, f[1], f[2], f[3], had ? was : L"" };
         for (int i = 0; i < 6; ++i) w_field(&rollback, back[i]);
         log_line(h, L"rubrapack: qword %ls\\%ls\\%ls: %ls (was %ls)", root, f[2], f[3], op[0] == L'w' ? L"write" : L"delete",
                  had ? L"set" : L"absent");
@@ -288,6 +322,10 @@ __declspec(dllexport) UINT __stdcall RpQwordPrepare(MSIHANDLE h) {
     if (apply.buf) HeapFree(GetProcessHeap(), 0, apply.buf);
     if (rollback.buf) HeapFree(GetProcessHeap(), 0, rollback.buf);
     return rc;
+}
+
+static int hexval(wchar_t c) {
+    return c >= L'0' && c <= L'9' ? c - L'0' : c >= L'A' && c <= L'F' ? c - L'A' + 10 : c >= L'a' && c <= L'f' ? c - L'a' + 10 : -1;
 }
 
 // Runs an apply list (RpQwordApply and RpQwordRollback share it).
@@ -306,7 +344,24 @@ static UINT run_list(MSIHANDLE h, bool rollback) {
         if (rc != ERROR_SUCCESS) break;
         HKEY k;
         LSTATUS ls;
-        if (f[0][0] == L'w') {
+        if (f[0][0] == L'v') {          // a value as it was (RpQwordPrepare): "<type>:<hex>"
+            const wchar_t *end = NULL;
+            DWORD type = (DWORD)rp_wtou(f[5], 10, &end);
+            size_t hn = end && *end == L':' ? rp_wlen(end + 1) : 1;
+            BYTE *bytes = hn % 2 == 0 ? HeapAlloc(GetProcessHeap(), 0, hn / 2 + 1) : NULL;
+            ls = bytes ? ERROR_SUCCESS : ERROR_INVALID_DATA;
+            for (size_t b = 0; bytes && b < hn / 2; ++b) {
+                int hi = hexval(end[1 + 2 * b]), lo = hexval(end[2 + 2 * b]);
+                if (hi < 0 || lo < 0) { ls = ERROR_INVALID_DATA; break; }
+                bytes[b] = (BYTE)(hi << 4 | lo);
+            }
+            if (ls == ERROR_SUCCESS) ls = RegCreateKeyExW(root_key(f[1]), f[3], 0, NULL, 0, KEY_SET_VALUE | view_flag(f[2]), NULL, &k, NULL);
+            if (ls == ERROR_SUCCESS) {
+                ls = RegSetValueExW(k, f[4][0] ? f[4] : NULL, 0, type, bytes, (DWORD)(hn / 2));
+                RegCloseKey(k);
+            }
+            if (bytes) HeapFree(GetProcessHeap(), 0, bytes);
+        } else if (f[0][0] == L'w') {
             uint64_t v = rp_wtou(f[5], 16, NULL);
             ls = RegCreateKeyExW(root_key(f[1]), f[3], 0, NULL, 0, KEY_SET_VALUE | view_flag(f[2]), NULL, &k, NULL);
             if (ls == ERROR_SUCCESS) {
@@ -321,7 +376,7 @@ static UINT run_list(MSIHANDLE h, bool rollback) {
             }
             if (ls == ERROR_FILE_NOT_FOUND) ls = ERROR_SUCCESS;     // already gone
         }
-        log_line(h, L"rubrapack: qword %ls %ls\\%ls\\%ls -> %ld", f[0][0] == L'w' ? L"write" : L"delete", f[1], f[3], f[4], (long)ls);
+        log_line(h, L"rubrapack: qword %ls %ls\\%ls\\%ls -> %ld", f[0][0] == L'w' ? L"write" : f[0][0] == L'v' ? L"put back" : L"delete", f[1], f[3], f[4], (long)ls);
         if (ls != ERROR_SUCCESS && !rollback) rc = ERROR_INSTALL_FAILURE;
     }
     HeapFree(GetProcessHeap(), 0, data);
@@ -618,6 +673,45 @@ static void make_dirs(const wchar_t *path) {
 }
 
 // Appends "file<TAB>path" to <folder>\pending.txt (UTF-16LE).
+// Takes the note of `path` (note_pending) out of the cleanup folder's pending.txt again.
+static void unnote_pending(MSIHANDLE h, const wchar_t *folder, const wchar_t *path) {
+    wchar_t file[MAX_PATH * 4], line[MAX_PATH * 4 + 16];
+    wfmt(file, MAX_PATH * 4, L"%ls\\pending.txt", folder);
+    int ln = wfmt(line, MAX_PATH * 4 + 16, L"file\t%ls\r\n", path);
+    HANDLE f = CreateFileW(file, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (f == INVALID_HANDLE_VALUE || ln <= 0) {
+        if (f != INVALID_HANDLE_VALUE) CloseHandle(f);
+        return;
+    }
+    LARGE_INTEGER size;
+    wchar_t *text = NULL;
+    DWORD got = 0;
+    if (GetFileSizeEx(f, &size) && size.QuadPart > 0 && size.QuadPart < (1 << 24) &&
+        (text = HeapAlloc(GetProcessHeap(), 0, (size_t)size.QuadPart + sizeof(wchar_t))) != NULL &&
+        ReadFile(f, text, (DWORD)size.QuadPart, &got, NULL) && got == (DWORD)size.QuadPart) {
+        size_t n = got / sizeof(wchar_t), w = 0, dropped = 0;
+        text[n] = 0;
+        for (size_t i = 0; i < n;) {        // line by line; this path's lines left out
+            size_t e = i;
+            while (e < n && text[e] != L'\n') ++e;
+            if (e < n) ++e;
+            bool same = e - i == (size_t)ln && memcmp(text + i, line, (size_t)ln * sizeof(wchar_t)) == 0;
+            if (same) ++dropped;
+            else {
+                memmove(text + w, text + i, (e - i) * sizeof(wchar_t));
+                w += e - i;
+            }
+            i = e;
+        }
+        LARGE_INTEGER zero = { 0 };
+        DWORD put = 0;
+        if (dropped && SetFilePointerEx(f, zero, NULL, FILE_BEGIN) && WriteFile(f, text, (DWORD)(w * sizeof(wchar_t)), &put, NULL)) SetEndOfFile(f);
+        if (dropped) log_line(h, L"rubrapack: remove: rollback: the note of %ls taken back", path);
+    }
+    if (text) HeapFree(GetProcessHeap(), 0, text);
+    CloseHandle(f);
+}
+
 static void note_pending(MSIHANDLE h, const wchar_t *folder, const wchar_t *path) {
     wchar_t file[MAX_PATH * 4], line[MAX_PATH * 4 + 16];
     make_dirs(folder);
@@ -633,7 +727,8 @@ static void note_pending(MSIHANDLE h, const wchar_t *folder, const wchar_t *path
 
 __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
     wchar_t *plan = get_property(h, L"RP_REMOVES");
-    wchar_t *root = get_property(h, L"RP_REMOVES_ROOT");
+    wchar_t *root_v = get_property(h, L"RP_REMOVES_ROOT");
+    const wchar_t *root = dual_value(h, root_v, L"volume", L"temp");
     wchar_t *upgrading = get_property(h, L"UPGRADINGPRODUCTCODE");
     writer_t apply = { 0 }, rollback = { 0 }, commit = { 0 };
     w_raw(&apply, L"RPR1", 4);
@@ -651,7 +746,10 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
         // Per user only: a per-machine removal runs as SYSTEM, which can always queue.
         static wchar_t cfolder[MAX_PATH * 4];
         wchar_t *pc = get_property(h, L"ProductCode");
-        if (!rp_weq(root, L"volume") && pc && cleanup_folder(pc, false, cfolder)) w_rec(&apply, L"c", cfolder, L"");
+        if (!rp_weq(root, L"volume") && pc && cleanup_folder(pc, false, cfolder)) {
+            w_rec(&apply, L"c", cfolder, L"");
+            w_rec(&rollback, L"c", cfolder, L"");       // the rollback takes this run's notes back
+        }
         if (pc) HeapFree(GetProcessHeap(), 0, pc);
         reader_t r = { plan + 4, plan + rp_wlen(plan) };
         static wchar_t f[3][MAX_TEXT / 8];
@@ -711,7 +809,7 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
     if (rc == ERROR_SUCCESS) rc = set_data(h, L"RP_RemoveApplyRollback", &rollback);
     if (rc == ERROR_SUCCESS) rc = set_data(h, L"RP_RemoveCommit", &commit);
     if (plan) HeapFree(GetProcessHeap(), 0, plan);
-    if (root) HeapFree(GetProcessHeap(), 0, root);
+    if (root_v) HeapFree(GetProcessHeap(), 0, root_v);
     if (upgrading) HeapFree(GetProcessHeap(), 0, upgrading);
     if (apply.buf) HeapFree(GetProcessHeap(), 0, apply.buf);
     if (rollback.buf) HeapFree(GetProcessHeap(), 0, rollback.buf);
@@ -818,6 +916,16 @@ static void remove_list(MSIHANDLE h, bool to_backup) {
                     BOOL later = MoveFileExW(f[1], NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
                     log_line(h, L"rubrapack: remove: %ls at the next restart: %ls", f[1], later ? L"queued" : L"could not queue");
                     if (!later && note[0]) note_pending(h, note, f[1]);     // per user: the cleanup task's job
+                }
+                // Rolled back with no backup to bring back: the file was never moved (it was held),
+                // so what the apply queued instead - its deletion at the next restart, or the cleanup
+                // task's note - is taken back; the product stays installed with the file.
+                if (!ok && !to_backup && GetFileAttributesW(f[1]) == INVALID_FILE_ATTRIBUTES && GetFileAttributesW(f[2]) != INVALID_FILE_ATTRIBUTES) {
+                    if (pfro_has(f[2])) {
+                        int taken = pfro_cancel(f[2], (unsigned long)-1);
+                        log_line(h, L"rubrapack: remove: rollback: the restart deletion of %ls taken back (%d)", f[2], taken);
+                    }
+                    if (note[0]) unnote_pending(h, note, f[2]);
                 }
             } else if (op == L'f') {
                 if (!backup_file_ok(f[1])) continue;
@@ -956,17 +1064,10 @@ __declspec(dllexport) UINT __stdcall RpRescueRollback(MSIHANDLE h) {
 }
 
 // `path` is inside folder `dir`, ignoring case.
-static bool inside(const wchar_t *path, const wchar_t *dir) {
-    size_t n = rp_wlen(dir);
-    return n && CompareStringOrdinal(path, (int)n, dir, (int)n, TRUE) == CSTR_EQUAL && path[n] == L'\\' && path[n + 1];
-}
+static bool inside(const wchar_t *path, const wchar_t *dir) { return keypath_inside(path, dir); }
 
-// <volume>\Config.Msi\<name>.rbf, one level down: one of the installer's backups.
-static bool is_backup(const wchar_t *path) {
-    size_t n = rp_wlen(path);
-    return n > 17 && path[1] == L':' && CompareStringOrdinal(path + 2, 12, L"\\Config.Msi\\", 12, TRUE) == CSTR_EQUAL &&
-           !rp_wchr(path + 14, L'\\') && CompareStringOrdinal(path + n - 4, 4, L".rbf", 4, TRUE) == CSTR_EQUAL;
-}
+// <volume>\Config.Msi\<name>.rbf, one level down: one of the installer's backups (keypath.h).
+static bool is_backup(const wchar_t *path) { return keypath_is_backup(path); }
 
 // x46: the add-ons of the main product `uc` still installed, from one registry root and view.
 static void addons_from(MSIHANDLE h, HKEY root, REGSAM view, const wchar_t *uc, wchar_t codes[][40], size_t *n, size_t cap) {
@@ -996,7 +1097,8 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
     writer_t w = { 0 };
     w_raw(&w, L"RPC1", 4);
     static wchar_t folder[MAX_PATH * 4];
-    bool machine = scope && rp_weq(scope, L"machine");
+    const wchar_t *scope_r = dual_value(h, scope, L"machine", L"user");
+    bool machine = scope_r && rp_weq(scope_r, L"machine");
     // Why this run may leave something. Windows Installer queues the installer's backups for the
     // next restart only after the commit actions (x40), so the commit cannot know - it registers the
     // task for every run that removes or replaces files, and the task's first run, two minutes
@@ -1901,41 +2003,10 @@ typedef struct {
 } purge_t;
 
 // Opens the entry at p->path as itself and checks, by the handle, that it is where its name says
-// (a folder above it put elsewhere by a link gives another place). INVALID_HANDLE_VALUE otherwise.
-static HANDLE purge_open(purge_t *p, DWORD *attr) {
-    const DWORD share = FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE;
-    const DWORD flags = FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT;
-    HANDLE f = CreateFileW(p->path, DELETE | FILE_LIST_DIRECTORY | FILE_READ_ATTRIBUTES | FILE_WRITE_ATTRIBUTES | SYNCHRONIZE, share, NULL,
-                           OPEN_EXISTING, flags, NULL);
-    if (f == INVALID_HANDLE_VALUE)
-        f = CreateFileW(p->path, DELETE | FILE_READ_ATTRIBUTES | SYNCHRONIZE, share, NULL, OPEN_EXISTING, flags, NULL);
-    if (f == INVALID_HANDLE_VALUE) return f;
-    FILE_ATTRIBUTE_TAG_INFO ti;
-    DWORD n = GetFinalPathNameByHandleW(f, p->real, PURGE_PATH, FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
-    if (!GetFileInformationByHandleEx(f, FileAttributeTagInfo, &ti, sizeof ti) || n == 0 || n >= PURGE_PATH ||
-        CompareStringOrdinal(p->real, -1, p->path, -1, TRUE) != CSTR_EQUAL) {
-        CloseHandle(f);
-        SetLastError(ERROR_CANT_RESOLVE_FILENAME);
-        return INVALID_HANDLE_VALUE;
-    }
-    *attr = ti.FileAttributes;
-    return f;
-}
+// (fileop.h). INVALID_HANDLE_VALUE otherwise.
+static HANDLE purge_open(purge_t *p, DWORD *attr) { return fileop_open(p->path, p->real, PURGE_PATH, attr); }
 
-static bool purge_delete(HANDLE f, DWORD attr) {
-    if (attr & FILE_ATTRIBUTE_READONLY) {
-        FILE_BASIC_INFO bi;
-        memset(&bi, 0, sizeof bi);
-        bi.FileAttributes = (attr & ~(DWORD)FILE_ATTRIBUTE_READONLY) ? (attr & ~(DWORD)FILE_ATTRIBUTE_READONLY) : FILE_ATTRIBUTE_NORMAL;
-        SetFileInformationByHandle(f, FileBasicInfo, &bi, sizeof bi);
-    }
-    // The name goes at once even while another program has the file open (Windows 10 1709 and
-    // later: class 21, delete | POSIX semantics | ignore read-only); the older way otherwise.
-    struct { DWORD flags; } ex = { 0x1 | 0x2 | 0x10 };
-    if (SetFileInformationByHandle(f, (FILE_INFO_BY_HANDLE_CLASS)21, &ex, sizeof ex)) return true;
-    FILE_DISPOSITION_INFO di = { TRUE };
-    return SetFileInformationByHandle(f, FileDispositionInfo, &di, sizeof di) != 0;
-}
+static bool purge_delete(HANDLE f, DWORD attr) { return fileop_delete(f, attr); }
 
 // Empties the folder open as `d` (p->path, `len` characters long, names it).
 static void purge_inside(purge_t *p, HANDLE d, size_t len, int depth) {
@@ -2006,7 +2077,19 @@ static void purge_tree(MSIHANDLE h, const wchar_t *dir) {
 }
 
 // Deletes the key `name` below `parent` with everything below it; a link is deleted as a link.
+// The rule the package was built with (purge_rule.h), again, before any key is deleted whole: a
+// package changed by hand does not get a branch of Windows' own deleted. The rule reads UTF-8: the
+// key is given as such (proven's conversion); one that is not valid UTF-16 is refused.
+static bool purge_key_allowed(const wchar_t *key) {
+    static char utf8[MAX_PATH * 16];
+    size_t kn = rp_wlen(key), n = 0;
+    if (kn == 0 || proven_utf16_to_utf8((const proven_u16 *)key, kn, (proven_byte_t *)utf8, sizeof utf8 - 1, &n) != PROVEN_OK) return false;
+    utf8[n] = 0;
+    return purge_key_ok(utf8);
+}
+
 static LSTATUS purge_subkey(HKEY parent, const wchar_t *name, REGSAM view, int depth) {
+    if (depth == 0 && !purge_key_allowed(name)) return ERROR_ACCESS_DENIED;      // every user's, the same rule
     HKEY k;
     LSTATUS ls = RegOpenKeyExW(parent, name, REG_OPTION_OPEN_LINK, DELETE | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | view, &k);
     if (ls != ERROR_SUCCESS) return ls;
@@ -2028,6 +2111,10 @@ static LSTATUS purge_subkey(HKEY parent, const wchar_t *name, REGSAM view, int d
 }
 
 static void purge_key(MSIHANDLE h, const wchar_t *root, const wchar_t *view, const wchar_t *key) {
+    if (!purge_key_allowed(key)) {
+        log_line(h, L"rubrapack: purge: key %ls\\%ls is kept: not a product's own key below Software", root, key);
+        return;
+    }
     HKEY base = HKEY_LOCAL_MACHINE;
     bool user = rp_weq(root, L"HKCU");
     // The hive of the user this action runs as, not the process's.
@@ -2347,8 +2434,29 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
         ex_query(db, L"SELECT `Directory_`, `Name` FROM `Shortcut`", known, &nknown, MAX_KNOWN, L".lnk", false);
         ex_query(db, L"SELECT `DirProperty`, `FileName` FROM `IniFile`", known, &nknown, MAX_KNOWN, L"", false);
         ex_query(db, L"SELECT `DirProperty`, `FileName` FROM `RemoveFile`", known, &nknown, MAX_KNOWN, L"", true);
+        // [copy] (DuplicateFile, MoveFile): the copies are the product's too - under their own name,
+        // or the file's when they have none (p3 removecopy).
+        ex_query(db, L"SELECT `DestFolder`, `DestName` FROM `DuplicateFile`", known, &nknown, MAX_KNOWN, L"", false);
+        ex_query(db, L"SELECT `DuplicateFile`.`DestFolder`, `File`.`FileName` FROM `DuplicateFile`, `File` "
+                     L"WHERE `DuplicateFile`.`File_` = `File`.`File` AND `DuplicateFile`.`DestName` IS NULL",
+                 known, &nknown, MAX_KNOWN, L"", false);
+        ex_query(db, L"SELECT `DestFolder`, `DestName` FROM `MoveFile`", known, &nknown, MAX_KNOWN, L"", false);
         MsiCloseHandle(db);
     }
+    // [remove] upgrade = false: its patterns are the helper's plan (RP_REMOVES: folder, name,
+    // component), not RemoveFile rows - what they match goes with the product too (x102).
+    wchar_t *rplan = get_property(h, L"RP_REMOVES");
+    if (rplan && rp_wstarts(rplan, L"RPR1")) {
+        reader_t r = { rplan + 4, rplan + rp_wlen(rplan) };
+        static wchar_t g[3][MAX_TEXT / 8];
+        while (r.p < r.end && nknown < MAX_KNOWN && r_field(&r, g[0], MAX_TEXT / 8) && r_field(&r, g[1], MAX_TEXT / 8) && r_field(&r, g[2], MAX_TEXT / 8)) {
+            if (g[1][0] == 0 || rp_wlen(g[0]) >= 80 || rp_wlen(g[1]) >= 260) continue;
+            ex_known_t *e = &known[nknown++];
+            (void)(RP_WCPY(e->dir, g[0]) && RP_WCPY(e->name, g[1]));
+            e->pattern = true;
+        }
+    }
+    if (rplan) HeapFree(GetProcessHeap(), 0, rplan);
     rp_wtok_t toks = rp_wtok(dirs, L";");
     for (wchar_t *d = rp_wtok_next(&toks); d && ndirs < MAX_DIRS; d = rp_wtok_next(&toks)) {
         DWORD n = MAX_PATH * 2;
@@ -2710,6 +2818,23 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
         }
     }
     if (view) MsiCloseHandle(view);
+    view = 0;
+    // The package's own services that the installation stops itself (ServiceControl, a stop event:
+    // install 0x2, uninstall 0x20): Windows Installer stops them at StopServices, so they are not
+    // programs anyone has to be asked to close (p3 service: a running service stopped every quiet
+    // removal of its product).
+    enum { MAX_SVC = 64 };
+    static wchar_t svc[MAX_SVC][256];
+    size_t nsvc = 0;
+    if (db && MsiDatabaseOpenViewW(db, L"SELECT `Name`, `Event` FROM `ServiceControl`", &view) == ERROR_SUCCESS && MsiViewExecute(view, 0) == ERROR_SUCCESS) {
+        while (nsvc < MAX_SVC && MsiViewFetch(view, &rec) == ERROR_SUCCESS) {
+            DWORD sn = 256;
+            int ev = MsiRecordGetInteger(rec, 2);
+            if (ev != (int)MSI_NULL_INTEGER && (ev & (0x2 | 0x20)) && MsiRecordGetStringW(rec, 1, svc[nsvc], &sn) == ERROR_SUCCESS && svc[nsvc][0]) ++nsvc;
+            MsiCloseHandle(rec);
+        }
+    }
+    if (view) MsiCloseHandle(view);
     if (db) MsiCloseHandle(db);
 
     static RM_PROCESS_INFO procs[MAX_PROCS];
@@ -2763,6 +2888,14 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
         image_name(pid, image);
         // Not the installer itself, and nothing Windows cannot do without.
         if (pid == GetCurrentProcessId() || rp_wieq(image, L"msiexec.exe") || procs[i].ApplicationType == RmCritical) continue;
+        bool stopped_here = false;
+        for (size_t k = 0; k < nsvc && procs[i].ApplicationType == RmService && !stopped_here; ++k) {
+            stopped_here = CompareStringOrdinal(procs[i].strServiceShortName, -1, svc[k], -1, TRUE) == CSTR_EQUAL;
+        }
+        if (stopped_here) {
+            log_line(h, L"rubrapack: preflight: the service %ls (process %lu) is stopped by this installation itself", procs[i].strServiceShortName, (unsigned long)pid);
+            continue;
+        }
         log_line(h, L"rubrapack: preflight: in use by %ls (%ls, process %lu, kind %d)", procs[i].strAppName, image, (unsigned long)pid, (int)procs[i].ApplicationType);
         if (nlisted < 15) {
             wchar_t line[400];

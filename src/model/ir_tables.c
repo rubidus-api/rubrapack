@@ -1,6 +1,7 @@
 // src/model/ir_tables.c - the other item tables: [arp], [msix], properties, actions, registry,
 // shortcuts and the rest.
 
+#include "../clean/purge_rule.h"
 #include "ir_int.h"
 
 #include "rubrapack/num.h"
@@ -491,17 +492,6 @@ void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
     if (ir_find_key(t, "check")) ERR(c, ir_key_pos(t, "check"), "RP1316", "[action.{}]: check goes with a do/undo pair", proven_arg_cstr(rp_cs(t->id)));
 }
 
-static bool ieq_n(const char *a, const char *b, size_t n) {
-    for (size_t i = 0; i < n; ++i) {
-        char x = a[i], y = b[i];
-        if (x >= 'A' && x <= 'Z') x = (char)(x - 'A' + 'a');
-        if (y >= 'A' && y <= 'Z') y = (char)(y - 'A' + 'a');
-        if (x != y) return false;
-        if (x == 0) return true;
-    }
-    return true;
-}
-
 // users = "all" (RFC-0030): what is wiped at removal, in every user's profile or HKCU - when the
 // removal is told so. Where it may stand is checked with the whole package (ir_check.c).
 static bool ir_users_all(ctx_t *c, const rp_ttable_t *t, char *users) {
@@ -571,21 +561,9 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
             if (ir_find_key(t, keys2[k])) ERR(c, ir_key_pos(t, keys2[k]), "RP1316", "on = \"uninstall\" removes the whole key at removal; it takes no '{}'", proven_arg_cstr(keys2[k]));
         }
         if (r->root == RP_ROOT_HKCR) ERR(c, ir_key_pos(t, "root"), "RP1316", "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)");
-        // Only a key of the product: below Software, and not a whole branch of Windows' own.
-        size_t parts = 1;
-        for (const char *p = rp_cs(r->key); *p; ++p) parts += *p == '\\';
-        static const char *const wide[] = { "Microsoft", "Classes", "Policies", "Wow6432Node" };
-        bool below = ieq_n(rp_cs(r->key), "Software\\", 9) && parts >= 2;
-        for (size_t k = 0; below && k < sizeof wide / sizeof wide[0]; ++k) {
-            size_t wl = strlen(wide[k]);
-            if (ieq_n(rp_cs(r->key) + 9, wide[k], wl) && (r->key.ptr[9 + wl] == '\\' || r->key.ptr[9 + wl] == 0) && parts < 4) below = false;
-        }
-        // Windows' own settings, however deep.
-        static const char *const own[] = { "Software\\Microsoft\\Windows", "Software\\Microsoft\\Windows NT" };
-        for (size_t k = 0; below && k < sizeof own / sizeof own[0]; ++k) {
-            size_t ol = strlen(own[k]);
-            if (ieq_n(rp_cs(r->key), own[k], ol) && (r->key.ptr[ol] == '\\' || r->key.ptr[ol] == 0)) below = false;
-        }
+        // Only a key of the product: below Software, and not a whole branch of Windows' own
+        // (src/clean/purge_rule.h, which the helper DLL checks again before it deletes one).
+        bool below = purge_key_ok(rp_cs(r->key));
         if (!below) ERR(c, ir_key_pos(t, "key"), "RP1316", "on = \"uninstall\" removes a key with everything below it: '{}' is not a product's own key below Software", proven_arg_cstr(rp_cs(r->key)));
     }
     char *view = ir_get_str(c, t, "view", false, NULL);

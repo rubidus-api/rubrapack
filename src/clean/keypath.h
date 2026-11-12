@@ -62,8 +62,40 @@ static inline bool keypath_value_dir(const wchar_t *v, wchar_t *out, size_t cap)
     return true;
 }
 
+// How many characters of `path` to compare with folder `root` to tell whether `path` is inside it
+// (not the root itself): `root` without its trailing '\', when `path` is longer and has a '\' and
+// more after that many characters; 0 otherwise (also for an empty root). The caller compares those
+// characters (CompareStringOrdinal, ignoring case): never past the end of the shorter string.
+static inline size_t keypath_inside_n(const wchar_t *path, const wchar_t *root) {
+    size_t n = rp_wlen(root);
+    while (n && root[n - 1] == L'\\') --n;
+    return n && rp_wlen(path) > n + 1 && path[n] == L'\\' ? n : 0;
+}
+
+// Whether `path` has the form of one of the installer's backups, <volume>\Config.Msi\<name>.rbf, one
+// level down - except the case of "Config.Msi" and ".rbf", which the caller compares: it returns
+// the offset of the name (14), or 0.
+static inline size_t keypath_backup_name(const wchar_t *path) {
+    size_t n = rp_wlen(path);
+    if (n < 14 + 5 || path[1] != L':' || path[2] != L'\\' || path[13] != L'\\') return 0;
+    return rp_wchr(path + 14, L'\\') ? 0 : 14;
+}
+
 #if defined(_WIN32)
 #include <windows.h>
+
+// keypath_inside_n with the comparison, ignoring case as Windows does.
+[[maybe_unused]] static bool keypath_inside(const wchar_t *path, const wchar_t *root) {
+    size_t n = keypath_inside_n(path, root);
+    return n && CompareStringOrdinal(path, (int)n, root, (int)n, TRUE) == CSTR_EQUAL;
+}
+
+// <volume>\Config.Msi\<name>.rbf, one level down: one of the installer's backups.
+[[maybe_unused]] static bool keypath_is_backup(const wchar_t *path) {
+    size_t at = keypath_backup_name(path), n = rp_wlen(path);
+    return at && CompareStringOrdinal(path + 3, 10, L"Config.Msi", 10, TRUE) == CSTR_EQUAL &&
+           CompareStringOrdinal(path + n - 4, 4, L".rbf", 4, TRUE) == CSTR_EQUAL;
+}
 
 // The folder of key path `kp` (ending in '\'), reading a registry value as the current user.
 [[maybe_unused]] static bool keypath_dir(const wchar_t *kp, wchar_t *out, size_t cap) {

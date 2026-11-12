@@ -25,6 +25,7 @@
 #include <windows.h>
 #include <msi.h>
 #include <sddl.h>
+#include <aclapi.h>
 #include <shellapi.h>
 
 #include <stdint.h>
@@ -32,6 +33,7 @@
 
 #include "../ca/rp_appx.h"
 #include "../ca/rp_ask.h"
+#include "rp_result.h"
 
 #include "proven/sha2.h"
 #include "proven/utf.h"
@@ -253,8 +255,31 @@ static void texts_load(const uint8_t *m, uint32_t n, uint32_t at, const wchar_t 
     }
 }
 
-// Copies bytes [at, at + size) of f to a new file `path`, checking their SHA-256 (proven's).
-static bool extract(HANDLE f, uint64_t at, uint64_t size, const uint8_t want[32], const wchar_t *path) {
+// The SHA-256 of what `h` reads from its start (proven's).
+static bool hash_file(HANDLE h, uint8_t got[32]) {
+    LARGE_INTEGER zero = { 0 };
+    if (!SetFilePointerEx(h, zero, NULL, FILE_BEGIN)) return false;
+    proven_sha256_t s;
+    proven_sha256_init(&s);
+    static uint8_t buf[1 << 16];
+    for (;;) {
+        DWORD n = 0;
+        if (!ReadFile(h, buf, sizeof buf, &n, NULL)) return false;
+        if (n == 0) break;
+        proven_sha256_update(&s, (proven_mem_view_t){ buf, n });
+    }
+    proven_sha256_final(&s, got);
+    return true;
+}
+
+// Copies bytes [at, at + size) of f to a new file `path`, checking their SHA-256 (proven's), and
+// holds it: `*hold` is a handle that lets others read the file but not write, delete or rename it -
+// nor rename the folder it is in - until the caller closes it after the installation. The file is
+// hashed again through that handle, so what is held is what was checked: elevated, a package
+// swapped in %TEMP% (whose parent the same user's unelevated programs may change) between the
+// check and the installation would be installed with this program's rights.
+static bool extract(HANDLE f, uint64_t at, uint64_t size, const uint8_t want[32], const wchar_t *path, HANDLE *hold) {
+    *hold = INVALID_HANDLE_VALUE;
     HANDLE out = CreateFileW(path, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     bool ok = out != INVALID_HANDLE_VALUE;
     proven_sha256_t h;
@@ -271,6 +296,14 @@ static bool extract(HANDLE f, uint64_t at, uint64_t size, const uint8_t want[32]
     proven_sha256_final(&h, got);
     if (ok) ok = memcmp(got, want, 32) == 0;
     if (out != INVALID_HANDLE_VALUE) CloseHandle(out);
+    if (ok) {
+        *hold = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        ok = *hold != INVALID_HANDLE_VALUE && hash_file(*hold, got) && memcmp(got, want, 32) == 0;
+        if (!ok && *hold != INVALID_HANDLE_VALUE) {
+            CloseHandle(*hold);
+            *hold = INVALID_HANDLE_VALUE;
+        }
+    }
     if (!ok) DeleteFileW(path);
     return ok;
 }
@@ -484,14 +517,13 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
                 for (uint32_t i = 0; target(p, i, product); ++i) {
                     if (!patch_applied(pc, product)) continue;
                     UINT one = MsiRemovePatchesW(pc, product, INSTALLTYPE_SINGLE_INSTANCE, NULL);     // the only type it takes
-                    if (one != ERROR_SUCCESS && r != ERROR_SUCCESS_REBOOT_REQUIRED) r = one;
+                    r = rp_result_merge(r, one);
                 }
             } else if (pc) {
                 r = MsiConfigureProductW(pc, INSTALLLEVEL_DEFAULT, INSTALLSTATE_ABSENT);
             }
             LocalFree(pc);
-            if (r == ERROR_SUCCESS_REBOOT_REQUIRED) result = (int)r;
-            else if (r != ERROR_SUCCESS && result == 0) result = (int)r;
+            result = (int)rp_result_merge((unsigned)result, r);     // a failure is never hidden by a 3010
         }
         if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say_done(title, texts[T_REMOVED], result);
         else say(title, texts[T_REMOVEFAILED], true);
@@ -514,16 +546,43 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         made = CreateDirectoryW(dir, sa.lpSecurityDescriptor ? &sa : NULL) != 0;
     }
     if (sa.lpSecurityDescriptor) LocalFree(sa.lpSecurityDescriptor);
+    // Held until the end, so it cannot be renamed, deleted or put elsewhere by a link while the
+    // packages in it are installed; and, elevated, checked to be the folder made here - not a link,
+    // owned by Administrators - in case it was swapped between its making and this opening.
+    HANDLE dirh = INVALID_HANDLE_VALUE;
+    if (made) {
+        dirh = CreateFileW(dir, FILE_LIST_DIRECTORY | FILE_READ_ATTRIBUTES | READ_CONTROL | SYNCHRONIZE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                           NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, NULL);
+        FILE_ATTRIBUTE_TAG_INFO ti;
+        bool ours = dirh != INVALID_HANDLE_VALUE && GetFileInformationByHandleEx(dirh, FileAttributeTagInfo, &ti, sizeof ti) &&
+                    (ti.FileAttributes & FILE_ATTRIBUTE_DIRECTORY) && !(ti.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT);
+        if (ours && elevated()) {
+            PSID owner = NULL;
+            PSECURITY_DESCRIPTOR sd = NULL;
+            BYTE admins[SECURITY_MAX_SID_SIZE];
+            DWORD an = sizeof admins;
+            ours = GetSecurityInfo(dirh, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, &owner, NULL, NULL, NULL, &sd) == ERROR_SUCCESS &&
+                   CreateWellKnownSid(WinBuiltinAdministratorsSid, NULL, admins, &an) && EqualSid(owner, admins);
+            if (sd) LocalFree(sd);
+        }
+        if (!ours) {
+            if (dirh != INVALID_HANDLE_VALUE) CloseHandle(dirh);
+            dirh = INVALID_HANDLE_VALUE;
+            made = false;
+        }
+    }
     if (!made) {
         say(title, texts[T_TEMPFAILED], true);
         CloseHandle(f);
         return ERROR_CANNOT_MAKE;
     }
+    static HANDLE holds[MAX_PACKAGES];   // the chain's packages, held while they are installed (extract)
+    for (uint32_t k = 0; k < c.count; ++k) holds[k] = INVALID_HANDLE_VALUE;
     for (uint32_t k = 0; k < c.count && result != EXIT_DAMAGED; ++k) {
         const package_t *p = &c.p[k];
         wchar_t *id = wide(p->id, p->id_len);
         wsprintfW(path, L"%s\\%s.%s", dir, id ? id : L"package", ext(p));
-        if (id == NULL || !extract(f, start + p->offset, p->size, p->sha256, path)) {
+        if (id == NULL || !extract(f, start + p->offset, p->size, p->sha256, path, &holds[k])) {
             say(title, texts[T_DAMAGED], true);
             result = EXIT_DAMAGED;
         }
@@ -539,11 +598,15 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         wchar_t *id = wide(p->id, p->id_len), *props = repair ? wide("REINSTALL=ALL REINSTALLMODE=ecmus", 33) : wide(p->properties, p->properties_len);
         wsprintfW(path, L"%s\\%s.%s", dir, id ? id : L"package", ext(p));
         // /lang: the packages' own dialogs and messages in that language too.
+        // (Copied, not wsprintfW: that stops at 1,024 characters and the properties may be longer.)
         wchar_t *all = props;
         if (props && lang && lstrlenW(lang) < 16) {
             size_t pn = (size_t)lstrlenW(props) + 40;
             all = LocalAlloc(LMEM_FIXED, pn * sizeof *all);
-            if (all) wsprintfW(all, L"%s RPLANGUAGE=%s", props, lang);
+            if (all && !(rp_wcpy(all, pn, props) && rp_wcat(all, pn, L" RPLANGUAGE=") && rp_wcat(all, pn, lang))) {
+                LocalFree(all);
+                all = NULL;
+            }
         }
         HRESULT hr = S_OK;
         UINT r = id == NULL || all == NULL       ? ERROR_OUTOFMEMORY
@@ -563,11 +626,13 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         LocalFree(props);
     }
     for (uint32_t k = 0; k < c.count; ++k) {
+        if (holds[k] != INVALID_HANDLE_VALUE) CloseHandle(holds[k]);
         wchar_t *id = wide(c.p[k].id, c.p[k].id_len);
         wsprintfW(path, L"%s\\%s.%s", dir, id ? id : L"package", ext(&c.p[k]));
         DeleteFileW(path);
         LocalFree(id);
     }
+    CloseHandle(dirh);
     RemoveDirectoryW(dir);
     if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say_done(title, repair ? texts[T_REPAIRED] : texts[T_FINISHED], result);
     LocalFree(title);

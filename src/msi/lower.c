@@ -1736,6 +1736,12 @@ static void lower_helper_actions(pkg_t *pk) {
         s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpQwordRollback"));
         s_(&pk->customaction, PROVEN_LIT("RP_QwordApply")); i_(&pk->customaction, 1 | 0x400 | noimp); s_(&pk->customaction, PROVEN_LIT("RpCa"));
         s_(&pk->customaction, PROVEN_LIT("RpQwordApply"));
+        if (ir->scope == 2) {           // a dual package for all users writes HKLM: its twins as SYSTEM
+            s_(&pk->customaction, PROVEN_LIT("RP_QwordApplyRollbackM")); i_(&pk->customaction, 1 | 0x100 | 0x400 | 0x800 | 0x40);
+            s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpQwordRollback"));
+            s_(&pk->customaction, PROVEN_LIT("RP_QwordApplyM")); i_(&pk->customaction, 1 | 0x400 | 0x800); s_(&pk->customaction, PROVEN_LIT("RpCa"));
+            s_(&pk->customaction, PROVEN_LIT("RpQwordApply"));
+        }
     }
     // DECISIONS 2026-10-06: RpPreflight before InstallValidate - the programs using the product's
     // files (asked about, or RPCLOSE), the folders and the older versions' cached packages. Its texts
@@ -1862,22 +1868,28 @@ static void lower_helper_actions(pkg_t *pk) {
         for (size_t i = 0; i < nkeys; ++i) dirs = *dirs ? kprintf(k, "{};{}", dirs, keys[i]) : keys[i];
         if (keys) rp_mem_free(pk->alloc, keys);
         s_(&pk->property, PROVEN_LIT("RP_CLEANUP_DIRS")); s_(&pk->property, RP_V(*dirs ? dirs : "TARGETDIR"));
-        s_(&pk->property, PROVEN_LIT("RP_CLEANUP_SCOPE")); s_(&pk->property, RP_V(ir->scope == 0 ? "machine" : "user"));
+        // A dual package: "dual", which the prepare reads as machine when ALLUSERS=1 (review 2026-11-12).
+        s_(&pk->property, PROVEN_LIT("RP_CLEANUP_SCOPE")); s_(&pk->property, RP_V(ir->scope == 0 ? "machine" : ir->scope == 2 ? "dual" : "user"));
         if (ir->remove_addons) { s_(&pk->property, PROVEN_LIT("RP_REMOVE_ADDONS")); s_(&pk->property, PROVEN_LIT("1")); }   // x46
         const int noimp = ir->scope == 0 ? 0x800 : 0;
         s_(&pk->customaction, PROVEN_LIT("RP_CleanupPrepare")); i_(&pk->customaction, 1 | 0x40); s_(&pk->customaction, PROVEN_LIT("RpCa"));
         s_(&pk->customaction, PROVEN_LIT("RpCleanupPrepare"));
         s_(&pk->customaction, PROVEN_LIT("RP_CleanupRegister")); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | noimp); s_(&pk->customaction, PROVEN_LIT("RpCa"));
         s_(&pk->customaction, PROVEN_LIT("RpCleanupRegister"));
+        if (ir->scope == 2) {           // its twin as SYSTEM, for an installation for all users (ALLUSERS=1)
+            s_(&pk->customaction, PROVEN_LIT("RP_CleanupRegisterM")); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | 0x800); s_(&pk->customaction, PROVEN_LIT("RpCa"));
+            s_(&pk->customaction, PROVEN_LIT("RpCleanupRegister"));
+        }
         pk->cleanup = true;
         // x41: take back the deletions an earlier removal queued for the paths this package installs
-        // (per machine: the list is in HKLM).
-        if (ir->scope == 0) {
+        // (per machine: the list is in HKLM; a dual package installed for all users the same, as SYSTEM).
+        if (ir->scope == 0 || ir->scope == 2) {
+            const int sys = 0x800;
             s_(&pk->customaction, PROVEN_LIT("RP_RescuePrepare")); i_(&pk->customaction, 1 | 0x40); s_(&pk->customaction, PROVEN_LIT("RpCa"));
             s_(&pk->customaction, PROVEN_LIT("RpRescuePrepare"));
-            s_(&pk->customaction, PROVEN_LIT("RP_RescueApplyRollback")); i_(&pk->customaction, 1 | 0x40 | 0x100 | 0x400 | noimp);
+            s_(&pk->customaction, PROVEN_LIT("RP_RescueApplyRollback")); i_(&pk->customaction, 1 | 0x40 | 0x100 | 0x400 | sys);
             s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpRescueRollback"));
-            s_(&pk->customaction, PROVEN_LIT("RP_RescueApply")); i_(&pk->customaction, 1 | 0x40 | 0x400 | noimp); s_(&pk->customaction, PROVEN_LIT("RpCa"));
+            s_(&pk->customaction, PROVEN_LIT("RP_RescueApply")); i_(&pk->customaction, 1 | 0x40 | 0x400 | sys); s_(&pk->customaction, PROVEN_LIT("RpCa"));
             s_(&pk->customaction, PROVEN_LIT("RpRescueApply"));
         }
     }
@@ -1885,7 +1897,7 @@ static void lower_helper_actions(pkg_t *pk) {
     // rollback twin -> apply (moves the files to a backup folder) -> commit (deletes the backup).
     if (pk->any_rplan) {
         s_(&pk->property, PROVEN_LIT("RP_REMOVES")); s_(&pk->property, RP_V(kprintf(k, "{}{}", pk->rplan, NULL)));
-        s_(&pk->property, PROVEN_LIT("RP_REMOVES_ROOT")); s_(&pk->property, RP_V(ir->scope == 0 ? "volume" : "temp"));
+        s_(&pk->property, PROVEN_LIT("RP_REMOVES_ROOT")); s_(&pk->property, RP_V(ir->scope == 0 ? "volume" : ir->scope == 2 ? "dual" : "temp"));
         const int noimp = ir->scope == 0 ? 0x800 : 0;
         s_(&pk->customaction, PROVEN_LIT("RP_RemovePrepare")); i_(&pk->customaction, 1); s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpRemovePrepare"));
         s_(&pk->customaction, PROVEN_LIT("RP_RemoveApplyRollback")); i_(&pk->customaction, 1 | 0x40 | 0x100 | 0x400 | noimp);
@@ -1894,6 +1906,14 @@ static void lower_helper_actions(pkg_t *pk) {
         s_(&pk->customaction, PROVEN_LIT("RpRemoveApply"));
         s_(&pk->customaction, PROVEN_LIT("RP_RemoveCommit")); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | noimp); s_(&pk->customaction, PROVEN_LIT("RpCa"));
         s_(&pk->customaction, PROVEN_LIT("RpRemoveCommit"));
+        if (ir->scope == 2) {           // the twins as SYSTEM, for an installation for all users (ALLUSERS=1)
+            s_(&pk->customaction, PROVEN_LIT("RP_RemoveApplyRollbackM")); i_(&pk->customaction, 1 | 0x40 | 0x100 | 0x400 | 0x800);
+            s_(&pk->customaction, PROVEN_LIT("RpCa")); s_(&pk->customaction, PROVEN_LIT("RpRemoveRollback"));
+            s_(&pk->customaction, PROVEN_LIT("RP_RemoveApplyM")); i_(&pk->customaction, 1 | 0x40 | 0x400 | 0x800); s_(&pk->customaction, PROVEN_LIT("RpCa"));
+            s_(&pk->customaction, PROVEN_LIT("RpRemoveApply"));
+            s_(&pk->customaction, PROVEN_LIT("RP_RemoveCommitM")); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | 0x800); s_(&pk->customaction, PROVEN_LIT("RpCa"));
+            s_(&pk->customaction, PROVEN_LIT("RpRemoveCommit"));
+        }
     }
     // [remove] recursive, [registry] on = "uninstall": prepare (immediate; nothing when
     // UPGRADINGPRODUCTCODE is set) -> two commit actions, so a removal that fails has touched
@@ -1926,6 +1946,8 @@ static void lower_helper_actions(pkg_t *pk) {
     struct { const char *name, *entry; bool have; int type; } commits[] = {
         { "RP_CleanupRegister", "RpCleanupRegister", pk->cleanup, 1 | 0x40 | 0x400 | noimp },
         { "RP_RemoveCommit", "RpRemoveCommit", pk->any_rplan, 1 | 0x40 | 0x400 | noimp },
+        { "RP_CleanupRegisterM", "RpCleanupRegister", pk->cleanup && ir->scope == 2, 1 | 0x40 | 0x400 | 0x800 },
+        { "RP_RemoveCommitM", "RpRemoveCommit", pk->any_rplan && ir->scope == 2, 1 | 0x40 | 0x400 | 0x800 },
         { "RP_PurgeUser", "RpPurge", pk->any_purge || pk->extra, 1 | 0x40 | 0x400 },
         { "RP_PurgeMachine", "RpPurge", (pk->any_purge || pk->extra) && ir->scope != 1, 1 | 0x40 | 0x400 | 0x800 },
         { "RP_PurgeOthers", "RpPurgeOthers", pk->any_others, 1 | 0x40 | 0x400 | 0x800 },
@@ -2602,20 +2624,34 @@ static proven_err_t lower_sequences(pkg_t *pk) {
     if (pk->preflight) {                // before InstallValidate (1400): nothing has been touched yet
         s_(&pk->iexec, PROVEN_LIT("RP_Preflight")); null_(&pk->iexec); i_(&pk->iexec, 1390);
     }
+    // A dual package (review 2026-11-12): each deferred action twice, as the user (NOT ALLUSERS=1)
+    // and as SYSTEM ("...M", ALLUSERS=1) - impersonated, an installation for all users under UAC
+    // would work with the user's filtered token - so its rows have numbers of their own; machine
+    // and user packages keep theirs.
+    const bool dual = ir->scope == 2;
+    const char *as_user = dual ? "NOT (ALLUSERS=1)" : NULL, *as_sys = "ALLUSERS=1";
     if (pk->cleanup) {                  // RFC-0026: last in the script; the commit runs at InstallFinalize
-        s_(&pk->iexec, PROVEN_LIT("RP_CleanupPrepare")); null_(&pk->iexec); i_(&pk->iexec, 6590);
-        s_(&pk->iexec, PROVEN_LIT("RP_CleanupRegister")); null_(&pk->iexec); i_(&pk->iexec, 6591);
-        if (ir->scope == 0) {           // after InstallFiles (4000), before DuplicateFiles (4210)
-            s_(&pk->iexec, PROVEN_LIT("RP_RescuePrepare")); null_(&pk->iexec); i_(&pk->iexec, 4190);
-            s_(&pk->iexec, PROVEN_LIT("RP_RescueApplyRollback")); null_(&pk->iexec); i_(&pk->iexec, 4191);
-            s_(&pk->iexec, PROVEN_LIT("RP_RescueApply")); null_(&pk->iexec); i_(&pk->iexec, 4192);
+        s_(&pk->iexec, PROVEN_LIT("RP_CleanupPrepare")); null_(&pk->iexec); i_(&pk->iexec, dual ? 6584 : 6590);
+        s_(&pk->iexec, PROVEN_LIT("RP_CleanupRegister")); s_(&pk->iexec, RP_V(as_user)); i_(&pk->iexec, dual ? 6585 : 6591);
+        if (dual) { s_(&pk->iexec, PROVEN_LIT("RP_CleanupRegisterM")); s_(&pk->iexec, RP_V(as_sys)); i_(&pk->iexec, 6586); }
+        if (ir->scope == 0 || dual) {   // after InstallFiles (4000), before DuplicateFiles (4210)
+            const char *c = dual ? as_sys : NULL;
+            s_(&pk->iexec, PROVEN_LIT("RP_RescuePrepare")); s_(&pk->iexec, RP_V(c)); i_(&pk->iexec, 4190);
+            s_(&pk->iexec, PROVEN_LIT("RP_RescueApplyRollback")); s_(&pk->iexec, RP_V(c)); i_(&pk->iexec, 4191);
+            s_(&pk->iexec, PROVEN_LIT("RP_RescueApply")); s_(&pk->iexec, RP_V(c)); i_(&pk->iexec, 4192);
         }
     }
     if (pk->any_rplan) {                // after the Undo actions (3401...), before RemoveFiles (3500)
-        s_(&pk->iexec, PROVEN_LIT("RP_RemovePrepare")); null_(&pk->iexec); i_(&pk->iexec, 3490);
-        s_(&pk->iexec, PROVEN_LIT("RP_RemoveApplyRollback")); null_(&pk->iexec); i_(&pk->iexec, 3491);
-        s_(&pk->iexec, PROVEN_LIT("RP_RemoveApply")); null_(&pk->iexec); i_(&pk->iexec, 3492);
-        s_(&pk->iexec, PROVEN_LIT("RP_RemoveCommit")); null_(&pk->iexec); i_(&pk->iexec, 3493);
+        const int at = dual ? 3483 : 3490;
+        s_(&pk->iexec, PROVEN_LIT("RP_RemovePrepare")); null_(&pk->iexec); i_(&pk->iexec, at);
+        s_(&pk->iexec, PROVEN_LIT("RP_RemoveApplyRollback")); s_(&pk->iexec, RP_V(as_user)); i_(&pk->iexec, at + 1);
+        s_(&pk->iexec, PROVEN_LIT("RP_RemoveApply")); s_(&pk->iexec, RP_V(as_user)); i_(&pk->iexec, at + 2);
+        s_(&pk->iexec, PROVEN_LIT("RP_RemoveCommit")); s_(&pk->iexec, RP_V(as_user)); i_(&pk->iexec, at + 3);
+        if (dual) {
+            s_(&pk->iexec, PROVEN_LIT("RP_RemoveApplyRollbackM")); s_(&pk->iexec, RP_V(as_sys)); i_(&pk->iexec, 3487);
+            s_(&pk->iexec, PROVEN_LIT("RP_RemoveApplyM")); s_(&pk->iexec, RP_V(as_sys)); i_(&pk->iexec, 3488);
+            s_(&pk->iexec, PROVEN_LIT("RP_RemoveCommitM")); s_(&pk->iexec, RP_V(as_sys)); i_(&pk->iexec, 3489);
+        }
     }
     if (pk->any_purge || pk->extra) {   // with them; the commits run at InstallFinalize, after RemoveFolders
         s_(&pk->iexec, PROVEN_LIT("RP_PurgePrepare")); null_(&pk->iexec); i_(&pk->iexec, 3494);
@@ -2629,8 +2665,14 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         const bool have[] = { pk->cleanup, pk->any_rplan, pk->any_purge || pk->extra, (pk->any_purge || pk->extra) && ir->scope != 1, pk->any_others };
         for (int i = 0; i < 5; ++i) {
             if (!have[i]) continue;
-            const char *cond = i == 3 && ir->scope == 2 ? "RollbackDisabled AND ALLUSERS=1" : "RollbackDisabled";
+            const char *cond = i == 3 && ir->scope == 2                ? "RollbackDisabled AND ALLUSERS=1"
+                             : (i == 0 || i == 1) && ir->scope == 2 ? "RollbackDisabled AND NOT (ALLUSERS=1)"
+                                                                    : "RollbackDisabled";
             s_(&pk->iexec, RP_V(kprintf(k, "{}NR", commits[i], NULL))); s_(&pk->iexec, RP_V(cond)); i_(&pk->iexec, 6592 + i);
+        }
+        if (ir->scope == 2) {           // the SYSTEM twins' twins (dual)
+            if (pk->any_rplan) { s_(&pk->iexec, PROVEN_LIT("RP_RemoveCommitMNR")); s_(&pk->iexec, PROVEN_LIT("RollbackDisabled AND ALLUSERS=1")); i_(&pk->iexec, 6587); }
+            if (pk->cleanup) { s_(&pk->iexec, PROVEN_LIT("RP_CleanupRegisterMNR")); s_(&pk->iexec, PROVEN_LIT("RollbackDisabled AND ALLUSERS=1")); i_(&pk->iexec, 6588); }
         }
     }
     if (pk->menu) {
@@ -2646,8 +2688,12 @@ static proven_err_t lower_sequences(pkg_t *pk) {
     }
     if (pk->any_qword) {                // after WriteRegistryValues; the prepare step reads component states
         s_(&pk->iexec, PROVEN_LIT("RP_QwordPrepare")); null_(&pk->iexec); i_(&pk->iexec, 5010);
-        s_(&pk->iexec, PROVEN_LIT("RP_QwordApplyRollback")); null_(&pk->iexec); i_(&pk->iexec, 5011);
-        s_(&pk->iexec, PROVEN_LIT("RP_QwordApply")); null_(&pk->iexec); i_(&pk->iexec, 5012);
+        s_(&pk->iexec, PROVEN_LIT("RP_QwordApplyRollback")); s_(&pk->iexec, RP_V(as_user)); i_(&pk->iexec, 5011);
+        s_(&pk->iexec, PROVEN_LIT("RP_QwordApply")); s_(&pk->iexec, RP_V(as_user)); i_(&pk->iexec, 5012);
+        if (dual) {
+            s_(&pk->iexec, PROVEN_LIT("RP_QwordApplyRollbackM")); s_(&pk->iexec, RP_V(as_sys)); i_(&pk->iexec, 5013);
+            s_(&pk->iexec, PROVEN_LIT("RP_QwordApplyM")); s_(&pk->iexec, RP_V(as_sys)); i_(&pk->iexec, 5014);
+        }
     }
     if (pk->any_write || pk->any_remove) {  // MS Learn "Suggested InstallExecuteSequence"
         s_(&pk->iexec, PROVEN_LIT("RemoveRegistryValues")); null_(&pk->iexec); i_(&pk->iexec, 2600);
