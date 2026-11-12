@@ -254,6 +254,6 @@ The digest in `SpcIndirectDataContent` - SHA-256 over that value, every stream's
 order, and the root CLSID:
 
 ```text
-aa 89 ed 8d 67 7d c4 b5 1f 73 0d e0 e3 23 fb ae dd bb 5a 9c cb 8e 6e 05 78 2c b9 22 5f 45 6c 1f
+21 0c fa 58 a6 03 96 c4 a5 e8 f9 57 17 15 56 fb 7e af 16 6b 72 e3 0d 0a 9b 33 86 1f b7 79 7c 27
 ```
 
