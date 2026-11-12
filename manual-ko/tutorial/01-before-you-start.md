@@ -82,7 +82,7 @@ C:\Users\you>
 
 ```text
 C:\work\hello> rubrapack version
-rubrapack 0.55.0 (proven_c_lib-v0.113.0)
+rubrapack 0.56.0 (proven_c_lib-v0.113.0)
 ```
 
 ## 작업 폴더
