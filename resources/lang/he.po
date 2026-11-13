@@ -3623,6 +3623,22 @@ msgid "ReadyText"
 msgstr "לחץ על \"התקן\" כדי להתקין את [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "תיקיית התקנה:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "לכל המשתמשים במחשב זה"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "רק עבורך"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "תכונות שיותקנו:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "מתקין את [ProductName]"
 

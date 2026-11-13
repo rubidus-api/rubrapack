@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Klik Pasang untuk memasang [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Folder pemasangan:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Untuk semua pengguna komputer ini"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Untuk anda sahaja"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Ciri yang akan dipasang:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Memasang [ProductName]"
 

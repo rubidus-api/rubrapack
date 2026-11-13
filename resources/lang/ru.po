@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Нажмите «Установить», чтобы установить [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Папка установки:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Для всех пользователей этого компьютера"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Только для вас"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Устанавливаемые компоненты:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Установка [ProductName]"
 

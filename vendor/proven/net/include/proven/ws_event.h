@@ -159,7 +159,9 @@ proven_err_t proven_ws_event_connect(proven_loop_t *loop, const proven_ws_event_
  *
  * @return PROVEN_ERR_AGAIN as described; PROVEN_ERR_INVALID_STATE after a close was sent or
  *         received, or in the middle of a message begun with proven_ws_stream_send_piece;
- *         PROVEN_ERR_RESET when the connection is gone.
+ *         PROVEN_ERR_RESET when the connection is gone. When it was lost during this call
+ *         (the transport refused the frame), `on_closed` has been called inside it: neither
+ *         `ws` nor anything `on_closed` freed may be used after the return.
  */
 [[nodiscard]]
 proven_err_t proven_ws_stream_send(proven_ws_stream_t *ws, bool text, proven_mem_view_t data);

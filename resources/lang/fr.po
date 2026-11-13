@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Cliquez sur Installer pour installer [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Dossier d'installation :"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Pour tous les utilisateurs de cet ordinateur"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Pour vous uniquement"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Fonctionnalités à installer :"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Installation de [ProductName]"
 

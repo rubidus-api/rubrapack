@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "单击“安装”开始安装 [ProductName]。"
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "安装文件夹:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "供此计算机上的所有用户使用"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "仅供您使用"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "要安装的功能:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "正在安装 [ProductName]"
 

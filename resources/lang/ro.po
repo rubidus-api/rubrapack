@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Faceți clic pe Instalare pentru a instala [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Dosar de instalare:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Pentru toți utilizatorii acestui computer"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Doar pentru dvs."
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Componente de instalat:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Se instalează [ProductName]"
 

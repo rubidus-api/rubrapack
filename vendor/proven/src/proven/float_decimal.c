@@ -33,6 +33,13 @@ proven_u64 proven_float_bits_f64(double value) {
 }
 
 proven_u128_parts_t proven_float_mul_u64_u64_to_u128(proven_u64 lhs, proven_u64 rhs) {
+#if defined(__SIZEOF_INT128__)
+    /* One multiply instruction where the compiler has the type: the four 32-bit partial
+     * products below cost ~15 instructions, and this function was 44 % of the exact
+     * formatter's instructions on random doubles (2026-11-13, perf on the build host). */
+    const unsigned __int128 p = (unsigned __int128)lhs * rhs;
+    return (proven_u128_parts_t){ .lo = (proven_u64)p, .hi = (proven_u64)(p >> 64) };
+#else
     const proven_u64 lhs_lo = lhs & 0xffffffffu;
     const proven_u64 lhs_hi = lhs >> 32;
     const proven_u64 rhs_lo = rhs & 0xffffffffu;
@@ -49,6 +56,7 @@ proven_u128_parts_t proven_float_mul_u64_u64_to_u128(proven_u64 lhs, proven_u64 
     out.lo = (p0 & 0xffffffffu) | (middle << 32);
     out.hi = p3 + (p1 >> 32) + (p2 >> 32) + (middle >> 32);
     return out;
+#endif
 }
 
 /*

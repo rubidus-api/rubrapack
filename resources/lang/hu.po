@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "A(z) [ProductName] telepítéséhez kattintson a Telepítés gombra."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Telepítési mappa:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "A számítógép minden felhasználójának"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Csak az Ön számára"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Telepítendő összetevők:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "A(z) [ProductName] telepítése"
 

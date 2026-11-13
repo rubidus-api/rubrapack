@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Asenna [ProductName] valitsemalla Asenna."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Asennuskansio:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Kaikille tämän tietokoneen käyttäjille"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Vain sinulle"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Asennettavat ominaisuudet:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "[ProductName] asennetaan"
 

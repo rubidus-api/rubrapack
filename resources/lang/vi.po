@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Bấm Cài đặt để cài [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Thư mục cài đặt:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Cho mọi người trên máy tính này"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Chỉ cho bạn"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Các tính năng sẽ được cài đặt:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Đang cài đặt [ProductName]"
 

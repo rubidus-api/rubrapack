@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Kliknutím na tlačidlo Inštalovať nainštalujete [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Priečinok inštalácie:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Pre všetkých používateľov tohto počítača"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Iba pre vás"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Súčasti na inštaláciu:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Inštaluje sa [ProductName]"
 

@@ -62,6 +62,11 @@ target = "file:Hello"
 
 A package with optional parts (chapter 8) has Change in every row but the first.
 
+The ready page, last before Install, repeats what was chosen: the install folder, whether the
+program is installed for everyone on the computer or for the user alone, and - when there are
+features to choose - the features that will be installed (up to five by name, then how many more).
+Install stays refused while a disk lacks the space the installation needs.
+
 Every set also has the pages Windows needs when something happens: "Are you sure you want to
 cancel?", an error message, "these programs use files that must be replaced" (files in use), and
 "not enough disk space". A package with dialogs still installs silently with `/qn`: every page only

@@ -1298,7 +1298,7 @@ text = "This will install [ProductName]. Close other programs first."
 `WelcomeTitle`, `WelcomeText`, `LicenseTitle`, `LicenseText`, `LicenseAccept`, `DirTitle`, `DirText`,
 `DirLabel`, `BrowseTitle`, `BrowseText`, `BrowseLookIn`, `BrowseFolder`, `BrowseUp`, `BrowseNew`,
 `CustomizeTitle`, `CustomizeText`, `Reset`, `DiskCost`, `DiskCostTitle`, `DiskCostText`, `ReadyTitle`,
-`ReadyText`, `ProgressTitle`, `ProgressText`, `ProgressStatus`, `ExitTitle`, `ExitText`,
+`ReadyText`, `ReadyFolder`, `ReadyForAll`, `ReadyForMe`, `ReadyFeatures`, `ProgressTitle`, `ProgressText`, `ProgressStatus`, `ExitTitle`, `ExitText`,
 `UserExitTitle`, `UserExitText`, `FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`,
 `FilesInUseText`, `FilesInUseTextRestart`, `Continue`, `OutOfDiskTitle`, `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`,
 `RepairText`, `Remove`, `RemoveText`, `Change`, `ChangeText`, `RemoveConfirmTitle`, `RemoveConfirmText`,

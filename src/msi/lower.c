@@ -660,7 +660,7 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, any_purge, any_others, cleanup, preflight, reg_bad, menu, maintain, details, report;
+    bool             any_write, any_remove, any_qword, any_rplan, any_purge, any_others, cleanup, preflight, reg_bad, menu, maintain, details, report, ready;
     bool             extra;            // the preflight looks for what was not installed in the product's folders (extra-files)
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
@@ -1545,9 +1545,12 @@ static void lower_helper_actions(pkg_t *pk) {
     // [ui] details: the progress page's box, filled by the helper DLL from the log as it grows.
     bool details = ir->ui_details && ir->ui != RP_UI_NONE && !ir->module && part_len > 0;
     pk->details = details;
+    // The ready page's list of the features to install, put there by the helper's RpReadySummary.
+    bool ready = rp_ui_ready_features(ir) && !ir->module && part_len > 0;
+    pk->ready = ready;
     // RFC-0028: past RP_UI_LANG_ACTIONS the dialogs' texts are put in place by RpLangApply (ui.c).
     bool lang_table = ir->ui != RP_UI_NONE && ir->ui_lang_count > RP_UI_LANG_ACTIONS;
-    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain || details || lang_table || report) {
+    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain || details || ready || lang_table || report) {
         if (part_len == 0) {
             rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP1901", false,
                            "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without",
@@ -1776,6 +1779,14 @@ static void lower_helper_actions(pkg_t *pk) {
             for (size_t b = 0; b < nlangs; ++b) {       // English, the built-in packs, the dialogs' languages
                 s_(&pk->property, RP_V(kprintf(k, "RpPre{}_{}", ids[t], langs[b])));
                 s_(&pk->property, RP_V(rp_ui_text_lang(ir, id, langs[b])));
+            }
+        }
+        // The buttons of the helper's own window for these messages (rp_ask.h; owner 2026-11-13).
+        static const char *const btns[][2] = { { "BtnYes", "Yes" }, { "BtnNo", "No" }, { "BtnCancel", "Cancel" }, { "BtnOK", "OK" } };
+        for (size_t t = 0; t < sizeof btns / sizeof btns[0]; ++t) {
+            for (size_t b = 0; b < nlangs; ++b) {
+                s_(&pk->property, RP_V(kprintf(k, "RpPre{}_{}", btns[t][0], langs[b])));
+                s_(&pk->property, RP_V(rp_ui_text_lang(ir, btns[t][1], langs[b])));
             }
         }
         // [other-copy.*]: "kind|action|ID|what" for each, kind m (an MSIX family for the installing
@@ -2882,7 +2893,7 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
     }
     if (err == PROVEN_OK) {
         rp_ui_input_t in = { dkey(ir, RP_V(ir->ui_install_dir.ptr ? rp_cs(ir->ui_install_dir) : "INSTALLDIR")), pk->rtf, rtf_len, pk->banner, banner_len,
-                             { 0 }, { 0 }, pk->details, pk->any_purge, pk->ctl_imgs, pk->nctl_img, pk->bb_imgs, pk->nbb_img };
+                             { 0 }, { 0 }, pk->details, pk->any_purge, pk->ctl_imgs, pk->nctl_img, pk->bb_imgs, pk->nbb_img, pk->ready };
         for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) {
             in.license_rtf_by_lang[li] = pk->lang_rtf[li];
             in.license_len_by_lang[li] = lang_rtf_len[li];

@@ -220,7 +220,7 @@ signature made with any key carries these same values. The streams in order of t
 | # | name (UTF-16LE) | Name | Size |
 |---|---|---|---|
 | 1 | `05 00 53 00 75 00` ... | `\005SummaryInformation` | 336 |
-| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 206336 |
+| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 211456 |
 | 3 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
 | 4 | `40 48 0b 43 31 41` ... | `Binary` | 4 |
 | 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 112 |
@@ -230,11 +230,11 @@ signature made with any key carries these same values. The streams in order of t
 | 9 | `40 48 0f 43 2f 42` | `File` | 20 |
 | 10 | `40 48 16 42 27 43` ... | `Media` | 14 |
 | 11 | `40 48 3f 3b f2 43` ... | `_Columns` | 648 |
-| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 92789 |
-| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 5312 |
+| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 96242 |
+| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 6468 |
 | 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 192 |
 | 15 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 48 |
-| 16 | `40 48 59 45 f2 44` ... | `Property` | 2424 |
+| 16 | `40 48 59 45 f2 44` ... | `Property` | 3208 |
 | 17 | `40 48 7f 3f 64 41` ... | `_Tables` | 36 |
 | 18 | `40 48 8c 44 f0 44` ... | `Component` | 12 |
 | 19 | `40 48 ca 41 30 43` ... | `AdminExecuteSequence` | 48 |
@@ -247,13 +247,13 @@ The prehash is the root's CLSID and state bits (20 bytes) and, per stream, its n
 two zero times: 908 bytes in all. Its SHA-256, the `\005MsiDigitalSignatureEx` value:
 
 ```text
-32 51 57 ff ce 71 b0 31 04 19 73 59 13 48 45 a6 f5 ca 47 9a 73 3e 14 cb 03 b5 bf 65 a1 d7 2a 80
+b9 f7 3b 6d 65 45 95 3c 98 1b 57 13 82 9f 52 a5 bb 3a d9 ac 18 cf 24 50 79 b0 9c c6 e2 fa e0 81
 ```
 
 The digest in `SpcIndirectDataContent` - SHA-256 over that value, every stream's bytes in the same
 order, and the root CLSID:
 
 ```text
-21 0c fa 58 a6 03 96 c4 a5 e8 f9 57 17 15 56 fb 7e af 16 6b 72 e3 0d 0a 9b 33 86 1f b7 79 7c 27
+e3 58 09 71 89 bb 28 c4 35 2d d5 e9 cb c2 ae 35 14 14 b7 62 de 14 0c 77 65 be 76 8a f4 ea 0e 75
 ```
 

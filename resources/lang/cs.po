@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Klikněte na Instalovat a nainstalujte [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Složka instalace:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Pro všechny uživatele tohoto počítače"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Pouze pro vás"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Součásti k instalaci:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Instalace [ProductName]"
 

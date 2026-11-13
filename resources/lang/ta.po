@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "[ProductName] ஐ நிறுவ நிறுவு என்பதைக் கிளிக் செய்யவும்."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "நிறுவல் கோப்புறை:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "இந்தக் கணினியின் அனைவருக்கும்"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "உங்களுக்கு மட்டும்"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "நிறுவப்படும் அம்சங்கள்:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "[ProductName] நிறுவப்படுகிறது"
 

@@ -3,7 +3,7 @@
 A copied snapshot of proven_c_lib (MIT, same author). Do not edit files here; if a proven
 defect is found, report it to proven_c_lib and resync from a fixed release.
 
-- Snapshot: tag `v0.114.0`, commit `5236974e`, taken 2026-11-13 with `git archive v0.114.0`
+- Snapshot: tag `v0.114.1`, commit `d9219d55`, taken 2026-11-13 with `git archive v0.114.1`
   (`include/`, `src/`, `platform/`, `crypto/`, `codec/`, `net/`, `LICENSE`, `THIRD_PARTY_NOTICES.md`).
   From v0.113.0 the cryptography and certificates are proven_crypto (`crypto/`: SHA-2, HMAC, the
   legacy hashes, AES, AEAD, key exchange, signing, DER, X.509) and compression is proven_codec

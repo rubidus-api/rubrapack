@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Lai instalētu [ProductName], noklikšķiniet uz Instalēt."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Instalēšanas mape:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Visiem šī datora lietotājiem"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Tikai jums"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Instalējamie komponenti:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Notiek [ProductName] instalēšana"
 

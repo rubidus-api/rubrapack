@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "'설치'를 누르면 [ProductName]을(를) 설치합니다."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "설치 폴더:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "이 컴퓨터의 모든 사용자용"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "나만 쓰도록"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "설치할 기능:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "[ProductName] 설치 중"
 

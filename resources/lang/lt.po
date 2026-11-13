@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Norėdami įdiegti [ProductName], spustelėkite Įdiegti."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Diegimo aplankas:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Visiems šio kompiuterio naudotojams"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Tik jums"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Diegiamos funkcijos:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Diegiama [ProductName]"
 

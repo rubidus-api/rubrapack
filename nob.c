@@ -412,7 +412,7 @@ static int parts(void) {
         n = snprintf(cmd, sizeof cmd,
                      "%s/bin/%s-w64-mingw32-clang -std=c23 -O2 -Wall -Wextra -Werror -shared -s -ffile-prefix-map=$PWD=. "
                      "-Wl,--no-insert-timestamp -Wl,--build-id=none -I%s src/ca/rubrapack_ca.c src/ca/rubrapack_ca.def " PART_PROVEN
-                     "-lmsi -ladvapi32 -lcomdlg32 -luser32 -lrstrtmgr -lshell32 -lruntimeobject -lole32 -lntdll -o %s",
+                     "-lmsi -ladvapi32 -lcomdlg32 -luser32 -lgdi32 -lrstrtmgr -lshell32 -lruntimeobject -lole32 -lntdll -o %s",
                      root, part_archs[i][1], pdir, out);
         if (n < 0 || (size_t)n >= sizeof cmd || run(cmd) != 0) {
             rc = 1;
@@ -431,7 +431,7 @@ static int parts(void) {
         n = snprintf(cmd, sizeof cmd,
                      "%s/bin/%s-w64-mingw32-clang -std=c23 -O2 -Wall -Wextra -Werror -municode -mwindows -s "
                      "-ffile-prefix-map=$PWD=. -Wl,--no-insert-timestamp -Wl,--build-id=none src/setup/rubrapack_setup.c " PART_PROVEN
-                     "-Ivendor/proven/crypto/include vendor/proven/crypto/src/sha2.c -lmsi -lshell32 -luser32 -ladvapi32 -lruntimeobject -lole32 -o %s",
+                     "-Ivendor/proven/crypto/include vendor/proven/crypto/src/sha2.c -lmsi -lshell32 -luser32 -lgdi32 -ladvapi32 -lruntimeobject -lole32 -o %s",
                      root, part_archs[i][1], out);
         if (n < 0 || (size_t)n >= sizeof cmd || run(cmd) != 0 || (data = read_all(out, &len)) == NULL) {
             rc = 1;

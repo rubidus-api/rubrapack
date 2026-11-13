@@ -24,6 +24,7 @@ EXPORTS
     RpDetails
     RpDetailsDone
     RpDirCheck
+    RpReadySummary
     RpLangApply
     RpReportPrepare
     RpReport

@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "[ProductName] proqramını quraşdırmaq üçün Quraşdır düyməsini klikləyin."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Quraşdırma qovluğu:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Bu kompüterdəki hər kəs üçün"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Yalnız sizin üçün"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Quraşdırılacaq komponentlər:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "[ProductName] quraşdırılır"
 

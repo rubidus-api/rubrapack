@@ -1597,79 +1597,124 @@ __declspec(dllexport) UINT __stdcall RpMenuRemove(MSIHANDLE h) {
 //   2. For an installation or an upgrade (never a removal): every package folder that exists is a
 //      folder SYSTEM may delete in, and the installed older versions still have their cached
 //      packages - otherwise the message says what is wrong and to remove the product first.
-// Texts: RpPre<Name>_<language> properties (RPLANGUAGE, else Korean for a Korean user, else en).
+// Texts: RpPre<Name>_<language> properties, in the language pre_lang chooses, else in English.
 
 #include <restartmanager.h>
 
-static wchar_t *pre_text(MSIHANDLE h, const wchar_t *id) {
-    wchar_t name[80];
+// The language of the preflight's texts, into code (empty: none chosen): RPLANGUAGE when a dialog
+// chose one; else, while the dialogs show (UILevel 4 or 5), the one language of a package whose
+// dialogs have one (RP_DIALOG_LANG; p4 inuse: English pages asked in Korean); else the user's, when
+// the package has it (RP_LANGS: "1042=ko;...").
+static void pre_lang(MSIHANDLE h, wchar_t code[16]) {
+    code[0] = 0;
     wchar_t *lang = get_property(h, L"RPLANGUAGE");
-    wchar_t *text = NULL;
-    if (lang && lang[0]) {
-        wfmt(name, 80, L"RpPre%ls_%ls", id, lang);
-        text = get_property(h, name);
-    } else {
-        // No dialog chose a language: the user's, when the package has it (RP_LANGS: "1042=ko;...").
-        wchar_t *ul = get_property(h, L"UserLanguageID"), *map = get_property(h, L"RP_LANGS");
-        size_t un = ul ? rp_wlen(ul) : 0;
-        for (const wchar_t *p = map; un && p && *p; p = rp_wchr(p, L';') ? rp_wchr(p, L';') + 1 : NULL) {
-            if (!rp_weq_n(p, ul, un) || p[un] != L'=') continue;
-            const wchar_t *code = p + un + 1, *end = rp_wchr(code, L';');
-            size_t cn = end ? (size_t)(end - code) : rp_wlen(code);
-            if (cn == 0 || cn > 15) break;
-            wchar_t c[16];
-            memcpy(c, code, cn * sizeof *c);
-            c[cn] = 0;
-            wfmt(name, 80, L"RpPre%ls_%ls", id, c);
-            text = get_property(h, name);
-            break;
+    if (lang == NULL || lang[0] == 0) {
+        if (lang) HeapFree(GetProcessHeap(), 0, lang);
+        lang = NULL;
+        wchar_t *dl = get_property(h, L"RP_DIALOG_LANG"), *ui = get_property(h, L"UILevel");
+        if (dl && dl[0] && ui && (rp_wtou(ui, 10, NULL) & 7) >= 4) {
+            lang = dl;
+            dl = NULL;
         }
-        if (ul) HeapFree(GetProcessHeap(), 0, ul);
-        if (map) HeapFree(GetProcessHeap(), 0, map);
+        if (dl) HeapFree(GetProcessHeap(), 0, dl);
+        if (ui) HeapFree(GetProcessHeap(), 0, ui);
+    }
+    if (lang) {
+        if (rp_wlen(lang) < 16) rp_wcpy(code, 16, lang);
+        HeapFree(GetProcessHeap(), 0, lang);
+        return;
+    }
+    wchar_t *ul = get_property(h, L"UserLanguageID"), *map = get_property(h, L"RP_LANGS");
+    size_t un = ul ? rp_wlen(ul) : 0;
+    for (const wchar_t *p = map; un && p && *p; p = rp_wchr(p, L';') ? rp_wchr(p, L';') + 1 : NULL) {
+        if (!rp_weq_n(p, ul, un) || p[un] != L'=') continue;
+        const wchar_t *c = p + un + 1, *end = rp_wchr(c, L';');
+        size_t cn = end ? (size_t)(end - c) : rp_wlen(c);
+        if (cn > 0 && cn < 16) {
+            memcpy(code, c, cn * sizeof *code);
+            code[cn] = 0;
+        }
+        break;
+    }
+    if (ul) HeapFree(GetProcessHeap(), 0, ul);
+    if (map) HeapFree(GetProcessHeap(), 0, map);
+}
+
+// Text `id` in pre_lang's language, else in English (RpPre<id>_<code> properties); *rtl (when given):
+// whether the language of the text found reads right to left (RFC-0031 L12) - both from one choice.
+static wchar_t *pre_text_rtl(MSIHANDLE h, const wchar_t *id, bool *rtl) {
+    wchar_t code[16], name[80];
+    pre_lang(h, code);
+    wchar_t *text = NULL;
+    if (code[0]) {
+        wfmt(name, 80, L"RpPre%ls_%ls", id, code);
+        text = get_property(h, name);
     }
     if (text == NULL || text[0] == 0) {
         if (text) HeapFree(GetProcessHeap(), 0, text);
         wfmt(name, 80, L"RpPre%ls_en", id);
         text = get_property(h, name);
+        rp_wcpy(code, 16, L"en");
     }
-    if (lang) HeapFree(GetProcessHeap(), 0, lang);
+    if (rtl) {
+        wchar_t loc[16];
+        size_t n = 0;
+        for (; code[n] && n + 1 < 16; ++n) loc[n] = code[n] == L'_' ? L'-' : code[n];
+        loc[n] = 0;
+        *rtl = rp_lcid_rtl(LocaleNameToLCID(loc, 0));
+    }
     return text;
 }
 
-// Whether pre_text's language reads right to left: RPLANGUAGE's when a dialog chose one, else the
-// user's when the package has it (RFC-0031 L12).
-static bool pre_rtl(MSIHANDLE h) {
-    bool rtl = false;
-    wchar_t *lang = get_property(h, L"RPLANGUAGE");
-    if (lang && lang[0]) {
-        wchar_t name[LOCALE_NAME_MAX_LENGTH];
-        size_t n = 0;
-        for (const wchar_t *p = lang; *p && n + 1 < LOCALE_NAME_MAX_LENGTH; ++p) name[n++] = *p == L'_' ? L'-' : *p;
-        name[n] = 0;
-        rtl = rp_lcid_rtl(LocaleNameToLCID(name, 0));
-    } else {
-        wchar_t *ul = get_property(h, L"UserLanguageID"), *map = get_property(h, L"RP_LANGS");
-        size_t un = ul ? rp_wlen(ul) : 0;
-        for (const wchar_t *p = map; un && p && *p; p = rp_wchr(p, L';') ? rp_wchr(p, L';') + 1 : NULL) {
-            if (rp_weq_n(p, ul, un) && p[un] == L'=') rtl = rp_lcid_rtl((LCID)rp_wtou(ul, 10, NULL));
-        }
-        if (ul) HeapFree(GetProcessHeap(), 0, ul);
-        if (map) HeapFree(GetProcessHeap(), 0, map);
-    }
-    if (lang) HeapFree(GetProcessHeap(), 0, lang);
-    return rtl;
-}
+static wchar_t *pre_text(MSIHANDLE h, const wchar_t *id) { return pre_text_rtl(h, id, NULL); }
 
 // Shows (or, without UI, logs) a message made from the text `id` with fields 1..3; returns the button.
 // A right-to-left language's message reads from the right.
+// With a window to show it in (UILevel 3 or more: basic, reduced, full), the message is the helper's
+// own window, which grows to its text (rp_ask.h): Windows Installer's message box cut a long one -
+// the list of programs, of folders - with "..." (owner 2026-11-13). The log has it either way.
 static int pre_message(MSIHANDLE h, const wchar_t *id, UINT type, const wchar_t *f1, const wchar_t *f2, const wchar_t *f3) {
-    if (pre_rtl(h)) type |= MB_RTLREADING | MB_RIGHT;
-    wchar_t *text = pre_text(h, id);
+    bool rtl = false;
+    wchar_t *text = pre_text_rtl(h, id, &rtl);
+    if (rtl) type |= MB_RTLREADING | MB_RIGHT;
     MSIHANDLE rec = MsiCreateRecord(3);
     MsiRecordSetStringW(rec, 0, text && text[0] ? text : L"[1] [2] [3]");
     MsiRecordSetStringW(rec, 1, f1 ? f1 : L"");
     MsiRecordSetStringW(rec, 2, f2 ? f2 : L"");
     MsiRecordSetStringW(rec, 3, f3 ? f3 : L"");
+    const UINT kind = type & 0xFF000000u, buttons = type & 0xF;
+    wchar_t *ui = get_property(h, L"UILevel");
+    unsigned level = ui ? (unsigned)(rp_wtou(ui, 10, NULL) & 7) : 2;
+    if (ui) HeapFree(GetProcessHeap(), 0, ui);
+    wchar_t *msg = NULL;
+    DWORD mn = 0;
+    if (level >= 3 && (kind == INSTALLMESSAGE_USER || kind == INSTALLMESSAGE_ERROR) && (buttons == MB_OK || buttons == MB_YESNOCANCEL) &&
+        MsiFormatRecordW(h, rec, L"", &mn) == ERROR_MORE_DATA && (msg = HeapAlloc(GetProcessHeap(), 0, ((size_t)++mn) * sizeof *msg)) != NULL &&
+        MsiFormatRecordW(h, rec, msg, &mn) == ERROR_SUCCESS) {
+        MsiProcessMessage(h, INSTALLMESSAGE_INFO, rec);         // the log keeps the text
+        wchar_t *title = get_property(h, L"ProductName");
+        wchar_t *yes = pre_text(h, L"BtnYes"), *no = pre_text(h, L"BtnNo"), *cancel = pre_text(h, buttons == MB_OK ? L"BtnOK" : L"BtnCancel");
+        rp_ask_t a = { .title = title ? title : L"", .text = msg, .rtl = rtl,
+                       .first = buttons == MB_YESNOCANCEL ? (yes && yes[0] ? yes : L"&Yes") : NULL,
+                       .second = no && no[0] ? no : L"&No",
+                       .cancel = cancel && cancel[0] ? cancel : (buttons == MB_OK ? L"OK" : L"Cancel"),
+                       .def = (type & MB_DEFMASK) == MB_DEFBUTTON2 ? 2 : (type & MB_DEFMASK) == MB_DEFBUTTON3 ? 3 : 0 };
+        int got = rp_ask_raw(NULL, &a);     // no owner: the window in front may be anyone's
+        DWORD why = GetLastError();
+        int r = buttons == MB_OK ? IDOK : got == RP_ASK_FIRST ? IDYES : got == RP_ASK_SECOND ? IDNO : IDCANCEL;
+        wchar_t *all[] = { title, yes, no, cancel, msg };
+        for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
+            if (all[i]) HeapFree(GetProcessHeap(), 0, all[i]);
+        }
+        msg = NULL;
+        if (got != RP_ASK_FAILED) {
+            MsiCloseHandle(rec);
+            if (text) HeapFree(GetProcessHeap(), 0, text);
+            return r;
+        }
+        log_line(h, L"rubrapack: preflight: the helper's window could not be made (error %lu): Windows Installer asks", why);
+    }
+    if (msg) HeapFree(GetProcessHeap(), 0, msg);
     int r = MsiProcessMessage(h, (INSTALLMESSAGE)type, rec);
     MsiCloseHandle(rec);
     if (text) HeapFree(GetProcessHeap(), 0, text);
@@ -2345,8 +2390,9 @@ __declspec(dllexport) UINT __stdcall RpMaintain(MSIHANDLE h) {
     wchar_t *t[6];
     static const wchar_t *const ids[6] = { L"MaintTitle", L"MaintText", L"Repair", L"Remove", L"Cancel", L"RemoveAsk" };
     for (size_t i = 0; i < 6; ++i) t[i] = maint_text(h, ids[i]);
-    rp_ask_t a = { t[0] ? t[0] : L"", t[1] ? t[1] : L"", t[2] ? t[2] : L"Repair", t[3] ? t[3] : L"Remove", t[4] ? t[4] : L"Cancel", false };
-    a.rtl = pre_rtl(h);     // the texts' language (pre_text) reads right to left: the window is mirrored
+    rp_ask_t a = { t[0] ? t[0] : L"", t[1] ? t[1] : L"", t[2] ? t[2] : L"Repair", t[3] ? t[3] : L"Remove", t[4] ? t[4] : L"Cancel", false, 0 };
+    wchar_t *probe = pre_text_rtl(h, L"MaintText", &a.rtl);     // the texts' language reads right to left: the window is mirrored
+    if (probe) HeapFree(GetProcessHeap(), 0, probe);
     int r;
     for (;;) {
         r = rp_ask(NULL, &a);       // no owner: the window in front may be anyone's
@@ -2756,7 +2802,7 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     wchar_t *remove = get_property(h, L"REMOVE"), *older = get_property(h, L"RP_OLDER_FOUND");
     wchar_t *dirs = get_property(h, L"RP_PREFLIGHT_DIRS"), *code = get_property(h, L"ProductCode");
     UINT rc = ERROR_SUCCESS;
-    bool silent = uilevel == NULL || rp_wtoi(uilevel, 10, NULL) <= 2;
+    bool silent = uilevel == NULL || (rp_wtou(uilevel, 10, NULL) & 7) <= 2;      // as pre_message and pre_lang read it
     bool removal = remove && rp_wieq(remove, L"ALL");
     // The old version's removal inside an upgrade: the upgrading package has asked already (x51).
     wchar_t *upgrading = get_property(h, L"UPGRADINGPRODUCTCODE");
@@ -3679,7 +3725,7 @@ __declspec(dllexport) UINT __stdcall RpLangApply(MSIHANDLE h) {
 //     removal) and not after a first installation that failed.
 // Nothing differs: nothing is written (a rollback that worked says nothing).
 //   RpReportPrepare  immediate: RP_Report's data - "RPR1", the product's name, the log's path, the
-//                    report's first paragraph (for what was being done, in the user's language), whether the product was there before ("1"/"0"), the older codes
+//                    report's first paragraph (for what was being done, in the preflight's language: pre_lang), whether the product was there before ("1"/"0"), the older codes
 //                    ("{..};{..}"), then per check: the program's path and its arguments.
 //   RpReport         rollback: checks, and writes the report when something differs.
 
@@ -3855,5 +3901,61 @@ __declspec(dllexport) UINT __stdcall RpReport(MSIHANDLE h) {
     }
     if (diff.buf) HeapFree(GetProcessHeap(), 0, diff.buf);
     HeapFree(GetProcessHeap(), 0, data);
+    return ERROR_SUCCESS;
+}
+
+// ---- the ready page's summary (owner 2026-11-13) ---------------------------------------------------
+
+// RpReadySummary (immediate, DoAction on the Next that opens the ready page): RP_READY_FEATURES, the
+// titles of the visible features (Display <> 0, in display order) that will be installed - on this
+// computer or from the source - one a line; past six lines, five and then "... (+N)", so the list
+// keeps within its box (98 units: six lines of a 9-point face, also Thai's or Hindi's); empty when
+// there is none.
+__declspec(dllexport) UINT __stdcall RpReadySummary(MSIHANDLE h) {
+    enum { MAX_LINES = 6, CAP = 4096 };
+    writer_t w = { 0 };
+    unsigned shown = 0, more = 0;
+    size_t last = 0;            // where the last line shown starts: dropped for "(+N)" past MAX_LINES
+    MSIHANDLE db = MsiGetActiveDatabase(h), view = 0, rec = 0;
+    if (db && MsiDatabaseOpenViewW(db, L"SELECT `Feature`, `Title` FROM `Feature` WHERE `Display` <> 0 ORDER BY `Display`", &view) == ERROR_SUCCESS &&
+        MsiViewExecute(view, 0) == ERROR_SUCCESS) {
+        static wchar_t id[80], title[1024];
+        while (MsiViewFetch(view, &rec) == ERROR_SUCCESS) {
+            DWORD in = 80, tn = 1024;
+            INSTALLSTATE installed = INSTALLSTATE_UNKNOWN, action = INSTALLSTATE_UNKNOWN;
+            bool ok = MsiRecordGetStringW(rec, 1, id, &in) == ERROR_SUCCESS && MsiRecordGetStringW(rec, 2, title, &tn) == ERROR_SUCCESS && title[0] &&
+                      MsiGetFeatureStateW(h, id, &installed, &action) == ERROR_SUCCESS;
+            bool goes = ok && (action == INSTALLSTATE_LOCAL || action == INSTALLSTATE_SOURCE ||
+                               (action == INSTALLSTATE_UNKNOWN && (installed == INSTALLSTATE_LOCAL || installed == INSTALLSTATE_SOURCE)));
+            MsiCloseHandle(rec);
+            if (!goes) continue;
+            if (shown == MAX_LINES) {
+                if (more == 0 && !w.bad) {          // the sixth gives its line to "(+N)"
+                    w.len = last;
+                    w.buf[last] = 0;
+                }
+                more += more == 0 ? 2 : 1;
+                continue;
+            }
+            wchar_t *t = format_text(h, title);         // a title may name properties ([ProductName])
+            const wchar_t *line = t && t[0] ? t : title;
+            if (rp_wlen(line) < CAP) {
+                last = w.len;
+                if (shown) w_raw(&w, L"\r\n", 2);
+                w_raw(&w, line, rp_wlen(line));
+                ++shown;
+            }
+            if (t) HeapFree(GetProcessHeap(), 0, t);
+        }
+    }
+    if (view) MsiCloseHandle(view);
+    if (db) MsiCloseHandle(db);
+    if (more) {
+        wchar_t tail[48];
+        wfmt(tail, 48, L"\r\n\x2026 (+%u)", more);
+        w_raw(&w, tail, rp_wlen(tail));
+    }
+    MsiSetPropertyW(h, L"RP_READY_FEATURES", w.buf && !w.bad ? w.buf : L"");
+    if (w.buf) HeapFree(GetProcessHeap(), 0, w.buf);
     return ERROR_SUCCESS;
 }

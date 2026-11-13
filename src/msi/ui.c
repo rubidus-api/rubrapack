@@ -57,6 +57,11 @@ static const text_t texts[] = {
     { "DiskCostText", "Space needed for the chosen features, and space available." },
     { "ReadyTitle", "Ready to install" },
     { "ReadyText", "Click Install to install [ProductName]." },
+    // The ready page's summary of what was chosen (owner 2026-11-13).
+    { "ReadyFolder", "Install folder:" },
+    { "ReadyForAll", "For everyone on this computer" },
+    { "ReadyForMe", "For you only" },
+    { "ReadyFeatures", "Features to install:" },
     { "ProgressTitle", "Installing [ProductName]" },
     { "ProgressText", "Please wait." },
     { "ProgressStatus", "Status:" },
@@ -322,6 +327,8 @@ typedef struct {
     bool               grouped;         // ... past RP_UI_LANG_LIST: the language page groups them by region
     bool               page;            // ... and the language page leads the flow
     bool               act;             // the status line's texts are the package's (ActionText)
+    bool               ready_features;  // the ready page lists the features to install (RpReadySummary)
+    const char        *end_when;        // the condition of a last page's EndDialog (buttons), or NULL
     bool               details;         // the progress page has its details box (the helper DLL is there)
     bool               details_dll;     // the helper DLL is in the package (RP_DirCheck can be called)
     const char        *next_when;       // buttons(): Next moves on only when this holds (its events come later, at 5)
@@ -790,9 +797,13 @@ static void buttons(ctx_t *c, const char *dlg, const char *back, const char *nex
     } else if (back) {
         event(c, dlg, "Back", "NewDialog", back, NULL, 1);
     }
+    // The ready page lists the features chosen: the helper DLL writes them (RpReadySummary) before
+    // the page opens - after this page's own settings (ordering 0, the folder check at 2).
+    bool to_ready = next && strcmp(next, "RpReadyDlg") == 0 && c->ready_features;
+    if (to_ready) event(c, dlg, "Next", "DoAction", "RP_ReadySummary", NULL, c->next_when ? 4 : 1);
     if (next && next[0] && c->next_when) event(c, dlg, "Next", "NewDialog", next, c->next_when, 5);
-    else if (next && next[0]) event(c, dlg, "Next", "NewDialog", next, next_cond_disable ? keep(c, "NOT (", keep(c, next_cond_disable, ")")) : NULL, 1);
-    else event(c, dlg, "Next", "EndDialog", "Return", next_cond_disable ? keep(c, "NOT (", keep(c, next_cond_disable, ")")) : NULL, 1);
+    else if (next && next[0]) event(c, dlg, "Next", "NewDialog", next, next_cond_disable ? keep(c, "NOT (", keep(c, next_cond_disable, ")")) : NULL, to_ready ? 3 : 1);
+    else event(c, dlg, "Next", "EndDialog", "Return", next_cond_disable ? keep(c, "NOT (", keep(c, next_cond_disable, ")")) : c->end_when, 1);
     if (next_cond_disable) {
         cond(c, dlg, "Next", "Disable", next_cond_disable);
         cond(c, dlg, "Next", "Enable", keep(c, "NOT (", keep(c, next_cond_disable, ")")));
@@ -860,8 +871,10 @@ static void progress_and_exits(ctx_t *c) {
     dialog(c, d, 370, 270, 1, "Cancel", "Cancel", "Cancel");
     frame(c, d, "ProgressTitle", "ProgressText", NULL);
     frame_removal(c, d, "ProgressTitle", NULL);
-    control(c, d, "StatusLabel", "Text", 25, 100, 50, 10, VIS | NOPREFIX, NULL, T(c, "ProgressStatus"), NULL);
-    control(c, d, "ActionText", "Text", 75, 100, 270, 10, VIS | NOPREFIX, NULL, "", NULL);
+    // 14 high: at 10 the 9-point faces lost the bottom of their letters (Thai, Hindi, Korean;
+    // the owner saw it, 2026-11-13).
+    control(c, d, "StatusLabel", "Text", 25, 98, 50, 14, VIS | NOPREFIX, NULL, T(c, "ProgressStatus"), NULL);
+    control(c, d, "ActionText", "Text", 75, 98, 270, 14, VIS | NOPREFIX, NULL, "", NULL);
     control(c, d, "ProgressBar", "ProgressBar", 25, 115, 320, 10, VIS | 0x10000, NULL, "", NULL);
     // RFC-0031 B10: billboards - a Billboard control in the upper body, and for each [billboard.*] a
     // Billboard row (shown while its feature's files install) with a Bitmap BBControl from a Binary.
@@ -965,6 +978,10 @@ static bool choosable(const rp_ir_t *ir) {
         if (!f->implicit && !f->hidden && !f->required) return true;
     }
     return false;
+}
+
+bool rp_ui_ready_features(const rp_ir_t *ir) {
+    return ir->ui >= RP_UI_INSTALLDIR && (ir->ui == RP_UI_FEATURES || choosable(ir));
 }
 
 // RFC-0013 A4: with features to choose, Change (to the feature tree) comes first. Remove asks once
@@ -1175,12 +1192,29 @@ static void scope_dlg(ctx_t *c, const char *back, const char *next, const char *
     prop(c, "RPSCOPE", "user");
 }
 
-static void ready_dlg(ctx_t *c, const char *back) {
+static void ready_dlg(ctx_t *c, const char *back, const char *dir) {
     const char *d = "RpReadyDlg";
     dialog(c, d, 370, 270, 3 | 32, "Next", "Next", "Cancel");
     frame(c, d, "ReadyTitle", "ReadyText", NULL);
+    // What was chosen (owner 2026-11-13): the folder, for whom, and - when features can be chosen -
+    // the features that will be installed (RP_READY_FEATURES, RpReadySummary: at most 8 lines).
+    control(c, d, "FolderLabel", "Text", 20, 56, 330, 12, VIS | NOPREFIX, NULL, T(c, "ReadyFolder"), NULL);
+    control(c, d, "Folder", "Text", 30, 70, 320, 24, VIS | NOPREFIX, NULL, keep(c, "[", keep(c, dir, "]")), NULL);
+    control(c, d, "ForAll", "Text", 20, 98, 330, 12, NOPREFIX, NULL, T(c, "ReadyForAll"), NULL);
+    control(c, d, "ForMe", "Text", 20, 98, 330, 12, NOPREFIX, NULL, T(c, "ReadyForMe"), NULL);
+    cond(c, d, "ForAll", "Show", "ALLUSERS = 1");
+    cond(c, d, "ForMe", "Show", "NOT (ALLUSERS = 1)");
+    if (c->ready_features) {
+        control(c, d, "FeaturesLabel", "Text", 20, 118, 330, 12, NOPREFIX, NULL, T(c, "ReadyFeatures"), NULL);
+        control(c, d, "Features", "Text", 30, 132, 320, 98, NOPREFIX, NULL, "[RP_READY_FEATURES]", NULL);
+        cond(c, d, "FeaturesLabel", "Show", "RP_READY_FEATURES");
+        cond(c, d, "Features", "Show", "RP_READY_FEATURES");
+    }
+    // Not enough space: say so instead of starting. The installation starts only with enough space
+    // (an EndDialog without a condition ran first and the space was never checked).
+    c->end_when = "NOT (OutOfDiskSpace = 1)";
     buttons(c, d, back, "", "Install", NULL, NULL);
-    // Not enough space: say so instead of starting.
+    c->end_when = NULL;
     event(c, d, "Next", "SpawnDialog", "RpOutOfDiskDlg", "OutOfDiskSpace = 1", 2);
     const char *o = "RpOutOfDiskDlg";
     dialog(c, o, 370, 270, 3 | 32, "OK", "OK", "OK");
@@ -1793,6 +1827,8 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
         s_(c, &c->style, RP_V(keep(c, "RpTitle", sfx))); s_(c, &c->style, RP_V(face)); i_(c, &c->style, 11); n_(c, &c->style); i_(c, &c->style, 1);
     }
     prop(c, "DefaultUIFont", c->multi ? "RpNormal_en" : "RpNormal");
+    // The dialogs' one language: the helper's questions go in it while they show (pre_text).
+    if (!c->multi) prop(c, "RP_DIALOG_LANG", lang_code(c, 0));
     // The engine's own texts (sizes, feature tree menus) have one table: English.
     for (size_t i = 0; i < sizeof uitexts / sizeof uitexts[0]; ++i) {
         s_(c, &c->uitext, RP_V(uitexts[i].id)); s_(c, &c->uitext, RP_V(uitexts[i].en));
@@ -1863,6 +1899,9 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     const char *dir = in->install_dir ? in->install_dir : "TARGETDIR";
     for (size_t i = 0; i < c->nlang && ir->ui_lang_count; ++i) c->rtl_any |= ir->ui_langs[i].rtl;
     c->rtl_any = c->rtl_any && c->multi;
+    // The ready page lists the features to install when they can be chosen and the helper DLL is there (RpReadySummary).
+    c->ready_features = in->ready_features;
+    if (c->ready_features) ca_dll(c, "RP_ReadySummary", "RpReadySummary");
     for (int pass = 0; pass <= (int)c->rtl_any; ++pass) {     // the dialogs, then their mirrored twins
     c->rtl = pass == 1;
     c->ncustom = 0;                         // the twins' own texts get the same keys
@@ -1900,7 +1939,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
             else if (strcmp(p, "RpInstallDirDlg") == 0) installdir_dlg(c, back, next, dir);
             else if (strcmp(p, "RpScopeDlg") == 0) scope_dlg(c, back, next, next_text, dir, ir->ui_install_dir.ptr ? rp_cs(ir->ui_install_dir) : "INSTALLDIR");
             else if (strcmp(p, "RpCustomizeDlg") == 0) customize_dlg(c, back, next, NULL);
-            else ready_dlg(c, back);
+            else ready_dlg(c, back, dir);
         }
         rp_mem_free(alloc, pages);
     }

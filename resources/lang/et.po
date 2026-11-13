@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Toote [ProductName] installimiseks klõpsake nuppu Installi."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Paigalduskaust:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Kõigile selles arvutis"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Ainult teile"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Paigaldatavad komponendid:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Toote [ProductName] installimine"
 

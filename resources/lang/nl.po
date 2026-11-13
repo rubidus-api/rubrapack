@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Klik op Installeren om [ProductName] te installeren."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Installatiemap:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Voor iedereen op deze computer"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Alleen voor u"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Te installeren onderdelen:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "[ProductName] wordt geïnstalleerd"
 

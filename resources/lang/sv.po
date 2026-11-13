@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Klicka på Installera för att installera [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Installationsmapp:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "För alla på den här datorn"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Bara för dig"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Funktioner som installeras:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "[ProductName] installeras"
 

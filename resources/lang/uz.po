@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "[ProductName] dasturini o‘rnatish uchun O‘rnatish tugmasini bosing."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "O'rnatish jildi:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Ushbu kompyuterdagi hamma uchun"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Faqat siz uchun"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "O'rnatiladigan komponentlar:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "[ProductName] o‘rnatilmoqda"
 

@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Κάντε κλικ στο Εγκατάσταση για να εγκατασταθεί το [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Φάκελος εγκατάστασης:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Για όλους σε αυτόν τον υπολογιστή"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Μόνο για εσάς"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Δυνατότητες που θα εγκατασταθούν:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Εγκατάσταση του [ProductName]"
 

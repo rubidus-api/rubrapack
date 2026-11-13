@@ -467,7 +467,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     for (uint32_t k = 0; k < c.count; ++k) all = all && installed(&c.p[k]);
     const wchar_t *extra = L"";
     if (all && !uninstall && !repair && !quiet && !passive) {
-        rp_ask_t a = { title, texts[T_ASK], texts[T_REPAIR], texts[T_REMOVE], texts[T_CANCEL], rtl };
+        rp_ask_t a = { title, texts[T_ASK], texts[T_REPAIR], texts[T_REMOVE], texts[T_CANCEL], rtl, 0 };
         int r;
         for (;;) {      // Remove is asked once more (No is the default button, and leads back)
             r = rp_ask(NULL, &a);

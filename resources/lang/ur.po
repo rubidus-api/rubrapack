@@ -3623,6 +3623,22 @@ msgid "ReadyText"
 msgstr "[ProductName] انسٹال کرنے کے لیے انسٹال کریں پر کلک کریں۔"
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "انسٹال فولڈر:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "اس کمپیوٹر کے سب صارفین کے لیے"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "صرف آپ کے لیے"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "انسٹال ہونے والی خصوصیات:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "[ProductName] انسٹال ہو رہا ہے"
 

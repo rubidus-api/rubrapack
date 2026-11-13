@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Kliknite Namesti, da namestite [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Mapa namestitve:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Za vse uporabnike tega računalnika"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Samo za vas"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Funkcije za namestitev:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "Nameščanje programa [ProductName]"
 

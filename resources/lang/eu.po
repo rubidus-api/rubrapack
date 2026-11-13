@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "Egin klik Instalatu botoian [ProductName] instalatzeko."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Instalazio-karpeta:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Ordenagailu honetako guztientzat"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Zuretzat bakarrik"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Instalatuko diren eginbideak:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "[ProductName] instalatzen"
 

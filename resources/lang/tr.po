@@ -3621,6 +3621,22 @@ msgid "ReadyText"
 msgstr "[ProductName] ürününü yüklemek için Yükle'ye tıklayın."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "Yükleme klasörü:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "Bu bilgisayardaki herkes için"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "Yalnızca sizin için"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "Yüklenecek özellikler:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "[ProductName] yükleniyor"
 

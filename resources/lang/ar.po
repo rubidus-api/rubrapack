@@ -3623,6 +3623,22 @@ msgid "ReadyText"
 msgstr "انقر فوق \"تثبيت\" لتثبيت [ProductName]."
 
 msgctxt "installer"
+msgid "ReadyFolder"
+msgstr "مجلد التثبيت:"
+
+msgctxt "installer"
+msgid "ReadyForAll"
+msgstr "لجميع مستخدمي هذا الكمبيوتر"
+
+msgctxt "installer"
+msgid "ReadyForMe"
+msgstr "لك فقط"
+
+msgctxt "installer"
+msgid "ReadyFeatures"
+msgstr "الميزات التي سيتم تثبيتها:"
+
+msgctxt "installer"
 msgid "ProgressTitle"
 msgstr "جارٍ تثبيت [ProductName]"
 
