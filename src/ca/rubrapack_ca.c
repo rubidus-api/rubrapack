@@ -3425,6 +3425,51 @@ __declspec(dllexport) UINT __stdcall RpDetailsDone(MSIHANDLE h) {
     return ERROR_SUCCESS;
 }
 
+// The finished pages' box (RP_LOG_VIEW, owner 2026-11-14): the run's lines as the progress page's
+// box showed them (readable, or the log's own with its check box ticked), CR LF, the last
+// LOG_VIEW_MAX characters of them. Set once, when RpDetails ends - before the finished page opens:
+// RP_Details is waited for at the end of the sequence.
+enum { LOG_VIEW_MAX = 300000 };
+
+static void det_log_view(MSIHANDLE h, det_state_t *st, const wchar_t *raw, size_t len, bool full) {
+    size_t cap = LOG_VIEW_MAX + 4096, o = 0;
+    wchar_t *out = HeapAlloc(GetProcessHeap(), 0, (cap + 1) * sizeof *out);
+    if (out == NULL) return;
+    memset(st->folder, 0, sizeof st->folder);
+    static wchar_t line[8192], nice[1024];
+    for (size_t p = 0; p < len;) {
+        size_t e = p;
+        while (e < len && raw[e] != L'\n') ++e;
+        size_t n = e - p;
+        if (n && raw[p + n - 1] == L'\r') --n;
+        if (n > 8191) n = 8191;
+        memcpy(line, raw + p, n * sizeof *line);
+        line[n] = 0;
+        p = e + 1;
+        const wchar_t *text = line;
+        if (!full) {
+            det_readable(st, line, nice, 1024);
+            text = nice;
+        }
+        size_t tn = rp_wlen(text);
+        if (tn == 0 || tn + 2 > cap) continue;
+        if (o + tn + 2 > cap) {             // keep the newest: drop the oldest half
+            size_t cut = o / 2;
+            while (cut < o && out[cut - 1] != L'\n') ++cut;
+            memmove(out, out + cut, (o - cut) * sizeof *out);
+            o -= cut;
+        }
+        memcpy(out + o, text, tn * sizeof *out);
+        o += tn;
+        out[o++] = L'\r';
+        out[o++] = L'\n';
+    }
+    while (o >= 2 && out[o - 1] == L'\n') o -= 2;             // no empty last line
+    out[o] = 0;
+    if (o) MsiSetPropertyW(h, L"RP_LOG_VIEW", out);
+    HeapFree(GetProcessHeap(), 0, out);
+}
+
 __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
     wchar_t *log = get_property(h, L"MsiLogFileLocation"), *lang = get_property(h, L"RPLANGUAGE");
     wchar_t *product = get_property(h, L"ProductName");
@@ -3574,6 +3619,7 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
         if (now - quiet_since > 600000 || now - born > 6u * 3600 * 1000) break;
     }
 out:
+    if (raw && len) det_log_view(h, &st, raw, len, full);
     det_font_close(&fmt);
     if (f != INVALID_HANDLE_VALUE) CloseHandle(f);
     if (done) CloseHandle(done);

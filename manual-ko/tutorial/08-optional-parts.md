@@ -98,15 +98,15 @@ target = "file:Hello"
 
 | 키 | 뜻 |
 |---|---|
-| `title` | 트리의 줄 |
-| `description` | 그 줄을 골랐을 때 보이는 글 |
+| `title` | 체크박스의 글 |
+| `description` | 그 아래 줄 |
 | `level` | 1(기본): 기본으로 설치. 2 이상: 보여 주지만 고를 때만 설치 |
-| `required = true` | 늘 설치: 트리가 "사용할 수 없음"을 제안하지 않는다 |
-| `parent = "Samples"` | 트리에서 다른 기능 아래의 줄 |
+| `required = true` | 늘 설치: 상자가 표시된 채 바꿀 수 없다 |
+| `parent = "Samples"` | 다른 기능 아래에 들여 써서 놓인다 |
 | `follow-parent = true` | 부모가 설치될 때 정확히 함께 설치 |
 | `default-when = "OLDPACK"` | 기본은 꺼짐(level 이 1보다 큼), 조건이 맞으면 기본으로 켜짐 |
 | `advertise = "disallow"` | 이 기능은 광고(필요할 때 설치)되지 않는다 |
-| `hidden = true` | 트리에 아예 보이지 않음 |
+| `hidden = true` | 목록에 아예 보이지 않음 |
 
 *광고* 바로가기는 처음 쓸 때 그 기능을 설치한다. 바로가기에 `advertise = true` 와 `icon` 을 주면
 Windows 가 아이콘을 보여 주고, 처음 실행할 때 기능을 설치하며, 파일이 빠지면 고친다(MSI 전용. 바로가기
@@ -127,19 +127,25 @@ dir 은 자기 기능을 아래 dir 에 물려주지 않는다: `MoreSamplesDir`
 
 ## 사용자가 보는 것
 
-`ui = "features"` 에서는 약관과 설치 폴더 다음에 "Choose features"(기능 고르기)가 나온다: 트리 하나
+`ui = "features"` 에서는 약관과 설치 폴더 다음에 "Choose features"(기능 고르기)가 나온다: 기능마다 체크박스
+하나, 그 제목, 오른쪽에 파일 크기, 아래에 설명
 
 ```text
-[x] Hello                     (끌 수 없음)
+[x] Hello                                  (끌 수 없음)
+    The program itself.
 [x] Documentation
+    The guide, in the docs folder.
 [ ] Samples
-      [ ] More samples        (Samples 를 따라감)
+    Example files to try Hello with.
 ```
 
-줄마다 메뉴가 있다: "Will be installed on local hard drive"(로컬 하드 드라이브에 설치), "Entire feature will be
-installed on local hard drive"(하위까지 모두 설치), "Entire feature will be unavailable"(모두 사용할 수 없음). 줄을
-고르면 설명과 필요한 디스크 공간이 보이고, "Disk Usage" 는 드라이브마다 공간을 보인다. (이 글들은 Windows 에서
-오므로 영어로 남는다.) Diagnostics 는 보이지 않는다.
+다른 기능 아래의 기능은 들여 써서 그 밑에 놓이고, 부모의 상자가 표시되어 있지 않은 동안 꺼져 있다. Diagnostics
+(`hidden`)와 More samples(`follow-parent`: Samples 와 함께 온다)는 목록에 없다. "Disk usage"(디스크 사용량)는
+드라이브마다 공간을 보인다.
+
+기능이 페이지에 다 들어가지 않으면(열 개쯤 넘거나 세 단계보다 깊으면) 페이지는 대신 Windows Installer 의 기능 트리를
+보인다: 줄마다 메뉴가 있고("Will be installed on local hard drive", "Entire feature will be unavailable", ...; 이 글들은
+Windows 에서 오므로 영어로 남는다), 줄을 고르면 설명과 크기가 보인다.
 
 기본 설치(두 번 누르고 다음, 다음, ...)는 Hello 와 문서를 설치한다.
 
@@ -157,14 +163,14 @@ installed on local hard drive"(하위까지 모두 설치), "Entire feature will
 | `msiexec /i hello.msi /qn INSTALLLEVEL=3` | level 이 3 이하인 모든 기능: 여기서는 전부 |
 | `msiexec /i hello.msi /qn REMOVE=Documentation` | 문서를 뺀 기본 |
 
-기능 ID 는 대소문자를 가리고 쉼표로 나눈다: `ADDLOCAL=Samples,Diagnostics`. `required` 는 트리만 묶는다: 명령줄의
+기능 ID 는 대소문자를 가리고 쉼표로 나눈다: `ADDLOCAL=Samples,Diagnostics`. `required` 는 페이지만 묶는다: 명령줄의
 `REMOVE=Main` 은 여전히 따른다(Windows Installer 가 그렇게 동작한다).
 
 ## 나중에 바꾸기
 
 설치한 뒤 "설치된 앱"은 Hello 에 수정을 보인다. 설치 파일의 유지 관리 페이지가 열리고 **변경**, **복구**,
-**제거**가 있다. 변경은 설치된 것이 표시된 같은 트리를 보이고, 사용자는 부분을 더하거나 뺀다 - 처음에 뺀 예제를 아무것도 지우지 않고 이렇게 설치한다. 이 페이지의 변경은 다른
-대화창 세트(`basic`, `minimal`, `installdir`)에도 있다. 그 세트들은 설치할 때는 트리를 보이지 않는다. 설치된 제품에
+**제거**가 있다. 변경은 설치된 것이 표시된 같은 페이지를 보이고, 사용자는 부분을 더하거나 뺀다 - 처음에 뺀 예제를 아무것도 지우지 않고 이렇게 설치한다. 이 페이지의 변경은 다른
+대화창 세트(`basic`, `minimal`, `installdir`)에도 있다. 그 세트들은 설치할 때는 기능 페이지를 보이지 않는다. 설치된 제품에
 명령줄로는:
 
 ```text
@@ -185,7 +191,7 @@ MoreSamples	Samples	More samples	Samples in sub folders.	7	1		2
 Samples		Samples	Example files to try Hello with.	5	2		0
 ```
 
-- `Display` 는 트리의 순서다(원본 순서의 홀수). 0 은 기능을 숨긴다.
+- `Display` 는 목록의 순서다(원본 순서의 홀수). 0 은 기능을 숨긴다.
 - `Level` 은 수준이다. Windows 는 수준이 속성 `INSTALLLEVEL`(1)보다 높지 않은 기능을 기본으로 설치한다.
 - `Attributes` 는 비트 플래그다: 16 은 "없앨 수 없음"(`required`), 2 는 "부모를 따라감".
 

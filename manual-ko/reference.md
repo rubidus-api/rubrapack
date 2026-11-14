@@ -79,7 +79,7 @@ rubrapack build app.toml -o app-1.0.1.msi -D VERSION=1.0.1    # 다음 판
 
 설치 파일이라면 흔히 바라는 두 가지: 설치 전에 사용자가 약관에 동의하는 것, 그리고 일부 구성요소를 고를 수
 있는 것. `license` 는 약관 페이지를 더하고("동의합니다"에 표시하기 전에는 다음 단추가 꺼져 있다),
-`ui = "features"` 는 사용자가 설치할 기능을 고르는 트리를 더한다. 아래 원본은 프로그램을 늘 설치하고, 예제는
+`ui = "features"` 는 사용자가 설치할 기능을 체크박스로 고르는 페이지를 더한다. 아래 원본은 프로그램을 늘 설치하고, 예제는
 보여 주되 고르지 않은 상태로 둔다:
 
 ```toml
@@ -91,7 +91,7 @@ manufacturer = "My Company"
 version = "$(VERSION)"
 arch = "x64"
 upgrade-code = "{E8C1815C-CCD7-4F3F-B914-92A4E3F3A317}"
-ui = "features"                        # welcome, license, folder, feature tree, ready
+ui = "features"                        # welcome, license, folder, features, ready
 license = "LICENSE.txt"                # Next stays off until "I accept" is ticked
 
 [define]
@@ -100,12 +100,12 @@ VERSION = "1.0.0"
 [feature.Main]
 title = "My App"
 description = "The program itself."
-required = true                        # always installed: the tree does not offer to leave it out
+required = true                        # always installed: its box cannot be unticked
 
 [feature.Samples]
 title = "Samples"
 description = "Example documents to try the program with."
-level = 2                              # offered in the tree, not selected by default
+level = 2                              # offered, not ticked by default
 
 [dir.INSTALLDIR]
 path = "$(ProgramFiles)/My App"
@@ -134,9 +134,9 @@ target = "file:App"
 ```
 
 약관 글은 `LICENSE.txt`(`.txt`, `.md`, `.rtf`)에, 예제 파일은 `dist/samples/` 에 둔다. `level = 2` 인 기능은
-사용자가 표시하지 않으면 설치되지 않고, `required` 는 트리가 그 기능을 빼자고 제안하지 못하게 한다. 나중에
+사용자가 표시하지 않으면 설치되지 않고, `required` 는 그 기능의 상자를 표시된 채로 둔다. 나중에
 사용자는 "설치된 앱"의 "변경"에서 고른 것을 바꿀 수 있고, 명령줄에서도 대화창 없이 같은 일을 한다:
-`msiexec /i app.msi /qn ADDLOCAL=Samples` 는 예제를 더하고, `REMOVE=Samples` 는 뺀다(`required` 는 트리에만
+`msiexec /i app.msi /qn ADDLOCAL=Samples` 는 예제를 더하고, `REMOVE=Samples` 는 뺀다(`required` 는 페이지에만
 적용되고 명령줄은 묶지 않는다). 나머지는 [기능(feature)](#기능feature)과 [조건: when](#조건-when)에 있다.
 
 ### 나머지를 설명하는 곳
@@ -1255,15 +1255,15 @@ msiexec /x {ProductCode} /qn
 | `basic` | 진행, 끝(또는 오류) | 변경(고를 기능이 있으면), 복구 또는 제거 |
 | `minimal` | 환영, 사용권(있으면), 진행, 끝 | 변경(고를 기능이 있으면), 복구 또는 제거 |
 | `installdir` | 환영, 사용권, 설치 폴더(폴더 찾아보기 포함), 준비, 진행, 끝 | 변경(고를 기능이 있으면), 복구 또는 제거 |
-| `features` | `installdir` 에 더해 기능 트리와 필요한 디스크 공간 | 변경, 복구 또는 제거 |
+| `features` | `installdir` 에 더해 기능 페이지(체크박스, 다 들어가지 않으면 기능 트리)와 필요한 디스크 공간 | 변경, 복구 또는 제거 |
 
 "이미 설치되어 있을 때"는 제품 - 이 버전 - 이 설치된 상태에서 같은 패키지를 다시 연 경우다(두 번 누르기,
 `msiexec /i`, "설치된 앱"의 수정). 복구는 빠지거나 망가진 파일과 설정을 되살리고, 제거는 제품을 지운다. **제거는 지우기 전에 한 번 더 묻는다**:
 대화창 세트는 무엇이 지워지는지 말하는 페이지를 보이고(패키지가 프로그램의 설정과 데이터까지 지우면 그것도 말한다 -
 [제거할 때 싹 지우기](#제거할-때-싹-지우기-recursive-on--uninstall) 참고) 그 페이지의 기본 단추는 '뒤로'다. `none` 의
 창은 예/아니요로 묻고 기본은 '아니요'다. **변경**은 패키지에 사용자가 켜고 끌 수 있는 기능(`hidden` 도 `required` 도
-아닌 기능)이 있으면 모든 세트에 나온다: 기능 트리로 가고, 거기서 '설치'를 누르면 켠 기능을 더하고 끈 기능을 뺀다.
-`none` 의 창에는 변경이 없다(트리를 보일 수 없다): 거기서는 명령줄로 한다(`ADDLOCAL=`, `REMOVE=`). 명령줄이
+아닌 기능)이 있으면 모든 세트에 나온다: 기능 페이지로 가고, 거기서 '설치'를 누르면 켠 기능을 더하고 끈 기능을 뺀다.
+`none` 의 창에는 변경이 없다(기능 페이지를 보일 수 없다): 거기서는 명령줄로 한다(`ADDLOCAL=`, `REMOVE=`). 명령줄이
 이미 골랐거나(`REINSTALL`, `REMOVE`, `ADDLOCAL`, `msiexec /f`, `/x`) `/qn`, `/qb`, `/qr` 이면 묻지 않고, 그때는
 아무것도 복구하거나 바꾸지 않는다. 더 새 버전의 패키지는 업그레이드이지 이 경우가 아니다. `none` 의 창은 영어이고
 한국어 사용자에게는 한국어다. 그 글은 아래의 `MaintTitle`, `MaintText`, `Repair`, `Remove`, `Cancel`, `RemoveAsk`(패키지가 싹 지우면
@@ -1700,11 +1700,11 @@ msiexec /i pkg.msi MSINEWINSTANCE=1 TRANSFORMS=:Instance1
 
 `[feature.*]` 표가 없으면 모든 것이 숨은 기능 하나에 든다. 기능을 하나라도 선언하면 모든 파일에
 기능이 있어야 한다: 파일 자신의 `feature` 키, 또는 그 dir 의 `feature`. `level` 이 1 보다 큰 기능은
-기본으로 설치하지 않는다. `ui = "features"` 면 사용자가 트리에서 기능을 고른다. 나중에는 - `features` 만이
-아니라 모든 대화창 세트에서 - 같은 패키지를 다시 열면(또는 "설치된 앱"의 수정) "변경"이 나오고, 그것이 그 트리로
+기본으로 설치하지 않는다. `ui = "features"` 면 사용자가 체크박스 페이지에서 기능을 고른다. 나중에는 - `features` 만이
+아니라 모든 대화창 세트에서 - 같은 패키지를 다시 열면(또는 "설치된 앱"의 수정) "변경"이 나오고, 그것이 그 페이지로
 간다: 처음에 뺀 기능을 더하고, 필요 없어진 기능을 뺀다([대화창: ui](#대화창-ui) 참고).
 
-- `required = true`: 트리에서 "설치하지 않음"을 고를 수 없다.
+- `required = true`: 상자가 표시된 채 바꿀 수 없다.
 - `follow-parent = true`: 부모가 설치되는 대로 따라간다.
 - `default-when = "<조건>"`(`level` 이 1보다 클 때): 기본으로는 꺼져 있지만, 처음 설치할 때 조건이 맞으면 기본으로
   켜진다 - 이를테면 검색으로 이 부분이 전에 따로 된 패키지로 설치되어 있었음을 알았을 때(`replaces` 참고). 그러면

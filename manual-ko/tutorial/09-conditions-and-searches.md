@@ -114,7 +114,7 @@ Windows 나 rubrapack 이 스스로 쓰는 이름(`ALLUSERS`, `ARP...`, `MSI...`
 
 - 바탕화면 바로가기의 `when = "DESKTOP_SHORTCUT = \"1\""`: 기본으로는 만들고, `msiexec /i hello.msi
   DESKTOP_SHORTCUT=0` 이면 만들지 않는다. 14장에서 이 속성을 내 페이지의 확인란으로 바꾼다.
-- 기능의 `when = "NOTEPAD_PATH"`: 조건이 거짓인 곳에서는 그 기능을 설치하지도 트리에 보이지도 않는다.
+- 기능의 `when = "NOTEPAD_PATH"`: 조건이 거짓인 곳에서는 그 기능을 설치하지도 기능 페이지에 보이지도 않는다.
 
 복구는 설치된 것을 그대로 두고, 메이저 업그레이드(다음 판)는 다시 정한다.
 

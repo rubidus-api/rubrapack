@@ -87,7 +87,7 @@ so nothing but the upgrade code needs to be remembered from one version to the n
 
 Two things most installers want: the user accepts a license before installing, and some parts are
 optional. `license` adds the license page (Next stays off until "I accept" is ticked), and
-`ui = "features"` adds a tree in which the user picks the features to install. Here the program is
+`ui = "features"` adds a page of check boxes on which the user picks the features to install. Here the program is
 always installed and the samples are offered but not selected:
 
 ```toml
@@ -99,7 +99,7 @@ manufacturer = "My Company"
 version = "$(VERSION)"
 arch = "x64"
 upgrade-code = "{E8C1815C-CCD7-4F3F-B914-92A4E3F3A317}"
-ui = "features"                        # welcome, license, folder, feature tree, ready
+ui = "features"                        # welcome, license, folder, features, ready
 license = "LICENSE.txt"                # Next stays off until "I accept" is ticked
 
 [define]
@@ -108,12 +108,12 @@ VERSION = "1.0.0"
 [feature.Main]
 title = "My App"
 description = "The program itself."
-required = true                        # always installed: the tree does not offer to leave it out
+required = true                        # always installed: its box cannot be unticked
 
 [feature.Samples]
 title = "Samples"
 description = "Example documents to try the program with."
-level = 2                              # offered in the tree, not selected by default
+level = 2                              # offered, not ticked by default
 
 [dir.INSTALLDIR]
 path = "$(ProgramFiles)/My App"
@@ -143,10 +143,10 @@ target = "file:App"
 
 Put the license text in `LICENSE.txt` (`.txt`, `.md` or `.rtf`) and the samples in
 `dist/samples/`. A feature with `level = 2` is not installed unless the user ticks it; `required`
-keeps the tree from offering to leave a feature out. Later the user changes the choice from
+keeps a feature's box ticked. Later the user changes the choice from
 Installed apps (Change), and the command line does the same without dialogs:
 `msiexec /i app.msi /qn ADDLOCAL=Samples` adds the samples, `REMOVE=Samples` takes them out
-(`required` binds only the tree, not the command line). [Features](#features) and
+(`required` binds only the page, not the command line). [Features](#features) and
 [Conditions](#conditions-when) have the rest.
 
 ### Where the rest is explained
@@ -1374,7 +1374,7 @@ only Windows Installer's own progress bar.
 | `basic` | progress, then finished (or error) | change (with features to choose), repair or remove |
 | `minimal` | welcome, the license if there is one, progress, finished | change (with features to choose), repair or remove |
 | `installdir` | welcome, license, install folder (with a folder browser), ready, progress, finished | change (with features to choose), repair or remove |
-| `features` | as `installdir`, plus a feature tree and the disk space it needs | change, repair or remove |
+| `features` | as `installdir`, plus a page of features (check boxes; the feature tree when they do not fit) and the disk space they need | change, repair or remove |
 
 "Already installed" is the same package opened again (a double click, `msiexec /i`, or Modify in
 Installed apps) with the product - this version - installed: Repair puts back missing or damaged
@@ -1383,9 +1383,9 @@ removed: the dialog sets show a page that says what goes (the program's settings
 the package wipes them - see [Wiping at removal](#wiping-at-removal-recursive-on--uninstall)), on
 which Back is the default button; the window of `none` asks Yes or No, with No as the default.
 **Change** is there when the package has a feature the user may turn on or off (one that is not
-`hidden` and not `required`), in every set: it leads to the feature tree, and Install there adds
+`hidden` and not `required`), in every set: it leads to the feature page, and Install there adds
 the features turned on and takes out those turned off. The window of `none` has no Change (it
-cannot show a tree): there the command line does it (`ADDLOCAL=`, `REMOVE=`). Nothing is asked when the command line has already
+cannot show a feature page): there the command line does it (`ADDLOCAL=`, `REMOVE=`). Nothing is asked when the command line has already
 chosen (`REINSTALL`, `REMOVE`, `ADDLOCAL`, `msiexec /f`, `/x`) or at `/qn`, `/qb` and `/qr`, where
 the run repairs nothing and changes nothing. A newer version's package is an upgrade, not this. The
 window of `none` is in English, or Korean for a Korean user; its texts are `MaintTitle`, `MaintText`,
@@ -1895,12 +1895,12 @@ stays after uninstall (for data the program writes).
 
 Without any `[feature.*]` table everything goes into one hidden feature. As soon as one feature is
 declared, every file needs one: its own `feature` key, or the `feature` of its dir. A feature with
-a `level` above 1 is not installed by default. With `ui = "features"` the user picks features in a
-tree. Later - in every dialog set, not only `features` - the same package opened again (or Modify
-in Installed apps) offers Change, which leads to that tree: a feature left out at first is added, one
+a `level` above 1 is not installed by default. With `ui = "features"` the user picks features on a
+page of check boxes. Later - in every dialog set, not only `features` - the same package opened again
+(or Modify in Installed apps) offers Change, which leads to that page: a feature left out at first is added, one
 no longer wanted is taken out (see [Dialogs: `ui`](#dialogs-ui)).
 
-- `required = true`: the tree offers no "will be unavailable" for it.
+- `required = true`: its box is ticked and cannot be unticked.
 - `follow-parent = true`: installed wherever its parent is (on this computer, or not at all).
 - `when = "<condition>"`: the feature is off - not installed and not shown - unless the condition
   holds (see below).

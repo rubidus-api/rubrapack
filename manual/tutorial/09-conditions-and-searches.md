@@ -120,7 +120,7 @@ an INI value installs it only when the condition is true at the first installati
   `msiexec /i hello.msi DESKTOP_SHORTCUT=0` it is not. Chapter 14 turns the property into a tick
   box on a page of your own.
 - `when = "NOTEPAD_PATH"` on a feature: where the condition is false, the feature is neither
-  installed nor shown in the tree.
+  installed nor listed on the feature page.
 
 A repair keeps what was installed; a major upgrade (the next version) decides again.
 

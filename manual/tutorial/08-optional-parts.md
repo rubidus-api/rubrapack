@@ -100,15 +100,15 @@ target = "file:Hello"
 
 | Key | Meaning |
 |---|---|
-| `title` | the line in the tree |
-| `description` | the text shown when the line is selected |
+| `title` | the check box's text |
+| `description` | the line below it |
 | `level` | 1 (default): installed by default. 2 or more: offered, but only installed when chosen |
-| `required = true` | always installed: the tree does not offer "will be unavailable" for it |
-| `parent = "Samples"` | a line under another feature in the tree |
+| `required = true` | always installed: its box is ticked and cannot be changed |
+| `parent = "Samples"` | listed under another feature, indented |
 | `follow-parent = true` | installed exactly when its parent is |
 | `default-when = "OLDPACK"` | off by default (level above 1), on by default when the condition holds |
 | `advertise = "disallow"` | the feature may not be advertised (installed on demand) |
-| `hidden = true` | not shown in the tree at all |
+| `hidden = true` | not listed at all |
 
 An *advertised* shortcut installs its feature the first time it is used. Give the shortcut
 `advertise = true` and an `icon`, and Windows shows the icon, installs the feature on the first
@@ -130,19 +130,26 @@ naming what has none.
 
 ## What the user sees
 
-With `ui = "features"`, after the license and the install folder comes "Choose features": a tree
+With `ui = "features"`, after the license and the install folder comes "Choose features": a check
+box for each feature, its title, the size of its files at the right and its description below
 
 ```text
-[x] Hello                     (cannot be turned off)
+[x] Hello                                  (cannot be turned off)
+    The program itself.
 [x] Documentation
+    The guide, in the docs folder.
 [ ] Samples
-      [ ] More samples        (follows Samples)
+    Example files to try Hello with.
 ```
 
-Each line has a menu: "Will be installed on local hard drive", "Entire feature will be installed on
-local hard drive", "Entire feature will be unavailable". Selecting a line shows its description and
-the disk space it needs; "Disk Usage" shows the space on every drive. (These texts come from Windows
-and stay English.) Diagnostics does not appear.
+A feature under another sits indented below it, and its box is off while its parent's is not ticked.
+Diagnostics (`hidden`) and More samples (`follow-parent`: it comes with Samples) are not listed.
+"Disk usage" shows the space on every drive.
+
+When the features do not fit on the page (more than about ten, or more than three levels deep), the
+page shows Windows Installer's feature tree instead: each line has a menu ("Will be installed on
+local hard drive", "Entire feature will be unavailable", ...; these texts come from Windows and stay
+English), and selecting a line shows its description and size.
 
 A default installation (double-click, Next, Next, ...) installs Hello and the documentation.
 
@@ -161,16 +168,16 @@ Features are chosen with properties, so a silent installation can choose too:
 | `msiexec /i hello.msi /qn REMOVE=Documentation` | the defaults without the documentation |
 
 Feature IDs are case-sensitive and separated by commas: `ADDLOCAL=Samples,Diagnostics`.
-`required` only binds the tree: `REMOVE=Main` on the command line is still obeyed (that is how
+`required` only binds the page: `REMOVE=Main` on the command line is still obeyed (that is how
 Windows Installer works).
 
 ## Changing the choice later
 
 After installation, Installed apps offers Modify for Hello; it opens the installer's maintenance
-page with **Change**, **Repair** and **Remove**. Change shows the same tree with what is installed
+page with **Change**, **Repair** and **Remove**. Change shows the same page with what is installed
 ticked; the user adds or removes parts - the samples left out at first are installed this way,
 without removing anything. The page has Change with the other dialog sets too (`basic`, `minimal`,
-`installdir`), although they show no tree at installation. From the command line on an installed product:
+`installdir`), although they show no feature page at installation. From the command line on an installed product:
 
 ```text
 msiexec /i hello.msi ADDLOCAL=Samples
@@ -190,7 +197,7 @@ MoreSamples	Samples	More samples	Samples in sub folders.	7	1		2
 Samples		Samples	Example files to try Hello with.	5	2		0
 ```
 
-- `Display` orders the tree (odd numbers, in the order of the source); 0 hides the feature.
+- `Display` orders the list (odd numbers, in the order of the source); 0 hides the feature.
 - `Level` is the level; Windows installs a feature by default when its level is not above the
   property `INSTALLLEVEL`, which is 1.
 - `Attributes` are bit flags: 16 means "may not be made absent" (`required`), 2 "follow the

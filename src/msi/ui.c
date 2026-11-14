@@ -595,7 +595,7 @@ static const char *AT(ctx_t *c, const char *all, const rp_ir_ltext_t *by, size_t
 
 // ---- building blocks ------------------------------------------------------------------------------
 
-enum { VIS = 1, EN = 2, SUNKEN = 4, INDIRECT = 8, TRANSPARENT = 0x10000, NOPREFIX = 0x20000,
+enum { VIS = 1, EN = 2, SUNKEN = 4, INDIRECT = 8, MULTILINE = 0x10000 /* Edit; Text controls use it as Transparent */, TRANSPARENT = 0x10000, NOPREFIX = 0x20000,
        FIXEDSIZE = 0x100000, ICON32 = 0x400000 };
 
 // Right-to-left languages (X-Rubrapack-Direction: rtl). The Dialog and Control attributes are fixed
@@ -940,6 +940,17 @@ static void progress_and_exits(ctx_t *c) {
             cond(c, exits[i][0], "Launch", "Hide", "Installed");
             event(c, exits[i][0], "Finish", "DoAction", "RP_Launch", "RPLAUNCH = \"1\" AND NOT Installed", 1);
         }
+        // What was done, to read before saving the log (owner 2026-11-14): the progress page's
+        // lines, which RpDetails leaves in RP_LOG_VIEW when the run ends - a multi-line edit box
+        // bound to it scrolls (a ScrollableText's text is fixed in the package).
+        if (details) {
+            int y = launch ? 100 : 55;
+            control(c, exits[i][0], "LogView", "Edit", 25, y, 320, 225 - y, VIS | EN | SUNKEN | MULTILINE, "RP_LOG_VIEW", "{1000000}",
+                    after_finish ? after_finish : "Finish");
+            cond(c, exits[i][0], "LogView", "Hide", "NOT RP_LOG_VIEW");
+            cond(c, exits[i][0], "LogView", "Show", "RP_LOG_VIEW");
+            after_finish = "LogView";
+        }
         control(c, exits[i][0], "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), NULL);
         control(c, exits[i][0], "Finish", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Finish"), after_finish);
         control(c, exits[i][0], "Cancel", "PushButton", 304, 243, 56, 17, VIS, NULL, T(c, "Cancel"), NULL);
@@ -1047,7 +1058,9 @@ static void license_dlg(ctx_t *c, const char *const *rtf, const char *back, cons
     for (size_t i = 0; i < n; ++i) {
         const char *name = i ? keep(c, "LicenseText_", lang_code(c, i)) : "LicenseText";
         const char *to = i + 1 < n ? keep(c, "LicenseText_", lang_code(c, i + 1)) : "Accept";
-        control(c, d, name, "ScrollableText", 20, 55, 330, 145, VIS | SUNKEN, NULL, rtf[i], to);
+        // Enabled: a disabled box does not scroll, and the license could not be read to its end
+        // (owner 2026-11-14).
+        control(c, d, name, "ScrollableText", 20, 55, 330, 145, VIS | EN | SUNKEN, NULL, rtf[i], to);
         if (several) {
             cond(c, d, name, "Show", lang_cond(c, i));
             cond(c, d, name, "Hide", keep(c, "NOT (", keep(c, lang_cond(c, i), ")")));
@@ -1113,21 +1126,191 @@ static void installdir_dlg(ctx_t *c, const char *back, const char *next, const c
     event(c, b, "Cancel", "EndDialog", "Return", NULL, 2);
 }
 
+// ---- the features as check boxes (owner 2026-11-14) ------------------------------------------------
+//
+// The feature page lists the features a user may choose as check boxes - a title, its size at the
+// right, its description below - instead of the selection tree, whose menus per item were found
+// awkward. MSI's own means only: each box is a property (RPF_<n>), set at the start from the
+// feature's state (a type 51 action after MigrateFeatureStates: what will be installed, else what
+// is installed and stays), and Next turns the boxes into AddLocal / Remove events, a child only when
+// every box above it is ticked. A child's box is off while its parent's is. A required feature is
+// a ticked box that cannot be changed; one that follows its parent or is hidden is not listed. The
+// tree stays when the list does not fit the page.
+enum { FLIST_TOP = 55, FLIST_BOTTOM = 205, FLIST_BOX = 12, FLIST_DESC = 10, FLIST_GAP = 4, FLIST_MAX = 20 };
+
+static bool flist_listed(const rp_ir_feature_t *f) { return !f->implicit && !f->hidden && !f->follow_parent; }
+
+static size_t flist_index(const rp_ir_t *ir, const char *id) {
+    for (size_t i = 0; id && i < ir->feature_count; ++i) {
+        if (RP_EQ(ir->features[i].id, id)) return i;
+    }
+    return SIZE_MAX;
+}
+
+// How deep a feature sits below the listed ones above it (0 for a top one).
+static int flist_depth(const rp_ir_t *ir, size_t i) {
+    int depth = 0;
+    for (size_t p = flist_index(ir, ir->features[i].parent.ptr ? rp_cs(ir->features[i].parent) : NULL), n = 0; p != SIZE_MAX && n < 64;
+         p = flist_index(ir, ir->features[p].parent.ptr ? rp_cs(ir->features[p].parent) : NULL), ++n) {
+        if (flist_listed(&ir->features[p])) ++depth;
+    }
+    return depth;
+}
+
+// A description's lines on a box 300 units wide: a letter past ASCII counts twice.
+static int flist_desc_lines(const char *s) {
+    size_t w = 0;
+    for (const unsigned char *p = (const unsigned char *)s; *p; ++p) {
+        if (*p < 0x80) ++w;
+        else if ((*p & 0xC0) != 0x80) w += 2;
+    }
+    return w == 0 ? 0 : w <= 62 ? 1 : 2;
+}
+
+// The page height the list needs (0: nothing to list), or -1 when it does not fit.
+static int flist_height(const rp_ir_t *ir) {
+    int h = 0, n = 0;
+    for (size_t i = 0; i < ir->feature_count; ++i) {
+        const rp_ir_feature_t *f = &ir->features[i];
+        if (!flist_listed(f)) continue;
+        if (++n > FLIST_MAX || flist_depth(ir, i) > 2) return -1;
+        h += FLIST_BOX + FLIST_GAP + FLIST_DESC * flist_desc_lines(f->description.ptr ? rp_cs(f->description) : "");
+    }
+    return h <= FLIST_BOTTOM - FLIST_TOP ? h : -1;
+}
+
+// "12.3 MB": the size of a feature's own files.
+static const char *flist_size(ctx_t *c, const rp_ir_t *ir, const char *id) {
+    uint64_t b = 0;
+    for (size_t i = 0; i < ir->file_count; ++i) {
+        if (ir->files[i].feature.ptr && RP_EQ(ir->files[i].feature, id)) b += ir->files[i].size;
+    }
+    if (b == 0) return NULL;
+    char t[32];
+    static const char *const unit[] = { "KB", "MB", "GB" };
+    uint64_t scale = 1024;
+    int u = 0;
+    while (u < 2 && b >= scale * 1024) scale *= 1024, ++u;
+    uint64_t tenths = (b * 10 + scale - 1) / scale;
+    if (u == 0 || tenths >= 100) (void)proven_fmt_to(t, sizeof t, "{} {}", proven_arg_u64((tenths + 9) / 10), proven_arg_cstr(unit[u]));
+    else (void)proven_fmt_to(t, sizeof t, "{}.{} {}", proven_arg_u64(tenths / 10), proven_arg_u64(tenths % 10), proven_arg_cstr(unit[u]));
+    return keep(c, t, "");
+}
+
+// A title for a check box: '&' would mark an access key.
+static const char *flist_title(ctx_t *c, const char *s) {
+    size_t n = strlen(s), amp = 0;
+    for (size_t i = 0; i < n; ++i) amp += s[i] == '&';
+    if (amp == 0) return s;
+    char *t = rp_mem_alloc(c->alloc, n + amp + 1, 1);
+    if (t == NULL) return s;
+    size_t o = 0;
+    for (size_t i = 0; i < n; ++i) {
+        t[o++] = s[i];
+        if (s[i] == '&') t[o++] = '&';
+    }
+    t[o] = 0;
+    const char *r = keep(c, t, "");
+    rp_mem_free(c->alloc, t);
+    return r;
+}
+
+// The listed box of feature i's nearest listed parent (SIZE_MAX: none), in list order.
+static size_t flist_parent(const rp_ir_t *ir, size_t i) {
+    size_t p = flist_index(ir, ir->features[i].parent.ptr ? rp_cs(ir->features[i].parent) : NULL);
+    for (size_t n = 0; p != SIZE_MAX && !flist_listed(&ir->features[p]) && n < 64; ++n)
+        p = flist_index(ir, ir->features[p].parent.ptr ? rp_cs(ir->features[p].parent) : NULL);
+    return p;
+}
+
+// RPF_<n>: the property of feature i's box (n counts the listed features, from 1).
+static const char *flist_prop(ctx_t *c, const rp_ir_t *ir, size_t i) {
+    int n = 0;
+    for (size_t j = 0; j <= i; ++j) n += flist_listed(&ir->features[j]);
+    char t[16];
+    (void)proven_fmt_to(t, sizeof t, "RPF_{}", proven_arg_i32(n));
+    return keep(c, t, "");
+}
+
+// The list's controls, conditions, start-up actions and Next's events; `after`: the control the
+// last box leads to (tab order). Returns the first box's name.
+static const char *feature_list(ctx_t *c, const char *d, const char *after) {
+    const rp_ir_t *ir = c->ir;
+    size_t idx[FLIST_MAX], n = 0;
+    for (size_t i = 0; i < ir->feature_count && n < FLIST_MAX; ++i) {
+        if (flist_listed(&ir->features[i])) idx[n++] = i;
+    }
+    int y = FLIST_TOP;
+    for (size_t k = 0; k < n; ++k) {
+        size_t i = idx[k];
+        const rp_ir_feature_t *f = &ir->features[i];
+        const char *id = rp_cs(f->id), *prop_name = flist_prop(c, ir, i), *box = keep(c, "F", prop_name + 3);
+        const char *to = k + 1 < n ? keep(c, "F", flist_prop(c, ir, idx[k + 1]) + 3) : after;
+        const char *size = flist_size(c, ir, id), *desc = f->description.ptr ? rp_cs(f->description) : "";
+        int x = 20 + 14 * flist_depth(ir, i), lines = flist_desc_lines(desc);
+        control(c, d, box, "CheckBox", x, y, (size ? 286 : 350) - x, FLIST_BOX, f->required ? VIS : VIS | EN, prop_name,
+                flist_title(c, rp_cs(f->title)), to);
+        if (size) control(c, d, keep(c, box, "Size"), "Text", 290, y + 2, 60, 10, VIS | NOPREFIX | CTL_RIGHT, NULL, size, NULL);
+        if (lines) control(c, d, keep(c, box, "Desc"), "Text", x + 14, y + FLIST_BOX, 336 - x, FLIST_DESC * lines, VIS | NOPREFIX, NULL, desc, NULL);
+        y += FLIST_BOX + FLIST_GAP + FLIST_DESC * lines;
+        // Every listed box above it must be ticked for it to be installed; the nearest one turns it off.
+        const char *above = "";
+        size_t p = flist_parent(ir, i);
+        if (p != SIZE_MAX && !f->required) {
+            const char *pp = flist_prop(c, ir, p);
+            cond(c, d, box, "Disable", keep(c, pp, " <> \"1\""));
+            cond(c, d, box, "Enable", keep(c, pp, " = \"1\""));
+        }
+        for (size_t q = p; q != SIZE_MAX; q = flist_parent(ir, q)) above = keep(c, above, keep(c, flist_prop(c, ir, q), " = \"1\" AND "));
+        // A feature whose condition takes it away at the first installation is not shown (lower.c).
+        const char *gone = f->when.ptr ? keep(c, "NOT Installed AND NOT (", keep(c, rp_cs(f->when), ")")) : NULL;
+        if (gone) {
+            const char *back_in = keep(c, "NOT (", keep(c, gone, ")"));
+            const char *mine[] = { box, size ? keep(c, box, "Size") : NULL, lines ? keep(c, box, "Desc") : NULL };
+            for (size_t m = 0; m < 3; ++m) {
+                if (mine[m] == NULL) continue;
+                cond(c, d, mine[m], "Hide", gone);
+                cond(c, d, mine[m], "Show", back_in);
+            }
+        }
+        // Next: the feature's state from its box, before the ready page's summary (ordering 0).
+        if (!f->required) {
+            const char *on = keep(c, above, keep(c, prop_name, " = \"1\""));
+            if (gone) on = keep(c, "(", keep(c, on, keep(c, ") AND NOT (", keep(c, gone, ")"))));
+            event(c, d, "Next", "AddLocal", id, on, 0);
+            event(c, d, "Next", "Remove", id, keep(c, prop_name, " <> \"1\""), 0);
+        }
+        // At the start: ticked when it will be installed, or is installed and stays.
+        if (!c->rtl) {
+            const char *a = keep(c, "RpFeat", prop_name + 3);
+            ca(c, a, prop_name, "1");
+            char cnd[600];
+            (void)proven_fmt_to(cnd, sizeof cnd, "&{0} = 3 OR &{0} = 4 OR ((!{0} = 3 OR !{0} = 4) AND &{0} <> 2)", proven_arg_cstr(id));
+            seq(c, a, keep(c, cnd, ""), 1201 + (int)k);
+        }
+    }
+    return n ? keep(c, "F", flist_prop(c, ir, idx[0]) + 3) : NULL;
+}
+
 static void customize_dlg(ctx_t *c, const char *back, const char *next, const char *next_text) {
     const char *d = "RpCustomizeDlg";
-    dialog(c, d, 370, 270, 3 | 32, "Tree", "Next", "Cancel");
+    bool list = flist_height(c->ir) > 0;
+    const char *first = list ? feature_list(c, d, "Reset") : "Tree";
+    dialog(c, d, 370, 270, 3 | 32, first, "Next", "Cancel");
     frame(c, d, "CustomizeTitle", "CustomizeText", NULL);
-    control(c, d, "Tree", "SelectionTree", 20, 55, 180, 150, VIS | EN | SUNKEN, "_RpBrowseProperty", NULL, "Reset");
-    control(c, d, "ItemDescription", "Text", 210, 55, 140, 60, VIS | NOPREFIX, NULL, "", NULL);
-    control(c, d, "ItemSize", "Text", 210, 120, 140, 60, VIS | NOPREFIX, NULL, "", NULL);
+    if (!list) {
+        control(c, d, "Tree", "SelectionTree", 20, 55, 180, 150, VIS | EN | SUNKEN, "_RpBrowseProperty", NULL, "Reset");
+        control(c, d, "ItemDescription", "Text", 210, 55, 140, 60, VIS | NOPREFIX, NULL, "", NULL);
+        control(c, d, "ItemSize", "Text", 210, 120, 140, 60, VIS | NOPREFIX, NULL, "", NULL);
+        mapping(c, d, "ItemDescription", "SelectionDescription", "Text");
+        mapping(c, d, "ItemSize", "SelectionSize", "Text");
+    }
     control(c, d, "Reset", "PushButton", 20, 211, 70, 17, VIS | EN, NULL, T(c, "Reset"), "DiskCost");
     control(c, d, "DiskCost", "PushButton", 95, 211, 70, 17, VIS | EN, NULL, T(c, "DiskCost"), "Back");
-    mapping(c, d, "ItemDescription", "SelectionDescription", "Text");
-    mapping(c, d, "ItemSize", "SelectionSize", "Text");
     event(c, d, "Reset", "Reset", "0", NULL, 1);
     event(c, d, "DiskCost", "SpawnDialog", "RpDiskCostDlg", NULL, 1);
     c->maint_back = true;
-    buttons(c, d, back, next, next_text, NULL, "Tree");
+    buttons(c, d, back, next, next_text, NULL, first);
     c->maint_back = false;
 
     const char *k = "RpDiskCostDlg";

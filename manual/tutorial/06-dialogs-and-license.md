@@ -131,7 +131,9 @@ Writing system registry values
 
 A removal and a repair show theirs the same way, and a failed installation shows what it takes
 back. Tick **Show the full log** under the box and it holds the log file's own lines instead -
-everything Windows Installer writes about the run. `details = false` in `[ui]` leaves the box out.
+everything Windows Installer writes about the run. When the run ends, the finished page (and the
+page for a cancelled or failed installation) keeps those lines in a box of its own, to scroll
+through before deciding whether to save the log. `details = false` in `[ui]` leaves both boxes out.
 
 ![The progress page with its details box](../images/ch06-details.png)
 
