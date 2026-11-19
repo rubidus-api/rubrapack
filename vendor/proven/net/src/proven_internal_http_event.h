@@ -171,6 +171,21 @@ typedef struct {
     bool orphan;                       /* stop_listening let go of it: it frees itself when answered */
 } proven_ev_listener_t;
 
+/* WebSocket connections whose loss under the program's send is reported from the loop
+ * (RFC-0047, ws_event.c): one for an event-driven server, shared by all its connections - an
+ * HTTP/2 connection lost under a send on one of its streams ends the others too - and one
+ * behind each client's struct. */
+struct proven_ws_stream;
+typedef struct {
+    proven_loop_t *loop;
+    proven_u32 sending;                /* the program's send, send_piece and ping calls on the stack, on any of them */
+    struct proven_ws_stream *pending;  /* lost during one: their on_closed waits for the loop */
+    proven_loop_timer_t timer;         /* set while any is pending: the loop's next turn calls them */
+    bool *gone;                        /* while the timer's function runs: set when the group ends under it */
+} proven_ws_group_t_;
+/* The server is destroyed: every pending on_closed is called now. */
+void proven_ws_event_group_end_(proven_ws_group_t_ *group);
+
 struct proven_http_event_server {
     proven_loop_t *loop;
     proven_allocator_t alloc;
@@ -206,6 +221,7 @@ struct proven_http_event_server {
     proven_loop_timer_t drain_deadline, drain_done;
     proven_http_event_drained_fn on_drained;
     void *drained_ctx;
+    proven_ws_group_t_ ws_group;       /* its WebSocket connections (ws_event.c) */
 };
 
 // -----------------------------------------------------------------------------

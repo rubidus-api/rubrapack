@@ -817,6 +817,7 @@ proven_err_t proven_http_event_server_create(proven_loop_t *loop, const proven_h
     if (!s) return PROVEN_ERR_NOMEM;
     for (proven_size_t i = 0; i < sizeof *s; ++i) ((proven_byte_t *)s)[i] = 0;
     s->loop = loop;
+    s->ws_group.loop = loop;
     s->alloc = a;
     s->cfg = *config;
     const proven_http_compress_cfg_t_ cc = proven_http_event_compress_cfg_(&s->cfg);
@@ -1134,6 +1135,8 @@ void proven_http_event_server_destroy(proven_http_event_server_t *s) {
 #if !defined(PROVEN_NO_HTTP3)
     proven_http_event_h3_destroy_(s);
 #endif
+    /* WebSocket connections lost under a send, whose on_closed was waiting for the loop. */
+    proven_ws_event_group_end_(&s->ws_group);
     proven_allocator_t a = s->alloc;
     if (s->headers) a.free_fn(a.ctx, s->headers);
     if (s->rbuf) a.free_fn(a.ctx, s->rbuf);

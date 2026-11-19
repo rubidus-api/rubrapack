@@ -339,14 +339,16 @@ void proven_crypto_aes_cbc_decrypt(const proven_crypto_aes_gcm_t *ctx, proven_by
     proven_mem_wipe((proven_mem_mut_t){ .ptr = (proven_byte_t *)&bk, .size = sizeof bk });
 }
 
-static void gcm_ctr(const proven_crypto_aes_gcm_t *ctx, const proven_byte_t nonce[12], proven_u32 counter,
+static void aes_ctr(const proven_byte_t *rk, int rounds, bool hw, const proven_byte_t nonce[12], proven_u32 counter,
                     const proven_byte_t *in, proven_byte_t *out, proven_size_t len) {
 #ifndef PROVEN_FREESTANDING
-    if (ctx->hw) { proven_sys_aes_ctr(ctx->rk, ctx->rounds, nonce, counter, in, out, len); return; }
+    if (hw) { proven_sys_aes_ctr(rk, rounds, nonce, counter, in, out, len); return; }
+#else
+    (void)hw;
 #endif
     proven_byte_t ks[64];
     proven_bs_keys_t bk;
-    bs_keys(&bk, ctx->rk, ctx->rounds);
+    bs_keys(&bk, rk, rounds);
     while (len > 0) {
         proven_size_t n = len < 64 ? len : 64;
         proven_size_t blocks = (n + 15) / 16;
@@ -356,12 +358,22 @@ static void gcm_ctr(const proven_crypto_aes_gcm_t *ctx, const proven_byte_t nonc
             ks[16 * k + 14] = (proven_byte_t)(counter >> 8); ks[16 * k + 15] = (proven_byte_t)counter;
             counter++;
         }
-        bs_encrypt(&bk, ctx->rounds, ks, blocks * 16);
+        bs_encrypt(&bk, rounds, ks, blocks * 16);
         for (proven_size_t i = 0; i < n; ++i) out[i] = (proven_byte_t)(in[i] ^ ks[i]);
         in += n; out += n; len -= n;
     }
     proven_mem_wipe((proven_mem_mut_t){ .ptr = (proven_byte_t *)&bk, .size = sizeof bk });
     proven_mem_wipe((proven_mem_mut_t){ .ptr = ks, .size = sizeof ks });
+}
+
+static void gcm_ctr(const proven_crypto_aes_gcm_t *ctx, const proven_byte_t nonce[12], proven_u32 counter,
+                    const proven_byte_t *in, proven_byte_t *out, proven_size_t len) {
+    aes_ctr(ctx->rk, ctx->rounds, ctx->hw, nonce, counter, in, out, len);
+}
+
+void proven_crypto_aes_ctr(const proven_crypto_aes_t *ctx, const proven_byte_t nonce[12], proven_u32 counter,
+                           const proven_byte_t *in, proven_byte_t *out, proven_size_t len) {
+    aes_ctr(ctx->rk, ctx->rounds, ctx->hw, nonce, counter, in, out, len);
 }
 
 static void gcm_ghash(const proven_crypto_aes_gcm_t *ctx, proven_byte_t y[16], const proven_byte_t *data, proven_size_t len) {

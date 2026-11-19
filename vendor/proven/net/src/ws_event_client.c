@@ -577,7 +577,7 @@ proven_err_t proven_ws_event_connect(proven_loop_t *loop, const proven_ws_event_
         c->out.len = len;
     }
     proven_ws_stream_t *ws = (void *)0;
-    if (e == PROVEN_OK) e = proven_ws_event_client_new_(alloc, &o->ws, &wsc_transport, c, to, &ws);
+    if (e == PROVEN_OK) e = proven_ws_event_client_new_(alloc, loop, &o->ws, &wsc_transport, c, to, &ws);
     if (e == PROVEN_OK && secure) e = proven_tls_client_create(o->tls, u.host, (void *)0, &c->tls);
     if (e == PROVEN_OK) {
         c->ws = ws;

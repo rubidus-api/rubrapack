@@ -276,8 +276,19 @@ static bool tab_room(proven_brotli_decoder_t *b, proven_size_t n) {
     return true;
 }
 
-/* The lengths in `lens` into the table; the code's offset in pc_result. */
+/* The most entries any code here can need (the insert-and-copy alphabet's, table_bound.py). */
+#define TAB_ONE_MAX 1080u
+
+/* The lengths in `lens` into the table; the code's offset in pc_result. Built once where there
+ * is room for the largest table any code can make; counted first only near the meta-block's
+ * bound, where reserving that much could ask for more than TAB_MAX. */
 static proven_err_t place(proven_brotli_decoder_t *b, unsigned n) {
+    if (b->tab_len + TAB_ONE_MAX <= TAB_MAX) {
+        if (!tab_room(b, TAB_ONE_MAX)) return bad(b, PROVEN_ERR_NOMEM);
+        b->pc_result = (proven_u32)b->tab_len;
+        b->tab_len += build(b->tab + b->tab_len, b->lens, n);
+        return PROVEN_OK;
+    }
     const proven_u32 size = build(NULL, b->lens, n);
     if (!tab_room(b, size)) return bad(b, PROVEN_ERR_NOMEM);
     b->pc_result = (proven_u32)b->tab_len;
@@ -863,6 +874,84 @@ static const proven_u16 *single_code(const proven_u16 *const *codes) {
     return codes[0];
 }
 
+/* The literal context as two lookups, ctx = first[p1] | second[p2], for each of the four modes
+ * (RFC 7932 section 7.1): no branch on the mode per literal. Mode 2 is brotli_lut0 and
+ * brotli_lut1; these are the other three, from the same definitions. */
+static const proven_u8 ctx_low6[256] = {
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+    48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+    48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+    48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+    48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+};
+static const proven_u8 ctx_high6[256] = {
+    0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3,
+    4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
+    8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11,
+    12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15,
+    16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19,
+    20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23,
+    24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27,
+    28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31,
+    32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35,
+    36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39,
+    40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43,
+    44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47,
+    48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51,
+    52, 52, 52, 52, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55,
+    56, 56, 56, 56, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59,
+    60, 60, 60, 60, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63,
+};
+static const proven_u8 ctx_signed_hi[256] = {
+    0, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+    24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
+    24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
+    24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
+    24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
+    32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
+    32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
+    32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
+    32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
+    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
+    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
+    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
+    48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 56,
+};
+static const proven_u8 ctx_zero[256] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+static const proven_u8 *const CTX_FIRST[4] = { ctx_low6, ctx_high6, brotli_lut0, ctx_signed_hi };
+static const proven_u8 *const CTX_SECOND[4] = { ctx_zero, ctx_zero, brotli_lut1, brotli_lut2 };
+
 /* Whole commands while there is input to spare (64 bytes, so no read can run out) and room
  * for the command's output: the items the step-by-step path takes one at a time, taken
  * without its checks for input, with the reader and the position in locals. It leaves the
@@ -924,7 +1013,7 @@ HOT void fast_body(proven_brotli_decoder_t *b, proven_io_t *io) {
         unsigned p1 = 0, p2 = 0;
         if (insert > 0 && !one) { p1 = pos >= 1 ? ring[(pos - 1) & mask] : 0; p2 = pos >= 2 ? ring[(pos - 2) & mask] : 0; }
         proven_u32 n = insert, count = cl->count;
-        unsigned mode = b->cmode[cl->type];
+        const proven_u8 *cfirst = CTX_FIRST[b->cmode[cl->type] & 3u], *csecond = CTX_SECOND[b->cmode[cl->type] & 3u];
         while (n > 0) {
             if (end - r.p < 16) break;
             fill(&r);
@@ -934,7 +1023,8 @@ HOT void fast_body(proven_brotli_decoder_t *b, proven_io_t *io) {
                 sync_in(b, io, &r);
                 fill(&r);
                 count = cl->count;
-                mode = b->cmode[cl->type];
+                cfirst = CTX_FIRST[b->cmode[cl->type] & 3u];
+                csecond = CTX_SECOND[b->cmode[cl->type] & 3u];
                 literal_codes(b, codes);
                 one = single_code(codes);
                 p1 = pos >= 1 ? ring[(pos - 1) & mask] : 0;
@@ -951,13 +1041,7 @@ HOT void fast_body(proven_brotli_decoder_t *b, proven_io_t *io) {
                 continue;
             }
             for (unsigned k = 0; k < batch; ++k) {
-                unsigned ctx;
-                switch (mode) {
-                    case 0: ctx = p1 & 0x3fu; break;
-                    case 1: ctx = p1 >> 2; break;
-                    case 2: ctx = brotli_lut0[p1] | brotli_lut1[p2]; break;
-                    default: ctx = (unsigned)(brotli_lut2[p1] << 3) | brotli_lut2[p2]; break;
-                }
+                const unsigned ctx = (unsigned)cfirst[p1] | csecond[p2];
                 const unsigned v = take_sym(&r, codes[ctx]);
                 ring[pos & mask] = (proven_byte_t)v;
                 pos++;

@@ -40,12 +40,9 @@ typedef struct {
     proven_u8 extra;
 } proven_seq_t;
 
-/* One entry of a Huffman table indexed by the next `log` bits: the symbol and its code's
- * length. */
-typedef struct {
-    proven_u8 symbol;
-    proven_u8 bits;
-} proven_huf_t;
+/* One entry of a Huffman table indexed by the next `log` bits: the symbol in the low byte, its
+ * code's length in the high one - one load for both. */
+typedef proven_u16 proven_huf_t;
 
 enum { Z_MAGIC, Z_SKIP_SIZE, Z_SKIP, Z_FHD, Z_HEADER, Z_BLOCK, Z_RAW, Z_RLE, Z_DATA, Z_DRAIN, Z_CHECK };
 
@@ -105,7 +102,8 @@ struct proven_zstd_ddict {
 };
 
 /* A sequence table from an FSE table of `1 << al` states: each symbol's base and extra bits
- * from the code tables of RFC 8878 section 3.1.1.3.2.1 (offsets: base 2^code, code bits). */
+ * from the code tables of RFC 8878 section 3.1.1.3.2.1 (offsets: base 2^code, code bits). For
+ * the predefined and RLE tables; one that is described goes straight there (seq_build). */
 enum { SEQ_LL, SEQ_ML, SEQ_OF };
 
 static void seq_from(proven_seq_t *dst, const proven_fse_t *src, unsigned al, int kind) {
@@ -218,7 +216,7 @@ static bool huf_build(proven_huf_t *huf, const proven_u8 *w, unsigned n, unsigne
     for (unsigned s = 0; s < n; ++s) {
         if (w[s] == 0) continue;
         const proven_u32 count = 1u << (w[s] - 1);
-        const proven_huf_t e = { .symbol = (proven_u8)s, .bits = (proven_u8)(log + 1 - w[s]) };
+        const proven_huf_t e = (proven_huf_t)(s | (log + 1 - w[s]) << 8);
         for (proven_u32 u = 0; u < count; ++u) huf[startpos[w[s]] + u] = e;
         startpos[w[s]] += count;
     }
@@ -237,8 +235,8 @@ static bool huf_read(proven_zstd_decoder_t *z, const proven_byte_t *p, proven_si
 
 static inline proven_byte_t huf_one(const proven_huf_t *t, unsigned log, proven_bits_t *b) {
     const proven_huf_t e = t[bits_look(b, log)];
-    b->used += e.bits;
-    return e.symbol;
+    b->used += e >> 8;
+    return (proven_byte_t)e;
 }
 
 /* One Huffman stream of exactly `count` symbols, read to its beginning exactly. Four symbols
@@ -261,8 +259,22 @@ ZDEC_HOT bool huf_stream(const proven_zstd_decoder_t *z, const proven_byte_t *p,
     return bits_exact(&b);
 }
 
+/* How many rounds of five symbols huf_four's fast loop may decode: as many as `left` symbols
+ * of the last stream make, and as every stream, read back to `i0`..`i3`, has 7 bytes for before
+ * its beginning. */
+static inline proven_size_t huf_rounds(const proven_bits_t b[4], const proven_byte_t *i0, const proven_byte_t *i1,
+                                       const proven_byte_t *i2, const proven_byte_t *i3, proven_size_t left) {
+    proven_size_t n = left / 5, k;
+    if ((k = (proven_size_t)(i0 - b[0].start) / 7) < n) n = k;
+    if ((k = (proven_size_t)(i1 - b[1].start) / 7) < n) n = k;
+    if ((k = (proven_size_t)(i2 - b[2].start) / 7) < n) n = k;
+    if ((k = (proven_size_t)(i3 - b[3].start) / 7) < n) n = k;
+    return n;
+}
+
 /* Four streams, the first three `seg` symbols long and the last `last`, decoded side by side:
- * the four are independent, so the processor can work on all of them at once. */
+ * the four are independent, so the processor can work on all of them at once. Most of them in
+ * the fast loop below, the rest four symbols at a time with a checked reload. */
 ZDEC_HOT bool huf_four(const proven_zstd_decoder_t *z, const proven_byte_t *q, const proven_size_t sz[4], proven_byte_t *out, proven_size_t seg, proven_size_t last) {
     proven_bits_t b[4];
     const proven_byte_t *at = q;
@@ -274,6 +286,41 @@ ZDEC_HOT bool huf_four(const proven_zstd_decoder_t *z, const proven_byte_t *q, c
     const proven_huf_t *t = z->huf;
     proven_byte_t *o0 = out, *o1 = out + seg, *o2 = out + 2 * seg, *o3 = out + 3 * seg;
     proven_size_t i = 0;
+    if (log <= 11 && huf_rounds(b, b[0].p, b[1].p, b[2].p, b[3].p, last) > 0) {
+        /* The fast loop: five symbols from each stream a round - at most 55 bits, so 11 is the
+         * longest code it takes - then a reload without checks. Each container holds its bits
+         * from the top and a marker bit below them; taking bits shifts them out, so how many were
+         * taken since the load is where the marker now is. A round moves a stream back by at most
+         * 7 bytes: huf_rounds counts the rounds every stream has room for, they run, and it counts
+         * again until none is left; then the loop below goes on from the same place, as if it had
+         * done all of it. (One round needs every stream to be 15 bytes long at least: the eight
+         * bytes each load reads are its own. Shorter streams do not come here.) */
+        const proven_byte_t *i0 = b[0].p, *i1 = b[1].p, *i2 = b[2].p, *i3 = b[3].p;
+        proven_u64 v0 = (le64(i0) | 1) << b[0].used, v1 = (le64(i1) | 1) << b[1].used,
+                   v2 = (le64(i2) | 1) << b[2].used, v3 = (le64(i3) | 1) << b[3].used;
+        const unsigned sh = 64 - log;
+        proven_size_t iters;
+        while ((iters = huf_rounds(b, i0, i1, i2, i3, last - i)) > 0) {
+            proven_byte_t *q0 = o0 + i, *q1 = o1 + i, *q2 = o2 + i, *q3 = o3 + i;
+            proven_byte_t *const qend = q3 + 5 * iters;
+            do {
+#define HUF5(j) { const proven_huf_t e0 = t[v0 >> sh], e1 = t[v1 >> sh], e2 = t[v2 >> sh], e3 = t[v3 >> sh]; \
+                  v0 <<= (e0 >> 8); v1 <<= (e1 >> 8); v2 <<= (e2 >> 8); v3 <<= (e3 >> 8); \
+                  q0[j] = (proven_byte_t)e0; q1[j] = (proven_byte_t)e1; q2[j] = (proven_byte_t)e2; q3[j] = (proven_byte_t)e3; }
+                HUF5(0) HUF5(1) HUF5(2) HUF5(3) HUF5(4)
+#undef HUF5
+                q0 += 5; q1 += 5; q2 += 5; q3 += 5;
+#define HUF_RELOAD(vk, ik) { const unsigned c = ctz64(vk); ik -= c >> 3; vk = (le64(ik) | 1) << (c & 7); }
+                HUF_RELOAD(v0, i0) HUF_RELOAD(v1, i1) HUF_RELOAD(v2, i2) HUF_RELOAD(v3, i3)
+#undef HUF_RELOAD
+            } while (q3 != qend);
+            i += 5 * iters;
+        }
+        b[0].p = i0; b[0].c = le64(i0); b[0].used = ctz64(v0);
+        b[1].p = i1; b[1].c = le64(i1); b[1].used = ctz64(v1);
+        b[2].p = i2; b[2].c = le64(i2); b[2].used = ctz64(v2);
+        b[3].p = i3; b[3].c = le64(i3); b[3].used = ctz64(v3);
+    }
     for (; i + 4 <= last; i += 4) {
         bits_reload(&b[0]); bits_reload(&b[1]); bits_reload(&b[2]); bits_reload(&b[3]);
         for (int k = 0; k < 4; ++k) {
@@ -372,6 +419,62 @@ ZDEC_HOT proven_err_t literals(proven_zstd_decoder_t *z, const proven_byte_t *sr
 // Sequences (RFC 8878, section 3.1.1.3.2) and their execution
 // -----------------------------------------------------------------------------
 
+
+/* An FSE table description straight to a sequence table (fse_build, then seq_from, in one).
+ * Without symbols of probability "less than 1" the spread is done as libzstd does it: each
+ * symbol written out in a row, eight bytes at a time, then placed two at a time. */
+static bool seq_build(proven_seq_t *dst, const proven_i16 *norm, unsigned nsym, unsigned al, int kind) {
+    const proven_u32 size = 1u << al, mask = size - 1;
+    const proven_u32 step = (size >> 1) + (size >> 3) + 3;
+    proven_u32 high = size - 1;
+    proven_u16 next[64];
+    proven_u8 sym[1u << LL_LOG];
+    for (unsigned s = 0; s < nsym; ++s) {
+        if (norm[s] == -1) { sym[high--] = (proven_u8)s; next[s] = 1; }
+        else next[s] = (proven_u16)norm[s];
+    }
+    if (high == size - 1) {
+        proven_u8 row[(1u << LL_LOG) + 8];
+        proven_u32 pos = 0;
+        proven_u64 add = 0;
+        for (unsigned s = 0; s < nsym; ++s, add += 0x0101010101010101ull) {
+            const int n = norm[s];
+            for (int i = 0; i < n; i += 8) __builtin_memcpy(row + pos + i, &add, 8);
+            pos += (proven_u32)n;
+        }
+        if (pos != size) return false;
+        proven_u32 at = 0;
+        for (proven_u32 u = 0; u < size; u += 2) {
+            sym[at] = row[u];
+            sym[(at + step) & mask] = row[u + 1];
+            at = (at + 2 * step) & mask;
+        }
+        if (at != 0) return false;
+    } else {
+        proven_u32 pos = 0;
+        for (unsigned s = 0; s < nsym; ++s) {
+            for (int i = 0; i < norm[s]; ++i) {
+                sym[pos] = (proven_u8)s;
+                do pos = (pos + step) & mask; while (pos > high);
+            }
+        }
+        if (pos != 0) return false;
+    }
+    for (proven_u32 u = 0; u < size; ++u) {
+        const unsigned c = sym[u];
+        const proven_u32 ns = next[c]++;
+        const unsigned nb = al - highbit32(ns);
+        proven_seq_t e;
+        e.next = (proven_u16)((ns << nb) - size);
+        e.bits = (proven_u8)nb;
+        if (kind == SEQ_LL) { e.base = LL_BASE[c]; e.extra = LL_BITS[c]; }
+        else if (kind == SEQ_ML) { e.base = ML_BASE[c]; e.extra = ML_BITS[c]; }
+        else { e.base = (proven_u32)1 << c; e.extra = (proven_u8)c; }
+        dst[u] = e;
+    }
+    return true;
+}
+
 static bool seq_table(unsigned mode, const proven_byte_t *p, proven_size_t n, proven_size_t *at,
                       const proven_seq_t **cur, unsigned *curlog, proven_seq_t *dyn, const proven_seq_t *def, unsigned deflog,
                       unsigned max_sym, unsigned max_log, int kind) {
@@ -390,12 +493,10 @@ static bool seq_table(unsigned mode, const proven_byte_t *p, proven_size_t n, pr
             return true; }
         case 2: {
             proven_i16 norm[64];
-            proven_fse_t t[1u << LL_LOG];
             unsigned nsym = 0, al = 0;
             proven_size_t u = 0;
             if (!fse_read(p + *at, n - *at, max_sym, max_log, norm, &nsym, &al, &u)) return false;
-            if (!fse_build(t, norm, nsym, al)) return false;
-            seq_from(dyn, t, al, kind);
+            if (!seq_build(dyn, norm, nsym, al, kind)) return false;
             *at += u;
             *cur = dyn;
             *curlog = al;
@@ -443,6 +544,43 @@ static inline void copy_match(proven_byte_t *d, proven_size_t off, proven_size_t
     for (proven_size_t i = 0; i < len; ++i) d[i] = s[i];
 }
 
+
+/* The fast path's copies (sequences), as libzstd makes them. Both may write up to 31 bytes past
+ * the end, and copy_lit read as far past its source: the caller leaves 32.
+ * Literals: sixteen bytes, most often all there are, then thirty-two at a time. */
+static inline void copy_lit(proven_byte_t *d, const proven_byte_t *s, proven_size_t n) {
+    copy16(d, s);
+    if (ZSTD_UNLIKELY(n > 16)) {
+        copy16(d + 16, s + 16);
+        for (proven_size_t i = 32; i < n; i += 32) { copy16(d + i, s + i); copy16(d + i + 16, s + i + 16); }
+    }
+}
+/* A match, `off` back (at least 1) and `len` long (at least 3). Each block copied at once lies
+ * wholly in what was written before it (copy_match): sixteen bytes at a time from 16 back or
+ * more, eight from 8 back or more. Closer, the first eight bytes are four one at a time and four
+ * from `add[off]` on, which by then hold the pattern of period `off`; after them the pattern
+ * repeats `dist[off]` back - a multiple of `off`, at least 8 - and the rest goes eight at a
+ * time from there (libzstd's tables). */
+static inline void match_fast(proven_byte_t *d, proven_size_t off, proven_size_t len) {
+    const proven_byte_t *s = d - off;
+    if (ZSTD_LIKELY(off >= 16)) {
+        copy16(d, s);
+        copy16(d + 16, s + 16);
+        for (proven_size_t i = 32; i < len; i += 32) { copy16(d + i, s + i); copy16(d + i + 16, s + i + 16); }
+        return;
+    }
+    proven_size_t dist = off;
+    if (off < 8) {
+        static const proven_u8 add[8] = { 0, 1, 2, 1, 4, 4, 4, 4 }, back[8] = { 0, 8, 8, 9, 8, 10, 12, 14 };
+        d[0] = s[0]; d[1] = s[1]; d[2] = s[2]; d[3] = s[3];
+        __builtin_memcpy(d + 4, s + add[off], 4);
+        dist = back[off];
+    } else {
+        copy8(d, s);
+    }
+    for (proven_size_t i = 8; i < len; i += 8) copy8(d + i, d + i - dist);
+}
+
 ZDEC_HOT proven_err_t sequences(proven_zstd_decoder_t *z, const proven_byte_t *p, proven_size_t n,
                               const proven_byte_t *lit, proven_size_t nlit, proven_size_t limit) {
     if (n < 1) return PROVEN_ERR_INVALID_FORMAT;
@@ -487,6 +625,9 @@ ZDEC_HOT proven_err_t sequences(proven_zstd_decoder_t *z, const proven_byte_t *p
         /* With a dictionary, while the frame has produced no more than its window, an offset may
          * reach any byte of the content (RFC 8878, section 5), which lies before the output. */
         const proven_size_t reach_to = z->dict_frame && z->dict_here ? z->dict->d.content_len + (proven_size_t)window : 0;
+        /* For the fast path: 32 bytes more than may be written and read, or the slack's end. */
+        const proven_size_t ocap = wend < limit + 32 ? wend : limit + 32;
+        const proven_size_t lcap = lend < nlit + 32 ? lend : nlit + 32;
         proven_err_t verdict = PROVEN_OK;
         for (proven_size_t i = 0; i < nseq; ++i) {
             /* At most 31 bits, then 32, then 26. After a reload at least 56 are held (`used`
@@ -518,6 +659,19 @@ ZDEC_HOT proven_err_t sequences(proven_zstd_decoder_t *z, const proven_byte_t *p
                 ls = l.next + (proven_u32)bits_read(&b, l.bits);
                 ms = m.next + (proven_u32)bits_read(&b, m.bits);
                 os = o.next + (proven_u32)bits_read(&b, o.bits);
+            }
+            /* Nearly every sequence: the literals are there with 32 bytes to spare, the match ends
+             * 32 bytes inside the slack and within the block's limit, and its offset is not 0 and
+             * reaches neither before `hist` nor beyond the window. Each of the checks below then
+             * passes; anything else - an end near, the reach a dictionary gives, damage - takes
+             * them. */
+            const proven_size_t opl = op + ll;
+            if (ZSTD_LIKELY(lp + ll + 32 <= lcap && opl + ml + 32 <= ocap && off - 1 < opl && off <= window)) {
+                copy_lit(h + op, lit + lp, ll);
+                match_fast(h + opl, (proven_size_t)off, ml);
+                op = opl + ml;
+                lp += ll;
+                continue;
             }
             if (ll > nlit - lp || ll > limit - op) { verdict = PROVEN_ERR_INVALID_FORMAT; break; }
             /* With the slack, sixteen bytes are copied even when there are none: no branch on a

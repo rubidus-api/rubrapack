@@ -770,9 +770,23 @@ struct proven_deflate {
     proven_u16 rle_extra[288 + 30];
 };
 
-static void put_bits(proven_deflate_t *z, proven_u32 value, unsigned n) {
+/* Bits gather in `bitbuf` (at most 16 at a time, fewer than 32 held between calls) and go out
+ * four bytes at once; put_whole writes the whole bytes left, so that between blocks fewer than 8
+ * are held, as when every byte went out at once. */
+static inline void put_bits(proven_deflate_t *z, proven_u32 value, unsigned n) {
     z->bitbuf |= (proven_u64)value << z->bitcnt;
     z->bitcnt += n;
+    if (z->bitcnt >= 32) {
+        proven_byte_t *const o = z->pending + z->pend_len;
+        const proven_u64 v = z->bitbuf;
+        o[0] = (proven_byte_t)v; o[1] = (proven_byte_t)(v >> 8); o[2] = (proven_byte_t)(v >> 16); o[3] = (proven_byte_t)(v >> 24);
+        z->pend_len += 4;
+        z->bitbuf = v >> 32;
+        z->bitcnt -= 32;
+    }
+}
+
+static void put_whole(proven_deflate_t *z) {
     while (z->bitcnt >= 8) {
         z->pending[z->pend_len++] = (proven_byte_t)z->bitbuf;
         z->bitbuf >>= 8;
@@ -781,6 +795,7 @@ static void put_bits(proven_deflate_t *z, proven_u32 value, unsigned n) {
 }
 
 static void put_align(proven_deflate_t *z) {
+    put_whole(z);
     if (z->bitcnt > 0) { z->pending[z->pend_len++] = (proven_byte_t)z->bitbuf; z->bitbuf = 0; z->bitcnt = 0; }
 }
 
@@ -857,17 +872,49 @@ static void make_code(proven_deflate_t *z, const proven_u16 *freq, int n, int li
     for (int i = 0; i < n; ++i) if (len[i]) code[i] = reverse_bits(next_code[len[i]]++, len[i]);
 }
 
-static unsigned length_symbol(unsigned length, unsigned *extra_bits, unsigned *extra) {
-    unsigned s = 28;
-    while (s > 0 && LEN_BASE[s] > length) --s;
+/* The length and distance symbols as tables (zlib's): LEN_SYM by length - 3, DIST_SYM_NEAR by
+ * distance - 1 up to 256, DIST_SYM_FAR by (distance - 1) >> 7 beyond - the codes from 257 on all
+ * span multiples of 128. The symbol's index among the 29 or 30; as the searches gave. */
+static const proven_u8 LEN_SYM[256] = {
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15,
+    16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 19, 19, 19, 19,
+    20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21,
+    22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
+    24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
+    25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25,
+    26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26,
+    27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 28,
+};
+static const proven_u8 DIST_SYM_NEAR[256] = {
+    0, 1, 2, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9,
+    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
+    12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+    13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
+    14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
+    14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+};
+static const proven_u8 DIST_SYM_FAR[256] = {
+    0, 14, 16, 17, 18, 18, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 23, 23, 23,
+    24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25,
+    26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26,
+    27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+    28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
+    28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
+    29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29,
+    29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29,
+};
+
+static inline unsigned length_symbol(unsigned length, unsigned *extra_bits, unsigned *extra) {
+    const unsigned s = LEN_SYM[length - MIN_MATCH];
     *extra_bits = LEN_EXTRA[s];
     *extra = length - LEN_BASE[s];
     return 257 + s;
 }
 
-static unsigned distance_symbol(unsigned distance, unsigned *extra_bits, unsigned *extra) {
-    unsigned lo = 0, hi = 29;
-    while (lo < hi) { const unsigned mid = (lo + hi + 1) / 2; if (DIST_BASE[mid] <= distance) lo = mid; else hi = mid - 1; }
+static inline unsigned distance_symbol(unsigned distance, unsigned *extra_bits, unsigned *extra) {
+    const unsigned lo = distance <= 256 ? DIST_SYM_NEAR[distance - 1] : DIST_SYM_FAR[(distance - 1) >> 7];
     *extra_bits = DIST_EXTRA[lo];
     *extra = distance - DIST_BASE[lo];
     return lo;
@@ -983,7 +1030,8 @@ static void emit_block(proven_deflate_t *z, bool last) {
             put_align(z);
             put_byte(z, (proven_u32)n & 0xff); put_byte(z, (proven_u32)n >> 8);
             put_byte(z, ~(proven_u32)n & 0xff); put_byte(z, (~(proven_u32)n >> 8) & 0xff);
-            for (proven_size_t i = 0; i < n; ++i) z->pending[z->pend_len++] = z->buf[at + i];
+            (void)proven_mem_copy(z->pending + z->pend_len, n, (proven_mem_view_t){ .ptr = z->buf + at, .size = n });
+            z->pend_len += n;
             at += n; left -= n;
         } while (left > 0);
     } else if (fixed_bits <= dynamic_bits) {
@@ -1005,6 +1053,7 @@ static void emit_block(proven_deflate_t *z, bool last) {
         }
         put_tokens(z, z->llen, z->lcode, z->dlen, z->dcode);
     }
+    put_whole(z);
     z->ntokens = 0;
     z->block_start = z->pos;
 }
@@ -1019,6 +1068,19 @@ static void insert(proven_deflate_t *z, proven_size_t at) {
     z->head[h] = (proven_u16)at;
 }
 
+static inline proven_u32 load16(const proven_byte_t *p) { return (proven_u32)p[0] | ((proven_u32)p[1] << 8); }
+
+/* The lowest set bit of a nonzero value. */
+static inline unsigned ctz64_(proven_u64 v) {
+#if defined(__GNUC__) || defined(__clang__)
+    return (unsigned)__builtin_ctzll(v);
+#else
+    unsigned n = 0;
+    while (!(v & 1)) { v >>= 1; ++n; }
+    return n;
+#endif
+}
+
 /* The longest match for the bytes at `at` among the earlier positions with the same hash,
  * looking no further back than the window allows and no longer than `limit` bytes. */
 static unsigned longest_match(const proven_deflate_t *z, proven_size_t at, unsigned limit, unsigned *distance) {
@@ -1029,9 +1091,16 @@ static unsigned longest_match(const proven_deflate_t *z, proven_size_t at, unsig
     proven_size_t cand = z->head[hash3(z, here)];
     while (cand != NIL && cand >= floor_ && cand < at && chain-- > 0) {
         const proven_byte_t *there = z->buf + cand;
-        if (there[best] == here[best] && there[0] == here[0]) {
+        /* The two bytes that end the best so far and the first two: a candidate that differs
+         * in any of them is no longer (best >= 2, and `limit` > best is read). */
+        if (load16(there + best - 1) == load16(here + best - 1) && load16(there) == load16(here)) {
             unsigned n = 0;
+            for (; n + 8 <= limit; n += 8) {
+                const proven_u64 x = load64(there + n) ^ load64(here + n);
+                if (x) { n += ctz64_(x) >> 3; goto counted; }
+            }
             while (n < limit && there[n] == here[n]) ++n;
+        counted:
             if (n > best) { best = n; *distance = (unsigned)(at - cand); if (n >= z->nice_len || n >= limit) break; }
         }
         const proven_size_t before = z->prev[cand & (z->wsize - 1)];
@@ -1041,14 +1110,23 @@ static unsigned longest_match(const proven_deflate_t *z, proven_size_t at, unsig
     return best >= MIN_MATCH ? best : 0;
 }
 
+/* Positions `w` back, or none: no branch, so that the compiler can do many at once. */
+static void slide_positions(proven_u16 *p, proven_size_t n, proven_u16 w) {
+    for (proven_size_t i = 0; i < n; ++i) {
+        const proven_u16 v = p[i];
+        const proven_u16 keep = (proven_u16)(0 - (proven_u16)(v >= w && v != NIL));
+        p[i] = (proven_u16)(((proven_u16)(v - w) & keep) | (NIL & ~keep));
+    }
+}
+
 /* Make room: the upper half of the buffer becomes the lower, and every remembered position
  * moves with it. Only at a block boundary. */
 static void slide(proven_deflate_t *z) {
     const proven_size_t w = z->wsize;
-    for (proven_size_t i = 0; i < w; ++i) z->buf[i] = z->buf[i + w];
+    (void)proven_mem_copy(z->buf, w, (proven_mem_view_t){ .ptr = z->buf + w, .size = w });
     z->fill -= w; z->pos -= w; z->block_start -= w;
-    for (proven_size_t i = 0; i <= z->hash_mask; ++i) z->head[i] = (proven_u16)(z->head[i] != NIL && z->head[i] >= w ? z->head[i] - w : NIL);
-    for (proven_size_t i = 0; i < w; ++i) z->prev[i] = (proven_u16)(z->prev[i] != NIL && z->prev[i] >= w ? z->prev[i] - w : NIL);
+    slide_positions(z->head, (proven_size_t)z->hash_mask + 1, (proven_u16)w);
+    slide_positions(z->prev, w, (proven_u16)w);
 }
 
 static void token_literal(proven_deflate_t *z, proven_byte_t b) { z->tokens[z->ntokens++] = b; }
@@ -1187,7 +1265,11 @@ proven_err_t proven_deflate(proven_deflate_t *z, proven_mem_view_t in, proven_si
     proven_size_t in_at = 0, out_at = 0;
     for (;;) {
         /* Hand over what is waiting. Nothing new is made while any of it is left. */
-        while (z->pend_at < z->pend_len && out_at < out.size) out.ptr[out_at++] = z->pending[z->pend_at++];
+        if (z->pend_at < z->pend_len && out_at < out.size) {
+            const proven_size_t give = z->pend_len - z->pend_at < out.size - out_at ? z->pend_len - z->pend_at : out.size - out_at;
+            (void)proven_mem_copy(out.ptr + out_at, give, (proven_mem_view_t){ .ptr = z->pending + z->pend_at, .size = give });
+            out_at += give; z->pend_at += give;
+        }
         if (z->pend_at < z->pend_len) break;
         z->pend_len = 0; z->pend_at = 0;
         if (z->finished) break;
@@ -1216,8 +1298,12 @@ proven_err_t proven_deflate(proven_deflate_t *z, proven_mem_view_t in, proven_si
             }
             if (z->pos >= z->wsize && z->block_start >= z->wsize) slide(z);
         }
-        proven_size_t room = 2 * z->wsize - z->fill, took = 0;
-        while (room > 0 && in_at < in.size) { z->buf[z->fill++] = in.ptr[in_at++]; --room; ++took; }
+        const proven_size_t room = 2 * z->wsize - z->fill;
+        const proven_size_t took = room < in.size - in_at ? room : in.size - in_at;
+        if (took > 0) {
+            (void)proven_mem_copy(z->buf + z->fill, took, (proven_mem_view_t){ .ptr = in.ptr + in_at, .size = took });
+            z->fill += took; in_at += took;
+        }
         if (took > 0) {
             const proven_byte_t *p = in.ptr + in_at - took;
             if (z->opt.format == PROVEN_DEFLATE_ZLIB) z->check = adler32(z->check, p, took);

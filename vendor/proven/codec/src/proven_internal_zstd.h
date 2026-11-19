@@ -44,6 +44,28 @@ static inline proven_u32 le32(const proven_byte_t *p) {
 #define ZSTD_BUILTINS 0
 #endif
 
+#if ZSTD_BUILTINS
+#define ZSTD_LIKELY(x) __builtin_expect(!!(x), 1)
+#define ZSTD_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#define ZSTD_PREFETCH(p) __builtin_prefetch((const void *)(p))   /* a hint only: what is computed is the same without it */
+#else
+#define ZSTD_LIKELY(x) (x)
+#define ZSTD_UNLIKELY(x) (x)
+#define ZSTD_PREFETCH(p) ((void)0)
+#endif
+
+/* The position of the lowest set bit of a nonzero value. */
+static inline unsigned ctz64(proven_u64 v) {
+#if ZSTD_BUILTINS
+    return (unsigned)__builtin_ctzll(v);
+#else
+    static const proven_u8 DEBRUIJN[64] = { 0, 1, 48, 2, 57, 49, 28, 3, 61, 58, 50, 42, 38, 29, 17, 4, 62, 55, 59, 36, 53, 51, 43, 22,
+                                            45, 39, 33, 30, 24, 18, 12, 5, 63, 47, 56, 27, 60, 41, 37, 16, 54, 35, 52, 21, 44, 32, 23, 11,
+                                            46, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6 };
+    return DEBRUIJN[((v & (0 - v)) * 0x03F79D71B4CB0A89ull) >> 58];
+#endif
+}
+
 /* The position of the highest set bit of a nonzero value. */
 static inline unsigned highbit32(proven_u32 v) {
 #if ZSTD_BUILTINS

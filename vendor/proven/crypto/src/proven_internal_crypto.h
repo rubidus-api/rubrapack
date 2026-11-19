@@ -253,6 +253,11 @@ typedef proven_aes_t proven_crypto_aes_t;
 /* key_len is 16 or 32. False otherwise. SECRET: key. */
 [[nodiscard]] bool proven_crypto_aes_init(proven_crypto_aes_t *ctx, const proven_byte_t *key, proven_size_t key_len);
 void proven_crypto_aes_block(const proven_crypto_aes_t *ctx, const proven_byte_t in[16], proven_byte_t out[16]);
+/* CTR: XOR `len` bytes with the keystream of nonce || be32(counter), be32(counter + 1), ...
+ * (the caller keeps the 32-bit counter from wrapping inside one call); `in` may be `out`. On
+ * the processor's instructions where the key was prepared for them, else bitsliced. */
+void proven_crypto_aes_ctr(const proven_crypto_aes_t *ctx, const proven_byte_t nonce[12], proven_u32 counter,
+                           const proven_byte_t *in, proven_byte_t *out, proven_size_t len);
 
 /* key_len is 16 or 32. False otherwise. SECRET: key. */
 [[nodiscard]] bool proven_crypto_aes_gcm_init(proven_crypto_aes_gcm_t *ctx, const proven_byte_t *key, proven_size_t key_len);

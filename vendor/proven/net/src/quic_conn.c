@@ -2810,7 +2810,6 @@ proven_err_t proven_quic_conn_receive(proven_quic_conn_t *c, proven_mem_view_t d
     read_datagram(c, c->scratch, d.size, from);
     if (c->st.packets_received != before) c->idle_start = now;
     replay_held(c);
-    if (c->server && !addr_eq(from, &c->peer_addr) && c->st.packets_received != before && !c->validated) c->amp_rx += 0;
     set_loss_timer(c);
     check_mem(c);
     return PROVEN_OK;

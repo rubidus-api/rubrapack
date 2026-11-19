@@ -20,6 +20,13 @@
  *   - `conn` is null from the moment the connection is let go of or gone;
  *   - `closed` is set before on_closed is called, and nothing is delivered after it;
  *   - the stream is freed only when the outermost entry leaves (`depth`).
+ *
+ * A connection lost while the program's send, send_piece or ping is on the stack - on this
+ * stream or, over HTTP/2, on another stream of the same connection - is not ended there
+ * (RFC-0047): `conn` goes null, so that every call answers as for a connection that is gone,
+ * and on_closed is called from the loop by its group's timer, with the code and error it would
+ * have had.
+ * Abort, a failure found by the library, and the server's destroy call it at once instead.
  */
 
 #define WS_DEFAULT_MESSAGE ((proven_u64)1024 * 1024)
@@ -49,10 +56,25 @@ struct proven_ws_stream {
     proven_ws_event_callbacks_t on;
     void *ctx;
     void *user;
-    proven_u64 max_message;
-    proven_size_t max_buffered;
-    proven_size_t close_left;                    /* after a close was sent: output the client had not taken when last looked */
-    proven_u32 ping_ms, pong_ms, close_ms;
+    /* A stream whose end is pending (`late_set`) has no connection, and nothing reads the
+     * fields only a connection needs again: the pending end is kept in their place, so that it
+     * costs an idle connection nothing (RFC-0047). */
+    union {
+        struct {
+            proven_u64 max_message;
+            proven_size_t max_buffered;
+            proven_size_t close_left;            /* after a close was sent: output the client had not taken when last looked */
+        };
+        struct {
+            proven_ws_group_t_ *late_group;      /* the one whose list it is in (ws_group's, when it was lost) */
+            struct proven_ws_stream *late_prev, *late_next;
+        };
+    };
+    union {
+        struct { proven_u32 ping_ms, pong_ms; };
+        struct { proven_err_t late_why; proven_u16 late_code; };      /* what on_closed is to say */
+    };
+    proven_u32 close_ms;
     proven_u32 depth;
     proven_net_addr_t peer;
     proven_ws_decoder_t dec;
@@ -66,6 +88,7 @@ struct proven_ws_stream {
     bool client : 1;                             /* this side asked for the connection: its frames are masked, the peer's are not */
     bool opening : 1;                            /* a client's, before the server has accepted the upgrade: nothing may be sent */
     bool may_deflate : 1;                        /* a client's that offered compression: room for a proven_ws_z_t follows this struct, used if the server agrees */
+    bool late_set : 1;                           /* lost under a send: on_closed waits for the loop (group->timer) */
 };
 
 /* What a connection that agreed permessage-deflate holds besides: allocated behind the struct
@@ -85,7 +108,8 @@ typedef struct {
 } proven_ws_z_t;
 
 /* A client's generator of mask keys: behind the struct, after the room for a proven_ws_z_t if it
- * offered compression. A server's connection has neither, and is not a byte larger for them. */
+ * offered compression; and after that its group. A server's connection has none of them, and is
+ * not a byte larger for them. */
 static proven_chacha_rng_t *ws_masks(const proven_ws_stream_t *ws);
 
 /* Only for a connection with `deflate` set. */
@@ -94,6 +118,19 @@ static proven_ws_rx_t *ws_rx(const proven_ws_stream_t *ws) { return ws->deflate 
 static proven_chacha_rng_t *ws_masks(const proven_ws_stream_t *ws) {
     return (proven_chacha_rng_t *)(void *)((proven_byte_t *)(ws + 1) + (ws->may_deflate ? sizeof(proven_ws_z_t) : 0));
 }
+/* Where a client's group begins behind its struct: after the mask generator, rounded up to the
+ * group's alignment (8 on a 32-bit Windows target, where what comes before may end at 4). */
+static proven_size_t ws_group_at(bool may_deflate) {
+    const proven_size_t at = sizeof(proven_ws_stream_t) + (may_deflate ? sizeof(proven_ws_z_t) : 0) + sizeof(proven_chacha_rng_t);
+    return (at + alignof(proven_ws_group_t_) - 1) & ~(proven_size_t)(alignof(proven_ws_group_t_) - 1);
+}
+/* Who counts this stream's sends and keeps its pending end: a client's own, behind its struct;
+ * the server's, reached through the connection - so only while there is one. */
+static proven_ws_group_t_ *ws_group(const proven_ws_stream_t *ws) {
+    if (ws->client) return (proven_ws_group_t_ *)(void *)((proven_byte_t *)(void *)ws + ws_group_at(ws->may_deflate));
+    return &((const proven_ev_head_t *)ws->conn)->server->ws_group;
+}
+static_assert(alignof(proven_ws_group_t_) <= 16, "a client's allocation (aligned to 16) keeps its group aligned");
 
 static void ws_enter(proven_ws_stream_t *ws) { ws->depth++; }
 static void ws_rx_free(proven_ws_stream_t *ws) {
@@ -126,9 +163,23 @@ static void ws_leave(proven_ws_stream_t *ws) {
     ws->alloc.free_fn(ws->alloc.ctx, ws);
 }
 
-/* The one place on_closed is called from. The connection has been let go of, or is gone. */
+/* A pending end leaves the loop's hands (and its group's list). */
+static void ws_late_drop(proven_ws_stream_t *ws) {
+    if (!ws->late_set) return;
+    ws->late_set = false;
+    proven_ws_group_t_ *g = ws->late_group;
+    if (ws->late_prev) ws->late_prev->late_next = ws->late_next;
+    else g->pending = ws->late_next;
+    if (ws->late_next) ws->late_next->late_prev = ws->late_prev;
+    ws->late_prev = ws->late_next = (void *)0;
+    if (!g->pending) proven_loop_timer_cancel(g->loop, &g->timer);
+}
+
+/* The one place on_closed is called from. The connection has been let go of, or is gone. An end
+ * that was pending says what was found when the connection was lost. */
 static void ws_finish(proven_ws_stream_t *ws, proven_u16 code, proven_err_t why) {
     if (ws->closed) return;
+    if (ws->late_set) { code = ws->late_code; why = ws->late_why; ws_late_drop(ws); }
     ws->closed = true;
     ws->conn = (void *)0;
     ws_enter(ws);
@@ -149,7 +200,8 @@ static void ws_end(proven_ws_stream_t *ws, bool polite, proven_u16 code, proven_
     ws_finish(ws, code, why);
 }
 
-/* Queue one frame. PROVEN_ERR_RESET when the connection is gone - on_closed has then been called. */
+/* Queue one frame. PROVEN_ERR_RESET when the connection is gone - on_closed has then been called,
+ * or, under the program's send, is pending. */
 static proven_err_t ws_frame(proven_ws_stream_t *ws, proven_u8 opcode, bool fin, bool rsv1, proven_mem_view_t data) {
     if (!ws->conn) return PROVEN_ERR_RESET;
     proven_byte_t header[PROVEN_WS_MAX_FRAME_HEADER];
@@ -307,7 +359,7 @@ static proven_size_t ws_on_input(void *raw, proven_mem_mut_t in) {
             }
             if (ws_rx(ws)) {
                 proven_size_t took = 0;
-                if (!ws_rx_run(ws, ev.data.ptr, ev.data.size, ev.last, &took) && !ws->closed && ws_rx(ws)) {
+                if (!ws_rx_run(ws, ev.data.ptr, ev.data.size, ev.last, &took) && !ws->closed && ws->conn && ws_rx(ws)) {
                     if (!ws_rx_hold(ws, ev.data.ptr + took, ev.data.size - took, ev.last)) { ws_fail(ws, PROVEN_ERR_NOMEM); break; }
                 }
             }
@@ -375,11 +427,55 @@ static void ws_on_timer(void *raw) {
     ws_leave(ws);
 }
 
+/* The loop's turn after a loss under a send: every pending end. An on_closed may destroy the
+ * server, and with it the group (`gone`); a client's group is in its stream's memory, and the
+ * only one there. */
+static void ws_late_fire(void *raw) {
+    proven_ws_group_t_ *g = raw;
+    bool gone = false;
+    g->gone = &gone;
+    while (g->pending) {
+        proven_ws_stream_t *ws = g->pending;
+        const bool own = ws->client;
+        ws_enter(ws);
+        ws_finish(ws, 0, PROVEN_OK);
+        if (own && !gone) g->gone = (void *)0;
+        ws_leave(ws);                                       /* may free it, and a client's group */
+        if (own || gone) return;
+    }
+    g->gone = (void *)0;
+}
+
 static void ws_on_closed(void *raw, proven_err_t why) {
     proven_ws_stream_t *ws = raw;
     /* An end of stream with no close frame is a client that vanished, whatever it meant. */
     if (why == PROVEN_ERR_EOF || why == PROVEN_OK) why = PROVEN_ERR_RESET;
-    ws_finish(ws, ws->close_sent ? ws->close_code : PROVEN_WS_CLOSE_ABNORMAL, why);
+    const proven_u16 code = ws->close_sent ? ws->close_code : PROVEN_WS_CLOSE_ABNORMAL;
+    proven_ws_group_t_ *g = !ws->closed && !ws->late_set && ws->conn ? ws_group(ws) : (proven_ws_group_t_ *)0;
+    if (g && g->sending > 0) {
+        /* Lost under the program's send: it learns that from the answer, and on_closed comes
+         * from the loop - nothing the program holds is freed under its feet. Nothing is
+         * allocated: the loss is often a failed allocation. */
+        ws->conn = (void *)0;
+        ws->late_set = true;
+        ws->late_code = code;
+        ws->late_why = why;
+        ws->late_group = g;
+        ws->late_prev = (void *)0;
+        ws->late_next = g->pending;
+        if (ws->late_next) ws->late_next->late_prev = ws;
+        g->pending = ws;
+        if (!proven_loop_timer_is_set(&g->timer)) proven_loop_timer_set(g->loop, &g->timer, 0, ws_late_fire, g);
+        return;
+    }
+    ws_finish(ws, code, why);
+}
+
+void proven_ws_event_group_end_(proven_ws_group_t_ *group) {
+    if (group->gone) *group->gone = true;
+    group->gone = (void *)0;
+    proven_loop_timer_cancel(group->loop, &group->timer);
+    while (group->pending) ws_finish(group->pending, 0, PROVEN_OK);
 }
 
 /* The server is ending: goodbye with 1001, and the answer is waited for as after any close
@@ -512,7 +608,7 @@ proven_err_t proven_ws_event_accept(proven_http_stream_t *stream, const proven_h
 // A connection this side makes (ws_event_client.c is its transport)
 // -----------------------------------------------------------------------------
 
-proven_err_t proven_ws_event_client_new_(proven_allocator_t alloc, const proven_ws_event_config_t *config, const proven_ws_transport_t_ *transport,
+proven_err_t proven_ws_event_client_new_(proven_allocator_t alloc, proven_loop_t *loop, const proven_ws_event_config_t *config, const proven_ws_transport_t_ *transport,
                                          void *conn, proven_net_addr_t peer, proven_ws_stream_t **out) {
     *out = (void *)0;
     /* (`subprotocol` is a server's answer; a client's offer is in the options. Set here it
@@ -520,12 +616,9 @@ proven_err_t proven_ws_event_client_new_(proven_allocator_t alloc, const proven_
     if (!config || !config->on.on_message || config->subprotocol.size != 0) return PROVEN_ERR_INVALID_ARG;
     if (config->compress_level < -1 || config->compress_level > 9 ||
         (config->compress_window_bits != 0 && (config->compress_window_bits < 9 || config->compress_window_bits > 15))) return PROVEN_ERR_INVALID_ARG;
-    proven_byte_t seed[PROVEN_CHACHA_SEED_SIZE];
-    if (!proven_random_bytes(seed, sizeof seed)) return PROVEN_ERR_IO;
-    /* Behind the struct: room for the compression state, if it was offered, and the
-     * generator of mask keys - neither of which a server's connection carries. */
-    const proven_size_t z_bytes = config->compress ? sizeof(proven_ws_z_t) : 0;
-    proven_result_mem_mut_t m = alloc.alloc_fn(alloc.ctx, sizeof(proven_ws_stream_t) + z_bytes + sizeof(proven_chacha_rng_t), 16);
+    /* Behind the struct: room for the compression state, if it was offered, the generator of
+     * mask keys and the group - none of which a server's connection carries. */
+    proven_result_mem_mut_t m = alloc.alloc_fn(alloc.ctx, ws_group_at(config->compress) + sizeof(proven_ws_group_t_), 16);
     if (m.err != PROVEN_OK) return PROVEN_ERR_NOMEM;
     proven_ws_stream_t *ws = (proven_ws_stream_t *)(void *)m.value.ptr;
     *ws = (proven_ws_stream_t){
@@ -540,7 +633,12 @@ proven_err_t proven_ws_event_client_new_(proven_allocator_t alloc, const proven_
     if (config->compress) {
         *ws_z(ws) = (proven_ws_z_t){ .level = (proven_i8)config->compress_level, .window_bits = (proven_i8)config->compress_window_bits };
     }
-    proven_chacha_rng_seed(ws_masks(ws), seed);
+    /* From entropy, so that a forked child does not repeat the parent's mask keys (RFC-0048). */
+    if (!proven_chacha_rng_seed_from_entropy(ws_masks(ws))) {
+        alloc.free_fn(alloc.ctx, ws);
+        return PROVEN_ERR_IO;
+    }
+    *ws_group(ws) = (proven_ws_group_t_){ .loop = loop };
     proven_ws_decoder_init(&ws->dec, false, ws->max_message);
     *out = ws;
     return PROVEN_OK;
@@ -579,6 +677,8 @@ proven_err_t proven_ws_stream_send_piece(proven_ws_stream_t *ws, bool text, prov
     proven_err_t e = ws_may_send(ws);
     if (e != PROVEN_OK) return e;
     ws_enter(ws);
+    proven_ws_group_t_ *g = ws_group(ws);         /* ws_may_send found the connection there */
+    g->sending++;
     proven_ws_z_t *z = ws->deflate ? ws_z(ws) : (proven_ws_z_t *)0;
     if (z && first) {
         /* A message begins: is it compressed? Not when it is whole and too short to gain, and
@@ -629,6 +729,7 @@ proven_err_t proven_ws_stream_send_piece(proven_ws_stream_t *ws, bool text, prov
         }
     }
     if (e == PROVEN_OK) ws->in_message = !last;
+    g->sending--;
     ws_leave(ws);
     return e;
 }
@@ -643,7 +744,10 @@ proven_err_t proven_ws_stream_ping(proven_ws_stream_t *ws, proven_mem_view_t dat
     proven_err_t e = ws_may_send(ws);
     if (e != PROVEN_OK) return e;
     ws_enter(ws);
+    proven_ws_group_t_ *g = ws_group(ws);         /* ws_may_send found the connection there */
+    g->sending++;
     e = ws_frame(ws, PROVEN_WS_PING, true, false, data);
+    g->sending--;
     ws_leave(ws);
     return e;
 }

@@ -94,7 +94,7 @@ typedef struct {
  * `config` is checked as proven_ws_event_accept checks it. */
 struct proven_ws_stream;
 [[nodiscard]]
-proven_err_t proven_ws_event_client_new_(proven_allocator_t alloc, const proven_ws_event_config_t *config, const proven_ws_transport_t_ *transport,
+proven_err_t proven_ws_event_client_new_(proven_allocator_t alloc, proven_loop_t *loop, const proven_ws_event_config_t *config, const proven_ws_transport_t_ *transport,
                                          void *conn, proven_net_addr_t peer, struct proven_ws_stream **out);
 /* The upgrade was accepted, with compression (`terms`, what was agreed) or without (null):
  * frames from here on. */

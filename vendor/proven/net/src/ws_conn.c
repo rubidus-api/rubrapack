@@ -497,13 +497,12 @@ static proven_err_t wc_open(proven_transport_t transport, bool is_server, proven
     if (deflate) proven_ws_decoder_allow_compressed(&c->decoder);
     if (!is_server) {
         /* Mask keys must be unpredictable to the application's peer; one draw from the system
-         * seeds a generator for the life of the connection. */
-        proven_byte_t seed[PROVEN_CHACHA_SEED_SIZE];
-        if (!proven_random_bytes(seed, sizeof seed)) {
+         * seeds a generator for the life of the connection - from entropy, so that a forked
+         * child does not repeat the parent's keys (RFC-0048). */
+        if (!proven_chacha_rng_seed_from_entropy(&c->masks)) {
             config->alloc.free_fn(config->alloc.ctx, c);
             return PROVEN_ERR_IO;
         }
-        proven_chacha_rng_seed(&c->masks, seed);
     }
     *out = c;
     return PROVEN_OK;

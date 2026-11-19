@@ -160,8 +160,13 @@ proven_err_t proven_ws_event_connect(proven_loop_t *loop, const proven_ws_event_
  * @return PROVEN_ERR_AGAIN as described; PROVEN_ERR_INVALID_STATE after a close was sent or
  *         received, or in the middle of a message begun with proven_ws_stream_send_piece;
  *         PROVEN_ERR_RESET when the connection is gone. When it was lost during this call
- *         (the transport refused the frame), `on_closed` has been called inside it: neither
- *         `ws` nor anything `on_closed` freed may be used after the return.
+ *         (the transport refused the frame: a socket error, or no memory for the output),
+ *         `on_closed` is **not** called inside it: `ws` stays valid, every send, piece and ping
+ *         on it answers PROVEN_ERR_RESET, close, pause and resume do nothing, and `on_closed`
+ *         is called once from the loop's next turn, with 1006 (or the code of a close already
+ *         sent) and the error met. proven_ws_stream_abort calls it at once instead, and so
+ *         does destroying the server. The same holds for another WebSocket on the same HTTP/2
+ *         connection that the loss ends. (Before v0.115.0 `on_closed` ran inside the call.)
  */
 [[nodiscard]]
 proven_err_t proven_ws_stream_send(proven_ws_stream_t *ws, bool text, proven_mem_view_t data);
@@ -194,7 +199,8 @@ proven_err_t proven_ws_stream_ping(proven_ws_stream_t *ws, proven_mem_view_t dat
 void proven_ws_stream_close(proven_ws_stream_t *ws, proven_u16 code, proven_u8str_view_t reason);
 
 /** @brief End the connection at once, with no close frame. `on_closed` is called with 1006
- *         and PROVEN_ERR_RESET, inside this call. */
+ *         and PROVEN_ERR_RESET, inside this call - or, for a connection a send has lost whose
+ *         `on_closed` is waiting for the loop, with what the send met, inside this call too. */
 void proven_ws_stream_abort(proven_ws_stream_t *ws);
 
 /** @brief Stop delivering messages (and stop reading the connection) until

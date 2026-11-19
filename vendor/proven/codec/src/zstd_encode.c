@@ -6,6 +6,12 @@
 #else
 #define ZSTD_BMI2 0
 #endif
+#if !defined(PROVEN_FREESTANDING) && ZSTD_BUILTINS && defined(__SSE2__)
+#define ZSTD_SSE2 1                     /* the rows' tags compared sixteen at a time */
+#include <emmintrin.h>
+#else
+#define ZSTD_SSE2 0
+#endif
 
 /* Zstandard compression (RFC 8878).
  *
@@ -22,9 +28,9 @@
  * kept here exactly as a decoder will have it, and put back when a block goes out stored. */
 
 #define WINDOW_LOG_MIN 10
-#define WINDOW_LOG_MAX 23
-#define WINDOW_LOG_DEFAULT 19
-#define LEVEL_MAX 19
+#define WINDOW_LOG_MAX 30                /* 1 GiB (RFC-0052); positions stay below 2^32: the buffer is a window and a half */
+#define LEVEL_MAX 22
+#define LEVEL_TWO_PASS 19               /* from here the frame's first block is parsed twice (libzstd's btultra2) */
 #define LEVEL_DEFAULT 3
 #define SEQ_MAX 16384u                  /* sequences in one block; a block ends early when they run out */
 #define HUF_MAX_BITS 11
@@ -481,9 +487,9 @@ typedef struct {
 enum { K_LL, K_OF, K_ML };
 
 typedef struct {
-    unsigned strategy;                 /* 0: one hash table; 1: two; 2: a hash table and a chain; 3: and binary trees, lazy2; 4: the trees, optimal parsing */
-    unsigned hlog, clog, mls;          /* clog: the second table's, or the chain's, size */
-    unsigned tries, depth;             /* chain: candidates looked at; 0 greedy, 1 lazy, 2 lazy2. Optimal parsing: 1 also finds three-byte matches */
+    unsigned strategy;                 /* 0: one hash table; 1: two; 2: rows of a hash table; 3: a hash table and binary trees, lazy2; 4: the trees, optimal parsing */
+    unsigned hlog, clog, mls;          /* clog: the second table's, or the trees', size (rows: unused) */
+    unsigned tries, depth;             /* candidates looked at; 0 greedy, 1 lazy, 2 lazy2. Optimal parsing: 1 also finds three-byte matches */
     unsigned target;                   /* optimal parsing: a match this long is taken at once */
 } proven_params_t;
 
@@ -496,7 +502,7 @@ typedef struct {
 #define LDM_LEVEL_MAX 5                 /* the levels it is used at */
 struct proven_ldm_match { proven_u32 at, off, len; };
 
-/* Optimal parsing (levels 16 to 19). Prices are in 1/256 of a bit. */
+/* Optimal parsing (levels 16 to 22). Prices are in 1/256 of a bit. */
 #define OPT_NUM 4096                   /* positions one stretch of the path may cover */
 #define OPT_MATCHES 72                 /* matches found at one position: three repeats, a three-byte one, and the trees' */
 #define OPT_H3_LOG 16                  /* the table of three-byte matches (levels whose `depth` is 1) */
@@ -505,6 +511,7 @@ typedef struct { proven_u32 price, dist, mlen, litlen, rep[3]; } proven_opt_node
 typedef struct { proven_u32 offv, dist, len; } proven_opt_match_t;
 struct proven_opt {
     bool ready;                        /* statistics carried over from an earlier block of the frame */
+    bool seeded;                       /* they are a first parse's of this block (opt_first_pass): taken as they are */
     proven_u32 lit[256], ll[36], ml[53], of[32];
     proven_u32 lit_sum, ll_sum, ml_sum, of_sum;
     proven_u32 lit_w, ll_w, ml_w, of_w;   /* the sums' weights */
@@ -536,9 +543,15 @@ struct proven_zstd_encoder {
     /* matching */
     proven_u32 *hash, *hash2;
     proven_size_t hash_size, hash2_size;
+    /* rows (strategy 2): `hash` is 2^(hlog - rowlog) rows of 2^rowlog positions; `tags` a byte of
+     * each position's hash beside it, then each row's head - the slot of its newest position */
+    proven_u8 *tags;
+    proven_size_t tags_size;
+    unsigned rowlog;
+    proven_u32 hc_pos[8], hc[8];       /* rows: the hashes of the next positions, computed ahead (hc_pos NONE: none) */
     bool fresh;                        /* the hash tables hold nothing of the current frame */
-    proven_u32 next_update;            /* chain: the first position not yet in the tables */
-    struct proven_opt *optp;           /* optimal parsing (levels 16 to 19): its statistics and its path */
+    proven_u32 next_update;            /* rows and trees: the first position not yet in the tables */
+    struct proven_opt *optp;           /* optimal parsing (levels 16 to 22): its statistics and its path */
     proven_seq_t *seqs;
     proven_byte_t *codes;              /* each sequence's literal-length, offset and match-length codes */
     proven_size_t nseq;
@@ -578,18 +591,20 @@ static const proven_params_t LEVELS[LEVEL_MAX + 1] = {
     { 0, 14, 0, 6, 0, 0, 0 },
     { 1, 14, 13, 6, 0, 0, 0 },
     { 1, 17, 16, 5, 0, 0, 0 },
-    { 2, 17, 16, 5, 4, 0, 0 },            /* greedy */
-    { 2, 17, 17, 5, 8, 0, 0 },
-    { 2, 17, 17, 5, 12, 1, 0 },           /* lazy: 12 candidates, where libzstd's level 6 has 8, to stay at or below gzip 6 */
-    { 2, 17, 17, 5, 12, 2, 0 },           /* lazy2 */
-    { 2, 17, 17, 5, 24, 2, 0 },
-    { 2, 17, 17, 4, 32, 2, 0 },
+    /* 4 to 12 (RFC-0051): rows of 2^hlog positions in all, 16 to 128 to a row as `tries` asks. */
+    { 2, 17, 0, 5, 4, 0, 0 },             /* greedy */
+    { 2, 17, 0, 5, 8, 0, 0 },
+    { 2, 17, 0, 5, 12, 1, 0 },            /* lazy: 12 candidates, where libzstd's level 6 has 8, to stay at or below gzip 6 */
+    { 2, 17, 0, 5, 12, 2, 0 },            /* lazy2 */
+    { 2, 17, 0, 5, 24, 2, 0 },
+    { 2, 17, 0, 4, 32, 2, 0 },
     /* 10 to 12 (RFC-0038 Z-1): libzstd's larger tables for them, each cut to the window and a known
      * input as every level's; four-byte hashes (libzstd's are five: four is smaller on binaries and
-     * JSON here, within a point on C) and more candidates. */
-    { 2, 22, 21, 4, 48, 2, 0 },
-    { 2, 22, 21, 4, 96, 2, 0 },
-    { 2, 23, 22, 4, 128, 2, 0 },
+     * JSON here, within a point on C) and more candidates. Five-byte hashes would make 9 to 12
+     * about 15 % faster and up to 1.6 % larger (RFC-0051). */
+    { 2, 22, 0, 4, 48, 2, 0 },
+    { 2, 22, 0, 4, 96, 2, 0 },
+    { 2, 23, 0, 4, 128, 2, 0 },
     /* 13 to 15 (RFC-0038 Z-2): the same lazy2 parse over binary trees, with libzstd's sizes for these
      * levels; `tries` is how many nodes a walk compares. */
     { 3, 22, 22, 4, 32, 2, 0 },
@@ -602,12 +617,24 @@ static const proven_params_t LEVELS[LEVEL_MAX + 1] = {
     { 4, 22, 23, 4, 32, 0, 64 },
     { 4, 22, 23, 4, 64, 1, 64 },
     { 4, 22, 24, 4, 128, 1, 256 },
+    /* 20 to 22 (RFC-0052): libzstd's tables and searches for them; a `window_log` of 0 is their
+     * window, 2^25 to 2^27 (WINDOW_LOG_LEVEL), and the tables are cut to the window as every level's. */
+    { 4, 23, 25, 4, 128, 1, 256 },
+    { 4, 24, 26, 4, 128, 1, 512 },
+    { 4, 25, 27, 4, 512, 1, 999 },
 };
 
-/* Levels 6 to 9 for a known input above 256 KiB (proven_zstd_encode_all): libzstd's hash and chain
- * sizes for such inputs (hash, chain), cut to the window as every level's. The servers, which stream
- * at these levels, keep the tables above. */
-static const unsigned LEVELS_BIG[4][2] = { { 19, 18 }, { 20, 19 }, { 20, 19 }, { 21, 20 } };
+/* A `window_log` of 0: 19 (512 KiB), and at 20 to 22 libzstd's windows for them. */
+static const unsigned WINDOW_LOG_LEVEL[LEVEL_MAX + 1] = { 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 25, 26, 27 };
+
+/* Levels 20 to 22 over a known input of 256 KiB or less: libzstd's candidates and match length for
+ * such inputs (16 to 19 take four times their candidates and twice their length, make). */
+static const unsigned SMALL_TRIES[3] = { 1024, 4096, 8192 }, SMALL_TARGET[3] = { 512, 512, 999 };
+
+/* Levels 6 to 9 for a known input above 256 KiB (proven_zstd_encode_all): libzstd's hash sizes for
+ * such inputs, cut to the window as every level's. The servers, which stream at these levels, keep
+ * the tables above. */
+static const unsigned LEVELS_BIG[4] = { 19, 20, 20, 21 };
 
 static proven_err_t grow(proven_zstd_encoder_t *z, void **buf, proven_size_t *cap, proven_size_t want, proven_size_t unit) {
     if (want <= *cap && *buf) return PROVEN_OK;
@@ -620,7 +647,7 @@ static proven_err_t grow(proven_zstd_encoder_t *z, void **buf, proven_size_t *ca
 }
 
 static void frame_start(proven_zstd_encoder_t *z) {
-    if (z->optp) z->optp->ready = false;      /* a new frame starts its statistics again */
+    if (z->optp) { z->optp->ready = false; z->optp->seeded = false; }     /* a new frame starts its statistics again */
     z->header_done = false;
     z->finished = false;
     z->failed = false;
@@ -643,9 +670,11 @@ static void frame_start(proven_zstd_encoder_t *z) {
     if (!z->fresh) {
         for (proven_size_t i = 0; i < z->hash_size; ++i) z->hash[i] = 0;
         for (proven_size_t i = 0; i < z->hash2_size; ++i) z->hash2[i] = 0;
+        for (proven_size_t i = 0; i < z->tags_size; ++i) z->tags[i] = 0;
         z->fresh = true;
     }
     z->next_update = 0;
+    for (int i = 0; i < 8; ++i) z->hc_pos[i] = NONE;
     if (z->ldm) {
         for (proven_size_t i = 0; i < ((proven_size_t)1 << z->ldm_log); ++i) z->ldm[i] = 0;
         for (proven_size_t i = 0; i < ((proven_size_t)1 << (z->ldm_log - LDM_BUCKET_LOG)); ++i) z->ldm_next[i] = 0;
@@ -666,7 +695,7 @@ static proven_err_t make(const proven_zstd_encoder_options_t *o, proven_u64 size
     proven_zstd_encoder_t *z = (proven_zstd_encoder_t *)(void *)m.value.ptr;
     *z = (proven_zstd_encoder_t){ .alloc = o->alloc, .opt = *o };
     if (z->opt.level == 0) z->opt.level = LEVEL_DEFAULT;
-    z->wlog = o->window_log ? (unsigned)o->window_log : WINDOW_LOG_DEFAULT;
+    z->wlog = o->window_log ? (unsigned)o->window_log : WINDOW_LOG_LEVEL[z->opt.level];
     z->p = LEVELS[z->opt.level];
     proven_zstd_dict_t_ dr;
     proven_size_t dlen = 0;
@@ -686,13 +715,13 @@ static proven_err_t make(const proven_zstd_encoder_options_t *o, proven_u64 size
      * as libzstd's table for such inputs has it (its trees and lazy parse only pay on more). */
     if (size_hint <= ((proven_u64)256 << 10) && z->p.strategy >= 3) {
         if (z->p.strategy == 3) z->p.target = 48;
+        else if (z->opt.level > 19) { z->p.tries = SMALL_TRIES[z->opt.level - 20]; z->p.target = SMALL_TARGET[z->opt.level - 20]; }
         else { z->p.tries *= 4; z->p.target *= 2; }   /* 16 to 19 look further than 13 to 15 */
         z->p.strategy = 4;
         z->p.depth = 1;
     }
     if (size_hint != ~(proven_u64)0 && size_hint > ((proven_u64)256 << 10) && z->opt.level >= 6 && z->opt.level <= 9) {
-        z->p.hlog = LEVELS_BIG[z->opt.level - 6][0];
-        z->p.clog = LEVELS_BIG[z->opt.level - 6][1];
+        z->p.hlog = LEVELS_BIG[z->opt.level - 6];
     }
     if (z->p.hlog > need + 1) z->p.hlog = need + 1;
     if (z->p.clog > need + 1) z->p.clog = need + 1;
@@ -700,12 +729,22 @@ static proven_err_t make(const proven_zstd_encoder_options_t *o, proven_u64 size
     z->block_size = z->window < ZSTD_BLOCK_MAX ? z->window : ZSTD_BLOCK_MAX;
     z->buf_max = z->window + (z->window / 2 > z->block_size ? z->window / 2 : z->block_size) + dlen;
     z->hash_size = (proven_size_t)1 << z->p.hlog;
-    z->hash2_size = z->p.strategy ? (proven_size_t)1 << z->p.clog : 0;     /* the second table, or the chain */
+    z->hash2_size = z->p.strategy && z->p.strategy != 2 ? (proven_size_t)1 << z->p.clog : 0;     /* the second table, or the trees */
+    if (z->p.strategy == 2) {
+        /* Rows of 16 positions where the level looks at up to 16 candidates, of 32, 64 or 128 above;
+         * at least two rows. */
+        z->rowlog = z->p.tries <= 16 ? 4 : z->p.tries <= 32 ? 5 : z->p.tries <= 64 ? 6 : 7;
+        if (z->p.hlog < z->rowlog + 1) z->p.hlog = z->rowlog + 1;
+        z->hash_size = (proven_size_t)1 << z->p.hlog;
+        z->tags_size = z->hash_size + (z->hash_size >> z->rowlog);
+    }
     proven_size_t got = 0;
-    proven_err_t e = grow(z, (void **)&z->hash, &got, z->hash_size + z->hash2_size, sizeof(proven_u32));
+    const proven_size_t tag_words = (z->tags_size + 3) / 4;
+    proven_err_t e = grow(z, (void **)&z->hash, &got, z->hash_size + z->hash2_size + tag_words, sizeof(proven_u32));
     if (e != PROVEN_OK) { o->alloc.free_fn(o->alloc.ctx, z); return e; }
     z->hash2 = z->hash2_size ? z->hash + z->hash_size : NULL;
-    for (proven_size_t i = 0; i < z->hash_size + z->hash2_size; ++i) z->hash[i] = 0;
+    z->tags = z->tags_size ? (proven_u8 *)(void *)(z->hash + z->hash_size + z->hash2_size) : NULL;
+    for (proven_size_t i = 0; i < z->hash_size + z->hash2_size + tag_words; ++i) z->hash[i] = 0;
     if (z->p.strategy == 4) {
         /* The path's nodes and the three-byte table, no larger than a known input needs. */
         const proven_u32 span = size_hint < OPT_NUM ? (proven_u32)size_hint + 1 : OPT_NUM;
@@ -715,6 +754,7 @@ static proven_err_t make(const proven_zstd_encoder_options_t *o, proven_u64 size
         if (om.err != PROVEN_OK) { o->alloc.free_fn(o->alloc.ctx, z->hash); o->alloc.free_fn(o->alloc.ctx, z); return PROVEN_ERR_NOMEM; }
         z->optp = (struct proven_opt *)(void *)om.value.ptr;
         z->optp->ready = false;
+        z->optp->seeded = false;
         z->optp->span_max = span;
         z->optp->h3_log = h3_log;
         z->optp->node = (proven_opt_node_t *)(void *)(om.value.ptr + sizeof(struct proven_opt));
@@ -791,17 +831,6 @@ static proven_err_t block_room(proven_zstd_encoder_t *z) {
 // -----------------------------------------------------------------------------
 // Matching
 // -----------------------------------------------------------------------------
-
-static inline unsigned ctz64(proven_u64 v) {
-#if ZSTD_BUILTINS
-    return (unsigned)__builtin_ctzll(v);
-#else
-    static const proven_u8 DEBRUIJN[64] = { 0, 1, 48, 2, 57, 49, 28, 3, 61, 58, 50, 42, 38, 29, 17, 4, 62, 55, 59, 36, 53, 51, 43, 22,
-                                            45, 39, 33, 30, 24, 18, 12, 5, 63, 47, 56, 27, 60, 41, 37, 16, 54, 35, 52, 21, 44, 32, 23, 11,
-                                            46, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6 };
-    return DEBRUIJN[((v & (0 - v)) * 0x03F79D71B4CB0A89ull) >> 58];
-#endif
-}
 
 /* How many bytes from `a` equal those from `b` (which is before it), stopping at `end`. */
 ZSTD_HOT proven_size_t count_same(const proven_byte_t *a, const proven_byte_t *b, const proven_byte_t *end) {
@@ -1036,44 +1065,141 @@ ZSTD_HOT proven_size_t match_double_mls(proven_zstd_encoder_t *z, const proven_b
     return full ? (proven_size_t)(anchor - base) : end;
 }
 
-/* Put every position from `next_update` up to `target` into the hash table, each linked to the
- * one its hash held before: the chain, indexed by position modulo its size. */
-ZSTD_HOT void hc_insert(proven_zstd_encoder_t *z, const proven_byte_t *base, proven_u32 target, const unsigned mls) {
-    proven_u32 *const ht = z->hash, *const ch = z->hash2;
-    const proven_u32 mask = (proven_u32)z->hash2_size - 1;
-    const unsigned hlog = z->p.hlog;
-    for (proven_u32 i = z->next_update; i < target; ++i) {
-        const proven_u32 h = hash_at(base + i, hlog, mls);
-        ch[i & mask] = ht[h];
-        ht[h] = i;
+/* Rows (levels 4 to 12, RFC-0051), as libzstd's row match finder: a position's hash names a row
+ * of the last 2^rowlog positions that hashed to it and a byte (its tag) kept beside each; a search
+ * compares the tags of a whole row at once and the bytes only where a tag agrees, newest first.
+ * The tags are compared eight at a time in plain 64-bit words, so every CPU finds the same. */
+ZSTD_HOT void row_put_h(proven_zstd_encoder_t *z, proven_u32 i, proven_u32 h, const unsigned rowlog) {
+    const proven_u32 row = h >> 8;
+    proven_u8 *const head = z->tags + z->hash_size + row;
+    const unsigned slot = (unsigned)(*head - 1) & ((1u << rowlog) - 1);
+    *head = (proven_u8)slot;
+    z->tags[((proven_size_t)row << rowlog) + slot] = (proven_u8)h;
+    z->hash[((proven_size_t)row << rowlog) + slot] = i;
+}
+
+ZSTD_HOT void row_put(proven_zstd_encoder_t *z, const proven_byte_t *base, proven_u32 i, const unsigned mls, const unsigned rowlog) {
+    row_put_h(z, i, hash_at(base + i, z->p.hlog - rowlog + 8, mls), rowlog);
+}
+
+/* The hash of position i, from those computed ahead where it is there; and, if `ahead`, that of
+ * i + 8 computed now (where its bytes are before `end`), its row asked of the memory for when it is
+ * needed. The lazy levels gain by it; the greedy ones, which skip more of the input, lose. */
+ZSTD_HOT proven_u32 row_hash(proven_zstd_encoder_t *z, const proven_byte_t *base, proven_u32 i, proven_u32 end, const unsigned mls, const unsigned rowlog,
+                             const bool ahead) {
+    const unsigned bits = z->p.hlog - rowlog + 8, k = i & 7;
+    if (!ahead) return hash_at(base + i, bits, mls);
+    const proven_u32 h = z->hc_pos[k] == i ? z->hc[k] : hash_at(base + i, bits, mls);
+    if (i + 16 <= end) {
+        const proven_u32 h8 = hash_at(base + i + 8, bits, mls);
+        const proven_size_t at = (proven_size_t)(h8 >> 8) << rowlog;
+        ZSTD_PREFETCH(z->tags + at);
+        ZSTD_PREFETCH(z->hash + at);
+        z->hc[k] = h8;
+        z->hc_pos[k] = i + 8;
     }
+    return h;
+}
+
+/* Every position from `next_update` up to `target` into its row; after a long match only its first
+ * 96 and last 32 positions, as libzstd. */
+ZSTD_HOT void row_update(proven_zstd_encoder_t *z, const proven_byte_t *base, proven_u32 target, proven_u32 end, const unsigned mls, const unsigned rowlog,
+                         const bool ahead) {
+    proven_u32 i = z->next_update;
+    if (target > i && target - i > 384) {
+        for (const proven_u32 bound = i + 96; i < bound; ++i) row_put(z, base, i, mls, rowlog);
+        i = target - 32;
+    }
+    for (; i < target; ++i) row_put_h(z, i, row_hash(z, base, i, end, mls, rowlog, ahead), rowlog);
     if (target > z->next_update) z->next_update = target;
 }
 
-/* The longest match for `ip` among the first positions of its chain, at least 4 long;
- * 0 when there is none, looking at `tries` candidates. Older positions than the chain holds share slots with newer ones: the
- * walk stops before them. Every candidate is compared byte by byte. */
-ZSTD_HOT proven_size_t hc_find(proven_zstd_encoder_t *z, const proven_byte_t *base, const proven_byte_t *ip, const proven_byte_t *iend,
-                               proven_size_t low, proven_u32 *off, const unsigned mls) {
-    const proven_u32 cur = (proven_u32)(ip - base), mask = (proven_u32)z->hash2_size - 1;
-    hc_insert(z, base, cur, mls);
-    const proven_u32 *const ch = z->hash2;
-    const proven_u32 min_chain = cur > mask + 1 ? cur - (mask + 1) : 0;
-    proven_u32 idx = z->hash[hash_at(ip, z->p.hlog, mls)];
+/* Bit j set where byte j of the eight in `w` is `b8` (the tag in every byte). */
+[[maybe_unused]] static inline unsigned tags_eq8(proven_u64 w, proven_u64 b8) {
+    const proven_u64 x = w ^ b8, lo = 0x7F7F7F7F7F7F7F7Full;
+    const proven_u64 t = ~(((x & lo) + lo) | x | lo);
+    return (unsigned)((t * 0x0002040810204081ull) >> 56);
+}
+
+/* The longest match for `ip` among its row's positions whose tag is its own, at least 4 long; 0
+ * when there is none, comparing at most `tries` of them. */
+ZSTD_HOT proven_size_t row_find(proven_zstd_encoder_t *z, const proven_byte_t *base, const proven_byte_t *ip, const proven_byte_t *iend,
+                                proven_size_t low, proven_u32 *off, const unsigned mls, const unsigned rowlog, const bool ahead) {
+    const proven_u32 cur = (proven_u32)(ip - base);
+    const proven_u32 end = (proven_u32)(iend - base);
+    /* A block that ran out of sequences ends early, and the next one starts again from there:
+     * positions from `cur` on may then be in the rows already. */
+    const bool behind = cur < z->next_update;
+    row_update(z, base, cur, end, mls, rowlog, ahead);
+    const proven_u32 h = row_hash(z, base, cur, end, mls, rowlog, ahead), row = h >> 8;
+    const proven_size_t at = (proven_size_t)row << rowlog;
+    const proven_u8 *const tg = z->tags + at;
+    const proven_u32 *const pos = z->hash + at;
+    const unsigned width = 1u << rowlog, head = z->tags[z->hash_size + row];
+    /* Bit j of w[0] (j < 64), or of w[1] (j - 64): slot j's tag is this position's. */
+    proven_u64 w[2] = { 0, 0 };
+    for (unsigned k = 0; k < width; k += 64) {
+        proven_u64 m = 0;
+#if ZSTD_SSE2
+        const __m128i b16 = _mm_set1_epi8((char)(proven_u8)h);
+        for (unsigned j = 0; j < 64 && j < width; j += 16)
+            m |= (proven_u64)(unsigned)_mm_movemask_epi8(_mm_cmpeq_epi8(_mm_loadu_si128((const __m128i *)(const void *)(tg + k + j)), b16)) << j;
+#else
+        const proven_u64 b8 = (proven_u64)(proven_u8)h * 0x0101010101010101ull;
+        for (unsigned j = 0; j < 64 && j < width; j += 8) m |= (proven_u64)tags_eq8(le64(tg + k + j), b8) << j;
+#endif
+        w[k >> 6] = m;
+    }
+    /* Newest first: the slots from the head to the row's end, then those before it - in one word
+     * rotated, or for rows of 128 in three pieces. */
+    proven_u32 cand[128];
+    unsigned nc = 0;
+    const unsigned tries = z->p.tries;
+    if (width <= 64) {
+        proven_u64 m = w[0];
+        if (head) m = (m >> head) | (m << (width - head));
+        if (width < 64) m &= ((proven_u64)1 << width) - 1;
+        for (; m && nc < tries; m &= m - 1) {
+            const proven_u32 idx = pos[(head + ctz64(m)) & (width - 1)];
+            if (idx < low) break;                  /* older still from here on */
+            ZSTD_PREFETCH(base + idx);
+            cand[nc++] = idx;
+        }
+    } else {
+        const unsigned hw = head >> 6;
+        const proven_u64 below = ((proven_u64)1 << (head & 63)) - 1;
+        const proven_u64 seg[3] = { w[hw] & ~below, w[hw ^ 1], w[hw] & below };
+        const unsigned seg_at[3] = { hw << 6, (hw ^ 1) << 6, hw << 6 };
+        for (unsigned g = 0; g < 3; ++g) {
+            for (proven_u64 mm = seg[g]; mm && nc < tries; mm &= mm - 1) {
+                const proven_u32 idx = pos[seg_at[g] + ctz64(mm)];
+                if (idx < low) goto gathered;
+                    ZSTD_PREFETCH(base + idx);
+                cand[nc++] = idx;
+            }
+        }
+    }
+gathered:
+    if (ZSTD_UNLIKELY(behind)) {
+        unsigned k = 0;
+        for (unsigned n = 0; n < nc; ++n) if (cand[n] < cur) cand[k++] = cand[n];
+        nc = k;
+    } else {
+        row_put_h(z, cur, h, rowlog);
+        z->next_update = cur + 1;
+    }
     proven_size_t best = 3;
     const proven_size_t room = (proven_size_t)(iend - ip);
-    for (unsigned n = z->p.tries; n > 0 && idx >= low && idx < cur; --n) {
-        const proven_byte_t *m = base + idx;
-        if (best < room && m[best] == ip[best]) {
-            const proven_size_t len = count_same(ip, m, iend);
+    for (unsigned n = 0; n < nc; ++n) {
+        const proven_byte_t *mp = base + cand[n];
+        if (best < room && mp[best] == ip[best]) {
+            const proven_size_t len = count_same(ip, mp, iend);
             if (len > best) {
                 best = len;
-                *off = cur - idx;
+                *off = cur - cand[n];
                 if (len == room) break;
             }
         }
-        if (idx <= min_chain) break;
-        idx = ch[idx & mask];
     }
     return best >= 4 ? best : 0;
 }
@@ -1143,7 +1269,7 @@ ZSTD_HOT proven_size_t bt_find(proven_zstd_encoder_t *z, const proven_byte_t *ba
     return bt_put(z, base, cur, iend, low, off, mls);
 }
 
-/* ---- Optimal parsing (levels 16 to 19, RFC-0038 Z-3) ----
+/* ---- Optimal parsing (levels 16 to 22, RFC-0038 Z-3, RFC-0052) ----
  *
  * Every match the trees find at a position, and the three repeat offsets, each weighed by what it
  * would cost to write - its offset code and extra bits, its length's, the literal length's of its
@@ -1174,9 +1300,11 @@ static void opt_prices(struct proven_opt *o) {
 static proven_u32 opt_sum(const proven_u32 *t, unsigned n) { proven_u32 s = 0; for (unsigned i = 0; i < n; ++i) s += t[i]; return s; }
 
 /* A block begins: its counts are the last block's scaled down, or - first in the frame - its own
- * bytes' and the predefined distributions'. */
+ * bytes' and the predefined distributions', or a first parse's of the same block whole. */
 static void opt_begin(struct proven_opt *o, const proven_byte_t *src, proven_size_t n) {
-    if (!o->ready) {
+    if (o->seeded) {
+        o->seeded = false;           /* scaled down they price about 0.1 to 0.3 % worse (RFC-0052) */
+    } else if (!o->ready) {
         for (unsigned i = 0; i < 256; ++i) o->lit[i] = 0;
         for (proven_size_t i = 0; i < n; ++i) o->lit[src[i]]++;
         for (unsigned i = 0; i < 256; ++i) o->lit[i] = 1 + (o->lit[i] >> 4);
@@ -1402,11 +1530,11 @@ ZSTD_HOT proven_size_t match_opt(proven_zstd_encoder_t *z, const proven_byte_t *
 /* The cost of an offset in the reference encoder's comparisons: the bits of its offset value. */
 static inline int off_bits(proven_u32 off, bool rep) { return rep ? 0 : (int)highbit32(off + 3); }
 
-/* A hash chain, with a decision put off by `depth` positions: greedy (0) takes the first match
+/* Rows (or, `tree`, binary trees), with a decision put off by `depth` positions: greedy (0) takes the first match
  * found; lazy (1) and lazy2 (2) look one and two bytes on for a better one, weighing length
  * against the offset's bits (the reference encoder's lazy loop). */
 ZSTD_HOT proven_size_t match_lazy_mls(proven_zstd_encoder_t *z, const proven_byte_t *base, proven_size_t start, proven_size_t end,
-                                      proven_size_t low, proven_size_t *last_from, const unsigned mls, const unsigned depth, const bool tree) {
+                                      proven_size_t low, proven_size_t *last_from, const unsigned mls, const unsigned depth, const bool tree, const unsigned rowlog) {
     const proven_byte_t *const iend = base + end, *const lowp = base + low;
     const proven_byte_t *const ilimit = end - start > 8 ? iend - 8 : base + start;
     proven_sink_t k = sink_open(z);
@@ -1426,7 +1554,7 @@ ZSTD_HOT proven_size_t match_lazy_mls(proven_zstd_encoder_t *z, const proven_byt
         }
         {
             proven_u32 o2 = 0;
-            const proven_size_t m2 = tree ? bt_find(z, base, ip, iend, low, &o2, mls) : hc_find(z, base, ip, iend, low, &o2, mls);
+            const proven_size_t m2 = tree ? bt_find(z, base, ip, iend, low, &o2, mls) : row_find(z, base, ip, iend, low, &o2, mls, rowlog, depth > 0);
             if (m2 > ml) { ml = m2; off = o2; rep = false; st = ip; }
         }
         if (ml < 4) {
@@ -1442,7 +1570,7 @@ ZSTD_HOT proven_size_t match_lazy_mls(proven_zstd_encoder_t *z, const proven_byt
                 if (g2 > g1) { ml = mr; off = r0; rep = true; st = ip; }
             }
             proven_u32 o2 = 0;
-            const proven_size_t m2 = tree ? bt_find(z, base, ip, iend, low, &o2, mls) : hc_find(z, base, ip, iend, low, &o2, mls);
+            const proven_size_t m2 = tree ? bt_find(z, base, ip, iend, low, &o2, mls) : row_find(z, base, ip, iend, low, &o2, mls, rowlog, depth > 0);
             if (m2 >= 4) {
                 const int g2 = (int)m2 * 4 - off_bits(o2, false), g1 = (int)ml * 4 - off_bits(off, rep) + extra;
                 if (g2 > g1) { ml = m2; off = o2; rep = false; st = ip; d = 0; continue; }   /* a better match: look on from it */
@@ -1467,22 +1595,57 @@ ZSTD_HOT proven_size_t match_lazy_mls(proven_zstd_encoder_t *z, const proven_byt
     return full ? (proven_size_t)(anchor - base) : end;
 }
 
+/* From LEVEL_TWO_PASS on, a frame's first block is parsed once only to learn what it costs to write -
+ * its statistics then price the real parse, which otherwise starts from the block's bytes and the
+ * predefined distributions (libzstd's btultra2: about half a percent on that block, twice its time).
+ * Only where the tables hold nothing from before the block: no dictionary, the frame's start. What the
+ * first parse wrote is dropped, and what it put in the tables taken out again - every entry it wrote
+ * is a position of the block, so the positions it reached find them all - so that the second parse
+ * sees the tables as the first did. */
+static void opt_first_pass(proven_zstd_encoder_t *z, const proven_byte_t *base, proven_size_t start, proven_size_t end, proven_size_t low) {
+    const proven_u32 rep[3] = { z->rep[0], z->rep[1], z->rep[2] };
+    const proven_size_t nseq = z->nseq, nlit = z->nlit;
+    proven_size_t lf = 0;
+    (void)match_opt(z, base, start, end, low, &lf);
+    z->nseq = nseq; z->nlit = nlit;
+    z->rep[0] = rep[0]; z->rep[1] = rep[1]; z->rep[2] = rep[2];
+    struct proven_opt *const o = z->optp;
+    const proven_u32 upto = z->next_update, nodes = (proven_u32)(z->hash2_size / 2);
+    for (proven_u32 i = (proven_u32)start; i < upto; ++i) z->hash[hash_at(base + i, z->p.hlog, z->p.mls)] = 0;
+    if (upto - (proven_u32)start >= nodes) { for (proven_size_t i = 0; i < z->hash2_size; ++i) z->hash2[i] = 0; }
+    else for (proven_u32 i = (proven_u32)start; i < upto; ++i) { z->hash2[2 * (i & (nodes - 1))] = 0; z->hash2[2 * (i & (nodes - 1)) + 1] = 0; }
+    for (proven_u32 i = (proven_u32)start; i < o->h3_next; ++i)
+        o->h3[(((proven_u32)base[i] | (proven_u32)base[i + 1] << 8 | (proven_u32)base[i + 2] << 16) * 506832829u) >> (32 - o->h3_log)] = 0;
+    z->next_update = (proven_u32)start;
+    o->h3_next = (proven_u32)start;
+    o->seeded = true;
+}
+
 ZSTD_HOT proven_size_t match_block(proven_zstd_encoder_t *z, const proven_byte_t *base, proven_size_t start, proven_size_t end, proven_size_t low, proven_size_t *last_from) {
+    if (z->p.strategy == 4 && z->opt.level >= LEVEL_TWO_PASS && z->fresh && !z->optp->ready && !z->cd && start == 0) opt_first_pass(z, base, start, end, low);
     z->fresh = false;
     if (z->p.strategy == 0) {
         return match_fast_mls(z, base, start, end, low, last_from, 6);
     }
     if (z->p.strategy == 2) {
-        const unsigned m4 = z->p.mls == 4;
-        switch (z->p.depth) {
-            case 0: return m4 ? match_lazy_mls(z, base, start, end, low, last_from, 4, 0, false) : match_lazy_mls(z, base, start, end, low, last_from, 5, 0, false);
-            case 1: return m4 ? match_lazy_mls(z, base, start, end, low, last_from, 4, 1, false) : match_lazy_mls(z, base, start, end, low, last_from, 5, 1, false);
-            default: return m4 ? match_lazy_mls(z, base, start, end, low, last_from, 4, 2, false) : match_lazy_mls(z, base, start, end, low, last_from, 5, 2, false);
+        /* The matcher compiled for each depth, hash length and row size the levels have (4 and 5,
+         * 6, 7, 8, 9, 10, 11 and 12), and once for any other. */
+#define ZSTD_ROWS(d, m, r) match_lazy_mls(z, base, start, end, low, last_from, m, d, false, r)
+        switch (z->p.depth * 100 + z->p.mls * 10 + z->rowlog) {
+            case 54: return ZSTD_ROWS(0, 5, 4);
+            case 154: return ZSTD_ROWS(1, 5, 4);
+            case 254: return ZSTD_ROWS(2, 5, 4);
+            case 255: return ZSTD_ROWS(2, 5, 5);
+            case 245: return ZSTD_ROWS(2, 4, 5);
+            case 246: return ZSTD_ROWS(2, 4, 6);
+            case 247: return ZSTD_ROWS(2, 4, 7);
+            default: return match_lazy_mls(z, base, start, end, low, last_from, z->p.mls, z->p.depth, false, z->rowlog);
         }
+#undef ZSTD_ROWS
     }
     if (z->p.strategy == 4) return match_opt(z, base, start, end, low, last_from);
     if (z->p.strategy == 3) {
-        return z->p.mls == 4 ? match_lazy_mls(z, base, start, end, low, last_from, 4, 2, true) : match_lazy_mls(z, base, start, end, low, last_from, 5, 2, true);
+        return z->p.mls == 4 ? match_lazy_mls(z, base, start, end, low, last_from, 4, 2, true, 0) : match_lazy_mls(z, base, start, end, low, last_from, 5, 2, true, 0);
     }
     return z->p.mls == 5 ? match_double_mls(z, base, start, end, low, last_from, 5) : match_double_mls(z, base, start, end, low, last_from, 6);
 }
@@ -1644,8 +1807,10 @@ static int choose_table(proven_zstd_encoder_t *z, int kind, const proven_u32 *co
         c_new = fse_cost(count, maxsym, norm, maxsym + 1, log);
         c_new += (proven_u64)k * 8 * 256;
     }
-    if (c_def <= c_new && c_def <= c_old) { *use = def; *next = 2; return 0; }
-    if (c_old <= c_new) { *use = old; return 3; }
+    /* ~0: the table cannot say every symbol (the predefined offsets stop at code 28, a window of
+     * 2^29 or more needs more). */
+    if (c_def != ~(proven_u64)0 && c_def <= c_new && c_def <= c_old) { *use = def; *next = 2; return 0; }
+    if (c_old != ~(proven_u64)0 && c_old <= c_new) { *use = old; return 3; }
     if (k == 0) return -1;
     fse_tab_build(&e->tab[kind][slot], norm, maxsym + 1, log);
     *dlen = k;
@@ -2007,12 +2172,15 @@ static void slide(proven_zstd_encoder_t *z) {
     z->fill -= shift;
     z->dict_at = 0;
     const proven_u32 s = (proven_u32)shift;
-    if (z->p.strategy >= 2) {
-        /* The chain is indexed by position modulo its size, the trees by twice that: what was at p
-         * is now at p - s. Rotate left by s (two links a position for the trees), in place (three
-         * reversals). */
+    if (z->p.strategy == 2) {
+        z->next_update = z->next_update > s ? z->next_update - s : 0;
+        for (int i = 0; i < 8; ++i) z->hc_pos[i] = NONE;
+    }
+    if (z->p.strategy >= 3) {
+        /* The trees are indexed by twice the position modulo their size: what was at p is now at
+         * p - s. Rotate left by 2 s, in place (three reversals). */
         proven_u32 *c = z->hash2;
-        const proven_size_t n = z->hash2_size, r = (z->p.strategy >= 3 ? 2 * shift : shift) & (n - 1);
+        const proven_size_t n = z->hash2_size, r = (2 * shift) & (n - 1);
         for (int part = 0; part < 3; ++part) {
             proven_size_t a = part == 1 ? r : 0, b = part == 0 ? r : n;
             while (a + 1 < b) { const proven_u32 t = c[a]; c[a] = c[b - 1]; c[b - 1] = t; a++; b--; }
@@ -2033,11 +2201,17 @@ static void slide(proven_zstd_encoder_t *z) {
 }
 
 /* Compress from `pos` as far as `upto`, the last block marked if asked, into `pend`. */
-/* The dictionary's content in `base` + [0, n): its positions put in the hash tables of levels 1 to 3
- * (the chains and trees of 4 and up take them as they go, from `next_update`). */
+/* The dictionary's content in `base` + [0, n): its positions put in the hash tables of levels 1 to 12
+ * (the trees of 13 and up take them as they go, from `next_update`). */
 static void dict_load(proven_zstd_encoder_t *z, const proven_byte_t *base, proven_size_t n) {
     z->fresh = false;
     z->dict_at = n;
+    if (z->p.strategy == 2) {
+        /* Every position of the dictionary into the rows (a search would put in only some). */
+        for (proven_u32 p = 0; p + 8 <= n; ++p) row_put(z, base, p, z->p.mls, z->rowlog);
+        z->next_update = n >= 8 ? (proven_u32)n - 7 : 0;
+        return;
+    }
     if (n < 8 || z->p.strategy > 1) return;
     const unsigned hlog = z->p.hlog, clog = z->p.clog, mls = z->p.mls;
     for (proven_size_t p = 0; p + 8 <= n; ++p) {
