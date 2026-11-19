@@ -1479,7 +1479,9 @@ int proven_float_scaled_round_sig_digits(double value, int sig_digits, char *out
     int iter;
     int nd;
 
-    if (!out || !decimal_exp || sig_digits < 1 || out_cap < (proven_size_t)sig_digits + 1u) {
+    /* Room for one digit more than asked and the NUL: the division below writes sig + 1 digits
+     * whenever the exponent's seed is one too low (10, 100, ...), not only on a rounding carry. */
+    if (!out || !decimal_exp || sig_digits < 1 || out_cap < (proven_size_t)sig_digits + 2u) {
         return -1;
     }
 

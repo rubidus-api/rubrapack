@@ -219,9 +219,8 @@ static void chacha_set_key(proven_chacha_rng_t *g, const proven_byte_t k[32]) {
  * first 32 bytes are the next key, the counter moves past it, and it is wiped. Every MiB, with
  * the option, 32 bytes from the entropy source are mixed in (XOR: as good as the better of the
  * two); a source that fails is skipped. */
-static void chacha_rekey_from(proven_chacha_rng_t *g, proven_byte_t kb[64]) {
-    chacha_set_key(g, kb);
-    chacha_step(g, 1);
+/* With CHACHA_MIB, at each MiB of keystream - the key block just stepped past - new entropy into the key. */
+static void chacha_mib_mix(proven_chacha_rng_t *g) {
     if ((g->seeded & CHACHA_MIB) && g->state[12] % CHACHA_MIB_BLOCKS == 0) {
         proven_byte_t e[32];
         if (proven_random_bytes(e, sizeof e)) {
@@ -231,6 +230,12 @@ static void chacha_rekey_from(proven_chacha_rng_t *g, proven_byte_t kb[64]) {
         }
         secure_zero(e, sizeof e);
     }
+}
+
+static void chacha_rekey_from(proven_chacha_rng_t *g, proven_byte_t kb[64]) {
+    chacha_set_key(g, kb);
+    chacha_step(g, 1);
+    chacha_mib_mix(g);
     secure_zero(kb, 64);
 }
 
@@ -386,12 +391,9 @@ void proven_chacha_rng_fill(proven_chacha_rng_t *g, void *buf, proven_size_t len
             chacha_step(g, CHACHA_EPOCH - 1);
             chacha_set_key(g, p + 64 * (CHACHA_EPOCH - 1));
             chacha_step(g, 1);
-            if ((g->seeded & CHACHA_MIB) && g->state[12] % CHACHA_MIB_BLOCKS == 0) {
-                proven_byte_t kb[64];
-                for (int i = 0; i < 64; ++i) kb[i] = p[64 * (CHACHA_EPOCH - 1) + i];
-                g->state[12] -= 1;                                          /* chacha_rekey_from steps past it again */
-                chacha_rekey_from(g, kb);
-            }
+            /* As chacha_rekey_from, without a second step: stepping back and again would carry
+             * into word 13 twice where word 12 has just wrapped. */
+            chacha_mib_mix(g);
             p += 64 * (CHACHA_EPOCH - 1);
             len -= 64 * (CHACHA_EPOCH - 1);
         } else if (pos == 0 && w >= 8 && len >= 64 * (CHACHA_EPOCH - 1)) {

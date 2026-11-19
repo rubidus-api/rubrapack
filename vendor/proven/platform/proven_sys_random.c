@@ -189,9 +189,10 @@ int proven_sys_chacha_keystream_width(void) {
     return w;
 }
 
+/* Wide stores and a barrier that says the memory is read, as random.c's secure_zero: the stores
+ * stay, and are not a byte at a time where the compiler does not widen a loop (-O0). */
 static void ks_forget(void *p, size_t n) {
-    unsigned char *b = (unsigned char *)p;
-    for (size_t i = 0; i < n; ++i) b[i] = 0;
+    __builtin_memset(p, 0, n);
     __asm__ __volatile__("" : : "r"(p) : "memory");
 }
 
@@ -313,9 +314,10 @@ void proven_sys_chacha_keystream(const uint32_t state[16], uint8_t *out, size_t 
 
 int proven_sys_chacha_keystream_width(void) { return 4; }
 
+/* Wide stores and a barrier that says the memory is read, as random.c's secure_zero: the stores
+ * stay, and are not a byte at a time where the compiler does not widen a loop (-O0). */
 static void ks_forget(void *p, size_t n) {
-    unsigned char *b = (unsigned char *)p;
-    for (size_t i = 0; i < n; ++i) b[i] = 0;
+    __builtin_memset(p, 0, n);
     __asm__ __volatile__("" : : "r"(p) : "memory");
 }
 
