@@ -57,7 +57,7 @@ target = "file:Hello"
 | (none) | Windows Installer's own small progress window only | a small window: repair or remove |
 | `basic` | progress, then finished (or an error) | repair or remove |
 | `minimal` | welcome, the license (if any), progress, finished | repair or remove |
-| `installdir` | welcome, license, install folder (with a folder browser), ready, progress, finished | repair or remove |
+| `installdir` | welcome, license, install folder (Browse opens Windows' folder picker), ready, progress, finished | repair or remove |
 | `features` | as `installdir`, plus a tree of features and the disk space they need (chapter 8) | change, repair or remove |
 
 A package with optional parts (chapter 8) has Change in every row but the first.
@@ -84,9 +84,12 @@ The license text is stored in the package when it is built; the user does not ne
 
 ## The install folder
 
-With `installdir` or `features`, a page shows the install folder with a Change button that opens a
-folder browser. The folder the user picks becomes `INSTALLDIR`, and every dir built on
-`INSTALLDIR` moves with it. To let the user change another dir, name it: `install-dir = "AppDir"`
+With `installdir` or `features`, a page shows the install folder, which the user may type, and a
+**Browse...** button that opens Windows' own folder picker - the window Explorer uses, with its
+address bar, folder tree, search and New folder. The product's folder name is added to the folder
+picked, unless it already ends in it: picking `D:\Apps` gives `D:\Apps\Hello\` (the folder box takes
+any other path as typed). The folder becomes `INSTALLDIR`, and every dir built on `INSTALLDIR`
+moves with it. Where the picker cannot be shown, the page opens a browse page of its own instead. To let the user change another dir, name it: `install-dir = "AppDir"`
 in `[ui]`. From the command line the folder is given as a property:
 
 ```text

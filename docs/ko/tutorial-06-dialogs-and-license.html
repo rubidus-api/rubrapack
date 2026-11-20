@@ -52,7 +52,7 @@ name = "Hello"
 target = "file:Hello"</code></pre>
 <h3 id="페이지-세트-고르기-ui">6.2 페이지 세트 고르기: <code>ui</code><a class="plink" href="#페이지-세트-고르기-ui" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p><code>[package]</code> 의 <code>ui</code> 는 내장 대화창 세트 하나를 고른다:</p>
-<div class="tblwrap"><table class="key"><tr><th><code>ui</code></th><th>설치할 때</th><th>설치 뒤 다시 실행할 때</th></tr><tr><td>(없음)</td><td>Windows Installer 자체의 작은 진행 창만</td><td>작은 창: 복구 또는 제거</td></tr><tr><td><code>basic</code></td><td>진행, 그다음 완료(또는 오류)</td><td>복구 또는 제거</td></tr><tr><td><code>minimal</code></td><td>환영, 약관(있으면), 진행, 완료</td><td>복구 또는 제거</td></tr><tr><td><code>installdir</code></td><td>환영, 약관, 설치 폴더(폴더 찾아보기 포함), 준비, 진행, 완료</td><td>복구 또는 제거</td></tr><tr><td><code>features</code></td><td><code>installdir</code> 과 같고, 기능 트리와 그것이 필요로 하는 디스크 공간이 더해진다(8장)</td><td>변경, 복구, 제거</td></tr></table></div>
+<div class="tblwrap"><table class="key"><tr><th><code>ui</code></th><th>설치할 때</th><th>설치 뒤 다시 실행할 때</th></tr><tr><td>(없음)</td><td>Windows Installer 자체의 작은 진행 창만</td><td>작은 창: 복구 또는 제거</td></tr><tr><td><code>basic</code></td><td>진행, 그다음 완료(또는 오류)</td><td>복구 또는 제거</td></tr><tr><td><code>minimal</code></td><td>환영, 약관(있으면), 진행, 완료</td><td>복구 또는 제거</td></tr><tr><td><code>installdir</code></td><td>환영, 약관, 설치 폴더(찾아보기는 Windows 의 폴더 선택 창), 준비, 진행, 완료</td><td>복구 또는 제거</td></tr><tr><td><code>features</code></td><td><code>installdir</code> 과 같고, 기능 트리와 그것이 필요로 하는 디스크 공간이 더해진다(8장)</td><td>변경, 복구, 제거</td></tr></table></div>
 <p>선택 부분이 있는 패키지(8장)는 첫 줄만 빼고 모든 줄에 변경이 있다.</p>
 <p>설치 단추 바로 앞의 준비 페이지는 고른 것을 다시 보여 준다: 설치 폴더, 이 컴퓨터의 모든 사람을 위해 설치하는지 사용자 혼자를 위해 설치하는지, 그리고 고를 기능이 있으면 설치될 기능(다섯 개까지는 이름으로, 그 뒤로는 몇 개 더인지). 디스크 공간이 모자라는 동안에는 설치 단추가 받아들여지지 않는다.</p>
 <p>어느 세트에나 무슨 일이 생겼을 때 Windows 가 필요로 하는 페이지도 있다: "정말 취소하겠습니까?", 오류 메시지, "이 프로그램들이 바꿔야 할 파일을 쓰고 있습니다"(사용 중인 파일), "디스크 공간 부족". 대화창이 있는 패키지도 <code>/qn</code> 으로 조용히 설치된다: 모든 페이지는 기본값이 있는 값만 모으기 때문이다.</p>
@@ -61,7 +61,7 @@ target = "file:Hello"</code></pre>
 <ul><li><code>.txt</code> 또는 <code>.md</code> - 평문으로 보인다. 한국어, 다른 글자, 이모지도 그대로다.</li><li><code>.rtf</code> - 글꼴과 서식을 그대로 보인다(워드패드나 Word 로 만든다).</li></ul>
 <p>약관 글은 빌드할 때 패키지 안에 저장되므로 사용자에게 그 파일이 필요하지 않다.</p>
 <h3 id="설치-폴더">6.4 설치 폴더<a class="plink" href="#설치-폴더" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
-<p><code>installdir</code> 이나 <code>features</code> 에서는 설치 폴더와, 폴더 찾아보기를 여는 변경 단추가 있는 페이지가 보인다. 사용자가 고른 폴더가 <code>INSTALLDIR</code> 이 되고, <code>INSTALLDIR</code> 위에 쌓은 dir 은 모두 함께 옮겨 간다. 다른 dir 을 바꾸게 하려면 이름을 댄다: <code>[ui]</code> 의 <code>install-dir = "AppDir"</code>. 명령줄에서는 폴더를 속성으로 준다:</p>
+<p><code>installdir</code> 이나 <code>features</code> 에서는 설치 폴더(직접 쓸 수도 있다)와 <strong>찾아보기...</strong> 단추가 있는 페이지가 보인다. 단추는 Windows 자신의 폴더 선택 창 - 탐색기가 쓰는 창으로, 주소 표시줄, 폴더 트리, 검색, 새 폴더가 있다 - 을 연다. 고른 폴더가 제품 폴더 이름으로 끝나지 않으면 그 이름이 붙는다: <code>D:\Apps</code> 를 고르면 <code>D:\Apps\Hello\</code>(다른 경로는 폴더 칸에 그대로 쓰면 된다). 그 폴더가 <code>INSTALLDIR</code> 이 되고, <code>INSTALLDIR</code> 위에 쌓은 dir 은 모두 함께 옮겨 간다. 폴더 선택 창을 띄울 수 없는 곳에서는 페이지가 자기 찾아보기 페이지를 대신 연다. 다른 dir 을 바꾸게 하려면 이름을 댄다: <code>[ui]</code> 의 <code>install-dir = "AppDir"</code>. 명령줄에서는 폴더를 속성으로 준다:</p>
 <pre><code class="lang-text">msiexec /i hello.msi INSTALLDIR="D:\Tools\Hello"</code></pre>
 <h3 id="위쪽의-그림-banner">6.5 위쪽의 그림: <code>banner</code><a class="plink" href="#위쪽의-그림-banner" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p><code>banner = "banner.bmp"</code> 는 안쪽 페이지마다 위쪽 띠에 그림을 넣는다(Windows Installer 는 BMP 를 그린다. 약 493 x 58 픽셀). 없으면 띠는 그냥 흰색이다.</p>

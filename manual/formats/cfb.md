@@ -118,8 +118,8 @@ crashes the reader.
 
 ## Worked example: the tutorial's hello.msi
 
-The first package of the tutorial (chapter 2), built with `--reproducible`, is 352256 bytes: the
-header sector and 85 sectors of 4096 bytes. Its header:
+The first package of the tutorial (chapter 2), built with `--reproducible`, is 356352 bytes: the
+header sector and 86 sectors of 4096 bytes. Its header:
 
 | Offset | Bytes | Field | Value |
 |---|---|---|---|
@@ -224,9 +224,10 @@ The sectors, and the FAT entry of each (the next sector of its chain):
 | 79 | `0x50000` | 80 | `Binary.RpCa` |
 | 80 | `0x51000` | 81 | `Binary.RpCa` |
 | 81 | `0x52000` | 82 | `Binary.RpCa` |
-| 82 | `0x53000` | `FFFFFFFE` | `Binary.RpCa` |
-| 83 | `0x54000` | 84 | `cab1.cab` |
-| 84 | `0x55000` | `FFFFFFFE` | `cab1.cab` |
+| 82 | `0x53000` | 83 | `Binary.RpCa` |
+| 83 | `0x54000` | `FFFFFFFE` | `Binary.RpCa` |
+| 84 | `0x55000` | 85 | `cab1.cab` |
+| 85 | `0x56000` | `FFFFFFFE` | `cab1.cab` |
 
 The root directory entry, the first 128 bytes of sector 1:
 

@@ -89,6 +89,7 @@
 #include "../clean/purge_rule.h"
 #include "rp_appx.h"
 #include "rp_ask.h"
+#include "rp_browse.h"
 #include "rp_wstr.h"
 
 // rubrapack_clean.exe for this architecture, as a byte array (written by `nob parts`).
@@ -3947,6 +3948,144 @@ __declspec(dllexport) UINT __stdcall RpReport(MSIHANDLE h) {
     }
     if (diff.buf) HeapFree(GetProcessHeap(), 0, diff.buf);
     HeapFree(GetProcessHeap(), 0, data);
+    return ERROR_SUCCESS;
+}
+
+// ---- the install folder page's Browse: Windows' folder picker (RFC-0033) -------------------------------
+//
+// RpBrowseFolder (immediate, DoAction on Browse): shows Windows' own folder picker (IFileOpenDialog,
+// FOS_PICKFOLDERS - Explorer's window) over the installer's page, starting at the nearest existing
+// folder of the current one, and leaves the install folder in RP_BROWSE_PATH: the folder chosen,
+// with the product's folder name (RP_BROWSE_LEAF) added unless it ends in it (rp_browse.h), and a
+// '\' at the end. Cancel leaves RP_BROWSE_PATH empty. Anything that keeps the picker from showing
+// sets RP_BROWSE_FAILED = "1": the page then opens its own browse page (RpBrowseDlg) instead.
+// The picker runs on a thread of its own, made a single-threaded COM apartment there, whatever the
+// action server's thread is.
+
+static const GUID rp_clsid_file_open = { 0xdc1c5a9c, 0xe88a, 0x4dde, { 0xa5, 0xa1, 0x60, 0xf8, 0x2a, 0x20, 0xae, 0xf7 } };
+static const GUID rp_iid_file_open = { 0xd57c7288, 0xd4ad, 0x4768, { 0xbe, 0x02, 0x9d, 0x96, 0x95, 0x32, 0xd9, 0x60 } };
+static const GUID rp_iid_shell_item = { 0x43826d1e, 0xe718, 0x42ee, { 0xbc, 0x55, 0xa1, 0xe2, 0x61, 0xc3, 0x7b, 0xfe } };
+
+typedef struct {
+    HWND           owner;
+    const wchar_t *title, *start;      // start: an existing folder, or NULL
+    wchar_t        picked[32768];
+    int            result;             // 1 chosen, 0 cancelled, -1 the picker failed
+    HRESULT        hr;
+} rp_pick_t;
+
+static DWORD WINAPI rp_pick_thread(void *arg) {
+    rp_pick_t *p = arg;
+    p->result = -1;
+    p->hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    if (FAILED(p->hr)) return 0;
+    IFileOpenDialog *d = NULL;
+    p->hr = CoCreateInstance(&rp_clsid_file_open, NULL, CLSCTX_INPROC_SERVER, &rp_iid_file_open, (void **)&d);
+    if (SUCCEEDED(p->hr)) {
+        FILEOPENDIALOGOPTIONS o = 0;
+        d->lpVtbl->GetOptions(d, &o);
+        d->lpVtbl->SetOptions(d, o | FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST | FOS_NOCHANGEDIR | FOS_DONTADDTORECENT);
+        if (p->title && p->title[0]) d->lpVtbl->SetTitle(d, p->title);
+        IShellItem *at = NULL;
+        if (p->start && SUCCEEDED(SHCreateItemFromParsingName(p->start, NULL, &rp_iid_shell_item, (void **)&at))) {
+            d->lpVtbl->SetFolder(d, at);
+            at->lpVtbl->Release(at);
+        }
+        p->hr = d->lpVtbl->Show(d, p->owner);
+        if (p->hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
+            p->result = 0;
+        } else if (SUCCEEDED(p->hr)) {
+            IShellItem *it = NULL;
+            wchar_t *path = NULL;
+            p->hr = d->lpVtbl->GetResult(d, &it);
+            if (SUCCEEDED(p->hr)) p->hr = it->lpVtbl->GetDisplayName(it, SIGDN_FILESYSPATH, &path);
+            if (SUCCEEDED(p->hr) && path && rp_wcpy(p->picked, sizeof p->picked / sizeof *p->picked, path)) p->result = 1;
+            if (path) CoTaskMemFree(path);
+            if (it) it->lpVtbl->Release(it);
+        }
+        d->lpVtbl->Release(d);
+    }
+    CoUninitialize();
+    return 0;
+}
+
+// The installer's page in front: a visible MsiDialog window titled with the product's name.
+typedef struct {
+    const wchar_t *title;
+    HWND           found;
+} rp_page_t;
+
+static BOOL CALLBACK rp_find_page(HWND w, LPARAM lp) {
+    rp_page_t *f = (rp_page_t *)lp;
+    wchar_t cls[40], title[300];
+    if (!IsWindowVisible(w) || GetClassNameW(w, cls, 40) == 0 || !rp_wistarts(cls, L"MsiDialog")) return TRUE;
+    title[0] = 0;
+    GetWindowTextW(w, title, 300);
+    if (f->title && f->title[0] && !rp_weq(title, f->title)) return TRUE;
+    f->found = w;
+    return FALSE;
+}
+
+__declspec(dllexport) UINT __stdcall RpBrowseFolder(MSIHANDLE h) {
+    MsiSetPropertyW(h, L"RP_BROWSE_PATH", L"");
+    MsiSetPropertyW(h, L"RP_BROWSE_FAILED", L"");
+    wchar_t *dir = get_property(h, L"RP_BROWSE_DIR"), *leaf = get_property(h, L"RP_BROWSE_LEAF");
+    wchar_t *title_fmt = get_property(h, L"RP_BROWSE_TITLE"), *product = get_property(h, L"ProductName");
+    wchar_t *current = dir && dir[0] ? get_property(h, dir) : NULL;
+    wchar_t *title = title_fmt && title_fmt[0] ? format_text(h, title_fmt) : NULL;
+    rp_pick_t *p = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof *p);
+    static wchar_t start[32768];
+    bool failed = p == NULL || dir == NULL || dir[0] == 0;
+    if (!failed) {
+        // The nearest folder of the current one that exists (a new install folder does not yet).
+        start[0] = 0;
+        if (current && rp_wcpy(start, sizeof start / sizeof *start, current)) {
+            for (;;) {
+                DWORD a = GetFileAttributesW(start);
+                if (a != INVALID_FILE_ATTRIBUTES && (a & FILE_ATTRIBUTE_DIRECTORY)) break;
+                size_t n = rp_wlen(start);
+                while (n > 3 && start[n - 1] == L'\\') start[--n] = 0;
+                wchar_t *cut = rp_wrchr(start, L'\\');
+                if (cut == NULL || n <= 3) {
+                    start[0] = 0;
+                    break;
+                }
+                cut[cut - start == 2 ? 1 : 0] = 0;         // "C:\x" -> "C:\"
+            }
+        }
+        rp_page_t page = { .title = product };
+        EnumWindows(rp_find_page, (LPARAM)&page);
+        p->owner = page.found;
+        p->title = title ? title : NULL;
+        p->start = start[0] ? start : NULL;
+        HANDLE t = CreateThread(NULL, 0, rp_pick_thread, p, 0, NULL);
+        if (t == NULL) {
+            failed = true;
+        } else {
+            WaitForSingleObject(t, INFINITE);
+            CloseHandle(t);
+            if (p->result < 0) failed = true;
+        }
+    }
+    if (!failed && p->result == 1) {
+        static wchar_t out[32768];
+        if (rp_browse_compose(p->picked, leaf ? leaf : L"", out, sizeof out / sizeof *out)) {
+            MsiSetPropertyW(h, L"RP_BROWSE_PATH", out);
+            log_line(h, L"rubrapack: browse: %.900ls", out);
+        }
+    } else if (!failed) {
+        log_line(h, L"rubrapack: browse: cancelled");
+    }
+    if (failed) {
+        MsiSetPropertyW(h, L"RP_BROWSE_FAILED", L"1");
+        log_line(h, L"rubrapack: browse: the folder picker could not be shown (0x%08lx): the page's own browse page instead",
+                 (unsigned long)(p ? p->hr : 0));
+    }
+    wchar_t *all[] = { dir, leaf, title_fmt, product, current, title };
+    for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
+        if (all[i]) HeapFree(GetProcessHeap(), 0, all[i]);
+    }
+    if (p) HeapFree(GetProcessHeap(), 0, p);
     return ERROR_SUCCESS;
 }
 

@@ -71,6 +71,7 @@ typedef struct {
     const rp_ui_control_image_t *billboard_images;  // RFC-0031 B10: one per [billboard.*] (control_id = billboard ID)
     size_t         billboard_image_count;
     bool ready_features;        // the helper DLL is in the package and the ready page lists the features (rp_ui_ready_features)
+    bool browse_folder;         // the helper DLL is in the package and Browse opens Windows' folder picker (RFC-0033)
 } rp_ui_input_t;
 
 // Builds the tables for ir->ui (RP_UI_BASIC..RP_UI_FEATURES) in English, with ir->ui_texts
@@ -108,6 +109,10 @@ bool rp_ui_wipes_dir(const rp_ir_t *ir, const char *id);
 // The ready page can list the features to install (the helper's RpReadySummary): a page set that
 // shows the install folder, with features to choose. The caller adds the helper DLL for it.
 bool rp_ui_ready_features(const rp_ir_t *ir);
+
+// The install folder page's Browse opens Windows' folder picker (the helper's RpBrowseFolder,
+// RFC-0033): a set with that page. The caller adds the helper DLL for it.
+bool rp_ui_browse_folder(const rp_ir_t *ir);
 
 // A typeface name as the license text's RTF can name it: an ASCII name as it is, the local name of
 // a common Korean, Japanese or Chinese face as its English one ("맑은 고딕" -> "Malgun Gothic"), else

@@ -1373,7 +1373,7 @@ only Windows Installer's own progress bar.
 | `none` | Windows Installer's progress bar | a small window: Repair, Remove or Cancel |
 | `basic` | progress, then finished (or error) | change (with features to choose), repair or remove |
 | `minimal` | welcome, the license if there is one, progress, finished | change (with features to choose), repair or remove |
-| `installdir` | welcome, license, install folder (with a folder browser), ready, progress, finished | change (with features to choose), repair or remove |
+| `installdir` | welcome, license, install folder (Browse opens Windows' folder picker), ready, progress, finished | change (with features to choose), repair or remove |
 | `features` | as `installdir`, plus a page of features (check boxes; the feature tree when they do not fit) and the disk space they need | change, repair or remove |
 
 "Already installed" is the same package opened again (a double click, `msiexec /i`, or Modify in

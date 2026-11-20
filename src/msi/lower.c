@@ -660,7 +660,7 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, any_purge, any_others, cleanup, preflight, reg_bad, menu, maintain, details, report, ready;
+    bool             any_write, any_remove, any_qword, any_rplan, any_purge, any_others, cleanup, preflight, reg_bad, menu, maintain, details, report, ready, browse;
     bool             extra;            // the preflight looks for what was not installed in the product's folders (extra-files)
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
@@ -1548,9 +1548,11 @@ static void lower_helper_actions(pkg_t *pk) {
     // The ready page's list of the features to install, put there by the helper's RpReadySummary.
     bool ready = rp_ui_ready_features(ir) && !ir->module && part_len > 0;
     pk->ready = ready;
+    bool browse = rp_ui_browse_folder(ir) && !ir->module && part_len > 0;      // RFC-0033
+    pk->browse = browse;
     // RFC-0028: past RP_UI_LANG_ACTIONS the dialogs' texts are put in place by RpLangApply (ui.c).
     bool lang_table = ir->ui != RP_UI_NONE && ir->ui_lang_count > RP_UI_LANG_ACTIONS;
-    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain || details || ready || lang_table || report) {
+    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain || details || ready || browse || lang_table || report) {
         if (part_len == 0) {
             rp_srcdiag_add(diags, ((rp_pos_t){ 1, 1 }), "RP1901", false,
                            "{} needs resources/bin/rubrapack_ca-{}.dll, which this rubrapack was built without",
@@ -2893,7 +2895,7 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
     }
     if (err == PROVEN_OK) {
         rp_ui_input_t in = { dkey(ir, RP_V(ir->ui_install_dir.ptr ? rp_cs(ir->ui_install_dir) : "INSTALLDIR")), pk->rtf, rtf_len, pk->banner, banner_len,
-                             { 0 }, { 0 }, pk->details, pk->any_purge, pk->ctl_imgs, pk->nctl_img, pk->bb_imgs, pk->nbb_img, pk->ready };
+                             { 0 }, { 0 }, pk->details, pk->any_purge, pk->ctl_imgs, pk->nctl_img, pk->bb_imgs, pk->nbb_img, pk->ready, pk->browse };
         for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) {
             in.license_rtf_by_lang[li] = pk->lang_rtf[li];
             in.license_len_by_lang[li] = lang_rtf_len[li];

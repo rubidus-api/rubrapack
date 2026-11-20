@@ -328,6 +328,7 @@ typedef struct {
     bool               page;            // ... and the language page leads the flow
     bool               act;             // the status line's texts are the package's (ActionText)
     bool               ready_features;  // the ready page lists the features to install (RpReadySummary)
+    bool               browse_folder;   // Browse opens Windows' folder picker (RpBrowseFolder, RFC-0033)
     const char        *end_when;        // the condition of a last page's EndDialog (buttons), or NULL
     bool               details;         // the progress page has its details box (the helper DLL is there)
     bool               details_dll;     // the helper DLL is in the package (RP_DirCheck can be called)
@@ -991,6 +992,8 @@ static bool choosable(const rp_ir_t *ir) {
     return false;
 }
 
+bool rp_ui_browse_folder(const rp_ir_t *ir) { return ir->ui >= RP_UI_INSTALLDIR; }
+
 bool rp_ui_ready_features(const rp_ir_t *ir) {
     return ir->ui >= RP_UI_INSTALLDIR && (ir->ui == RP_UI_FEATURES || choosable(ir));
 }
@@ -1078,8 +1081,19 @@ static void installdir_dlg(ctx_t *c, const char *back, const char *next, const c
     control(c, d, "Label", "Text", 20, 60, 330, 12, VIS, NULL, T(c, "DirLabel"), NULL);
     control(c, d, "Path", "PathEdit", 20, 75, 330, 18, VIS | EN | SUNKEN, dir, NULL, "Browse");
     control(c, d, "Browse", "PushButton", 20, 98, 70, 17, VIS | EN, NULL, T(c, "Browse"), "Back");
-    event(c, d, "Browse", "[_RpBrowseProperty]", dir, NULL, 1);
-    event(c, d, "Browse", "SpawnDialog", "RpBrowseDlg", NULL, 2);
+    if (c->browse_folder) {
+        // RFC-0033: Windows' folder picker (the helper's RpBrowseFolder); the folder it leaves is
+        // checked by SetTargetPath as a typed one is. The page's own browse page only when the
+        // picker cannot be shown.
+        event(c, d, "Browse", "DoAction", "RP_BrowseFolder", NULL, 1);
+        event(c, d, "Browse", keep(c, "[", keep(c, dir, "]")), "[RP_BROWSE_PATH]", "RP_BROWSE_PATH", 2);
+        event(c, d, "Browse", "SetTargetPath", dir, "RP_BROWSE_PATH", 3);
+        event(c, d, "Browse", "[_RpBrowseProperty]", dir, "RP_BROWSE_FAILED = \"1\"", 4);
+        event(c, d, "Browse", "SpawnDialog", "RpBrowseDlg", "RP_BROWSE_FAILED = \"1\"", 5);
+    } else {
+        event(c, d, "Browse", "[_RpBrowseProperty]", dir, NULL, 1);
+        event(c, d, "Browse", "SpawnDialog", "RpBrowseDlg", NULL, 2);
+    }
     // A package that wipes this folder at removal asks before it takes a folder that holds
     // something: RP_DirCheck (helper DLL) looks, RpDirWarnDlg asks, and Next moves on only for an
     // empty or new folder or after "Use this folder". Not for an installed product (its own folder).
@@ -2085,6 +2099,19 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     // The ready page lists the features to install when they can be chosen and the helper DLL is there (RpReadySummary).
     c->ready_features = in->ready_features;
     if (c->ready_features) ca_dll(c, "RP_ReadySummary", "RpReadySummary");
+    // RFC-0033: Browse opens Windows' folder picker. Its title is the browse page's; the folder
+    // name added to a folder chosen is the install folder's own last name.
+    c->browse_folder = in->browse_folder;
+    if (c->browse_folder) {
+        ca_dll(c, "RP_BrowseFolder", "RpBrowseFolder");
+        const char *id = ir->ui_install_dir.ptr ? rp_cs(ir->ui_install_dir) : "INSTALLDIR", *leaf = "";
+        for (size_t i = 0; i < ir->dir_count; ++i) {
+            if (RP_EQ(ir->dirs[i].id, id) && ir->dirs[i].part_count) leaf = ir->dirs[i].parts[ir->dirs[i].part_count - 1];
+        }
+        prop(c, "RP_BROWSE_DIR", dir);
+        if (leaf[0]) prop(c, "RP_BROWSE_LEAF", leaf);
+        prop(c, "RP_BROWSE_TITLE", T(c, "BrowseTitle"));
+    }
     for (int pass = 0; pass <= (int)c->rtl_any; ++pass) {     // the dialogs, then their mirrored twins
     c->rtl = pass == 1;
     c->ncustom = 0;                         // the twins' own texts get the same keys
