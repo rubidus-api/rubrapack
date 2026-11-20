@@ -250,8 +250,12 @@ static void object_path(char *out, size_t cap, const char *dir, const char *sour
 static const char *opt_flags(const target_t *t) {
     if (t->sanitize) return "-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all";
     if (t->debug) return "-O0 -g";
+    // Linux: each function and datum in a section of its own, so the link can leave out what nothing
+    // calls (link_flags: --gc-sections) - proven_c_lib's files hold more than rubrapack uses (220 KB
+    // less, 2026-11-20). Not on MinGW: there the data sections of zeroed arrays went to .data (4 MB
+    // more in the file) and, functions alone, the symbol table grew 320 KB for 0 KB of code left out.
     if (t->kind == KIND_WIN32) return "-O2 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong";
-    return "-O2 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -fstack-protector-strong -fstack-clash-protection";
+    return "-O2 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -fstack-protector-strong -fstack-clash-protection -ffunction-sections -fdata-sections";
 }
 
 // Linker options of a release build on this host.
@@ -259,7 +263,7 @@ static const char *link_flags(const target_t *t) {
     if (t->sanitize || t->debug) return "";
     if (t->kind == KIND_WIN32) return "-lssp";
 #ifdef __linux__
-    return "-Wl,-z,relro,-z,now";
+    return "-Wl,-z,relro,-z,now -Wl,--gc-sections";
 #else
     return "";
 #endif
