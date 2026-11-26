@@ -20,16 +20,6 @@
 !/resources/ui/
 !/resources/bin/
 !/resources/lang/
-# docs/ is the book as GitHub Pages served it from main; Pages moves to the gh-pages branch and docs/
-# then leaves main. The PDFs were built there but published only as release assets.
-!/docs/
-/docs/*
-!/docs/.nojekyll
-!/docs/index.html
-!/docs/book.css
-!/docs/en/
-!/docs/ko/
-!/docs/fonts/
 
 # Build output, even inside whitelisted folders.
 *.o

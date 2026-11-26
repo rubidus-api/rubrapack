@@ -18,13 +18,14 @@ same toolchain rebuilds them byte for byte.
 
 ## Fonts in the published manual
 
-`docs/fonts/` (the web edition of the manual) holds subsets of Noto Serif, Noto Sans, Noto Sans
-Mono, Noto Serif CJK KR, Noto Sans CJK KR (Google, Adobe) and D2Coding (NAVER), all under the SIL
-Open Font License 1.1, which permits subsetting and redistribution; each subset keeps its font's
-copyright and licence records, and `docs/fonts/README.md` names the sources. The PDF editions embed
-the same fonts. The fonts are not part of the program.
+The web edition of the manual (GitHub Pages, the `gh-pages` branch) holds in `fonts/` subsets of
+Noto Serif, Noto Sans, Noto Serif CJK KR, Noto Sans CJK KR (Google, Adobe) and D2Coding (NAVER); the
+PDF editions embed subsets of these and of Noto Sans Mono and Noto Emoji (Google). All are under the
+SIL Open Font License 1.1, which permits subsetting and redistribution; each subset keeps its font's
+copyright and licence records, and `fonts/README.md` there names the sources. The fonts are not part
+of the program.
 
-The web edition's page design and script follow the Proven C Book's web edition (same author, MIT).
+The manual's page design and scripts come from scriptor_kit (same author, MIT).
 
 ## Unicode data
 
