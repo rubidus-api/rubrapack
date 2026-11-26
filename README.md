@@ -67,7 +67,7 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 ```
 
 A first package, step by step, is the first chapter of the manual:
-[Getting started](manual/reference.md#getting-started).
+[Getting started](https://rubidus-api.github.io/rubrapack/en/reference.html#getting-started).
 
 ## Features in detail
 
@@ -136,13 +136,13 @@ cross-built with MinGW-w64 and runs on Windows).
 
 ## Documentation
 
-- [`manual/reference.md`](manual/reference.md) - the user manual: writing sources (`.toml`) and the command line.
-- [`manual/formats/`](manual/formats/README.md) - the file format manual, for implementers: the
+- [The user manual](https://rubidus-api.github.io/rubrapack/en/reference.html) - writing sources (`.toml`) and the command line.
+- [The file format manual](https://rubidus-api.github.io/rubrapack/en/formats-readme.html) - for implementers: the
   compound file, the MSI database encoding, summary information, the tables that install,
   cabinets/MSZIP/deflate, deterministic identities, Authenticode and timestamps, MSIX packages,
   bundles and signatures, registry hives, and how to check your own output against Windows.
-- Both manuals as one book (PDF and web): <https://rubidus-api.github.io/rubrapack/>
-- Korean: [`manual-ko/`](manual-ko/README.md).
+- Both manuals as one book, on the web (<https://rubidus-api.github.io/rubrapack/>) and as a PDF with each release.
+- Korean: <https://rubidus-api.github.io/rubrapack/ko/>.
 
 ## Text encoding
 

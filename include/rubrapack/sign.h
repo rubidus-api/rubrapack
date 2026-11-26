@@ -140,7 +140,7 @@ void rp_cab_verify(const uint8_t *cab, size_t len, rp_authenticode_check_t *r, c
 // ---- MSI ---------------------------------------------------------------------------------------
 
 // The MSI digests, from the compound file (tests/fixtures/authenticode, worked out against
-// Windows' signer - manual/formats/authenticode.md): `ex` = SHA-256 over the root's CLSID and
+// Windows' signer - the manual's formats-authenticode chapter): `ex` = SHA-256 over the root's CLSID and
 // state bits and, for every stream in UTF-16LE name order, its name, 8-byte size and two stored
 // times; `digest` = hash over ex, the stream contents in the same order, and the root CLSID. The
 // two signature streams are left out. A database with storages is refused.

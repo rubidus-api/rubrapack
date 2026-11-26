@@ -2,7 +2,7 @@
 //
 // No specification describes where a cabinet keeps its signature; this is how Windows' signtool
 // writes it (tests/fixtures/cab-sign, made by scripts/x96-oracle.sh; the format notes and
-// manual/formats/authenticode.md tell the same):
+// the manual's formats-authenticode chapter tell the same):
 //  - the header gets reserved space (flag 0x0004): cbCFHeader 20, cbCFFolder 0, cbCFData 0, then
 //    20 bytes abReserve = 00 00 10 00, u32 offset of the signature, u32 its size, 8 zero bytes; a
 //    cabinet without reserved space gets it inserted, one with header space of another size (makecab's

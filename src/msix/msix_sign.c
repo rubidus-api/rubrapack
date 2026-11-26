@@ -1,5 +1,5 @@
 // src/msix/msix_sign.c - signing and checking MSIX packages and bundles (RFC-0011 P9a), as Windows'
-// AppX SIP does (docs in manual/formats/msix.md "Signatures"; worked out against mssign32!SignerSignEx2):
+// AppX SIP does (docs in the manual's formats-msix, "Signatures"; worked out against mssign32!SignerSignEx2):
 // AppxSignature.p7x = "PKCX" + an Authenticode SignedData whose indirect data is SpcSipInfo (the
 // package or bundle SIP GUID) with the digest "APPX" + AXPC (the ZIP up to the signature's local
 // header), AXCD (the central directory and end records without the signature entry), AXCT

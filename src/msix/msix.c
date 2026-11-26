@@ -1315,7 +1315,7 @@ static void content_types(rp_buf_t *t, const item_t *items, size_t n) {
     rp_buf_puts(t, "<Override PartName=\"/AppxBlockMap.xml\" ContentType=\"application/vnd.ms-appx.blockmap+xml\" /></Types>");
 }
 
-// ---- extensions (RFC-0010 N4; the support table: manual/formats/msix.md "Extensions") -------------
+// ---- extensions (RFC-0010 N4; the support table: the manual's formats-msix, "Extensions") -----
 
 // The build number of min-version ("10.0.17763.0" -> 17763).
 static unsigned min_build(const rp_ir_t *ir) {
