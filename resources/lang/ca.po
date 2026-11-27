@@ -4255,3 +4255,23 @@ msgstr "No s'ha pogut treure el [1], i desfer-ho no l'ha restaurat. Les diferèn
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "No s'ha pogut reparar el [1], i desfer-ho no l'ha restaurat. Les diferències s'indiquen a sota. Torneu a executar l'instal·lador per reparar-lo.\r\nRegistre: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volum"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Mida"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Disponible"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Necessari"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Diferència"

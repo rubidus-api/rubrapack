@@ -4255,3 +4255,23 @@ msgstr "[1] nevarēja noņemt, un atsaukšana to neatjaunoja. Atšķirības ir u
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] nevarēja salabot, un atsaukšana to neatjaunoja. Atšķirības ir uzskaitītas zemāk. Palaidiet instalētāju vēlreiz, lai to salabotu.\r\nŽurnāls: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Sējums"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Izmērs"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Brīvs"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Vajadzīgs"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Starpība"

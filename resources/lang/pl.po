@@ -4255,3 +4255,23 @@ msgstr "Nie udało się usunąć programu [1], a cofnięcie go nie przywróciło
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "Nie udało się naprawić programu [1], a cofnięcie go nie przywróciło. Różnice wymieniono poniżej. Uruchom instalator ponownie, aby go naprawić.\r\nDziennik: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Wolumin"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Rozmiar"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Dostępne"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Wymagane"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Różnica"

@@ -4255,3 +4255,23 @@ msgstr "Não foi possível remover [1], e desfazer não o restaurou. As diferen�
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "Não foi possível reparar [1], e desfazer não o restaurou. As diferenças estão listadas abaixo. Execute o instalador de novo para repará-lo.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volume"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Tamanho"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Disponível"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Necessário"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Diferença"

@@ -4255,3 +4255,23 @@ msgstr "[1] সরানো যায়নি, আর পূর্বাবস�
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] মেরামত করা যায়নি, আর পূর্বাবস্থায় ফেরানোও এটিকে আগের মতো করেনি। পার্থক্যগুলো নিচে দেওয়া হলো। মেরামত করতে ইনস্টলার আবার চালান।\r\nলগ: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "ভলিউম"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "আকার"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "উপলব্ধ"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "প্রয়োজন"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "পার্থক্য"

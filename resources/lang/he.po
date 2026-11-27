@@ -4257,3 +4257,23 @@ msgstr "לא ניתן היה להסיר את [1], והביטול לא החזיר
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "לא ניתן היה לתקן את [1], והביטול לא החזיר אותו כפי שהיה. ההבדלים מפורטים למטה. הפעילו שוב את תוכנית ההתקנה כדי לתקן אותו.\r\nיומן: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "כונן"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "גודל"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "פנוי"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "נדרש"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "הפרש"

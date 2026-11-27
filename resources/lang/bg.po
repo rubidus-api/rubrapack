@@ -4255,3 +4255,23 @@ msgstr "[1] не можа да се премахне и отмяната не г
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] не можа да се поправи и отмяната не го възстанови. Разликите са изброени по-долу. Пуснете инсталатора отново, за да го поправите.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Том"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Размер"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Налично"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Необходимо"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Разлика"

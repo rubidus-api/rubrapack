@@ -4255,3 +4255,23 @@ msgstr "[1] tidak dapat dihapus, dan pembatalan tidak memulihkannya. Perbedaanny
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] tidak dapat diperbaiki, dan pembatalan tidak memulihkannya. Perbedaannya tercantum di bawah. Jalankan lagi penginstal untuk memperbaikinya.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volume"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Ukuran"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Tersedia"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Diperlukan"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Selisih"

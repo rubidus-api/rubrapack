@@ -4255,3 +4255,23 @@ msgstr "[1] kunne ikke fjernes, og angringen gjenopprettet det ikke. Forskjellen
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] kunne ikke repareres, og angringen gjenopprettet det ikke. Forskjellene står nedenfor. Kjør installasjonsprogrammet på nytt for å reparere det.\r\nLogg: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volum"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Størrelse"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Ledig"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Påkrevd"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Differanse"

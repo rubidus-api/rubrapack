@@ -141,7 +141,7 @@ cross-built with MinGW-w64 and runs on Windows).
   compound file, the MSI database encoding, summary information, the tables that install,
   cabinets/MSZIP/deflate, deterministic identities, Authenticode and timestamps, MSIX packages,
   bundles and signatures, registry hives, and how to check your own output against Windows.
-- Both manuals as one book, on the web (<https://rubidus-api.github.io/rubrapack/>) and as a PDF with each release.
+- Both manuals as one book, on the web (<https://rubidus-api.github.io/rubrapack/>) and, with each release, as a PDF and as the web edition in a ZIP to read offline.
 - Korean: <https://rubidus-api.github.io/rubrapack/ko/>.
 
 ## Text encoding

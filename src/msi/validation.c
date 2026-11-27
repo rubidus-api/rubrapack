@@ -194,6 +194,8 @@ static const rule_t rules[] = {
     // rubrapack's own (RFC-0028): a dialog language's value of a property, set by RpLangApply.
     R("RpText", "Lang", "Identifier"), R("RpText", "Key", "Identifier"), R("RpText", "Text", "Text"),
     RN("RpText", "Format", 0, 1),
+    // RFC-0034 F9: the volume list's column titles per dialog language, put into UIText by RpUiText.
+    R("RpUiText", "Lang", "Identifier"), R("RpUiText", "Key", "Identifier"), R("RpUiText", "Text", "Text"),
 };
 
 static const rp_msi_wcolumn_t validation_cols[] = {

@@ -4255,3 +4255,23 @@ msgstr "[1] se nepodařilo odebrat a vrácení zpět jej neobnovilo. Rozdíly js
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] se nepodařilo opravit a vrácení zpět jej neobnovilo. Rozdíly jsou uvedeny níže. Spusťte instalační program znovu a opravte jej.\r\nProtokol: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Svazek"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Velikost"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Volné"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Potřeba"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Rozdíl"

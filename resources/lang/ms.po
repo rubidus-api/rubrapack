@@ -4255,3 +4255,23 @@ msgstr "[1] tidak dapat dialih keluar, dan buat asal tidak memulihkannya. Perbez
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] tidak dapat dibaiki, dan buat asal tidak memulihkannya. Perbezaannya disenaraikan di bawah. Jalankan pemasang sekali lagi untuk membaikinya.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volum"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Saiz"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Tersedia"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Diperlukan"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Perbezaan"

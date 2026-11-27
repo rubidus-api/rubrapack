@@ -4255,3 +4255,23 @@ msgstr "[1] kon niet worden verwijderd, en het ongedaan maken heeft het niet her
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] kon niet worden hersteld, en het ongedaan maken heeft het niet teruggezet. De verschillen staan hieronder. Start het installatieprogramma opnieuw om het te herstellen.\r\nLogboek: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volume"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Grootte"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Beschikbaar"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Vereist"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Verschil"

@@ -4255,3 +4255,23 @@ msgstr "Không gỡ được [1], và việc hoàn tác không khôi phục nó.
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "Không sửa được [1], và việc hoàn tác không khôi phục nó. Các điểm khác được liệt kê bên dưới. Hãy chạy lại trình cài đặt để sửa.\r\nNhật ký: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Ổ đĩa"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Dung lượng"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Còn trống"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Cần"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Chênh lệch"

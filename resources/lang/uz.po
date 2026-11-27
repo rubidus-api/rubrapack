@@ -4255,3 +4255,23 @@ msgstr "[1] olib tashlanmadi va bekor qilish uni avvalgi holiga keltirmadi. Farq
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] tuzatilmadi va bekor qilish uni avvalgi holiga keltirmadi. Farqlar quyida keltirilgan. Tuzatish uchun o'rnatuvchini qayta ishga tushiring.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Disk"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Hajmi"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Boʻsh"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Kerak"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Farq"

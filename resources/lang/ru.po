@@ -4255,3 +4255,23 @@ msgstr "Не удалось удалить [1], и откат не восста�
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "Не удалось восстановить [1], и откат не вернул его в прежнее состояние. Различия перечислены ниже. Запустите установщик ещё раз, чтобы восстановить его.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Том"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Размер"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Доступно"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Требуется"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Разница"

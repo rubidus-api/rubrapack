@@ -4255,3 +4255,23 @@ msgstr "[1] sa nepodarilo odstrániť a vrátenie späť ho neobnovilo. Rozdiely
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] sa nepodarilo opraviť a vrátenie späť ho neobnovilo. Rozdiely sú uvedené nižšie. Spustite inštalačný program znova a opravte ho.\r\nDenník: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Zväzok"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Veľkosť"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Voľné"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Potrebné"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Rozdiel"

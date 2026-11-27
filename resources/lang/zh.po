@@ -4255,3 +4255,23 @@ msgstr "[1] 未能删除，撤销也没能恢复原样。不同之处如下。�
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] 未能修复，撤销也没能恢复原样。不同之处如下。请再次运行安装程序进行修复。\r\n日志：[2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "卷"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "大小"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "可用"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "所需"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "差值"

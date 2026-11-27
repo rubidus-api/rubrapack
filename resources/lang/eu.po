@@ -4255,3 +4255,23 @@ msgstr "Ezin izan da [1] kendu, eta desegiteak ez du leheneratu. Desberdintasuna
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "Ezin izan da [1] konpondu, eta desegiteak ez du leheneratu. Desberdintasunak behean daude. Exekutatu berriro instalatzailea konpontzeko.\r\nErregistroa: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Bolumena"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Tamaina"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Libre"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Behar da"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Aldea"

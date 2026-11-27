@@ -4255,3 +4255,23 @@ msgstr "[1] n'a pas pu être supprimé, et l'annulation ne l'a pas rétabli. Les
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] n'a pas pu être réparé, et l'annulation ne l'a pas rétabli. Les différences sont indiquées ci-dessous. Relancez le programme d'installation pour le réparer.\r\nJournal : [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volume"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Taille"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Disponible"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Requis"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Différence"

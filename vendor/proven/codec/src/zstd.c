@@ -233,7 +233,7 @@ static bool huf_read(proven_zstd_decoder_t *z, const proven_byte_t *p, proven_si
     return true;
 }
 
-static inline proven_byte_t huf_one(const proven_huf_t *t, unsigned log, proven_bits_t *b) {
+ZDEC_HOT proven_byte_t huf_one(const proven_huf_t *t, unsigned log, proven_bits_t *b) {
     const proven_huf_t e = t[bits_look(b, log)];
     b->used += e >> 8;
     return (proven_byte_t)e;
@@ -262,8 +262,8 @@ ZDEC_HOT bool huf_stream(const proven_zstd_decoder_t *z, const proven_byte_t *p,
 /* How many rounds of five symbols huf_four's fast loop may decode: as many as `left` symbols
  * of the last stream make, and as every stream, read back to `i0`..`i3`, has 7 bytes for before
  * its beginning. */
-static inline proven_size_t huf_rounds(const proven_bits_t b[4], const proven_byte_t *i0, const proven_byte_t *i1,
-                                       const proven_byte_t *i2, const proven_byte_t *i3, proven_size_t left) {
+ZDEC_HOT proven_size_t huf_rounds(const proven_bits_t b[4], const proven_byte_t *i0, const proven_byte_t *i1,
+                                  const proven_byte_t *i2, const proven_byte_t *i3, proven_size_t left) {
     proven_size_t n = left / 5, k;
     if ((k = (proven_size_t)(i0 - b[0].start) / 7) < n) n = k;
     if ((k = (proven_size_t)(i1 - b[1].start) / 7) < n) n = k;
@@ -513,12 +513,12 @@ static void copy_bytes(proven_byte_t *d, const proven_byte_t *s, proven_size_t n
 }
 
 /* Eight and sixteen bytes at once; the compiler makes each one load and one store. */
-static inline void copy8(proven_byte_t *d, const proven_byte_t *s) { __builtin_memcpy(d, s, 8); }
-static inline void copy16(proven_byte_t *d, const proven_byte_t *s) { __builtin_memcpy(d, s, 16); }
+ZDEC_HOT void copy8(proven_byte_t *d, const proven_byte_t *s) { __builtin_memcpy(d, s, 8); }
+ZDEC_HOT void copy16(proven_byte_t *d, const proven_byte_t *s) { __builtin_memcpy(d, s, 16); }
 
 /* `n` bytes from `s` to `d`, sixteen at a time: up to fifteen beyond the end are written, and
  * read. The caller has checked that both have that slack and that they do not overlap. */
-static inline void copy_wild(proven_byte_t *d, const proven_byte_t *s, proven_size_t n) {
+ZDEC_HOT void copy_wild(proven_byte_t *d, const proven_byte_t *s, proven_size_t n) {
     copy16(d, s);                                /* most are sixteen or fewer: one copy, no loop */
     for (proven_size_t i = 16; i < n; i += 16) copy16(d + i, s + i);
 }
@@ -530,7 +530,7 @@ static inline void copy_wild(proven_byte_t *d, const proven_byte_t *s, proven_si
  * out to `step` bytes - the smallest multiple of `off` that is at least 8 - and the rest eight
  * at a time from `step` back, which repeats the same pattern. `room`: bytes that may be
  * written from `d`, the slack included - the wide copies write up to fifteen beyond the match. */
-static inline void copy_match(proven_byte_t *d, proven_size_t off, proven_size_t len, proven_size_t room) {
+ZDEC_HOT void copy_match(proven_byte_t *d, proven_size_t off, proven_size_t len, proven_size_t room) {
     const proven_byte_t *s = d - off;
     if (len + 16 <= room) {
         if (off >= 16) { copy_wild(d, s, len); return; }
@@ -548,7 +548,7 @@ static inline void copy_match(proven_byte_t *d, proven_size_t off, proven_size_t
 /* The fast path's copies (sequences), as libzstd makes them. Both may write up to 31 bytes past
  * the end, and copy_lit read as far past its source: the caller leaves 32.
  * Literals: sixteen bytes, most often all there are, then thirty-two at a time. */
-static inline void copy_lit(proven_byte_t *d, const proven_byte_t *s, proven_size_t n) {
+ZDEC_HOT void copy_lit(proven_byte_t *d, const proven_byte_t *s, proven_size_t n) {
     copy16(d, s);
     if (ZSTD_UNLIKELY(n > 16)) {
         copy16(d + 16, s + 16);
@@ -561,7 +561,7 @@ static inline void copy_lit(proven_byte_t *d, const proven_byte_t *s, proven_siz
  * from `add[off]` on, which by then hold the pattern of period `off`; after them the pattern
  * repeats `dist[off]` back - a multiple of `off`, at least 8 - and the rest goes eight at a
  * time from there (libzstd's tables). */
-static inline void match_fast(proven_byte_t *d, proven_size_t off, proven_size_t len) {
+ZDEC_HOT void match_fast(proven_byte_t *d, proven_size_t off, proven_size_t len) {
     const proven_byte_t *s = d - off;
     if (ZSTD_LIKELY(off >= 16)) {
         copy16(d, s);
@@ -629,62 +629,108 @@ ZDEC_HOT proven_err_t sequences(proven_zstd_decoder_t *z, const proven_byte_t *p
         const proven_size_t ocap = wend < limit + 32 ? wend : limit + 32;
         const proven_size_t lcap = lend < nlit + 32 ? lend : nlit + 32;
         proven_err_t verdict = PROVEN_OK;
-        for (proven_size_t i = 0; i < nseq; ++i) {
-            /* At most 31 bits, then 32, then 26. After a reload at least 56 are held (`used`
-             * at most 7), so a second reload is needed only when what follows would run past
-             * 64 - rarely: long offsets with long extra bits. */
-            bits_reload(&b);
-            const proven_seq_t o = oft[os], m = mlt[ms], l = llt[ls];
-            const proven_u64 ofv = (proven_u64)o.base + bits_read(&b, o.extra);
-            if (b.used + m.extra + l.extra > 64) bits_reload(&b);
-            const proven_size_t ml = m.base + (proven_size_t)bits_read(&b, m.extra);
-            const proven_size_t ll = l.base + (proven_size_t)bits_read(&b, l.extra);
-            proven_u64 off;
-            if (ofv > 3) {
-                off = ofv - 3;
-                rep2 = rep1; rep1 = rep0; rep0 = off;
-            } else {
-                const unsigned idx = (unsigned)ofv - 1 + (ll == 0);
-                if (idx == 0) {
-                    off = rep0;
+        proven_size_t i = 0;
+        /* Fast loop: while at least 24 bytes remain in the bit stream before `b.start` (three
+         * reloads read back at most 8 + 4 + 8 = 20 bytes) and another sequence follows, every
+         * reload stays inside `[b.start, p]` without bounds checks, and no out-of-line call
+         * happens inside the loop. Separate ZSTD_UNLIKELY checks avoid Clang boolean flags. */
+        while (i < nseq) {
+            proven_size_t s_ll = 0, s_ml = 0;
+            proven_u64 s_off = 0;
+            bool have_slow = false;
+            /* Clang rotates cleanly with an explicit preheader guard, whereas GCC keeps tighter
+             * register allocation and loop peeling when `b.used <= 64` stays in the condition. */
+#if defined(__clang__)
+            if (i + 1 < nseq && b.used <= 64 && (proven_size_t)(b.p - b.start) >= 24)
+                for (; i + 1 < nseq && (proven_size_t)(b.p - b.start) >= 24; ++i) {
+#else
+            for (; i + 1 < nseq && b.used <= 64 && (proven_size_t)(b.p - b.start) >= 24; ++i) {
+#endif
+                    b.p -= b.used >> 3;
+                    b.used &= 7;
+                    b.c = le64(b.p);
+                    const proven_seq_t *const o = oft + os;
+                    const proven_seq_t *const m = mlt + ms;
+                    const proven_seq_t *const l = llt + ls;
+                    const proven_u64 ofv = (proven_u64)o->base + bits_read(&b, o->extra);
+                    if (ZSTD_UNLIKELY(b.used + m->extra + l->extra > 64)) { b.p -= b.used >> 3; b.used &= 7; b.c = le64(b.p); }
+                    const proven_size_t ml = m->base + (proven_size_t)bits_read(&b, m->extra);
+                    const proven_size_t ll = l->base + (proven_size_t)bits_read(&b, l->extra);
+                    if (ZSTD_UNLIKELY(b.used + LL_LOG + ML_LOG + OF_LOG > 64)) { b.p -= b.used >> 3; b.used &= 7; b.c = le64(b.p); }
+                    ls = l->next + (proven_u32)bits_read(&b, l->bits);
+                    ms = m->next + (proven_u32)bits_read(&b, m->bits);
+                    os = o->next + (proven_u32)bits_read(&b, o->bits);
+                    proven_u64 off;
+                    if (ZSTD_LIKELY(ofv > 3)) {
+                        off = ofv - 3;
+                        rep2 = rep1; rep1 = rep0; rep0 = off;
+                    } else {
+                        const unsigned idx = (unsigned)ofv - 1 + (ll == 0);
+                        if (idx == 0) {
+                            off = rep0;
+                        } else {
+                            off = idx == 1 ? rep1 : idx == 2 ? rep2 : rep0 - 1;
+                            if (idx != 1) rep2 = rep1;
+                            rep1 = rep0;
+                            rep0 = off;
+                        }
+                    }
+                    const proven_size_t opl = op + ll;
+                    if (ZSTD_UNLIKELY(lp + ll + 32 > lcap) || ZSTD_UNLIKELY(opl + ml + 32 > ocap) ||
+                        ZSTD_UNLIKELY(off - 1 >= opl) || ZSTD_UNLIKELY(off > window)) {
+                        s_ll = ll; s_ml = ml; s_off = off; have_slow = true;
+                        break;
+                    }
+                    copy_lit(h + op, lit + lp, ll);
+                    match_fast(h + opl, (proven_size_t)off, ml);
+                    op = opl + ml;
+                    lp += ll;
+                }
+            if (!have_slow) {
+                if (i >= nseq) break;
+                /* At most 31 bits, then 32, then 26. After a reload at least 56 are held (`used`
+                 * at most 7), so a second reload is needed only when what follows would run past
+                 * 64 - rarely: long offsets with long extra bits. */
+                bits_reload(&b);
+                const proven_seq_t o = oft[os], m = mlt[ms], l = llt[ls];
+                const proven_u64 ofv = (proven_u64)o.base + bits_read(&b, o.extra);
+                if (b.used + m.extra + l.extra > 64) bits_reload(&b);
+                s_ml = m.base + (proven_size_t)bits_read(&b, m.extra);
+                s_ll = l.base + (proven_size_t)bits_read(&b, l.extra);
+                if (ofv > 3) {
+                    s_off = ofv - 3;
+                    rep2 = rep1; rep1 = rep0; rep0 = s_off;
                 } else {
-                    off = idx == 1 ? rep1 : idx == 2 ? rep2 : rep0 - 1;
-                    if (idx != 1) rep2 = rep1;
-                    rep1 = rep0;
-                    rep0 = off;
+                    const unsigned idx = (unsigned)ofv - 1 + (s_ll == 0);
+                    if (idx == 0) {
+                        s_off = rep0;
+                    } else {
+                        s_off = idx == 1 ? rep1 : idx == 2 ? rep2 : rep0 - 1;
+                        if (idx != 1) rep2 = rep1;
+                        rep1 = rep0;
+                        rep0 = s_off;
+                    }
+                }
+                if (i + 1 < nseq) {
+                    if (b.used + LL_LOG + ML_LOG + OF_LOG > 64) bits_reload(&b);
+                    ls = l.next + (proven_u32)bits_read(&b, l.bits);
+                    ms = m.next + (proven_u32)bits_read(&b, m.bits);
+                    os = o.next + (proven_u32)bits_read(&b, o.bits);
                 }
             }
-            if (i + 1 < nseq) {
-                if (b.used + LL_LOG + ML_LOG + OF_LOG > 64) bits_reload(&b);
-                ls = l.next + (proven_u32)bits_read(&b, l.bits);
-                ms = m.next + (proven_u32)bits_read(&b, m.bits);
-                os = o.next + (proven_u32)bits_read(&b, o.bits);
-            }
-            /* Nearly every sequence: the literals are there with 32 bytes to spare, the match ends
-             * 32 bytes inside the slack and within the block's limit, and its offset is not 0 and
-             * reaches neither before `hist` nor beyond the window. Each of the checks below then
-             * passes; anything else - an end near, the reach a dictionary gives, damage - takes
-             * them. */
-            const proven_size_t opl = op + ll;
-            if (ZSTD_LIKELY(lp + ll + 32 <= lcap && opl + ml + 32 <= ocap && off - 1 < opl && off <= window)) {
-                copy_lit(h + op, lit + lp, ll);
-                match_fast(h + opl, (proven_size_t)off, ml);
-                op = opl + ml;
-                lp += ll;
-                continue;
-            }
-            if (ll > nlit - lp || ll > limit - op) { verdict = PROVEN_ERR_INVALID_FORMAT; break; }
+            if (s_ll > nlit - lp || s_ll > limit - op) { verdict = PROVEN_ERR_INVALID_FORMAT; break; }
             /* With the slack, sixteen bytes are copied even when there are none: no branch on a
              * length that is zero about as often as not. What lands beyond the literals is
              * written over by the match, or by what follows, before anything reads it. */
-            if (op + ll + 16 <= wend && lp + ll + 16 <= lend) copy_wild(h + op, lit + lp, ll);
-            else copy_bytes(h + op, lit + lp, ll);
-            op += ll;
-            lp += ll;
+            if (op + s_ll + 16 <= wend && lp + s_ll + 16 <= lend) copy_wild(h + op, lit + lp, s_ll);
+            else copy_bytes(h + op, lit + lp, s_ll);
+            op += s_ll;
+            lp += s_ll;
             /* Further back than this frame has produced, or than its window reaches. */
-            if (ml > limit - op || off == 0 || off > op || (off > window && op > reach_to)) { verdict = PROVEN_ERR_INVALID_FORMAT; break; }
-            if (ml > 0) copy_match(h + op, (proven_size_t)off, ml, wend - op);
-            op += ml;
+            if (s_ml > limit - op || s_off == 0 || s_off > op || (s_off > window && op > reach_to)) { verdict = PROVEN_ERR_INVALID_FORMAT; break; }
+            if (s_ml > 0) copy_match(h + op, (proven_size_t)s_off, s_ml, wend - op);
+            op += s_ml;
+            ++i;
         }
         z->rep[0] = rep0; z->rep[1] = rep1; z->rep[2] = rep2;
         if (verdict != PROVEN_OK) return verdict;
@@ -706,7 +752,34 @@ static proven_size_t block_room(const proven_zstd_decoder_t *z) {
     return room;
 }
 
-/* Decode a whole compressed block after `hist_pos`; `*from` is where its output begins. */
+/* Decode a whole compressed block after `hist_pos`; `*from` is where its output begins.
+ * Under Clang, keeping `literals` and `sequences` in separate non-inlined functions avoids
+ * spilling the sequence loop's pointers and fields across the combined frame. */
+#if defined(__clang__)
+__attribute__((noinline))
+static proven_err_t lit_plain(proven_zstd_decoder_t *z, const proven_byte_t *src, proven_size_t n,
+                              const proven_byte_t **lit, proven_size_t *nlit, proven_size_t *used) {
+    return literals(z, src, n, lit, nlit, used);
+}
+
+__attribute__((noinline))
+static proven_err_t seq_plain(proven_zstd_decoder_t *z, const proven_byte_t *p, proven_size_t n,
+                              const proven_byte_t *lit, proven_size_t nlit, proven_size_t limit) {
+    return sequences(z, p, n, lit, nlit, limit);
+}
+
+static proven_err_t block_plain(proven_zstd_decoder_t *z, const proven_byte_t *src, proven_size_t n, proven_size_t *from) {
+    const proven_size_t room = block_room(z);
+    proven_err_t e = make_room(z, room);
+    if (e != PROVEN_OK) return e;
+    *from = z->hist_pos;
+    const proven_byte_t *lit = NULL;
+    proven_size_t nlit = 0, used = 0;
+    e = lit_plain(z, src, n, &lit, &nlit, &used);
+    if (e != PROVEN_OK) return e;
+    return seq_plain(z, src + used, n - used, lit, nlit, z->hist_pos + room);
+}
+#else
 ZDEC_HOT proven_err_t block_body(proven_zstd_decoder_t *z, const proven_byte_t *src, proven_size_t n, proven_size_t *from) {
     const proven_size_t room = block_room(z);
     proven_err_t e = make_room(z, room);
@@ -726,12 +799,39 @@ ZDEC_HOT proven_err_t block_body(proven_zstd_decoder_t *z, const proven_byte_t *
 static proven_err_t block_plain(proven_zstd_decoder_t *z, const proven_byte_t *src, proven_size_t n, proven_size_t *from) {
     return block_body(z, src, n, from);
 }
+#endif
 
 #if ZDEC_BMI2
+#if defined(__clang__)
+__attribute__((noinline, target("bmi2")))
+static proven_err_t lit_bmi2(proven_zstd_decoder_t *z, const proven_byte_t *src, proven_size_t n,
+                             const proven_byte_t **lit, proven_size_t *nlit, proven_size_t *used) {
+    return literals(z, src, n, lit, nlit, used);
+}
+
+__attribute__((noinline, target("bmi2")))
+static proven_err_t seq_bmi2(proven_zstd_decoder_t *z, const proven_byte_t *p, proven_size_t n,
+                             const proven_byte_t *lit, proven_size_t nlit, proven_size_t limit) {
+    return sequences(z, p, n, lit, nlit, limit);
+}
+
+static proven_err_t block_bmi2(proven_zstd_decoder_t *z, const proven_byte_t *src, proven_size_t n, proven_size_t *from) {
+    const proven_size_t room = block_room(z);
+    proven_err_t e = make_room(z, room);
+    if (e != PROVEN_OK) return e;
+    *from = z->hist_pos;
+    const proven_byte_t *lit = NULL;
+    proven_size_t nlit = 0, used = 0;
+    e = lit_bmi2(z, src, n, &lit, &nlit, &used);
+    if (e != PROVEN_OK) return e;
+    return seq_bmi2(z, src + used, n - used, lit, nlit, z->hist_pos + room);
+}
+#else
 __attribute__((target("bmi2")))
 static proven_err_t block_bmi2(proven_zstd_decoder_t *z, const proven_byte_t *src, proven_size_t n, proven_size_t *from) {
     return block_body(z, src, n, from);
 }
+#endif
 
 static int g_zdec_bmi2 = -1;                     /* -1: not asked yet */
 

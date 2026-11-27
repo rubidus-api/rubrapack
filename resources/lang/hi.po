@@ -4255,3 +4255,23 @@ msgstr "[1] हटाया नहीं जा सका, और पूर्�
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] ठीक नहीं हो सका, और पूर्ववत करने से यह पहले जैसा नहीं हुआ। अंतर नीचे दिए हैं। इसे ठीक करने के लिए इंस्टॉलर फिर से चलाएँ।\r\nलॉग: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "वॉल्यूम"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "आकार"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "उपलब्ध"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "आवश्यक"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "अंतर"

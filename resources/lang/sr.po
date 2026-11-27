@@ -4255,3 +4255,23 @@ msgstr "[1] nije mogao da se ukloni, a poništavanje ga nije vratilo. Razlike su
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] nije mogao da se popravi, a poništavanje ga nije vratilo. Razlike su navedene u nastavku. Ponovo pokrenite instalacioni program da biste ga popravili.\r\nEvidencija: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volumen"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Veličina"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Slobodno"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Potrebno"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Razlika"

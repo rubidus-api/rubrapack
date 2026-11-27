@@ -167,12 +167,26 @@ static void drop(proven_brotli_decoder_t *b, unsigned n) {
     b->bitcnt -= n;
 }
 
+#if defined(__GNUC__) || defined(__clang__)
+#define HOT static inline __attribute__((always_inline))
+#define BROTLI_LIKELY(x) __builtin_expect(!!(x), 1)
+#define BROTLI_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#define HOT static inline
+#define BROTLI_LIKELY(x) (x)
+#define BROTLI_UNLIKELY(x) (x)
+#endif
+
+HOT proven_u64 mask_bits(proven_u64 bits, unsigned n) {
+    return n < 64 ? (bits & (((proven_u64)1 << n) - 1u)) : bits;
+}
+
 /* The symbol that `bits` (lowest first) begin with, and how many of them its code is. */
-static inline unsigned lookup(const proven_u16 *t, proven_u64 bits, unsigned *len) {
+HOT unsigned lookup(const proven_u16 *t, proven_u64 bits, unsigned *len) {
     proven_u16 e = t[bits & 0xffu];
     unsigned l = e & 15u;
-    if (l > ROOT_BITS) {
-        e = t[(e >> 4) + (unsigned)((bits >> ROOT_BITS) & ((1u << (l - ROOT_BITS)) - 1u))];
+    if (BROTLI_UNLIKELY(l > ROOT_BITS)) {
+        e = t[(e >> 4) + (unsigned)mask_bits(bits >> ROOT_BITS, l - ROOT_BITS)];
         l = ROOT_BITS + (e & 15u);
     }
     *len = l;
@@ -232,7 +246,22 @@ static proven_u32 build(proven_u16 *t, const proven_u8 *lens, unsigned n) {
             const unsigned sym = sorted[at++];
             const unsigned r = reverse(code, len);
             if (len <= ROOT_BITS) {
-                if (t) for (unsigned i = r; i < (1u << ROOT_BITS); i += 1u << len) t[i] = ENTRY(sym, len);
+                if (t) {
+                    const proven_u16 v = ENTRY(sym, len);
+                    if (len == 8) {
+                        t[r] = v;
+                    } else if (len == 7) {
+                        t[r] = v;
+                        t[r + 128] = v;
+                    } else if (len == 6) {
+                        t[r] = v;
+                        t[r + 64] = v;
+                        t[r + 128] = v;
+                        t[r + 192] = v;
+                    } else {
+                        for (unsigned i = r; i < (1u << ROOT_BITS); i += 1u << len) t[i] = v;
+                    }
+                }
             } else {
                 if ((r & 0xffu) != root) {
                     /* A new second-level table, as large as the longest code under this prefix
@@ -266,12 +295,11 @@ static bool tab_room(proven_brotli_decoder_t *b, proven_size_t n) {
     proven_size_t cap = b->tab_cap ? 2 * b->tab_cap : 4096;
     if (cap > TAB_MAX) cap = TAB_MAX;
     if (cap < b->tab_len + n) cap = b->tab_len + n;
-    proven_result_mem_mut_t m = b->alloc.alloc_fn(b->alloc.ctx, cap * sizeof(proven_u16), 16);
+    proven_result_mem_mut_t m = b->tab
+        ? b->alloc.realloc_fn(b->alloc.ctx, b->tab, b->tab_cap * sizeof(proven_u16), cap * sizeof(proven_u16), 16)
+        : b->alloc.alloc_fn(b->alloc.ctx, cap * sizeof(proven_u16), 16);
     if (m.err != PROVEN_OK) return false;
-    proven_u16 *t = (proven_u16 *)(void *)m.value.ptr;
-    for (proven_size_t i = 0; i < b->tab_len; ++i) t[i] = b->tab[i];
-    if (b->tab) b->alloc.free_fn(b->alloc.ctx, b->tab);
-    b->tab = t;
+    b->tab = (proven_u16 *)(void *)m.value.ptr;
     b->tab_cap = cap;
     return true;
 }
@@ -514,10 +542,10 @@ static int room(proven_brotli_decoder_t *b, proven_io_t *io, proven_size_t n) {
         proven_size_t cap = b->cap ? b->cap : 4096;
         while (cap < b->pos + n) cap *= 2;
         if (cap > b->full) cap = b->full;
-        proven_result_mem_mut_t m = b->alloc.alloc_fn(b->alloc.ctx, cap + SLACK, 16);
+        proven_result_mem_mut_t m = b->ring
+            ? b->alloc.realloc_fn(b->alloc.ctx, b->ring, b->cap + SLACK, cap + SLACK, 16)
+            : b->alloc.alloc_fn(b->alloc.ctx, cap + SLACK, 16);
         if (m.err != PROVEN_OK) { bad(b, PROVEN_ERR_NOMEM); return -1; }
-        (void)proven_mem_copy(m.value.ptr, cap, (proven_mem_view_t){ b->ring, (proven_size_t)b->pos });
-        if (b->ring) b->alloc.free_fn(b->alloc.ctx, b->ring);
         b->ring = m.value.ptr;
         b->cap = cap;
         if (b->pos + n <= b->cap) return 1;
@@ -727,6 +755,7 @@ static unsigned context(const proven_brotli_decoder_t *b, unsigned mode) {
 /* The distance codes from 16 on for the meta-block's NPOSTFIX and NDIRECT (section 4): their
  * extra bits, and their distance with extra bits of zero. Made once a meta-block. */
 static void distance_codes(proven_brotli_decoder_t *b) {
+    for (unsigned code = 0; code < 16; ++code) b->dx_bits[code] = 0;
     for (unsigned code = 16; code < b->dist_alphabet; ++code) {
         if (code < 16 + b->ndirect) { b->dx_bits[code] = 0; b->dx_base[code] = code - 15; continue; }
         const unsigned c = code - b->ndirect - 16;
@@ -748,17 +777,11 @@ static inline proven_u32 distance_of(const proven_brotli_decoder_t *b, unsigned 
     return b->dx_base[code] + (extra << b->npostfix);
 }
 
-static inline unsigned distance_extra(const proven_brotli_decoder_t *b, unsigned code) {
-    return code < 16 ? 0u : b->dx_bits[code];
+HOT unsigned distance_extra(const proven_brotli_decoder_t *b, unsigned code) {
+    return b->dx_bits[code];
 }
 
 /* --- the fast path --- */
-
-#if defined(__GNUC__) || defined(__clang__)
-#define HOT static inline __attribute__((always_inline))
-#else
-#define HOT static inline
-#endif
 
 /* Eight bytes, lowest first; and stored so. Compilers make each one load or store. */
 HOT proven_u64 get64(const proven_byte_t *p) {
@@ -796,7 +819,7 @@ HOT unsigned take_sym(proven_brotli_reader_t *r, const proven_u16 *t) {
 }
 
 HOT proven_u32 take_bits(proven_brotli_reader_t *r, unsigned n) {
-    const proven_u32 v = (proven_u32)(r->bits & (((proven_u64)1 << n) - 1u));
+    const proven_u32 v = (proven_u32)mask_bits(r->bits, n);
     r->bits >>= n;
     r->n -= n;
     return v;
@@ -836,7 +859,8 @@ static proven_u64 copy_back(proven_byte_t *ring, proven_size_t cap, proven_u64 p
             /* Closer than eight: the first bytes one at a time until the pattern of period `d`
              * is written out to `step`, the smallest multiple of `d` that is at least eight;
              * then eight at a time from `step` back, which repeats it. */
-            const proven_size_t step = (proven_size_t)d * ((8 + (proven_size_t)d - 1) / (proven_size_t)d);
+            static const proven_u8 STEP8[8] = { 0, 8, 8, 9, 8, 10, 12, 14 };
+            const proven_size_t step = STEP8[d];
             proven_size_t i = 0;
             for (; i < step && i < n; ++i) dst[i] = src[i];
             for (; i < n; i += 8) copy8(dst + i, dst + i - step);
@@ -952,6 +976,196 @@ static const proven_u8 ctx_zero[256] = {
 static const proven_u8 *const CTX_FIRST[4] = { ctx_low6, ctx_high6, brotli_lut0, ctx_signed_hi };
 static const proven_u8 *const CTX_SECOND[4] = { ctx_zero, ctx_zero, brotli_lut1, brotli_lut2 };
 
+/* RFC 7932 command parameters keyed by the 704-entry insert-and-copy code: replaces the cell
+ * arithmetic and INS/COPY table chains inside fast_body. */
+typedef struct {
+    proven_u16 ins_base;
+    proven_u16 copy_base;
+    proven_u8 ins_extra;
+    proven_u8 copy_extra;
+    proven_u8 tot_extra;
+    proven_u8 pad;
+} proven_brotli_cmd_t;
+
+static const proven_brotli_cmd_t CMD_LUT[704] = {
+    {0,2,0,0,0,0}, {0,3,0,0,0,0}, {0,4,0,0,0,0}, {0,5,0,0,0,0},
+    {0,6,0,0,0,0}, {0,7,0,0,0,0}, {0,8,0,0,0,0}, {0,9,0,0,0,0},
+    {1,2,0,0,0,0}, {1,3,0,0,0,0}, {1,4,0,0,0,0}, {1,5,0,0,0,0},
+    {1,6,0,0,0,0}, {1,7,0,0,0,0}, {1,8,0,0,0,0}, {1,9,0,0,0,0},
+    {2,2,0,0,0,0}, {2,3,0,0,0,0}, {2,4,0,0,0,0}, {2,5,0,0,0,0},
+    {2,6,0,0,0,0}, {2,7,0,0,0,0}, {2,8,0,0,0,0}, {2,9,0,0,0,0},
+    {3,2,0,0,0,0}, {3,3,0,0,0,0}, {3,4,0,0,0,0}, {3,5,0,0,0,0},
+    {3,6,0,0,0,0}, {3,7,0,0,0,0}, {3,8,0,0,0,0}, {3,9,0,0,0,0},
+    {4,2,0,0,0,0}, {4,3,0,0,0,0}, {4,4,0,0,0,0}, {4,5,0,0,0,0},
+    {4,6,0,0,0,0}, {4,7,0,0,0,0}, {4,8,0,0,0,0}, {4,9,0,0,0,0},
+    {5,2,0,0,0,0}, {5,3,0,0,0,0}, {5,4,0,0,0,0}, {5,5,0,0,0,0},
+    {5,6,0,0,0,0}, {5,7,0,0,0,0}, {5,8,0,0,0,0}, {5,9,0,0,0,0},
+    {6,2,1,0,1,0}, {6,3,1,0,1,0}, {6,4,1,0,1,0}, {6,5,1,0,1,0},
+    {6,6,1,0,1,0}, {6,7,1,0,1,0}, {6,8,1,0,1,0}, {6,9,1,0,1,0},
+    {8,2,1,0,1,0}, {8,3,1,0,1,0}, {8,4,1,0,1,0}, {8,5,1,0,1,0},
+    {8,6,1,0,1,0}, {8,7,1,0,1,0}, {8,8,1,0,1,0}, {8,9,1,0,1,0},
+    {0,10,0,1,1,0}, {0,12,0,1,1,0}, {0,14,0,2,2,0}, {0,18,0,2,2,0},
+    {0,22,0,3,3,0}, {0,30,0,3,3,0}, {0,38,0,4,4,0}, {0,54,0,4,4,0},
+    {1,10,0,1,1,0}, {1,12,0,1,1,0}, {1,14,0,2,2,0}, {1,18,0,2,2,0},
+    {1,22,0,3,3,0}, {1,30,0,3,3,0}, {1,38,0,4,4,0}, {1,54,0,4,4,0},
+    {2,10,0,1,1,0}, {2,12,0,1,1,0}, {2,14,0,2,2,0}, {2,18,0,2,2,0},
+    {2,22,0,3,3,0}, {2,30,0,3,3,0}, {2,38,0,4,4,0}, {2,54,0,4,4,0},
+    {3,10,0,1,1,0}, {3,12,0,1,1,0}, {3,14,0,2,2,0}, {3,18,0,2,2,0},
+    {3,22,0,3,3,0}, {3,30,0,3,3,0}, {3,38,0,4,4,0}, {3,54,0,4,4,0},
+    {4,10,0,1,1,0}, {4,12,0,1,1,0}, {4,14,0,2,2,0}, {4,18,0,2,2,0},
+    {4,22,0,3,3,0}, {4,30,0,3,3,0}, {4,38,0,4,4,0}, {4,54,0,4,4,0},
+    {5,10,0,1,1,0}, {5,12,0,1,1,0}, {5,14,0,2,2,0}, {5,18,0,2,2,0},
+    {5,22,0,3,3,0}, {5,30,0,3,3,0}, {5,38,0,4,4,0}, {5,54,0,4,4,0},
+    {6,10,1,1,2,0}, {6,12,1,1,2,0}, {6,14,1,2,3,0}, {6,18,1,2,3,0},
+    {6,22,1,3,4,0}, {6,30,1,3,4,0}, {6,38,1,4,5,0}, {6,54,1,4,5,0},
+    {8,10,1,1,2,0}, {8,12,1,1,2,0}, {8,14,1,2,3,0}, {8,18,1,2,3,0},
+    {8,22,1,3,4,0}, {8,30,1,3,4,0}, {8,38,1,4,5,0}, {8,54,1,4,5,0},
+    {0,2,0,0,0,0}, {0,3,0,0,0,0}, {0,4,0,0,0,0}, {0,5,0,0,0,0},
+    {0,6,0,0,0,0}, {0,7,0,0,0,0}, {0,8,0,0,0,0}, {0,9,0,0,0,0},
+    {1,2,0,0,0,0}, {1,3,0,0,0,0}, {1,4,0,0,0,0}, {1,5,0,0,0,0},
+    {1,6,0,0,0,0}, {1,7,0,0,0,0}, {1,8,0,0,0,0}, {1,9,0,0,0,0},
+    {2,2,0,0,0,0}, {2,3,0,0,0,0}, {2,4,0,0,0,0}, {2,5,0,0,0,0},
+    {2,6,0,0,0,0}, {2,7,0,0,0,0}, {2,8,0,0,0,0}, {2,9,0,0,0,0},
+    {3,2,0,0,0,0}, {3,3,0,0,0,0}, {3,4,0,0,0,0}, {3,5,0,0,0,0},
+    {3,6,0,0,0,0}, {3,7,0,0,0,0}, {3,8,0,0,0,0}, {3,9,0,0,0,0},
+    {4,2,0,0,0,0}, {4,3,0,0,0,0}, {4,4,0,0,0,0}, {4,5,0,0,0,0},
+    {4,6,0,0,0,0}, {4,7,0,0,0,0}, {4,8,0,0,0,0}, {4,9,0,0,0,0},
+    {5,2,0,0,0,0}, {5,3,0,0,0,0}, {5,4,0,0,0,0}, {5,5,0,0,0,0},
+    {5,6,0,0,0,0}, {5,7,0,0,0,0}, {5,8,0,0,0,0}, {5,9,0,0,0,0},
+    {6,2,1,0,1,0}, {6,3,1,0,1,0}, {6,4,1,0,1,0}, {6,5,1,0,1,0},
+    {6,6,1,0,1,0}, {6,7,1,0,1,0}, {6,8,1,0,1,0}, {6,9,1,0,1,0},
+    {8,2,1,0,1,0}, {8,3,1,0,1,0}, {8,4,1,0,1,0}, {8,5,1,0,1,0},
+    {8,6,1,0,1,0}, {8,7,1,0,1,0}, {8,8,1,0,1,0}, {8,9,1,0,1,0},
+    {0,10,0,1,1,0}, {0,12,0,1,1,0}, {0,14,0,2,2,0}, {0,18,0,2,2,0},
+    {0,22,0,3,3,0}, {0,30,0,3,3,0}, {0,38,0,4,4,0}, {0,54,0,4,4,0},
+    {1,10,0,1,1,0}, {1,12,0,1,1,0}, {1,14,0,2,2,0}, {1,18,0,2,2,0},
+    {1,22,0,3,3,0}, {1,30,0,3,3,0}, {1,38,0,4,4,0}, {1,54,0,4,4,0},
+    {2,10,0,1,1,0}, {2,12,0,1,1,0}, {2,14,0,2,2,0}, {2,18,0,2,2,0},
+    {2,22,0,3,3,0}, {2,30,0,3,3,0}, {2,38,0,4,4,0}, {2,54,0,4,4,0},
+    {3,10,0,1,1,0}, {3,12,0,1,1,0}, {3,14,0,2,2,0}, {3,18,0,2,2,0},
+    {3,22,0,3,3,0}, {3,30,0,3,3,0}, {3,38,0,4,4,0}, {3,54,0,4,4,0},
+    {4,10,0,1,1,0}, {4,12,0,1,1,0}, {4,14,0,2,2,0}, {4,18,0,2,2,0},
+    {4,22,0,3,3,0}, {4,30,0,3,3,0}, {4,38,0,4,4,0}, {4,54,0,4,4,0},
+    {5,10,0,1,1,0}, {5,12,0,1,1,0}, {5,14,0,2,2,0}, {5,18,0,2,2,0},
+    {5,22,0,3,3,0}, {5,30,0,3,3,0}, {5,38,0,4,4,0}, {5,54,0,4,4,0},
+    {6,10,1,1,2,0}, {6,12,1,1,2,0}, {6,14,1,2,3,0}, {6,18,1,2,3,0},
+    {6,22,1,3,4,0}, {6,30,1,3,4,0}, {6,38,1,4,5,0}, {6,54,1,4,5,0},
+    {8,10,1,1,2,0}, {8,12,1,1,2,0}, {8,14,1,2,3,0}, {8,18,1,2,3,0},
+    {8,22,1,3,4,0}, {8,30,1,3,4,0}, {8,38,1,4,5,0}, {8,54,1,4,5,0},
+    {10,2,2,0,2,0}, {10,3,2,0,2,0}, {10,4,2,0,2,0}, {10,5,2,0,2,0},
+    {10,6,2,0,2,0}, {10,7,2,0,2,0}, {10,8,2,0,2,0}, {10,9,2,0,2,0},
+    {14,2,2,0,2,0}, {14,3,2,0,2,0}, {14,4,2,0,2,0}, {14,5,2,0,2,0},
+    {14,6,2,0,2,0}, {14,7,2,0,2,0}, {14,8,2,0,2,0}, {14,9,2,0,2,0},
+    {18,2,3,0,3,0}, {18,3,3,0,3,0}, {18,4,3,0,3,0}, {18,5,3,0,3,0},
+    {18,6,3,0,3,0}, {18,7,3,0,3,0}, {18,8,3,0,3,0}, {18,9,3,0,3,0},
+    {26,2,3,0,3,0}, {26,3,3,0,3,0}, {26,4,3,0,3,0}, {26,5,3,0,3,0},
+    {26,6,3,0,3,0}, {26,7,3,0,3,0}, {26,8,3,0,3,0}, {26,9,3,0,3,0},
+    {34,2,4,0,4,0}, {34,3,4,0,4,0}, {34,4,4,0,4,0}, {34,5,4,0,4,0},
+    {34,6,4,0,4,0}, {34,7,4,0,4,0}, {34,8,4,0,4,0}, {34,9,4,0,4,0},
+    {50,2,4,0,4,0}, {50,3,4,0,4,0}, {50,4,4,0,4,0}, {50,5,4,0,4,0},
+    {50,6,4,0,4,0}, {50,7,4,0,4,0}, {50,8,4,0,4,0}, {50,9,4,0,4,0},
+    {66,2,5,0,5,0}, {66,3,5,0,5,0}, {66,4,5,0,5,0}, {66,5,5,0,5,0},
+    {66,6,5,0,5,0}, {66,7,5,0,5,0}, {66,8,5,0,5,0}, {66,9,5,0,5,0},
+    {98,2,5,0,5,0}, {98,3,5,0,5,0}, {98,4,5,0,5,0}, {98,5,5,0,5,0},
+    {98,6,5,0,5,0}, {98,7,5,0,5,0}, {98,8,5,0,5,0}, {98,9,5,0,5,0},
+    {10,10,2,1,3,0}, {10,12,2,1,3,0}, {10,14,2,2,4,0}, {10,18,2,2,4,0},
+    {10,22,2,3,5,0}, {10,30,2,3,5,0}, {10,38,2,4,6,0}, {10,54,2,4,6,0},
+    {14,10,2,1,3,0}, {14,12,2,1,3,0}, {14,14,2,2,4,0}, {14,18,2,2,4,0},
+    {14,22,2,3,5,0}, {14,30,2,3,5,0}, {14,38,2,4,6,0}, {14,54,2,4,6,0},
+    {18,10,3,1,4,0}, {18,12,3,1,4,0}, {18,14,3,2,5,0}, {18,18,3,2,5,0},
+    {18,22,3,3,6,0}, {18,30,3,3,6,0}, {18,38,3,4,7,0}, {18,54,3,4,7,0},
+    {26,10,3,1,4,0}, {26,12,3,1,4,0}, {26,14,3,2,5,0}, {26,18,3,2,5,0},
+    {26,22,3,3,6,0}, {26,30,3,3,6,0}, {26,38,3,4,7,0}, {26,54,3,4,7,0},
+    {34,10,4,1,5,0}, {34,12,4,1,5,0}, {34,14,4,2,6,0}, {34,18,4,2,6,0},
+    {34,22,4,3,7,0}, {34,30,4,3,7,0}, {34,38,4,4,8,0}, {34,54,4,4,8,0},
+    {50,10,4,1,5,0}, {50,12,4,1,5,0}, {50,14,4,2,6,0}, {50,18,4,2,6,0},
+    {50,22,4,3,7,0}, {50,30,4,3,7,0}, {50,38,4,4,8,0}, {50,54,4,4,8,0},
+    {66,10,5,1,6,0}, {66,12,5,1,6,0}, {66,14,5,2,7,0}, {66,18,5,2,7,0},
+    {66,22,5,3,8,0}, {66,30,5,3,8,0}, {66,38,5,4,9,0}, {66,54,5,4,9,0},
+    {98,10,5,1,6,0}, {98,12,5,1,6,0}, {98,14,5,2,7,0}, {98,18,5,2,7,0},
+    {98,22,5,3,8,0}, {98,30,5,3,8,0}, {98,38,5,4,9,0}, {98,54,5,4,9,0},
+    {0,70,0,5,5,0}, {0,102,0,5,5,0}, {0,134,0,6,6,0}, {0,198,0,7,7,0},
+    {0,326,0,8,8,0}, {0,582,0,9,9,0}, {0,1094,0,10,10,0}, {0,2118,0,24,24,0},
+    {1,70,0,5,5,0}, {1,102,0,5,5,0}, {1,134,0,6,6,0}, {1,198,0,7,7,0},
+    {1,326,0,8,8,0}, {1,582,0,9,9,0}, {1,1094,0,10,10,0}, {1,2118,0,24,24,0},
+    {2,70,0,5,5,0}, {2,102,0,5,5,0}, {2,134,0,6,6,0}, {2,198,0,7,7,0},
+    {2,326,0,8,8,0}, {2,582,0,9,9,0}, {2,1094,0,10,10,0}, {2,2118,0,24,24,0},
+    {3,70,0,5,5,0}, {3,102,0,5,5,0}, {3,134,0,6,6,0}, {3,198,0,7,7,0},
+    {3,326,0,8,8,0}, {3,582,0,9,9,0}, {3,1094,0,10,10,0}, {3,2118,0,24,24,0},
+    {4,70,0,5,5,0}, {4,102,0,5,5,0}, {4,134,0,6,6,0}, {4,198,0,7,7,0},
+    {4,326,0,8,8,0}, {4,582,0,9,9,0}, {4,1094,0,10,10,0}, {4,2118,0,24,24,0},
+    {5,70,0,5,5,0}, {5,102,0,5,5,0}, {5,134,0,6,6,0}, {5,198,0,7,7,0},
+    {5,326,0,8,8,0}, {5,582,0,9,9,0}, {5,1094,0,10,10,0}, {5,2118,0,24,24,0},
+    {6,70,1,5,6,0}, {6,102,1,5,6,0}, {6,134,1,6,7,0}, {6,198,1,7,8,0},
+    {6,326,1,8,9,0}, {6,582,1,9,10,0}, {6,1094,1,10,11,0}, {6,2118,1,24,25,0},
+    {8,70,1,5,6,0}, {8,102,1,5,6,0}, {8,134,1,6,7,0}, {8,198,1,7,8,0},
+    {8,326,1,8,9,0}, {8,582,1,9,10,0}, {8,1094,1,10,11,0}, {8,2118,1,24,25,0},
+    {130,2,6,0,6,0}, {130,3,6,0,6,0}, {130,4,6,0,6,0}, {130,5,6,0,6,0},
+    {130,6,6,0,6,0}, {130,7,6,0,6,0}, {130,8,6,0,6,0}, {130,9,6,0,6,0},
+    {194,2,7,0,7,0}, {194,3,7,0,7,0}, {194,4,7,0,7,0}, {194,5,7,0,7,0},
+    {194,6,7,0,7,0}, {194,7,7,0,7,0}, {194,8,7,0,7,0}, {194,9,7,0,7,0},
+    {322,2,8,0,8,0}, {322,3,8,0,8,0}, {322,4,8,0,8,0}, {322,5,8,0,8,0},
+    {322,6,8,0,8,0}, {322,7,8,0,8,0}, {322,8,8,0,8,0}, {322,9,8,0,8,0},
+    {578,2,9,0,9,0}, {578,3,9,0,9,0}, {578,4,9,0,9,0}, {578,5,9,0,9,0},
+    {578,6,9,0,9,0}, {578,7,9,0,9,0}, {578,8,9,0,9,0}, {578,9,9,0,9,0},
+    {1090,2,10,0,10,0}, {1090,3,10,0,10,0}, {1090,4,10,0,10,0}, {1090,5,10,0,10,0},
+    {1090,6,10,0,10,0}, {1090,7,10,0,10,0}, {1090,8,10,0,10,0}, {1090,9,10,0,10,0},
+    {2114,2,12,0,12,0}, {2114,3,12,0,12,0}, {2114,4,12,0,12,0}, {2114,5,12,0,12,0},
+    {2114,6,12,0,12,0}, {2114,7,12,0,12,0}, {2114,8,12,0,12,0}, {2114,9,12,0,12,0},
+    {6210,2,14,0,14,0}, {6210,3,14,0,14,0}, {6210,4,14,0,14,0}, {6210,5,14,0,14,0},
+    {6210,6,14,0,14,0}, {6210,7,14,0,14,0}, {6210,8,14,0,14,0}, {6210,9,14,0,14,0},
+    {22594,2,24,0,24,0}, {22594,3,24,0,24,0}, {22594,4,24,0,24,0}, {22594,5,24,0,24,0},
+    {22594,6,24,0,24,0}, {22594,7,24,0,24,0}, {22594,8,24,0,24,0}, {22594,9,24,0,24,0},
+    {10,70,2,5,7,0}, {10,102,2,5,7,0}, {10,134,2,6,8,0}, {10,198,2,7,9,0},
+    {10,326,2,8,10,0}, {10,582,2,9,11,0}, {10,1094,2,10,12,0}, {10,2118,2,24,26,0},
+    {14,70,2,5,7,0}, {14,102,2,5,7,0}, {14,134,2,6,8,0}, {14,198,2,7,9,0},
+    {14,326,2,8,10,0}, {14,582,2,9,11,0}, {14,1094,2,10,12,0}, {14,2118,2,24,26,0},
+    {18,70,3,5,8,0}, {18,102,3,5,8,0}, {18,134,3,6,9,0}, {18,198,3,7,10,0},
+    {18,326,3,8,11,0}, {18,582,3,9,12,0}, {18,1094,3,10,13,0}, {18,2118,3,24,27,0},
+    {26,70,3,5,8,0}, {26,102,3,5,8,0}, {26,134,3,6,9,0}, {26,198,3,7,10,0},
+    {26,326,3,8,11,0}, {26,582,3,9,12,0}, {26,1094,3,10,13,0}, {26,2118,3,24,27,0},
+    {34,70,4,5,9,0}, {34,102,4,5,9,0}, {34,134,4,6,10,0}, {34,198,4,7,11,0},
+    {34,326,4,8,12,0}, {34,582,4,9,13,0}, {34,1094,4,10,14,0}, {34,2118,4,24,28,0},
+    {50,70,4,5,9,0}, {50,102,4,5,9,0}, {50,134,4,6,10,0}, {50,198,4,7,11,0},
+    {50,326,4,8,12,0}, {50,582,4,9,13,0}, {50,1094,4,10,14,0}, {50,2118,4,24,28,0},
+    {66,70,5,5,10,0}, {66,102,5,5,10,0}, {66,134,5,6,11,0}, {66,198,5,7,12,0},
+    {66,326,5,8,13,0}, {66,582,5,9,14,0}, {66,1094,5,10,15,0}, {66,2118,5,24,29,0},
+    {98,70,5,5,10,0}, {98,102,5,5,10,0}, {98,134,5,6,11,0}, {98,198,5,7,12,0},
+    {98,326,5,8,13,0}, {98,582,5,9,14,0}, {98,1094,5,10,15,0}, {98,2118,5,24,29,0},
+    {130,10,6,1,7,0}, {130,12,6,1,7,0}, {130,14,6,2,8,0}, {130,18,6,2,8,0},
+    {130,22,6,3,9,0}, {130,30,6,3,9,0}, {130,38,6,4,10,0}, {130,54,6,4,10,0},
+    {194,10,7,1,8,0}, {194,12,7,1,8,0}, {194,14,7,2,9,0}, {194,18,7,2,9,0},
+    {194,22,7,3,10,0}, {194,30,7,3,10,0}, {194,38,7,4,11,0}, {194,54,7,4,11,0},
+    {322,10,8,1,9,0}, {322,12,8,1,9,0}, {322,14,8,2,10,0}, {322,18,8,2,10,0},
+    {322,22,8,3,11,0}, {322,30,8,3,11,0}, {322,38,8,4,12,0}, {322,54,8,4,12,0},
+    {578,10,9,1,10,0}, {578,12,9,1,10,0}, {578,14,9,2,11,0}, {578,18,9,2,11,0},
+    {578,22,9,3,12,0}, {578,30,9,3,12,0}, {578,38,9,4,13,0}, {578,54,9,4,13,0},
+    {1090,10,10,1,11,0}, {1090,12,10,1,11,0}, {1090,14,10,2,12,0}, {1090,18,10,2,12,0},
+    {1090,22,10,3,13,0}, {1090,30,10,3,13,0}, {1090,38,10,4,14,0}, {1090,54,10,4,14,0},
+    {2114,10,12,1,13,0}, {2114,12,12,1,13,0}, {2114,14,12,2,14,0}, {2114,18,12,2,14,0},
+    {2114,22,12,3,15,0}, {2114,30,12,3,15,0}, {2114,38,12,4,16,0}, {2114,54,12,4,16,0},
+    {6210,10,14,1,15,0}, {6210,12,14,1,15,0}, {6210,14,14,2,16,0}, {6210,18,14,2,16,0},
+    {6210,22,14,3,17,0}, {6210,30,14,3,17,0}, {6210,38,14,4,18,0}, {6210,54,14,4,18,0},
+    {22594,10,24,1,25,0}, {22594,12,24,1,25,0}, {22594,14,24,2,26,0}, {22594,18,24,2,26,0},
+    {22594,22,24,3,27,0}, {22594,30,24,3,27,0}, {22594,38,24,4,28,0}, {22594,54,24,4,28,0},
+    {130,70,6,5,11,0}, {130,102,6,5,11,0}, {130,134,6,6,12,0}, {130,198,6,7,13,0},
+    {130,326,6,8,14,0}, {130,582,6,9,15,0}, {130,1094,6,10,16,0}, {130,2118,6,24,30,0},
+    {194,70,7,5,12,0}, {194,102,7,5,12,0}, {194,134,7,6,13,0}, {194,198,7,7,14,0},
+    {194,326,7,8,15,0}, {194,582,7,9,16,0}, {194,1094,7,10,17,0}, {194,2118,7,24,31,0},
+    {322,70,8,5,13,0}, {322,102,8,5,13,0}, {322,134,8,6,14,0}, {322,198,8,7,15,0},
+    {322,326,8,8,16,0}, {322,582,8,9,17,0}, {322,1094,8,10,18,0}, {322,2118,8,24,32,0},
+    {578,70,9,5,14,0}, {578,102,9,5,14,0}, {578,134,9,6,15,0}, {578,198,9,7,16,0},
+    {578,326,9,8,17,0}, {578,582,9,9,18,0}, {578,1094,9,10,19,0}, {578,2118,9,24,33,0},
+    {1090,70,10,5,15,0}, {1090,102,10,5,15,0}, {1090,134,10,6,16,0}, {1090,198,10,7,17,0},
+    {1090,326,10,8,18,0}, {1090,582,10,9,19,0}, {1090,1094,10,10,20,0}, {1090,2118,10,24,34,0},
+    {2114,70,12,5,17,0}, {2114,102,12,5,17,0}, {2114,134,12,6,18,0}, {2114,198,12,7,19,0},
+    {2114,326,12,8,20,0}, {2114,582,12,9,21,0}, {2114,1094,12,10,22,0}, {2114,2118,12,24,36,0},
+    {6210,70,14,5,19,0}, {6210,102,14,5,19,0}, {6210,134,14,6,20,0}, {6210,198,14,7,21,0},
+    {6210,326,14,8,22,0}, {6210,582,14,9,23,0}, {6210,1094,14,10,24,0}, {6210,2118,14,24,38,0},
+    {22594,70,24,5,29,0}, {22594,102,24,5,29,0}, {22594,134,24,6,30,0}, {22594,198,24,7,31,0},
+    {22594,326,24,8,32,0}, {22594,582,24,9,33,0}, {22594,1094,24,10,34,0}, {22594,2118,24,24,48,0}
+};
+
 /* Whole commands while there is input to spare (64 bytes, so no read can run out) and room
  * for the command's output: the items the step-by-step path takes one at a time, taken
  * without its checks for input, with the reader and the position in locals. It leaves the
@@ -959,11 +1173,12 @@ static const proven_u8 *const CTX_SECOND[4] = { ctx_zero, ctx_zero, brotli_lut1,
  * ahead. */
 HOT void fast_body(proven_brotli_decoder_t *b, proven_io_t *io) {
     const proven_size_t start = io->in_at;
-    const proven_byte_t *end = io->in + io->in_len;
-    proven_category_t *ci = &b->c[1], *cl = &b->c[0], *cd = &b->c[2];
+    const proven_byte_t *const end = io->in + io->in_len;
+    proven_category_t *const ci = &b->c[1], *const cl = &b->c[0], *const cd = &b->c[2];
     const proven_u16 *codes[64];
     literal_codes(b, codes);
     const proven_u16 *one = single_code(codes);
+    const proven_u8 *cfirst = CTX_FIRST[b->cmode[cl->type] & 3u], *csecond = CTX_SECOND[b->cmode[cl->type] & 3u];
     /* The command code and the four distance codes of the current block types, as pointers: one
      * load from each command's lookup instead of a chain of three (type, map, code) - the chain
      * is on the path from one command to the next. Made again at a block switch. */
@@ -971,133 +1186,231 @@ HOT void fast_body(proven_brotli_decoder_t *b, proven_io_t *io) {
     for (unsigned k = 0; k < 4; ++k) dcode[k] = b->tab + b->code_d[b->cmap_d[4 * cd->type + k]];
     proven_brotli_reader_t r;
     sync_in(b, io, &r);
+    proven_byte_t *ring = b->ring;
+    proven_size_t cap = b->cap, mask = cap - 1;
+    const proven_size_t full = b->full;
+    const proven_u64 window = b->window;
+    const unsigned npostfix = b->npostfix;
+    proven_u64 pos = b->pos;
+    proven_u32 left = b->left;
+    proven_u32 ci_count = ci->count, cl_count = cl->count, cd_count = cd->count;
+    proven_u32 *const dist = b->dist;
+    proven_u32 dist_at = b->dist_at;
+    static const proven_u8 WHICH[16] = { 0, 1, 2, 3, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1 };
+    static const proven_i8 DELTA[16] = { 0, 0, 0, 0, -1, 1, -2, 2, -3, 3, -1, 1, -2, 2, -3, 3 };
+
     while (b->state == S_COMMAND && end - r.p >= 64) {
-        if (b->left == 0) { meta_end(b); break; }
+        if (BROTLI_UNLIKELY(left == 0)) { meta_end(b); break; }
         fill(&r);
-        if (ci->count == 0) {
+        if (BROTLI_UNLIKELY(ci_count == 0)) {
+            ci->count = 0;
             sync_out(b, io, &r); (void)block_switch(b, io, ci); sync_in(b, io, &r); fill(&r);
+            ci_count = ci->count;
             icode = b->tab + b->code_i[ci->type];
         }
         unsigned len;
         const unsigned s = lookup(icode, r.bits, &len);
-        const unsigned cell = s >> 6;
-        const unsigned ic = (cell < 2 ? 0u : CELL_INS[cell - 2]) + ((s >> 3) & 7u);
-        const unsigned cc = (cell < 2 ? (cell == 1 ? 8u : 0u) : CELL_COPY[cell - 2]) + (s & 7u);
+        const proven_brotli_cmd_t cmd = CMD_LUT[s];
+        const unsigned ie = cmd.ins_extra, ce = cmd.copy_extra;
         r.bits >>= len;
-        r.n -= len;
-        const proven_u32 insert = INS_BASE[ic] + take_bits(&r, INS_EXTRA[ic]);
-        fill(&r);
-        const proven_u32 copy = COPY_BASE[cc] + take_bits(&r, COPY_EXTRA[cc]);
-        ci->count--;
-        b->insert = insert;
-        b->copy = copy;
-        b->copy_code = cc;
-        b->implicit_zero = s < 128;
-        b->state = S_LITERALS;
-        if (insert > b->left) { bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
+        proven_u32 insert, copy;
+        /* Only s == 703 (24 + 24 extra bits + up to 15 prefix bits) can exceed 56 held bits. */
+        if (BROTLI_LIKELY(s != 703)) {
+            const proven_u64 eb = r.bits;
+            insert = cmd.ins_base + (proven_u32)mask_bits(eb, ie);
+            copy = cmd.copy_base + (proven_u32)mask_bits(eb >> ie, ce);
+            r.bits = eb >> cmd.tot_extra;
+            r.n -= len + cmd.tot_extra;
+        } else {
+            insert = cmd.ins_base + (proven_u32)mask_bits(r.bits, ie);
+            r.bits >>= ie;
+            r.n -= len + ie;
+            fill(&r);
+            copy = cmd.copy_base + (proven_u32)mask_bits(r.bits, ce);
+            r.bits >>= ce;
+            r.n -= ce;
+        }
+        ci_count--;
+        if (BROTLI_UNLIKELY(insert > left)) {
+            b->insert = insert; b->copy = copy; b->implicit_zero = s < 128; b->state = S_LITERALS;
+            bad(b, PROVEN_ERR_INVALID_FORMAT); break;
+        }
         /* Room for the literals, the copy or a word, and 64 bytes more (see copy_back). */
         const proven_u64 need = (proven_u64)insert + copy + 64;
-        if (need > b->full) break;
-        if (b->cap < b->full ? b->pos + need > b->cap : b->pos + need - b->flushed > b->cap) {
+        if (BROTLI_UNLIKELY(need > full)) {
+            b->insert = insert; b->copy = copy; b->implicit_zero = s < 128; b->state = S_LITERALS;
+            break;
+        }
+        if (BROTLI_UNLIKELY(cap < full ? pos + need > cap : pos + need - b->flushed > cap)) {
+            b->pos = pos; b->left = left;
+            b->insert = insert; b->copy = copy; b->implicit_zero = s < 128; b->state = S_LITERALS;
             sync_out(b, io, &r);
             const int k = room(b, io, (proven_size_t)need);
             if (k <= 0) { sync_in(b, io, &r); break; }
+            b->state = S_COMMAND;
+            ring = b->ring; cap = b->cap; mask = cap - 1;
         }
 
-        /* The literals. */
-        proven_byte_t *ring = b->ring;
-        const proven_size_t mask = b->cap - 1;
-        proven_u64 pos = b->pos;
-        /* The last two bytes, for the literals' contexts: read only when there are literals and
-         * their code depends on them. */
-        unsigned p1 = 0, p2 = 0;
-        if (insert > 0 && !one) { p1 = pos >= 1 ? ring[(pos - 1) & mask] : 0; p2 = pos >= 2 ? ring[(pos - 2) & mask] : 0; }
-        proven_u32 n = insert, count = cl->count;
-        const proven_u8 *cfirst = CTX_FIRST[b->cmode[cl->type] & 3u], *csecond = CTX_SECOND[b->cmode[cl->type] & 3u];
-        while (n > 0) {
-            if (end - r.p < 16) break;
-            fill(&r);
-            if (count == 0) {
-                sync_out(b, io, &r);
-                (void)block_switch(b, io, cl);
-                sync_in(b, io, &r);
-                fill(&r);
-                count = cl->count;
-                cfirst = CTX_FIRST[b->cmode[cl->type] & 3u];
-                csecond = CTX_SECOND[b->cmode[cl->type] & 3u];
-                literal_codes(b, codes);
-                one = single_code(codes);
-                p1 = pos >= 1 ? ring[(pos - 1) & mask] : 0;
-                p2 = pos >= 2 ? ring[(pos - 2) & mask] : 0;
+        if (insert > 0) {
+            proven_u32 n = insert;
+            const proven_size_t at = (proven_size_t)(pos & mask);
+            /* Fast non-wrapping, no-switch literal run: write directly without mask arithmetic. */
+            if (BROTLI_LIKELY(n <= cl_count && at + n <= cap && (proven_size_t)(end - r.p) >= (proven_size_t)2 * n + 16)) {
+                proven_byte_t *dst = ring + at;
+                cl_count -= n;
+                left -= n;
+                if (one) {
+                    pos += n;
+                    while (n >= 3) {
+                        fill(&r);
+                        dst[0] = (proven_byte_t)take_sym(&r, one);
+                        dst[1] = (proven_byte_t)take_sym(&r, one);
+                        dst[2] = (proven_byte_t)take_sym(&r, one);
+                        dst += 3; n -= 3;
+                    }
+                    if (n > 0) {
+                        if (r.n < 15u * n) fill(&r);
+                        do { *dst++ = (proven_byte_t)take_sym(&r, one); } while (--n);
+                    }
+                } else {
+                    unsigned p1 = pos >= 1 ? ring[(pos - 1) & mask] : 0;
+                    unsigned p2 = pos >= 2 ? ring[(pos - 2) & mask] : 0;
+                    pos += n;
+                    while (n >= 3) {
+                        fill(&r);
+                        unsigned v = take_sym(&r, codes[(unsigned)cfirst[p1] | csecond[p2]]); dst[0] = (proven_byte_t)v; p2 = p1; p1 = v;
+                        v = take_sym(&r, codes[(unsigned)cfirst[p1] | csecond[p2]]); dst[1] = (proven_byte_t)v; p2 = p1; p1 = v;
+                        v = take_sym(&r, codes[(unsigned)cfirst[p1] | csecond[p2]]); dst[2] = (proven_byte_t)v; p2 = p1; p1 = v;
+                        dst += 3; n -= 3;
+                    }
+                    if (n > 0) {
+                        if (r.n < 15u * n) fill(&r);
+                        do {
+                            const unsigned v = take_sym(&r, codes[(unsigned)cfirst[p1] | csecond[p2]]);
+                            *dst++ = (proven_byte_t)v; p2 = p1; p1 = v;
+                        } while (--n);
+                    }
+                }
+            } else {
+                unsigned p1 = 0, p2 = 0;
+                if (!one) { p1 = pos >= 1 ? ring[(pos - 1) & mask] : 0; p2 = pos >= 2 ? ring[(pos - 2) & mask] : 0; }
+                while (n > 0) {
+                    if (end - r.p < 16) break;
+                    fill(&r);
+                    if (cl_count == 0) {
+                        cl->count = 0;
+                        sync_out(b, io, &r);
+                        (void)block_switch(b, io, cl);
+                        sync_in(b, io, &r);
+                        fill(&r);
+                        cl_count = cl->count;
+                        cfirst = CTX_FIRST[b->cmode[cl->type] & 3u];
+                        csecond = CTX_SECOND[b->cmode[cl->type] & 3u];
+                        literal_codes(b, codes);
+                        one = single_code(codes);
+                        p1 = pos >= 1 ? ring[(pos - 1) & mask] : 0;
+                        p2 = pos >= 2 ? ring[(pos - 2) & mask] : 0;
+                    }
+                    unsigned batch = n < 3 ? n : 3;
+                    if (batch > cl_count) batch = cl_count;
+                    n -= batch;
+                    cl_count -= batch;
+                    if (one) {
+                        for (unsigned k = 0; k < batch; ++k) { ring[pos & mask] = (proven_byte_t)take_sym(&r, one); pos++; }
+                        continue;
+                    }
+                    for (unsigned k = 0; k < batch; ++k) {
+                        const unsigned ctx = (unsigned)cfirst[p1] | csecond[p2];
+                        const unsigned v = take_sym(&r, codes[ctx]);
+                        ring[pos & mask] = (proven_byte_t)v;
+                        pos++;
+                        p2 = p1;
+                        p1 = v;
+                    }
+                }
+                left -= insert - n;
+                if (n > 0) {
+                    b->insert = n; b->copy = copy; b->implicit_zero = s < 128; b->state = S_LITERALS;
+                    break;
+                }
             }
-            /* Up to three literals per fill: fifteen bits each. */
-            unsigned batch = n < 3 ? n : 3;
-            if (batch > count) batch = count;
-            n -= batch;
-            count -= batch;
-            if (one) {
-                /* No context: p1 and p2 are not kept, and are read back if a switch needs them. */
-                for (unsigned k = 0; k < batch; ++k) { ring[pos & mask] = (proven_byte_t)take_sym(&r, one); pos++; }
-                continue;
-            }
-            for (unsigned k = 0; k < batch; ++k) {
-                const unsigned ctx = (unsigned)cfirst[p1] | csecond[p2];
-                const unsigned v = take_sym(&r, codes[ctx]);
-                ring[pos & mask] = (proven_byte_t)v;
-                pos++;
-                p2 = p1;
-                p1 = v;
-            }
+            if (BROTLI_UNLIKELY(left == 0)) { meta_end(b); break; }
         }
-        cl->count = count;
-        b->pos = pos;
-        b->left -= insert - n;
-        b->insert = n;
-        if (n > 0) break;
-        if (b->left == 0) { meta_end(b); break; }
 
         /* The distance. */
-        b->state = S_DISTANCE;
-        if (!b->implicit_zero && end - r.p < 16) break;
-        unsigned code = 0;
-        proven_u32 extra = 0;
-        if (!b->implicit_zero) {
-            fill(&r);
-            if (cd->count == 0) {
-                sync_out(b, io, &r); (void)block_switch(b, io, cd); sync_in(b, io, &r); fill(&r);
-                for (unsigned k = 0; k < 4; ++k) dcode[k] = b->tab + b->code_d[b->cmap_d[4 * cd->type + k]];
+        proven_u32 d;
+        if (s < 128) {
+            d = dist[(dist_at - 1u) & 3u];
+            if (BROTLI_UNLIKELY(d > pos || d > window)) goto dict_word;
+        } else {
+            if (BROTLI_UNLIKELY(end - r.p < 16)) {
+                b->insert = 0; b->copy = copy; b->implicit_zero = false; b->state = S_DISTANCE;
+                break;
             }
-            const unsigned ctx = copy > 4 ? 3u : copy - 2;
-            code = take_sym(&r, dcode[ctx]);
-            extra = take_bits(&r, distance_extra(b, code));
-            cd->count--;
-            b->implicit_zero = true;            /* read: if the other path goes on from here, it reads none */
+            if (BROTLI_UNLIKELY(cd_count == 0)) {
+                cd->count = 0;
+                sync_out(b, io, &r); (void)block_switch(b, io, cd); sync_in(b, io, &r); fill(&r);
+                cd_count = cd->count;
+                for (unsigned k = 0; k < 4; ++k) dcode[k] = b->tab + b->code_d[b->cmap_d[4 * cd->type + k]];
+            } else if (BROTLI_UNLIKELY(r.n < 39)) {
+                fill(&r);
+            }
+            const unsigned dctx = copy > 4 ? 3u : copy - 2;
+            const unsigned code = take_sym(&r, dcode[dctx]);
+            const proven_u32 extra = take_bits(&r, distance_extra(b, code));
+            cd_count--;
+            if (code < 16) {
+                const proven_u32 base = dist[(dist_at - 1u - WHICH[code]) & 3u];
+                const proven_i64 dv = (proven_i64)base + DELTA[code];
+                if (BROTLI_UNLIKELY(dv <= 0)) { b->state = S_DISTANCE; bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
+                d = (proven_u32)dv;
+            } else {
+                d = b->dx_base[code] + (extra << npostfix);
+            }
+            if (BROTLI_UNLIKELY(d > pos || d > window)) goto dict_word;
+            if (code != 0) { dist[dist_at & 3u] = d; dist_at++; }
         }
-        const proven_u32 d = distance_of(b, code, extra);
-        if (d == 0) { bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
-        const proven_u64 reach = pos < b->window ? pos : b->window;
-        if (d > reach) {
-            if (copy < 4 || copy > 24) { bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
+
+        if (BROTLI_UNLIKELY(copy > left)) { b->state = S_DISTANCE; bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
+        {
+            const proven_size_t to = (proven_size_t)(pos & mask);
+            const proven_size_t from = (proven_size_t)((pos - d) & mask);
+            if (BROTLI_LIKELY(to + copy <= cap) && BROTLI_LIKELY(from + copy <= cap) && BROTLI_LIKELY(d >= 16)) {
+                proven_byte_t *dst = ring + to;
+                const proven_byte_t *src = ring + from;
+                copy16(dst, src);
+                if (BROTLI_UNLIKELY(copy > 16)) {
+                    for (proven_size_t i = 16; i < copy; i += 16) copy16(dst + i, src + i);
+                }
+                pos += copy;
+            } else {
+                pos = copy_back(ring, cap, pos, d, copy, true);
+            }
+        }
+        left -= copy;
+        continue;
+
+    dict_word: {
+            if (copy < 4 || copy > 24) { b->state = S_DISTANCE; bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
+            const proven_u64 reach = pos < window ? pos : window;
             const proven_u64 id = d - reach - 1;
             const unsigned nbits = brotli_ndbits[copy];
             const proven_u64 transform = id >> nbits;
-            if (transform >= 121) { bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
+            if (transform >= 121) { b->state = S_DISTANCE; bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
             dictionary_word(b, copy, (proven_u32)(id & ((1u << nbits) - 1u)), (unsigned)transform);
-            if (b->word_len > b->left) { bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
+            if (b->word_len > left) { b->state = S_DISTANCE; bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
             for (proven_u32 i = 0; i < b->word_len; ++i) ring[(pos + i) & mask] = b->word[i];
-            b->pos = pos + b->word_len;
-            b->left -= b->word_len;
-            b->state = S_COMMAND;
+            pos += b->word_len;
+            left -= b->word_len;
             continue;
         }
-        if (code != 0) { b->dist[b->dist_at & 3u] = d; b->dist_at++; }
-        if (copy > b->left) { bad(b, PROVEN_ERR_INVALID_FORMAT); break; }
-        b->distance = d;
-        b->pos = copy_back(ring, b->cap, pos, d, copy, true);
-        b->left -= copy;
-        b->copy = 0;
-        b->state = S_COMMAND;
     }
+    b->pos = pos;
+    b->left = left;
+    ci->count = ci_count;
+    cl->count = cl_count;
+    cd->count = cd_count;
+    b->dist_at = dist_at;
     sync_out(b, io, &r);
     /* Whole bytes read ahead go back, as far as they were read here. */
     proven_size_t ahead = b->bitcnt >> 3;

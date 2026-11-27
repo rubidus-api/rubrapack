@@ -4255,3 +4255,23 @@ msgstr "[1] pašalinti nepavyko, o atšaukimas jos neatkūrė. Skirtumai išvard
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] pataisyti nepavyko, o atšaukimas jos neatkūrė. Skirtumai išvardyti toliau. Paleiskite diegimo programą dar kartą, kad ją pataisytumėte.\r\nŽurnalas: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Tomas"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Dydis"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Laisva"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Reikia"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Skirtumas"

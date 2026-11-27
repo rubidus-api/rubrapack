@@ -4257,3 +4257,23 @@ msgstr "تعذّرت إزالة [1]، ولم يُعِده التراجع كما 
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "تعذّر إصلاح [1]، ولم يُعِده التراجع كما كان. الفروق مذكورة أدناه. شغّل المثبّت مرة أخرى لإصلاحه.\r\nالسجل: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "القرص"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "الحجم"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "المتاح"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "المطلوب"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "الفرق"

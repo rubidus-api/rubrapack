@@ -4257,3 +4257,23 @@ msgstr "[1] ہٹایا نہیں جا سکا، اور واپس لینے سے یہ
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] کی مرمت نہیں ہو سکی، اور واپس لینے سے یہ پہلے جیسا نہیں ہوا۔ فرق نیچے درج ہیں۔ مرمت کے لیے انسٹالر دوبارہ چلائیں۔\r\nلاگ: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "والیوم"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "سائز"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "دستیاب"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "درکار"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "فرق"

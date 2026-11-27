@@ -4255,3 +4255,23 @@ msgstr "[1] kunde inte tas bort, och ångrandet återställde det inte. Skillnad
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] kunde inte repareras, och ångrandet återställde det inte. Skillnaderna listas nedan. Kör installationsprogrammet igen för att reparera det.\r\nLogg: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volym"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Storlek"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Ledigt"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Krävs"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Skillnad"

@@ -4255,3 +4255,23 @@ msgstr "[1] жойылмады, ал болдырмау оны бұрынғы к
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] жөнделмеді, ал болдырмау оны бұрынғы күйіне келтірмеді. Айырмашылықтар төменде берілген. Жөндеу үшін орнатқышты қайта іске қосыңыз.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Том"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Өлшемі"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Бос"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Қажет"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Айырма"

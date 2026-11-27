@@ -4255,3 +4255,23 @@ msgstr "A(z) [1] nem távolítható el, és a visszavonás nem állította vissz
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "A(z) [1] nem javítható, és a visszavonás nem állította vissza. Az eltérések lent láthatók. A javításhoz futtassa újra a telepítőt.\r\nNapló: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Kötet"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Méret"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Szabad"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Szükséges"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Különbség"

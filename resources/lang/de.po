@@ -4255,3 +4255,23 @@ msgstr "[1] konnte nicht entfernt werden, und das Rückgängigmachen hat es nich
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] konnte nicht repariert werden, und das Rückgängigmachen hat es nicht wiederhergestellt. Die Unterschiede stehen unten. Starten Sie das Setup erneut, um es zu reparieren.\r\nProtokoll: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Laufwerk"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Größe"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Verfügbar"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Benötigt"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Differenz"

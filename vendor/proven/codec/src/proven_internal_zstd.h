@@ -21,15 +21,6 @@ void proven_zstd_encode_force_plain_(bool on);
 /* Tests: the same for the decoder's block builds. */
 void proven_zstd_decode_force_plain_(bool on);
 
-static inline proven_u64 le64(const proven_byte_t *p) {
-    return (proven_u64)p[0] | ((proven_u64)p[1] << 8) | ((proven_u64)p[2] << 16) | ((proven_u64)p[3] << 24) |
-           ((proven_u64)p[4] << 32) | ((proven_u64)p[5] << 40) | ((proven_u64)p[6] << 48) | ((proven_u64)p[7] << 56);
-}
-
-static inline proven_u32 le32(const proven_byte_t *p) {
-    return (proven_u32)p[0] | ((proven_u32)p[1] << 8) | ((proven_u32)p[2] << 16) | ((proven_u32)p[3] << 24);
-}
-
 /* Inlining that the hot loops need, and the bit scans the processor has, where the compiler
  * says how to ask for them; plain C otherwise. PROVEN_ZSTD_NO_BUILTINS takes the plain C bit
  * scans everywhere, so that a test can run the code other compilers get. */
@@ -38,6 +29,15 @@ static inline proven_u32 le32(const proven_byte_t *p) {
 #else
 #define ZSTD_HOT static inline
 #endif
+
+ZSTD_HOT proven_u64 le64(const proven_byte_t *p) {
+    return (proven_u64)p[0] | ((proven_u64)p[1] << 8) | ((proven_u64)p[2] << 16) | ((proven_u64)p[3] << 24) |
+           ((proven_u64)p[4] << 32) | ((proven_u64)p[5] << 40) | ((proven_u64)p[6] << 48) | ((proven_u64)p[7] << 56);
+}
+
+ZSTD_HOT proven_u32 le32(const proven_byte_t *p) {
+    return (proven_u32)p[0] | ((proven_u32)p[1] << 8) | ((proven_u32)p[2] << 16) | ((proven_u32)p[3] << 24);
+}
 #if (defined(__GNUC__) || defined(__clang__)) && !defined(PROVEN_ZSTD_NO_BUILTINS)
 #define ZSTD_BUILTINS 1
 #else
@@ -55,7 +55,7 @@ static inline proven_u32 le32(const proven_byte_t *p) {
 #endif
 
 /* The position of the lowest set bit of a nonzero value. */
-static inline unsigned ctz64(proven_u64 v) {
+ZSTD_HOT unsigned ctz64(proven_u64 v) {
 #if ZSTD_BUILTINS
     return (unsigned)__builtin_ctzll(v);
 #else
@@ -67,7 +67,7 @@ static inline unsigned ctz64(proven_u64 v) {
 }
 
 /* The position of the highest set bit of a nonzero value. */
-static inline unsigned highbit32(proven_u32 v) {
+ZSTD_HOT unsigned highbit32(proven_u32 v) {
 #if ZSTD_BUILTINS
     return 31u - (unsigned)__builtin_clz(v | 1u);
 #else
@@ -208,7 +208,7 @@ typedef struct {
     unsigned used;
 } proven_bits_t;
 
-static inline bool bits_init(proven_bits_t *b, const proven_byte_t *src, proven_size_t len) {
+ZSTD_HOT bool bits_init(proven_bits_t *b, const proven_byte_t *src, proven_size_t len) {
     if (len == 0 || src[len - 1] == 0) return false;
     b->start = src;
     if (len >= 8) {
@@ -226,19 +226,19 @@ static inline bool bits_init(proven_bits_t *b, const proven_byte_t *src, proven_
 }
 
 /* The next `n` bits (at most 56) without taking them. */
-static inline proven_u64 bits_look(const proven_bits_t *b, unsigned n) {
+ZSTD_HOT proven_u64 bits_look(const proven_bits_t *b, unsigned n) {
     /* Past 63 the stream is damaged and every caller finds out (bits_exact, bits_over); what
      * is returned meanwhile only has to stay in range - at most `n` bits - which it does. */
     return ((b->c << (b->used & 63)) >> 1) >> (63 - n);
 }
 
-static inline proven_u64 bits_read(proven_bits_t *b, unsigned n) {
+ZSTD_HOT proven_u64 bits_read(proven_bits_t *b, unsigned n) {
     const proven_u64 v = bits_look(b, n);
     b->used += n;
     return v;
 }
 
-static inline void bits_reload(proven_bits_t *b) {
+ZSTD_HOT void bits_reload(proven_bits_t *b) {
     if (b->used > 64) return;
     if (b->p >= b->start + 8) {
         b->p -= b->used >> 3;
@@ -254,13 +254,13 @@ static inline void bits_reload(proven_bits_t *b) {
 }
 
 /* Whether the stream was read to its beginning and no further. */
-static inline bool bits_exact(proven_bits_t *b) {
+ZSTD_HOT bool bits_exact(proven_bits_t *b) {
     bits_reload(b);
     return b->p == b->start && b->used == 64;
 }
 
 /* Whether it was read past its beginning. */
-static inline bool bits_over(proven_bits_t *b) {
+ZSTD_HOT bool bits_over(proven_bits_t *b) {
     bits_reload(b);
     return b->used > 64;
 }

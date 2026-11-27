@@ -1669,6 +1669,48 @@ static wchar_t *pre_text_rtl(MSIHANDLE h, const wchar_t *id, bool *rtl) {
 
 static wchar_t *pre_text(MSIHANDLE h, const wchar_t *id) { return pre_text_rtl(h, id, NULL); }
 
+// While the helper's question is open, the installer's own windows (Windows Installer's pages or its
+// basic progress window: class MsiDialog*, titled with the product's name) are disabled, as a modal
+// box disables its owner, so their Cancel cannot run beside the question (RFC-0034 P3; review
+// 2026-11-13 finding 9). They are not made its owner: that joins the two processes' input queues.
+// Only windows that were enabled are touched, and each is enabled again after the answer.
+enum { PRE_HOLD_MAX = 8 };
+
+typedef struct {
+    const wchar_t *title;
+    HWND held[PRE_HOLD_MAX];
+    int  n;
+} pre_hold_t;
+
+static BOOL CALLBACK pre_hold_one(HWND w, LPARAM lp) {
+    pre_hold_t *ph = (pre_hold_t *)lp;
+    wchar_t cls[40], title[300];
+    if (ph->n >= PRE_HOLD_MAX) return FALSE;
+    if (!IsWindowVisible(w) || !IsWindowEnabled(w) || GetClassNameW(w, cls, 40) == 0 || !rp_wistarts(cls, L"MsiDialog")) return TRUE;
+    title[0] = 0;
+    GetWindowTextW(w, title, 300);
+    if (!rp_weq(title, ph->title)) return TRUE;
+    DWORD pid = 0;
+    GetWindowThreadProcessId(w, &pid);
+    if (pid == GetCurrentProcessId()) return TRUE;
+    EnableWindow(w, FALSE);
+    ph->held[ph->n++] = w;
+    return TRUE;
+}
+
+static void pre_hold(pre_hold_t *ph, const wchar_t *title) {
+    memset(ph, 0, sizeof *ph);
+    ph->title = title;
+    if (title && title[0]) EnumWindows(pre_hold_one, (LPARAM)ph);
+}
+
+static void pre_release(pre_hold_t *ph) {
+    for (int i = 0; i < ph->n; ++i) {
+        if (IsWindow(ph->held[i])) EnableWindow(ph->held[i], TRUE);
+    }
+    ph->n = 0;
+}
+
 // Shows (or, without UI, logs) a message made from the text `id` with fields 1..3; returns the button.
 // A right-to-left language's message reads from the right.
 // With a window to show it in (UILevel 3 or more: basic, reduced, full), the message is the helper's
@@ -1700,8 +1742,13 @@ static int pre_message(MSIHANDLE h, const wchar_t *id, UINT type, const wchar_t 
                        .second = no && no[0] ? no : L"&No",
                        .cancel = cancel && cancel[0] ? cancel : (buttons == MB_OK ? L"OK" : L"Cancel"),
                        .def = (type & MB_DEFMASK) == MB_DEFBUTTON2 ? 2 : (type & MB_DEFMASK) == MB_DEFBUTTON3 ? 3 : 0 };
-        int got = rp_ask_raw(NULL, &a);     // no owner: the window in front may be anyone's
+        pre_hold_t held;
+        pre_hold(&held, title);
+        int got = rp_ask_raw(NULL, &a);     // no owner (above): the installer's windows are disabled instead
         DWORD why = GetLastError();
+        int nheld = held.n;
+        pre_release(&held);
+        log_line(h, L"rubrapack: ui: %d installer window(s) disabled while the preflight's question was open", nheld);
         int r = buttons == MB_OK ? IDOK : got == RP_ASK_FIRST ? IDYES : got == RP_ASK_SECOND ? IDNO : IDCANCEL;
         wchar_t *all[] = { title, yes, no, cancel, msg };
         for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
@@ -3105,8 +3152,8 @@ static LRESULT det_send(HWND w, UINT m, WPARAM wp, LPARAM lp) {
     return (LRESULT)r;
 }
 
-// The box's character format: Segoe UI at 8 points, the dialogs' own (CJK text is drawn by
-// RichEdit's font binding). Without it the lines come in RichEdit's default font, larger than the
+// The box's character format: Segoe UI at 9 points, the pages' own size (it was 8, smaller than
+// the text around it; RFC-0034 P3) (CJK text is drawn by RichEdit's font binding). Without it the lines come in RichEdit's default font, larger than the
 // dialog's and, on a Korean Windows, with the backslash drawn as a currency sign (x59). Text and
 // RTF sent across processes do not change it (WM_SETTEXT and EM_REPLACESEL insert RTF literally,
 // observed); EM_SETCHARFORMAT takes a pointer, so the format is written into the dialog's process
@@ -3186,7 +3233,7 @@ static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lc
     memset(&cf, 0, sizeof cf);
     cf.cbSize = sizeof cf;
     cf.dwMask = CFM_FACE | CFM_SIZE | CFM_CHARSET | CFM_BOLD | CFM_ITALIC;
-    cf.yHeight = 8 * 20;                                    // twips
+    cf.yHeight = 9 * 20;                                    // twips
     cf.bCharSet = det_charset(lcid);
     fm->noauto = cf.bCharSet != SHIFTJIS_CHARSET && cf.bCharSet != GB2312_CHARSET && cf.bCharSet != HANGEUL_CHARSET &&
                  cf.bCharSet != CHINESEBIG5_CHARSET;
@@ -3330,7 +3377,7 @@ static void det_readable(det_state_t *st, const wchar_t *line, wchar_t *out, siz
     out[0] = 0;
     const wchar_t *own = rp_wstr(line, L"rubrapack: ");
     if (own) {                              // the helper's own lines (what was closed, kept, wiped), not its housekeeping
-        if (!rp_wstarts(own + 11, L"cleanup:") && !rp_wstarts(own + 11, L"details:")) wfmt(out, cap, L"  %.900ls", own + 11);
+        if (!rp_wstarts(own + 11, L"cleanup:") && !rp_wstarts(own + 11, L"details:") && !rp_wstarts(own + 11, L"ui:")) wfmt(out, cap, L"  %.900ls", own + 11);
         return;
     }
     const wchar_t *op = rp_wstr(line, L"Executing op: ");
@@ -3430,12 +3477,72 @@ __declspec(dllexport) UINT __stdcall RpDetailsDone(MSIHANDLE h) {
 // box showed them (readable, or the log's own with its check box ticked), CR LF, the last
 // LOG_VIEW_MAX characters of them. Set once, when RpDetails ends - before the finished page opens:
 // RP_Details is waited for at the end of the sequence.
-enum { LOG_VIEW_MAX = 300000 };
+// Windows Installer makes that box without wrapping, so a long path ran past its right edge with no
+// way to see the rest (RFC-0034 P3): each line is broken here where it would reach the edge, after a
+// backslash, slash or space when there is one, and the rest goes on the next lines, indented.
+// Measured in the box's face at 9 points as 96 dpi sees it (the page scales with the DPI): the box is
+// 320 units, 427 px at 100% (uishot), less its frame, scroll bar and margins.
+enum { LOG_VIEW_MAX = 300000, LOG_VIEW_PX = 384 };
 
-static void det_log_view(MSIHANDLE h, det_state_t *st, const wchar_t *raw, size_t len, bool full) {
+typedef struct {
+    HDC   dc;
+    HFONT font, old;
+    int   indent;                                           // the indent's width
+} det_wrap_t;
+
+static void det_wrap_open(det_wrap_t *w, const wchar_t *face) {
+    memset(w, 0, sizeof *w);
+    w->dc = CreateCompatibleDC(NULL);
+    if (w->dc == NULL) return;
+    LOGFONTW lf;
+    memset(&lf, 0, sizeof lf);
+    lf.lfHeight = -12;                                      // 9 points at 96 dpi
+    lf.lfCharSet = DEFAULT_CHARSET;
+    size_t fl = face && face[0] ? rp_wlen(face) : 0;
+    if (fl == 0 || fl >= LF_FACESIZE) face = L"Segoe UI", fl = 8;
+    memcpy(lf.lfFaceName, face, (fl + 1) * sizeof *face);
+    w->font = CreateFontIndirectW(&lf);
+    SIZE sz;
+    if (w->font == NULL || (w->old = SelectObject(w->dc, w->font)) == NULL || !GetTextExtentPoint32W(w->dc, L"    ", 4, &sz)) {
+        if (w->font) DeleteObject(w->font);
+        DeleteDC(w->dc);
+        memset(w, 0, sizeof *w);
+        return;
+    }
+    w->indent = sz.cx;
+}
+
+static void det_wrap_close(det_wrap_t *w) {
+    if (w->dc == NULL) return;
+    SelectObject(w->dc, w->old);
+    DeleteObject(w->font);
+    DeleteDC(w->dc);
+}
+
+// How many characters of s[0..n) go on a line `px` wide: all, or up to a break after \ or / (else
+// after a space) in its second half, else as many as fit (never half a surrogate pair); at least one.
+static size_t det_wrap_take(const det_wrap_t *w, const wchar_t *s, size_t n, int px) {
+    int fit = 0;
+    SIZE sz;
+    if (n > 4096) n = 4096;
+    if (!GetTextExtentExPointW(w->dc, s, (int)n, px, &fit, NULL, &sz) || (size_t)fit >= n) return n;
+    size_t k = fit > 0 ? (size_t)fit : 1;
+    for (size_t j = k; j > k / 2; --j) {        // after a backslash or slash: a path breaks between folders
+        if (s[j - 1] == L'\\' || s[j - 1] == L'/') return j;
+    }
+    for (size_t j = k; j > k / 2; --j) {
+        if (s[j - 1] == L' ') return j;
+    }
+    if (k > 1 && s[k - 1] >= 0xD800 && s[k - 1] <= 0xDBFF) --k;
+    return k;
+}
+
+static void det_log_view(MSIHANDLE h, det_state_t *st, const wchar_t *raw, size_t len, bool full, const wchar_t *face) {
     size_t cap = LOG_VIEW_MAX + 4096, o = 0;
     wchar_t *out = HeapAlloc(GetProcessHeap(), 0, (cap + 1) * sizeof *out);
     if (out == NULL) return;
+    det_wrap_t wr;
+    det_wrap_open(&wr, face);
     memset(st->folder, 0, sizeof st->folder);
     static wchar_t line[8192], nice[1024];
     for (size_t p = 0; p < len;) {
@@ -3453,18 +3560,31 @@ static void det_log_view(MSIHANDLE h, det_state_t *st, const wchar_t *raw, size_
             text = nice;
         }
         size_t tn = rp_wlen(text);
-        if (tn == 0 || tn + 2 > cap) continue;
-        if (o + tn + 2 > cap) {             // keep the newest: drop the oldest half
+        if (tn == 0 || 2 * tn + 2 > cap) continue;
+        if (o + 2 * tn + 2 > cap) {         // keep the newest: drop the oldest half (a line and its breaks)
             size_t cut = o / 2;
             while (cut < o && out[cut - 1] != L'\n') ++cut;
             memmove(out, out + cut, (o - cut) * sizeof *out);
             o -= cut;
         }
-        memcpy(out + o, text, tn * sizeof *out);
-        o += tn;
+        // The line, broken to the box's width; the next pieces indented by four spaces (at most a
+        // break per character, so 2 * tn bounds what is written).
+        for (size_t at = 0, piece = 0; at < tn; ++piece) {
+            size_t take = wr.dc ? det_wrap_take(&wr, text + at, tn - at, LOG_VIEW_PX - (piece ? wr.indent : 0)) : tn - at;
+            if (piece) {
+                if (o + 8 + take > cap) break;      // room for this piece, its break and the line's end
+                out[o++] = L'\r';
+                out[o++] = L'\n';
+                for (int sp = 0; sp < 4; ++sp) out[o++] = L' ';
+            }
+            memcpy(out + o, text + at, take * sizeof *out);
+            o += take;
+            at += take;
+        }
         out[o++] = L'\r';
         out[o++] = L'\n';
     }
+    det_wrap_close(&wr);
     while (o >= 2 && out[o - 1] == L'\n') o -= 2;             // no empty last line
     out[o] = 0;
     if (o) MsiSetPropertyW(h, L"RP_LOG_VIEW", out);
@@ -3493,6 +3613,11 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
     uint8_t *bytes = HeapAlloc(GetProcessHeap(), 0, bytes_cap + 2);
     bool utf16 = false, first = true, full = false, started = false, seen = false, ended = false;
     DWORD quiet_since = GetTickCount(), born = GetTickCount();
+    wchar_t *face = NULL;                                   // the dialog language's face (RpDetFont_<code>)
+    {
+        wchar_t name[48];
+        if (wfmt(name, 48, L"RpDetFont_%.15ls", lang && lang[0] ? lang : L"en") > 0) face = get_property(h, name);
+    }
     if (log == NULL || log[0] == 0 || raw == NULL || bytes == NULL) goto out;
     for (int i = 0; i < 100 && win.dlg == NULL; ++i) {         // the progress page, up to ten seconds
         EnumWindows(det_top, (LPARAM)&win);
@@ -3507,11 +3632,9 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
     det_send(win.edit, WM_USER + 53, 0, 16 * 1024 * 1024);      // EM_EXLIMITTEXT: the box takes more than 64 KB
     {   // the dialog language's face (RpDetFont_<code>): a CJK face draws its own script and the paths
         wchar_t name[48];
-        wchar_t *face = NULL, *lcid = NULL;
-        if (wfmt(name, 48, L"RpDetFont_%.15ls", lang && lang[0] ? lang : L"en") > 0) face = get_property(h, name);
+        wchar_t *lcid = NULL;
         if (wfmt(name, 48, L"RpDetLcid_%.15ls", lang && lang[0] ? lang : L"en") > 0) lcid = get_property(h, name);
         det_font_open(&fmt, win.edit, face, lcid ? (LCID)rp_wtou(lcid, 10, NULL) : 0);
-        if (face) HeapFree(GetProcessHeap(), 0, face);
         if (lcid) HeapFree(GetProcessHeap(), 0, lcid);
     }
     det_font_apply(&fmt, win.edit);
@@ -3620,7 +3743,8 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
         if (now - quiet_since > 600000 || now - born > 6u * 3600 * 1000) break;
     }
 out:
-    if (raw && len) det_log_view(h, &st, raw, len, full);
+    if (raw && len) det_log_view(h, &st, raw, len, full, face);
+    if (face) HeapFree(GetProcessHeap(), 0, face);
     det_font_close(&fmt);
     if (f != INVALID_HANDLE_VALUE) CloseHandle(f);
     if (done) CloseHandle(done);
@@ -3734,6 +3858,61 @@ static size_t lang_rows(MSIHANDLE h, MSIHANDLE db, const wchar_t *code) {
     if (view) MsiCloseHandle(view);
     MsiCloseHandle(arg);
     return n;
+}
+
+// RpUiText, immediate (RFC-0034 F9): in the UI sequence (23) and as a DoAction of the language
+// page's Next. The rows of RpUiText for RPLANGUAGE (English's when it has none) become temporary rows
+// of UIText - the volume list's column titles in the dialogs' language. A session cannot change a
+// stored row, so the package stores none of these; a second run (another language chosen) deletes
+// the temporary rows of the first. It never fails the installation.
+static size_t uitext_rows(MSIHANDLE db, const wchar_t *code) {
+    MSIHANDLE view = 0, rec = 0, arg = MsiCreateRecord(1);
+    size_t n = 0;
+    if (arg == 0) return 0;
+    MsiRecordSetStringW(arg, 1, code);
+    if (MsiDatabaseOpenViewW(db, L"SELECT `Key`, `Text` FROM `RpUiText` WHERE `Lang` = ?", &view) == ERROR_SUCCESS &&
+        MsiViewExecute(view, arg) == ERROR_SUCCESS) {
+        while (MsiViewFetch(view, &rec) == ERROR_SUCCESS) {
+            wchar_t *key = rec_string(rec, 1), *text = rec_string(rec, 2);
+            MSIHANDLE one = 0, old = 0, karg = MsiCreateRecord(1), row = MsiCreateRecord(2);
+            if (key && text && karg && row) {
+                MsiRecordSetStringW(karg, 1, key);
+                if (MsiDatabaseOpenViewW(db, L"SELECT `Key`, `Text` FROM `UIText` WHERE `Key` = ?", &one) == ERROR_SUCCESS &&
+                    MsiViewExecute(one, karg) == ERROR_SUCCESS) {
+                    if (MsiViewFetch(one, &old) == ERROR_SUCCESS) {         // ours from a run before
+                        (void)MsiViewModify(one, MSIMODIFY_DELETE, old);
+                        MsiCloseHandle(old);
+                    }
+                    MsiRecordSetStringW(row, 1, key);
+                    MsiRecordSetStringW(row, 2, text);
+                    if (MsiViewModify(one, MSIMODIFY_INSERT_TEMPORARY, row) == ERROR_SUCCESS) ++n;
+                }
+            }
+            if (one) MsiCloseHandle(one);
+            if (karg) MsiCloseHandle(karg);
+            if (row) MsiCloseHandle(row);
+            if (key) HeapFree(GetProcessHeap(), 0, key);
+            if (text) HeapFree(GetProcessHeap(), 0, text);
+            MsiCloseHandle(rec);
+        }
+    }
+    if (view) MsiCloseHandle(view);
+    MsiCloseHandle(arg);
+    return n;
+}
+
+__declspec(dllexport) UINT __stdcall RpUiText(MSIHANDLE h) {
+    wchar_t *lang = get_property(h, L"RPLANGUAGE");
+    MSIHANDLE db = MsiGetActiveDatabase(h);
+    if (db) {
+        const wchar_t *code = lang && lang[0] ? lang : L"en";
+        size_t n = uitext_rows(db, code);
+        if (n == 0 && !rp_weq(code, L"en")) n = uitext_rows(db, L"en");
+        log_line(h, L"rubrapack: ui: UIText for %ls: %lu rows", code, (unsigned long)n);
+        MsiCloseHandle(db);
+    }
+    if (lang) HeapFree(GetProcessHeap(), 0, lang);
+    return ERROR_SUCCESS;
 }
 
 __declspec(dllexport) UINT __stdcall RpLangApply(MSIHANDLE h) {

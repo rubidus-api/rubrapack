@@ -4255,3 +4255,23 @@ msgstr "[1] 無法移除，復原也沒能恢復原樣。不同之處如下。�
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] 無法修復，復原也沒能恢復原樣。不同之處如下。請再次執行安裝程式進行修復。\r\n記錄：[2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "磁碟區"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "大小"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "可用"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "所需"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "差異"

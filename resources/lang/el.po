@@ -4255,3 +4255,23 @@ msgstr "Το [1] δεν καταργήθηκε και η αναίρεση δεν
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "Το [1] δεν επιδιορθώθηκε και η αναίρεση δεν το επανέφερε. Οι διαφορές παρατίθενται παρακάτω. Εκτελέστε ξανά το πρόγραμμα εγκατάστασης για να το επιδιορθώσετε.\r\nΑρχείο καταγραφής: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Τόμος"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Μέγεθος"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Διαθέσιμο"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Απαιτείται"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Διαφορά"

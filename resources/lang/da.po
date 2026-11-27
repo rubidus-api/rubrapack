@@ -4255,3 +4255,23 @@ msgstr "[1] kunne ikke fjernes, og fortrydelsen gendannede det ikke. Forskellene
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] kunne ikke repareres, og fortrydelsen gendannede det ikke. Forskellene står nedenfor. Kør installationsprogrammet igen for at reparere det.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Drev"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Størrelse"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Ledig"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Krævet"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Forskel"

@@ -4255,3 +4255,23 @@ msgstr "Não foi possível remover o [1], e anular não o repôs. As diferenças
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "Não foi possível reparar o [1], e anular não o repôs. As diferenças estão indicadas abaixo. Execute o instalador novamente para o reparar.\r\nRegisto: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volume"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Tamanho"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Disponível"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Necessário"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Diferença"

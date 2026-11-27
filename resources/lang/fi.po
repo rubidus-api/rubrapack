@@ -4255,3 +4255,23 @@ msgstr "Kohdetta [1] ei voitu poistaa, eikä peruminen palauttanut sitä. Erot o
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "Kohdetta [1] ei voitu korjata, eikä peruminen palauttanut sitä. Erot on lueteltu alla. Korjaa se suorittamalla asennusohjelma uudelleen.\r\nLoki: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Asema"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Koko"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Vapaana"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Tarvitaan"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Erotus"

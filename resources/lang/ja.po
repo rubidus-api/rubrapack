@@ -4255,3 +4255,23 @@ msgstr "[1] を削除できず、元に戻す処理でも元どおりになり�
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] を修復できず、元に戻す処理でも元どおりになりませんでした。違いを下に示します。インストーラーをもう一度実行して修復してください。\r\nログ: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "ボリューム"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "サイズ"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "空き容量"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "必要"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "差分"

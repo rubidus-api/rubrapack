@@ -4255,3 +4255,23 @@ msgstr "ถอน [1] ออกไม่สำเร็จ และการย
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "ซ่อมแซม [1] ไม่สำเร็จ และการย้อนกลับก็คืนสภาพเดิมไม่ได้ ส่วนที่ต่างไปแสดงไว้ด้านล่าง เรียกใช้ตัวติดตั้งอีกครั้งเพื่อซ่อมแซม\r\nบันทึก: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "ไดรฟ์"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "ขนาด"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "ว่าง"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "ต้องใช้"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "ส่วนต่าง"

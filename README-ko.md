@@ -119,7 +119,7 @@ Arm64 컴퓨터가 없습니다), 하드웨어 PKCS#11 토큰(소프트웨어 �
 - [파일 형식 매뉴얼](https://rubidus-api.github.io/rubrapack/ko/formats-readme.html) - 구현하는 분을 위한 것: 복합 파일, MSI
   데이터베이스 인코딩, 요약 정보, 설치하는 표들, 캐비닛/MSZIP/deflate, 결정적 정체, Authenticode 와
   타임스탬프, MSIX 패키지·묶음·서명, 레지스트리 하이브, 그리고 자기 출력을 Windows 와 대조하는 방법.
-- 두 매뉴얼을 묶은 책: 웹판(<https://rubidus-api.github.io/rubrapack/>)과, 릴리스마다 붙는 PDF.
+- 두 매뉴얼을 묶은 책: 웹판(<https://rubidus-api.github.io/rubrapack/>)과, 릴리스마다 붙는 PDF 와 오프라인으로 읽는 웹판 ZIP.
 - 영어판이 원본입니다: <https://rubidus-api.github.io/rubrapack/en/>.
 
 ## 글자 인코딩

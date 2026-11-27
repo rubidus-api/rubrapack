@@ -27,5 +27,6 @@ EXPORTS
     RpReadySummary
     RpBrowseFolder
     RpLangApply
+    RpUiText
     RpReportPrepare
     RpReport

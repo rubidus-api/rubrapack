@@ -4255,3 +4255,23 @@ msgstr "[1] அகற்ற முடியவில்லை, திரும�
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] சரிசெய்ய முடியவில்லை, திரும்பப்பெறுதலும் அதை முன்பிருந்தபடி மீட்கவில்லை. வேறுபாடுகள் கீழே உள்ளன. சரிசெய்ய நிறுவியை மீண்டும் இயக்குங்கள்.\r\nபதிவு: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "தொகுதி"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "அளவு"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "கிடைப்பது"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "தேவை"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "வேறுபாடு"

@@ -4255,3 +4255,23 @@ msgstr "[1] kaldırılamadı ve geri alma onu eski haline getiremedi. Farklar a�
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] onarılamadı ve geri alma onu eski haline getiremedi. Farklar aşağıda listelenmiştir. Onarmak için yükleyiciyi yeniden çalıştırın.\r\nGünlük: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Birim"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Boyut"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Boş"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Gerekli"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Fark"

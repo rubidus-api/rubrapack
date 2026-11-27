@@ -4257,3 +4257,23 @@ msgstr "[1] حذف نشد و لغو کردن آن را به حال قبل برن
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] تعمیر نشد و لغو کردن آن را به حال قبل برنگرداند. تفاوت‌ها در زیر آمده است. برای تعمیر، نصب‌کننده را دوباره اجرا کنید.\r\nگزارش: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "درایو"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "اندازه"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "موجود"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "لازم"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "تفاوت"

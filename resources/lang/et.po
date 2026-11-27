@@ -4255,3 +4255,23 @@ msgstr "Toodet [1] ei saanud eemaldada ja tagasivõtmine ei taastanud seda. Erin
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "Toodet [1] ei saanud parandada ja tagasivõtmine ei taastanud seda. Erinevused on loetletud allpool. Parandamiseks käivitage installer uuesti.\r\nLogi: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Köide"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Maht"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Vaba"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Vajalik"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Vahe"

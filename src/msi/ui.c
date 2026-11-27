@@ -332,6 +332,7 @@ typedef struct {
     const char        *end_when;        // the condition of a last page's EndDialog (buttons), or NULL
     bool               details;         // the progress page has its details box (the helper DLL is there)
     bool               details_dll;     // the helper DLL is in the package (RP_DirCheck can be called)
+    bool               uitext_dll;      // RFC-0034 F9: RpUiText puts the chosen language's UIText rows
     const char        *next_when;       // buttons(): Next moves on only when this holds (its events come later, at 5)
     bool               maint_back;      // buttons(): Back also leads to the maintenance page
     size_t             nlang;
@@ -353,7 +354,7 @@ typedef struct {
     bool               nomem;
     char             **strings;
     size_t             nstr, capstr;
-    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo, listbox, acttext, rptext, billboard, bbcontrol;
+    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo, listbox, acttext, rptext, billboard, bbcontrol, uitextl;
     rp_ui_prop_t      *props;
     size_t             nprops, capprops;
     rp_ui_seq_t       *seqs;
@@ -402,6 +403,13 @@ static const rp_msi_wcolumn_t listbox_cols[] = { { "Property", KEY_S(72) }, { "O
 static const rp_msi_wcolumn_t combo_cols[] = { { "Property", KEY_S(72) }, { "Order", KEY_I2 }, { "Value", S(64) },
     { "Text", L_N(64) } };
 // RFC-0028: a language's value of a property (Key) - Format 1: the installer formats it first.
+// The tables a dialog set may write, each in `all` of rp_ui_build and rp_ui_free. The array of them
+// had 13 places for 15 tables: a package with all of them (every language, billboards, a combo, ...)
+// wrote past it (RFC-0034, ASan; T211).
+enum { UI_TABLES = 16 };
+// RFC-0034 F9: the volume list's column titles per dialog language, put into UIText as temporary
+// rows by the helper's RpUiText for the language chosen (UIText itself has one row per key).
+static const rp_msi_wcolumn_t rpuitext_cols[] = { { "Lang", KEY_S(16) }, { "Key", KEY_S(72) }, { "Text", L_N(0) } };
 static const rp_msi_wcolumn_t rptext_cols[] = { { "Lang", KEY_S(16) }, { "Key", KEY_S(72) }, { "Text", L_N(0) }, { "Format", I2 } };
 // RFC-0031 B10: billboards shown on the progress page, and the controls (a Bitmap) drawn on each.
 static const rp_msi_wcolumn_t billboard_cols[] = { { "Billboard", KEY_S(50) }, { "Feature_", S(38) }, { "Action", S_N(50) }, { "Ordering", I2_N } };
@@ -644,6 +652,9 @@ static void dialog(ctx_t *c, const char *name, int w, int h, int attrs, const ch
 static void control(ctx_t *c, const char *dlg, const char *name, const char *type, int x, int y, int w, int h,
                     int attrs, const char *prop, const char *text, const char *next) {
     rows_t *r = &c->control;
+    // A disabled Text is drawn in the grey of disabled text and its access key does nothing
+    // (RFC-0034 P1: every label, title and description was grey). Texts never take the focus.
+    if (strcmp(type, "Text") == 0) attrs |= EN;
     if (merged(c, dlg)) {
         // One tab cycle through both sets: the last control of each leads to the other's first.
         bool to_first = next && c->dfirst && strcmp(next, c->dfirst) == 0;
@@ -749,10 +760,19 @@ static void mapping(ctx_t *c, const char *dlg, const char *ctl, const char *ev, 
 
 // Banner (white fill, title, description) and the bottom line, with the texts as given (the title
 // with its style, from TT or AT).
+// The volume list's five columns fit its 330 units with the border and a vertical scroll bar: at
+// {120}{70}... (400) it scrolled sideways and "Required" was cut (RFC-0034 P1, uishot).
+#define VOLUME_COLUMNS "{74}{60}{60}{60}{60}"
+
+// The banner (44 units): a bold title and a description of up to two lines, which ends on the
+// banner's line. At 22 + 20 a second line was cut and a long one-line text ended in "..." (RFC-0034
+// P1, uishot); at 20 + 23 two lines needed 50 px of 47 at 150% (en, de; uishot-dpi-vm).
+enum { BANNER_TITLE_Y = 4, BANNER_DESC_Y = 19, BANNER_DESC_H = 25 };
+
 static void frame_text(ctx_t *c, const char *dlg, const char *title, const char *text) {
     control(c, dlg, "Banner", "Bitmap", 0, 0, 370, 44, VIS, NULL, "RpBanner", NULL);
-    control(c, dlg, "Title", "Text", 15, 7, 330, 15, VIS | TRANSPARENT | NOPREFIX, NULL, title, NULL);
-    control(c, dlg, "Description", "Text", 25, 22, 330, 20, VIS | TRANSPARENT | NOPREFIX, NULL, text ? text : "", NULL);
+    control(c, dlg, "Title", "Text", 15, BANNER_TITLE_Y, 330, 15, VIS | TRANSPARENT | NOPREFIX, NULL, title, NULL);
+    control(c, dlg, "Description", "Text", 25, BANNER_DESC_Y, 330, BANNER_DESC_H, VIS | TRANSPARENT | NOPREFIX, NULL, text ? text : "", NULL);
     control(c, dlg, "BannerLine", "Line", 0, 44, 370, 0, VIS, NULL, NULL, NULL);
     control(c, dlg, "BottomLine", "Line", 0, 234, 370, 0, VIS, NULL, NULL, NULL);
 }
@@ -764,12 +784,12 @@ static void frame_text(ctx_t *c, const char *dlg, const char *title, const char 
 static void frame_removal(ctx_t *c, const char *dlg, const char *title, const char *text) {
     char id[64];
     (void)proven_fmt_to(id, sizeof id, "Removal{}", proven_arg_cstr(title));
-    control(c, dlg, "RemovalTitle", "Text", 15, 7, 330, 15, TRANSPARENT | NOPREFIX, NULL, TT(c, keep(c, id, "")), NULL);
+    control(c, dlg, "RemovalTitle", "Text", 15, BANNER_TITLE_Y, 330, 15, TRANSPARENT | NOPREFIX, NULL, TT(c, keep(c, id, "")), NULL);
     cond(c, dlg, "RemovalTitle", "Show", RP_REMOVAL_COND);
     cond(c, dlg, "Title", "Hide", RP_REMOVAL_COND);
     if (text) {
         (void)proven_fmt_to(id, sizeof id, "Removal{}", proven_arg_cstr(text));
-        control(c, dlg, "RemovalDescription", "Text", 25, 22, 330, 20, TRANSPARENT | NOPREFIX, NULL, T(c, keep(c, id, "")), NULL);
+        control(c, dlg, "RemovalDescription", "Text", 25, BANNER_DESC_Y, 330, BANNER_DESC_H, TRANSPARENT | NOPREFIX, NULL, T(c, keep(c, id, "")), NULL);
         cond(c, dlg, "RemovalDescription", "Show", RP_REMOVAL_COND);
         cond(c, dlg, "Description", "Hide", RP_REMOVAL_COND);
     }
@@ -785,11 +805,13 @@ static void frame(ctx_t *c, const char *dlg, const char *title, const char *text
 // The tab order (Control_Next) must be ONE cycle through every control that has a next pointer
 // (error 2810 otherwise, observed): `first` is the dialog's first own control, whose chain ends at
 // Back; Cancel closes the cycle back to it.
+// The button row: Back 168, Next 228 (touching), Cancel 300, each 60 units (80 px at 100%). At 56
+// the longest texts touched the focus frame (th Back, de Finish; RFC-0034 F10, uishot).
 static void buttons(ctx_t *c, const char *dlg, const char *back, const char *next, const char *next_text,
                     const char *next_cond_disable, const char *first) {
-    control(c, dlg, "Back", "PushButton", 180, 243, 56, 17, back || c->maint_back ? VIS | EN : VIS, NULL, T(c, "Back"), "Next");
-    control(c, dlg, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, next_text ? next_text : "Next"), "Cancel");
-    control(c, dlg, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), first ? first : "Back");
+    control(c, dlg, "Back", "PushButton", 168, 243, 60, 17, back || c->maint_back ? VIS | EN : VIS, NULL, T(c, "Back"), "Next");
+    control(c, dlg, "Next", "PushButton", 228, 243, 60, 17, VIS | EN, NULL, T(c, next_text ? next_text : "Next"), "Cancel");
+    control(c, dlg, "Cancel", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "Cancel"), first ? first : "Back");
     if (back && c->maint_back) {            // the feature tree, reached from the maintenance page too
         event(c, dlg, "Back", "NewDialog", back, "NOT Installed", 1);
         event(c, dlg, "Back", "NewDialog", "RpMaintenanceDlg", "Installed", 1);
@@ -817,8 +839,8 @@ static void buttons(ctx_t *c, const char *dlg, const char *back, const char *nex
 static void cancel_dlg(ctx_t *c) {
     dialog(c, "RpCancelDlg", 260, 85, 3, "No", "No", "No");
     control(c, "RpCancelDlg", "Text", "Text", 15, 15, 230, 30, VIS | NOPREFIX, NULL, T(c, "CancelText"), NULL);
-    control(c, "RpCancelDlg", "Yes", "PushButton", 72, 57, 56, 17, VIS | EN, NULL, T(c, "Yes"), "No");
-    control(c, "RpCancelDlg", "No", "PushButton", 132, 57, 56, 17, VIS | EN, NULL, T(c, "No"), "Yes");
+    control(c, "RpCancelDlg", "Yes", "PushButton", 66, 57, 60, 17, VIS | EN, NULL, T(c, "Yes"), "No");
+    control(c, "RpCancelDlg", "No", "PushButton", 134, 57, 60, 17, VIS | EN, NULL, T(c, "No"), "Yes");
     event(c, "RpCancelDlg", "Yes", "EndDialog", "Exit", NULL, 1);
     event(c, "RpCancelDlg", "No", "EndDialog", "Return", NULL, 1);
 }
@@ -833,7 +855,7 @@ static void error_dlg(ctx_t *c) {
                                           { "N", "ErrorNo" }, { "O", "ErrorOk" }, { "R", "ErrorRetry" }, { "Y", "ErrorYes" } };
     static const char *const label[] = { "Abort", "Cancel", "Ignore", "No", "OK", "Retry", "Yes" };
     for (int i = 0; i < 7; ++i) {
-        control(c, "RpErrorDlg", btn[i][0], "PushButton", 107, 80, 56, 17, VIS | EN, NULL, T(c, label[i]), NULL);
+        control(c, "RpErrorDlg", btn[i][0], "PushButton", 105, 80, 60, 17, VIS | EN, NULL, T(c, label[i]), NULL);
         event(c, "RpErrorDlg", btn[i][0], "EndDialog", btn[i][1], NULL, 1);
     }
     prop(c, "ErrorDialog", "RpErrorDlg");
@@ -855,12 +877,13 @@ static void files_in_use_dlg(ctx_t *c) {
     const char *text = c->ir->reboot_suppress || user_text(c->ir, "FilesInUseText") ? "FilesInUseText" : "FilesInUseTextRestart";
     dialog(c, d, 370, 270, 3 | 32, "Ignore", "Ignore", "Exit");
     frame(c, d, "FilesInUseTitle", NULL, NULL);     // the text is too long for the banner (observed cut)
-    control(c, d, "Text", "Text", 20, 52, 330, 40, VIS | NOPREFIX, NULL, T(c, text), NULL);
-    control(c, d, "List", "ListBox", 20, 97, 330, 128, VIS | SUNKEN, "FileInUseProcess", NULL, NULL);
+    // Four lines (RFC-0034 P1); 50 high, as German needs at 150% (100 px of 97 at 47).
+    control(c, d, "Text", "Text", 20, 50, 330, 50, VIS | NOPREFIX, NULL, T(c, text), NULL);
+    control(c, d, "List", "ListBox", 20, 102, 330, 123, VIS | SUNKEN, "FileInUseProcess", NULL, NULL);
     // Retry wider, with a gap before Continue: Arabic's 75 px ran into Continue when mirrored (x69).
-    control(c, d, "Retry", "PushButton", 166, 243, 66, 17, VIS | EN, NULL, T(c, "Retry"), "Exit");
-    control(c, d, "Ignore", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Continue"), "Retry");
-    control(c, d, "Exit", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Exit"), "Ignore");
+    control(c, d, "Retry", "PushButton", 158, 243, 66, 17, VIS | EN, NULL, T(c, "Retry"), "Exit");
+    control(c, d, "Ignore", "PushButton", 228, 243, 60, 17, VIS | EN, NULL, T(c, "Continue"), "Retry");
+    control(c, d, "Exit", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "Exit"), "Ignore");
     event(c, d, "Retry", "EndDialog", "Retry", NULL, 1);
     event(c, d, "Ignore", "EndDialog", "Ignore", NULL, 1);
     event(c, d, "Exit", "EndDialog", "Exit", NULL, 1);
@@ -901,16 +924,16 @@ static void progress_and_exits(ctx_t *c) {
             i_(c, &c->bbcontrol, 1); s_(c, &c->bbcontrol, RP_V(bn));
         }
     }
-    control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), NULL);
-    control(c, d, "Next", "PushButton", 236, 243, 56, 17, VIS, NULL, T(c, "Next"), NULL);
+    control(c, d, "Back", "PushButton", 168, 243, 60, 17, VIS, NULL, T(c, "Back"), NULL);
+    control(c, d, "Next", "PushButton", 228, 243, 60, 17, VIS, NULL, T(c, "Next"), NULL);
     // [ui] details: a scrolling box the helper DLL fills while the installation runs (RpDetails),
     // and the check box that turns it to the log's own lines. Empty RTF: the box starts blank.
     bool details = c->ir->ui_details && c->details;
     if (details) {
-        control(c, d, "Details", "ScrollableText", 25, 132, 320, 82, VIS | EN | SUNKEN, NULL, "{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Segoe UI;}}\\fs16 }", NULL);
+        control(c, d, "Details", "ScrollableText", 25, 132, 320, 82, VIS | EN | SUNKEN, NULL, "{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Segoe UI;}}\\fs18 }", "FullLog");   // Tab reaches it: scrolled by keys too (RFC-0034 F8)
         control(c, d, "FullLog", "CheckBox", 25, 218, 320, 12, VIS | EN, "RPDETAILSFULL", T(c, "DetailsFull"), "Cancel");
     }
-    control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), details ? "FullLog" : NULL);
+    control(c, d, "Cancel", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "Cancel"), details ? "Details" : NULL);
     event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
     mapping(c, d, "ActionText", "ActionText", "Text");
     mapping(c, d, "ProgressBar", "SetProgress", "Progress");
@@ -931,7 +954,7 @@ static void progress_and_exits(ctx_t *c) {
         // to save a copy. Hidden when Windows Installer keeps no log (MsiLogFileLocation empty).
         const char *after_finish = launch ? "Launch" : NULL;
         if (c->ir->ui_save_log) {
-            control(c, exits[i][0], "SaveLog", "PushButton", 25, 243, 90, 17, VIS | EN, NULL, T(c, "SaveLog"), launch ? "Launch" : "Finish");
+            control(c, exits[i][0], "SaveLog", "PushButton", 25, 243, 96, 17, VIS | EN, NULL, T(c, "SaveLog"), launch ? "Launch" : "Finish");
             cond(c, exits[i][0], "SaveLog", "Hide", "NOT MsiLogFileLocation");
             event(c, exits[i][0], "SaveLog", "DoAction", "RP_SaveLog", "MsiLogFileLocation", 1);
             after_finish = "SaveLog";
@@ -952,9 +975,9 @@ static void progress_and_exits(ctx_t *c) {
             cond(c, exits[i][0], "LogView", "Show", "RP_LOG_VIEW");
             after_finish = "LogView";
         }
-        control(c, exits[i][0], "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), NULL);
-        control(c, exits[i][0], "Finish", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Finish"), after_finish);
-        control(c, exits[i][0], "Cancel", "PushButton", 304, 243, 56, 17, VIS, NULL, T(c, "Cancel"), NULL);
+        control(c, exits[i][0], "Back", "PushButton", 168, 243, 60, 17, VIS, NULL, T(c, "Back"), NULL);
+        control(c, exits[i][0], "Finish", "PushButton", 228, 243, 60, 17, VIS | EN, NULL, T(c, "Finish"), after_finish);
+        control(c, exits[i][0], "Cancel", "PushButton", 300, 243, 60, 17, VIS, NULL, T(c, "Cancel"), NULL);
         event(c, exits[i][0], "Finish", "EndDialog", "Return", NULL, launch ? 2 : 1);
     }
     if (c->ir->ui_launch_file.ptr && c->ir->ui_launch_default) prop(c, "RPLAUNCH", "1");
@@ -1000,6 +1023,7 @@ bool rp_ui_ready_features(const rp_ir_t *ir) {
 
 // RFC-0013 A4: with features to choose, Change (to the feature tree) comes first. Remove asks once
 // more on a page of its own (RpRemoveDlg) before anything is removed.
+// Each choice's text has two lines (24 units): at 20 a second line ended in "..." (RFC-0034 P1, uishot).
 static void maintenance_dlg(ctx_t *c, bool change) {
     const char *d = "RpMaintenanceDlg";
     int y = change ? 40 : 0;
@@ -1007,14 +1031,14 @@ static void maintenance_dlg(ctx_t *c, bool change) {
     frame(c, d, "MaintTitle", "MaintText", NULL);
     if (change) {
         control(c, d, "Change", "PushButton", 25, 65, 80, 17, VIS | EN, NULL, T(c, "Change"), "Repair");
-        control(c, d, "ChangeText", "Text", 115, 67, 235, 20, VIS | NOPREFIX, NULL, T(c, "ChangeText"), NULL);
+        control(c, d, "ChangeText", "Text", 115, 67, 235, 24, VIS | NOPREFIX, NULL, T(c, "ChangeText"), NULL);
         event(c, d, "Change", "NewDialog", "RpCustomizeDlg", NULL, 1);
     }
     control(c, d, "Repair", "PushButton", 25, 65 + y, 80, 17, VIS | EN, NULL, T(c, "Repair"), "Remove");
-    control(c, d, "RepairText", "Text", 115, 67 + y, 235, 20, VIS | NOPREFIX, NULL, T(c, "RepairText"), NULL);
+    control(c, d, "RepairText", "Text", 115, 67 + y, 235, 24, VIS | NOPREFIX, NULL, T(c, "RepairText"), NULL);
     control(c, d, "Remove", "PushButton", 25, 105 + y, 80, 17, VIS | EN, NULL, T(c, "Remove"), "Cancel");
-    control(c, d, "RemoveText", "Text", 115, 107 + y, 235, 20, VIS | NOPREFIX, NULL, T(c, "RemoveText"), NULL);
-    control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), change ? "Change" : "Repair");
+    control(c, d, "RemoveText", "Text", 115, 107 + y, 235, 24, VIS | NOPREFIX, NULL, T(c, "RemoveText"), NULL);
+    control(c, d, "Cancel", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "Cancel"), change ? "Change" : "Repair");
     event(c, d, "Repair", "Reinstall", "ALL", NULL, 1);
     event(c, d, "Repair", "ReinstallMode", "ecmus", NULL, 2);
     event(c, d, "Repair", "EndDialog", "Return", NULL, 3);
@@ -1026,9 +1050,9 @@ static void maintenance_dlg(ctx_t *c, bool change) {
     dialog(c, r, 370, 270, 3, "Back", "Back", "Cancel");
     frame(c, r, "RemoveConfirmTitle", NULL, NULL);
     control(c, r, "Text", "Text", 25, 65, 320, 60, VIS | NOPREFIX, NULL, T(c, rp_ui_wipes(c->ir) ? "RemoveConfirmTextAll" : "RemoveConfirmText"), NULL);
-    control(c, r, "Back", "PushButton", 180, 243, 56, 17, VIS | EN, NULL, T(c, "Back"), "Next");
-    control(c, r, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Remove"), "Cancel");
-    control(c, r, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "Back");
+    control(c, r, "Back", "PushButton", 168, 243, 60, 17, VIS | EN, NULL, T(c, "Back"), "Next");
+    control(c, r, "Next", "PushButton", 228, 243, 60, 17, VIS | EN, NULL, T(c, "Remove"), "Cancel");
+    control(c, r, "Cancel", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "Cancel"), "Back");
     event(c, r, "Back", "NewDialog", d, NULL, 1);
     event(c, r, "Next", "Remove", "ALL", NULL, 1);
     event(c, r, "Next", "[RP_REMOVING]", "1", NULL, 2);       // the Remove event leaves REMOVE unset (observed)
@@ -1112,7 +1136,7 @@ static void installdir_dlg(ctx_t *c, const char *back, const char *next, const c
         control(c, w, "Text", "Text", 25, 65, 320, 70, VIS | NOPREFIX, NULL, T(c, "DirNotEmptyText"), NULL);
         control(c, w, "Back", "PushButton", 120, 243, 86, 17, VIS | EN, NULL, T(c, "DirChoose"), "Next");
         control(c, w, "Next", "PushButton", 210, 243, 86, 17, VIS | EN, NULL, T(c, "DirContinue"), "Cancel");
-        control(c, w, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "Back");
+        control(c, w, "Cancel", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "Cancel"), "Back");
         event(c, w, "Back", "NewDialog", d, NULL, 1);
         if (next && next[0]) event(c, w, "Next", "NewDialog", next, NULL, 1);
         else event(c, w, "Next", "EndDialog", "Return", NULL, 1);
@@ -1122,16 +1146,17 @@ static void installdir_dlg(ctx_t *c, const char *back, const char *next, const c
     const char *b = "RpBrowseDlg";
     dialog(c, b, 370, 270, 3, "PathEdit", "OK", "Cancel");
     frame(c, b, "BrowseTitle", "BrowseText", NULL);
-    control(c, b, "LookIn", "Text", 20, 58, 50, 12, VIS, NULL, T(c, "BrowseLookIn"), NULL);
+    // The labels in one column 60 units wide: at 50 "찾는 위치(&L):" wrapped and lost its second line.
+    control(c, b, "LookIn", "Text", 20, 58, 60, 12, VIS, NULL, T(c, "BrowseLookIn"), NULL);
     // Up and New folder as wide as their longest translation (T158: 82 and 120 px at 1.38 a unit).
-    control(c, b, "Combo", "DirectoryCombo", 72, 55, 125, 80, VIS | EN | INDIRECT | 0x70000 | 0x100000, "_RpBrowseProperty", NULL, "Up");
+    control(c, b, "Combo", "DirectoryCombo", 82, 55, 115, 80, VIS | EN | INDIRECT | 0x70000 | 0x100000, "_RpBrowseProperty", NULL, "Up");
     control(c, b, "Up", "PushButton", 201, 55, 62, 17, VIS | EN, NULL, T(c, "BrowseUp"), "NewFolder");
     control(c, b, "NewFolder", "PushButton", 267, 55, 88, 17, VIS | EN, NULL, T(c, "BrowseNew"), "List");
     control(c, b, "List", "DirectoryList", 20, 78, 335, 110, VIS | EN | SUNKEN | INDIRECT, "_RpBrowseProperty", NULL, "PathEdit");
     control(c, b, "PathLabel", "Text", 20, 196, 60, 12, VIS, NULL, T(c, "BrowseFolder"), NULL);
     control(c, b, "PathEdit", "PathEdit", 82, 193, 273, 18, VIS | EN | SUNKEN | INDIRECT, "_RpBrowseProperty", NULL, "OK");
-    control(c, b, "OK", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "OK"), "Cancel");
-    control(c, b, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "Combo");
+    control(c, b, "OK", "PushButton", 228, 243, 60, 17, VIS | EN, NULL, T(c, "OK"), "Cancel");
+    control(c, b, "Cancel", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "Cancel"), "Combo");
     event(c, b, "Up", "DirectoryListUp", "0", NULL, 1);
     event(c, b, "NewFolder", "DirectoryListNew", "0", NULL, 1);
     event(c, b, "OK", "SetTargetPath", "[_RpBrowseProperty]", NULL, 1);
@@ -1150,7 +1175,8 @@ static void installdir_dlg(ctx_t *c, const char *back, const char *next, const c
 // every box above it is ticked. A child's box is off while its parent's is. A required feature is
 // a ticked box that cannot be changed; one that follows its parent or is hidden is not listed. The
 // tree stays when the list does not fit the page.
-enum { FLIST_TOP = 55, FLIST_BOTTOM = 205, FLIST_BOX = 12, FLIST_DESC = 10, FLIST_GAP = 4, FLIST_MAX = 20 };
+// A description line is 12 units: at 10 the descenders of p, g, y were cut (RFC-0034 P1, uishot).
+enum { FLIST_TOP = 55, FLIST_BOTTOM = 205, FLIST_BOX = 12, FLIST_DESC = 12, FLIST_GAP = 4, FLIST_MAX = 20 };
 
 static bool flist_listed(const rp_ir_feature_t *f) { return !f->implicit && !f->hidden && !f->follow_parent; }
 
@@ -1208,7 +1234,9 @@ static const char *flist_size(ctx_t *c, const rp_ir_t *ir, const char *id) {
     uint64_t tenths = (b * 10 + scale - 1) / scale;
     if (u == 0 || tenths >= 100) (void)proven_fmt_to(t, sizeof t, "{} {}", proven_arg_u64((tenths + 9) / 10), proven_arg_cstr(unit[u]));
     else (void)proven_fmt_to(t, sizeof t, "{}.{} {}", proven_arg_u64(tenths / 10), proven_arg_u64(tenths % 10), proven_arg_cstr(unit[u]));
-    return keep(c, t, "");
+    // In a right-to-left page "18 KB" came out as "KB 18": left-to-right marks (U+200E) on both
+    // sides keep the number before its unit (RFC-0034, uishot ar).
+    return c->rtl ? keep(c, keep(c, "\u200E", t), "\u200E") : keep(c, t, "");
 }
 
 // A title for a check box: '&' would mark an access key.
@@ -1264,7 +1292,7 @@ static const char *feature_list(ctx_t *c, const char *d, const char *after) {
         int x = 20 + 14 * flist_depth(ir, i), lines = flist_desc_lines(desc);
         control(c, d, box, "CheckBox", x, y, (size ? 286 : 350) - x, FLIST_BOX, f->required ? VIS : VIS | EN, prop_name,
                 flist_title(c, rp_cs(f->title)), to);
-        if (size) control(c, d, keep(c, box, "Size"), "Text", 290, y + 2, 60, 10, VIS | NOPREFIX | CTL_RIGHT, NULL, size, NULL);
+        if (size) control(c, d, keep(c, box, "Size"), "Text", 290, y, 60, 12, VIS | NOPREFIX | CTL_RIGHT, NULL, size, NULL);
         if (lines) control(c, d, keep(c, box, "Desc"), "Text", x + 14, y + FLIST_BOX, 336 - x, FLIST_DESC * lines, VIS | NOPREFIX, NULL, desc, NULL);
         y += FLIST_BOX + FLIST_GAP + FLIST_DESC * lines;
         // Every listed box above it must be ticked for it to be installed; the nearest one turns it off.
@@ -1319,8 +1347,8 @@ static void customize_dlg(ctx_t *c, const char *back, const char *next, const ch
         mapping(c, d, "ItemDescription", "SelectionDescription", "Text");
         mapping(c, d, "ItemSize", "SelectionSize", "Text");
     }
-    control(c, d, "Reset", "PushButton", 20, 211, 70, 17, VIS | EN, NULL, T(c, "Reset"), "DiskCost");
-    control(c, d, "DiskCost", "PushButton", 95, 211, 70, 17, VIS | EN, NULL, T(c, "DiskCost"), "Back");
+    control(c, d, "Reset", "PushButton", 20, 211, 80, 17, VIS | EN, NULL, T(c, "Reset"), "DiskCost");
+    control(c, d, "DiskCost", "PushButton", 104, 211, 80, 17, VIS | EN, NULL, T(c, "DiskCost"), "Back");
     event(c, d, "Reset", "Reset", "0", NULL, 1);
     event(c, d, "DiskCost", "SpawnDialog", "RpDiskCostDlg", NULL, 1);
     c->maint_back = true;
@@ -1331,8 +1359,8 @@ static void customize_dlg(ctx_t *c, const char *back, const char *next, const ch
     dialog(c, k, 370, 270, 3 | 32, "OK", "OK", "OK");
     frame(c, k, "DiskCostTitle", "DiskCostText", NULL);
     control(c, k, "List", "VolumeCostList", 20, 55, 330, 160, VIS | SUNKEN | 0x20000, NULL,
-            "{120}{70}{70}{70}{70}", "OK");
-    control(c, k, "OK", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "OK"), "List");
+            VOLUME_COLUMNS, "OK");
+    control(c, k, "OK", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "OK"), "List");
     event(c, k, "OK", "EndDialog", "Return", NULL, 1);
 }
 
@@ -1416,8 +1444,8 @@ static void ready_dlg(ctx_t *c, const char *back, const char *dir) {
     const char *o = "RpOutOfDiskDlg";
     dialog(c, o, 370, 270, 3 | 32, "OK", "OK", "OK");
     frame(c, o, "OutOfDiskTitle", "OutOfDiskText", NULL);
-    control(c, o, "List", "VolumeCostList", 20, 55, 330, 160, VIS | SUNKEN | 0x20000, NULL, "{120}{70}{70}{70}{70}", "OK");
-    control(c, o, "OK", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "OK"), "List");
+    control(c, o, "List", "VolumeCostList", 20, 55, 330, 160, VIS | SUNKEN | 0x20000, NULL, VOLUME_COLUMNS, "OK");
+    control(c, o, "OK", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "OK"), "List");
     event(c, o, "OK", "EndDialog", "Return", NULL, 1);
 }
 
@@ -1615,10 +1643,11 @@ static void grouped_page(ctx_t *c, const char *title, const char *text) {
         (void)proven_fmt_to(cnd, sizeof cnd, "RpLangGroup <> \"{}\"", proven_arg_i32(g));
         cond(c, d, ctl, "Hide", keep(c, cnd, NULL));
     }
-    control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), "Next");
-    control(c, d, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Next"), "Cancel");
-    control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "RpLangGroup");
+    control(c, d, "Back", "PushButton", 168, 243, 60, 17, VIS, NULL, T(c, "Back"), "Next");
+    control(c, d, "Next", "PushButton", 228, 243, 60, 17, VIS | EN, NULL, T(c, "Next"), "Cancel");
+    control(c, d, "Cancel", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "Cancel"), "RpLangGroup");
     event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
+    if (c->uitext_dll) event(c, d, "Next", "DoAction", "RP_UiText", NULL, 1);
     event(c, d, "Next", "NewDialog", "RpWelcomeDlg", "NOT Installed", 2);
     event(c, d, "Next", "NewDialog", "RpMaintenanceDlg", "Installed", 2);
     dseq(c, d, "NOT Installed OR (NOT RESUME AND NOT Preselected)", 1225);
@@ -1655,12 +1684,13 @@ static void language_dlg(ctx_t *c) {
         s_(c, r, PROVEN_LIT("RPLANGUAGEUI")); i_(c, r, (int32_t)i + 1); s_(c, r, RP_V(lang_code(c, i))); i_(c, r, 0);
         i_(c, r, (int32_t)i * 14); i_(c, r, 200); i_(c, r, 14); s_(c, r, RP_V(name)); n_(c, r);
     }
-    control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), "Next");
-    control(c, d, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Next"), "Cancel");
-    control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "Lang");
+    control(c, d, "Back", "PushButton", 168, 243, 60, 17, VIS, NULL, T(c, "Back"), "Next");
+    control(c, d, "Next", "PushButton", 228, 243, 60, 17, VIS | EN, NULL, T(c, "Next"), "Cancel");
+    control(c, d, "Cancel", "PushButton", 300, 243, 60, 17, VIS | EN, NULL, T(c, "Cancel"), "Lang");
     event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
     event(c, d, "Next", "[RPLANGUAGE]", "[RPLANGUAGEUI]", NULL, 0);
     // Next: the texts and fonts of the chosen language first (language_rows), then the page.
+    if (c->uitext_dll) event(c, d, "Next", "DoAction", "RP_UiText", NULL, 1);
     event(c, d, "Next", "NewDialog", "RpWelcomeDlg", "NOT Installed", 2);
     event(c, d, "Next", "NewDialog", "RpMaintenanceDlg", "Installed", 2);
     dseq(c, d, "NOT Installed OR (NOT RESUME AND NOT Preselected)", 1225);
@@ -1977,7 +2007,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     *out = NULL;
     ctx_t *c = rp_mem_alloc(alloc, 1, sizeof *c);
     rp_ui_t *ui = rp_mem_alloc(alloc, 1, sizeof *ui);
-    rp_msi_wtable_t *tables = rp_mem_alloc(alloc, 13, sizeof *tables);
+    rp_msi_wtable_t *tables = rp_mem_alloc(alloc, UI_TABLES, sizeof *tables);
     if (c == NULL || ui == NULL || tables == NULL) {
         rp_mem_free(alloc, c);
         rp_mem_free(alloc, ui);
@@ -2011,6 +2041,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     rows_init(&c->listbox, "ListBox", listbox_cols, 4);
     rows_init(&c->acttext, "ActionText", acttext_cols, 3);
     rows_init(&c->rptext, "RpText", rptext_cols, 4);
+    rows_init(&c->uitextl, "RpUiText", rpuitext_cols, 3);
     rows_init(&c->billboard, "Billboard", billboard_cols, 4);
     rows_init(&c->bbcontrol, "BBControl", bbcontrol_cols, 9);
 
@@ -2026,9 +2057,32 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     prop(c, "DefaultUIFont", c->multi ? "RpNormal_en" : "RpNormal");
     // The dialogs' one language: the helper's questions go in it while they show (pre_text).
     if (!c->multi) prop(c, "RP_DIALOG_LANG", lang_code(c, 0));
-    // The engine's own texts (sizes, feature tree menus) have one table: English.
+    // The engine's own texts (sizes, feature tree menus) have one table: English. The volume list's
+    // column titles (RFC-0034 F9) follow the dialogs' language: one language, its pack's text; several
+    // with the helper DLL there, none here but a row per language in RpUiText, which RpUiText puts
+    // into UIText as temporary rows once the language is settled (a session cannot change a stored row).
+    // Each of these means the helper DLL is in the package (lower.c puts it in for any of them).
+    c->uitext_dll = c->multi && (in->details || in->helper || in->ready_features || in->browse_folder);
     for (size_t i = 0; i < sizeof uitexts / sizeof uitexts[0]; ++i) {
-        s_(c, &c->uitext, RP_V(uitexts[i].id)); s_(c, &c->uitext, RP_V(uitexts[i].en));
+        bool vol = strncmp(uitexts[i].id, "VolumeCost", 10) == 0;
+        const char *text = uitexts[i].en;
+        if (vol && c->uitext_dll) {
+            for (size_t li = 0; li < c->nlang; ++li) {
+                const char *code = lang_code(c, li);
+                const char *t = strcmp(code, "en") == 0 ? NULL : rp_langpack_text(rp_langpack_get(code, NULL), "installer", keep(c, "UIText.", uitexts[i].id));
+                s_(c, &c->uitextl, RP_V(code)); s_(c, &c->uitextl, RP_V(uitexts[i].id)); s_(c, &c->uitextl, RP_V(t ? t : uitexts[i].en));
+            }
+            continue;
+        }
+        if (vol && !c->multi && strcmp(lang_code(c, 0), "en") != 0) {
+            const char *t = rp_langpack_text(rp_langpack_get(lang_code(c, 0), NULL), "installer", keep(c, "UIText.", uitexts[i].id));
+            if (t) text = t;
+        }
+        s_(c, &c->uitext, RP_V(uitexts[i].id)); s_(c, &c->uitext, RP_V(text));
+    }
+    if (c->uitext_dll) {
+        ca_dll(c, "RP_UiText", "RpUiText");
+        seq(c, "RP_UiText", NULL, 23);       // after the language and RTL actions (9-22)
     }
     // The status line's texts, when every language has them (English here, another in its pack;
     // a language without them keeps Windows Installer's own, which follow Windows). With several languages the text is a
@@ -2165,7 +2219,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     if (c->table) language_table(c);
     else if (c->multi) language_rows(c);
 
-    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext, &c->rptext, &c->billboard, &c->bbcontrol };
+    rows_t *all[UI_TABLES] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext, &c->rptext, &c->billboard, &c->bbcontrol, &c->uitextl };
     size_t nt = 0;
     for (size_t i = 0; i < sizeof all / sizeof *all; ++i) {
         rows_t *r = all[i];
@@ -2201,7 +2255,7 @@ void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui) {
     if (ui == NULL) return;
     ctx_t *c = ui->priv;
     if (c) {
-        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext, &c->rptext, &c->billboard, &c->bbcontrol };
+        rows_t *all[UI_TABLES] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext, &c->rptext, &c->billboard, &c->bbcontrol, &c->uitextl };
         for (size_t i = 0; i < sizeof all / sizeof *all; ++i) rp_mem_free(alloc, all[i]->cells);
         for (size_t i = 0; i < c->nstr; ++i) rp_mem_free(alloc, c->strings[i]);
         rp_mem_free(alloc, c->strings);

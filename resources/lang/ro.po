@@ -4255,3 +4255,23 @@ msgstr "[1] nu a putut fi eliminat, iar anularea nu l-a restabilit. Diferențele
 msgctxt "installer"
 msgid "ReportRepair"
 msgstr "[1] nu a putut fi reparat, iar anularea nu l-a restabilit. Diferențele sunt listate mai jos. Rulați din nou programul de instalare pentru a-l repara.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostVolume"
+msgstr "Volum"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostSize"
+msgstr "Dimensiune"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostAvailable"
+msgstr "Disponibil"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostRequired"
+msgstr "Necesar"
+
+msgctxt "installer"
+msgid "UIText.VolumeCostDifference"
+msgstr "Diferență"
