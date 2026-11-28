@@ -81,4 +81,26 @@ static inline bool rp_script_next(const uint16_t *s, size_t n, size_t *i, size_t
     return false;
 }
 
+// Whether a run gets its script's face from the helper. With the box's font binding off (every
+// language but Chinese, Japanese and Korean) every run does. With it on, the binding draws Han,
+// Kana and Hangul in the system's CJK face and keeps the paths after them right, so only Indic and
+// Thai runs, which it left in the box's CJK face as empty squares (x62, a Hindi name in a Korean
+// box, 2026-11-13), get theirs.
+static inline bool rp_script_own_face(int face, bool binding) {
+    return !binding || face == RP_FACE_INDIC || face == RP_FACE_THAI;
+}
+
+// Where the letters of no script group that follow a run end (a RichEdit position), from the
+// state rp_script_next left (*i and *pos just past the run); the line's end stops them. With the
+// binding on, RichEdit gave those letters the face it chose for the run before them (".txt" after
+// a Thai name came in a Thai face, larger: x62 ja, 2026-11-27), so they go back to the box's own.
+static inline size_t rp_script_tail(const uint16_t *s, size_t n, size_t i, size_t pos) {
+    size_t units;
+    while (i < n && s[i] != '\r' && s[i] != '\n' && rp_script_class(s, n, i, &units) == 0) {
+        i += units;
+        pos += units;
+    }
+    return pos;
+}
+
 #endif

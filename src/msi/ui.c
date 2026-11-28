@@ -966,10 +966,14 @@ static void progress_and_exits(ctx_t *c) {
         }
         // What was done, to read before saving the log (owner 2026-11-14): the progress page's
         // lines, which RpDetails leaves in RP_LOG_VIEW when the run ends - a multi-line edit box
-        // bound to it scrolls (a ScrollableText's text is fixed in the package).
+        // bound to it scrolls (a ScrollableText's text is fixed in the package). Its face is Nirmala
+        // UI in every language (RpLog): an Edit has one face, and only that one, with the fonts Windows
+        // links to it, drew every script of a file name - Hangul, Han, Kana, Thai, Devanagari, Arabic,
+        // Hebrew - and a backslash as a backslash; the language's own face left Devanagari as squares
+        // (Malgun Gothic, Yu Gothic UI, Segoe UI, Leelawadee UI; RFC-0034, VM 2026-11-28).
         if (details) {
             int y = launch ? 100 : 55;
-            control(c, exits[i][0], "LogView", "Edit", 25, y, 320, 225 - y, VIS | EN | SUNKEN | MULTILINE, "RP_LOG_VIEW", "{1000000}",
+            control(c, exits[i][0], "LogView", "Edit", 25, y, 320, 225 - y, VIS | EN | SUNKEN | MULTILINE, "RP_LOG_VIEW", "{\\RpLog}{1000000}",
                     after_finish ? after_finish : "Finish");
             cond(c, exits[i][0], "LogView", "Hide", "NOT RP_LOG_VIEW");
             cond(c, exits[i][0], "LogView", "Show", "RP_LOG_VIEW");
@@ -2053,6 +2057,9 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
         const char *sfx = c->multi ? keep(c, "_", lang_code(c, i)) : "";
         s_(c, &c->style, RP_V(keep(c, "RpNormal", sfx))); s_(c, &c->style, RP_V(face)); i_(c, &c->style, 9); n_(c, &c->style); n_(c, &c->style);
         s_(c, &c->style, RP_V(keep(c, "RpTitle", sfx))); s_(c, &c->style, RP_V(face)); i_(c, &c->style, 11); n_(c, &c->style); i_(c, &c->style, 1);
+    }
+    if (ir->ui_details && in->details) {   // the finished page's log box (RFC-0034)
+        s_(c, &c->style, RP_V("RpLog")); s_(c, &c->style, RP_V("Nirmala UI")); i_(c, &c->style, 9); n_(c, &c->style); n_(c, &c->style);
     }
     prop(c, "DefaultUIFont", c->multi ? "RpNormal_en" : "RpNormal");
     // The dialogs' one language: the helper's questions go in it while they show (pre_text).

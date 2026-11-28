@@ -3172,14 +3172,17 @@ static LRESULT det_send(HWND w, UINT m, WPARAM wp, LPARAM lp) {
 // left-to-right box a Korean name after a Chinese one came apart (x62, ca). So (RFC-0027) in every
 // box with the binding off each run of Korean, Chinese, Japanese, Indic or Thai letters gets its
 // script's face itself: the run is selected (EM_SETSEL takes numbers) and given one more
-// CHARFORMAT2W written into the dialog's process beside the box's own.
-enum { DET_FMTS = 1 + RP_FACE_COUNT - 1 };                  // the box's own, then one per RP_FACE_* but NONE
+// CHARFORMAT2W written into the dialog's process beside the box's own. In a Chinese, Japanese or
+// Korean box (binding on) only the Indic and Thai runs are, which the binding left as squares
+// (rp_script_own_face; RFC-0034).
+enum { DET_SIZE = RP_FACE_COUNT,                            // the box's size alone (after the faces)
+       DET_FMTS = 1 + RP_FACE_COUNT - 1 + 1 };               // the box's own, one per RP_FACE_* but NONE, the size
 
 typedef struct {
     HANDLE proc;
     void  *remote;                                          // DET_FMTS formats, then a CHARRANGE
     bool   noauto;                                          // IMF_AUTOFONT off
-    bool   runs;                                            // a face per script run (binding off)
+    bool   runs;                                            // a face per script run (rp_script_own_face)
 } det_fmt_t;
 
 // The face of a script run (RP_FACE_*): Han alone by the system's UI language.
@@ -3237,7 +3240,7 @@ static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lc
     cf.bCharSet = det_charset(lcid);
     fm->noauto = cf.bCharSet != SHIFTJIS_CHARSET && cf.bCharSet != GB2312_CHARSET && cf.bCharSet != HANGEUL_CHARSET &&
                  cf.bCharSet != CHINESEBIG5_CHARSET;
-    fm->runs = fm->noauto;
+    fm->runs = true;                                        // all with the binding off, Indic and Thai with it on
     cf.bPitchAndFamily = VARIABLE_PITCH | FF_SWISS;
     size_t fl = face && face[0] ? rp_wlen(face) : 0;
     if (fl == 0 || fl >= LF_FACESIZE) face = L"Segoe UI", fl = 8, cf.bCharSet = DEFAULT_CHARSET;
@@ -3245,7 +3248,7 @@ static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lc
     // The box's format, then each script run's (face and character set only), then a CHARRANGE.
     CHARFORMAT2W all[DET_FMTS];
     all[0] = cf;
-    for (int i = 1; i < DET_FMTS; ++i) {
+    for (int i = 1; i < DET_SIZE; ++i) {
         const wchar_t *name;
         memset(&all[i], 0, sizeof all[i]);
         all[i].cbSize = sizeof all[i];
@@ -3253,6 +3256,10 @@ static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lc
         det_run_face(i, &name, &all[i].bCharSet);
         (void)RP_WCPY(all[i].szFaceName, name);
     }
+    memset(&all[DET_SIZE], 0, sizeof all[DET_SIZE]);
+    all[DET_SIZE].cbSize = sizeof all[DET_SIZE];
+    all[DET_SIZE].dwMask = CFM_SIZE;
+    all[DET_SIZE].yHeight = cf.yHeight;
     size_t size = sizeof all + sizeof(CHARRANGE);
     if (mine == theirs) {
         fm->remote = VirtualAllocEx(fm->proc, NULL, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
@@ -3298,11 +3305,24 @@ static void det_font_runs(const det_fmt_t *fm, HWND edit, LONG base, const wchar
     rp_script_run_t r;
     bool any = false;
     while (rp_script_next((const uint16_t *)text, n, &i, &pos, &r)) {
+        if (!rp_script_own_face(r.face, !fm->noauto)) continue;
         det_send(edit, EM_SETSEL, (WPARAM)(base + (LONG)r.from), (LPARAM)(base + (LONG)r.to));
         det_send(edit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)((CHARFORMAT2W *)fm->remote + r.face));
         any = true;
+        size_t tail = fm->noauto ? r.to : rp_script_tail((const uint16_t *)text, n, i, pos);
+        if (tail > r.to) {                                  // the binding's face spread past the run
+            det_send(edit, EM_SETSEL, (WPARAM)(base + (LONG)r.to), (LPARAM)(base + (LONG)tail));
+            det_send(edit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)fm->remote);
+        }
     }
     if (!any) return;
+    // With the binding on, what came after a Thai name in the same lines came larger in a Korean
+    // box (x62 ko, 0.62.0 alike, 2026-11-28): the lines go back to the box's size, the size alone -
+    // the faces and character sets stay the binding's.
+    if (!fm->noauto) {
+        det_send(edit, EM_SETSEL, (WPARAM)base, (LPARAM)(base + (LONG)pos));
+        det_send(edit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)((CHARFORMAT2W *)fm->remote + DET_SIZE));
+    }
     det_send(edit, EM_SETSEL, (WPARAM)-1, (LPARAM)-1);
     det_send(edit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)fm->remote);
 }
@@ -3480,15 +3500,24 @@ __declspec(dllexport) UINT __stdcall RpDetailsDone(MSIHANDLE h) {
 // Windows Installer makes that box without wrapping, so a long path ran past its right edge with no
 // way to see the rest (RFC-0034 P3): each line is broken here where it would reach the edge, after a
 // backslash, slash or space when there is one, and the rest goes on the next lines, indented.
-// Measured in the box's face at 9 points as 96 dpi sees it (the page scales with the DPI): the box is
+// Measured in the box's face (Nirmala UI, ui.c RpLog) at 9 points as 96 dpi sees it (the page scales with the DPI): the box is
 // 320 units, 427 px at 100% (uishot), less its frame, scroll bar and margins.
 enum { LOG_VIEW_MAX = 300000, LOG_VIEW_PX = 384 };
 
 typedef struct {
     HDC   dc;
     HFONT font, old;
+    HWND  re;                                               // a hidden RichEdit20W in that font, or NULL
     int   indent;                                           // the indent's width
 } det_wrap_t;
+
+// The width of the first k characters of the line in w->re (set with WM_SETTEXT), or -1.
+static long det_wrap_re_x(const det_wrap_t *w, size_t k) {
+    POINTL a = { 0, 0 }, b = { 0, 0 };
+    SendMessageW(w->re, EM_POSFROMCHAR, (WPARAM)&a, 0);
+    SendMessageW(w->re, EM_POSFROMCHAR, (WPARAM)&b, (LPARAM)k);
+    return b.x >= a.x ? (long)(b.x - a.x) : -1;
+}
 
 static void det_wrap_open(det_wrap_t *w, const wchar_t *face) {
     memset(w, 0, sizeof *w);
@@ -3510,10 +3539,29 @@ static void det_wrap_open(det_wrap_t *w, const wchar_t *face) {
         return;
     }
     w->indent = sz.cx;
+    // The box is Windows Installer's Edit, a RichEdit20W: a hidden one in the same face, in plain-text
+    // mode, lays a line out within 5 px of the box (wider, never narrower: Japanese 374 for 370 drawn,
+    // Korean 354 for 354), where GDI's measure gave Japanese 392 and broke it early, and a rich-text
+    // one Korean 393 (tests/uimock/fontprobe.c, VM 2026-11-28). Without it, GDI's.
+    if (GetModuleHandleW(L"riched20.dll") || LoadLibraryW(L"riched20.dll"))
+        w->re = CreateWindowExW(0, L"RichEdit20W", L"", WS_POPUP | ES_MULTILINE, 0, 0, 8000, 100, NULL, NULL, NULL, NULL);
+    if (w->re) {
+        SendMessageW(w->re, EM_SETTEXTMODE, TM_PLAINTEXT, 0);  // while it is empty
+        SendMessageW(w->re, WM_SETFONT, (WPARAM)w->font, FALSE);
+        SendMessageW(w->re, EM_SETTARGETDEVICE, 0, 1);         // one line, never wrapped
+        SetWindowTextW(w->re, L"    ");
+        long x = det_wrap_re_x(w, 4);
+        if (x > 0) w->indent = (int)x;
+        else {
+            DestroyWindow(w->re);
+            w->re = NULL;
+        }
+    }
 }
 
 static void det_wrap_close(det_wrap_t *w) {
     if (w->dc == NULL) return;
+    if (w->re) DestroyWindow(w->re);
     SelectObject(w->dc, w->old);
     DeleteObject(w->font);
     DeleteDC(w->dc);
@@ -3525,7 +3573,22 @@ static size_t det_wrap_take(const det_wrap_t *w, const wchar_t *s, size_t n, int
     int fit = 0;
     SIZE sz;
     if (n > 4096) n = 4096;
-    if (!GetTextExtentExPointW(w->dc, s, (int)n, px, &fit, NULL, &sz) || (size_t)fit >= n) return n;
+    if (w->re) {
+        static wchar_t one[4097];
+        memcpy(one, s, n * sizeof *s);
+        one[n] = 0;
+        SetWindowTextW(w->re, one);
+        long all = det_wrap_re_x(w, n);
+        if (all >= 0 && all <= px) return n;
+        size_t lo = 0, hi = n;                              // lo fits, hi does not
+        while (all >= 0 && hi - lo > 1) {
+            size_t mid = lo + (hi - lo) / 2;
+            long x = det_wrap_re_x(w, mid);
+            if (x >= 0 && x <= px) lo = mid; else hi = mid;
+        }
+        fit = (int)lo;
+        if (all < 0 && (!GetTextExtentExPointW(w->dc, s, (int)n, px, &fit, NULL, &sz) || (size_t)fit >= n)) return n;
+    } else if (!GetTextExtentExPointW(w->dc, s, (int)n, px, &fit, NULL, &sz) || (size_t)fit >= n) return n;
     size_t k = fit > 0 ? (size_t)fit : 1;
     for (size_t j = k; j > k / 2; --j) {        // after a backslash or slash: a path breaks between folders
         if (s[j - 1] == L'\\' || s[j - 1] == L'/') return j;
@@ -3719,6 +3782,10 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
                 det_send(win.edit, EM_SETREADONLY, FALSE, 0);
                 LONG base = fmt.runs ? det_text_end(&fmt, win.edit) : -1;
                 det_send(win.edit, EM_SETSEL, (WPARAM)-1, (LPARAM)-1);
+                // The new lines start in the box's own format: moving the insertion point gave them
+                // the format of the character before it, and after a Thai name that RichEdit's binding
+                // had put in its own face the next lines came larger (x62 ko; 0.62.0 alike, 2026-11-28).
+                if (shown && fmt.remote) det_send(win.edit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)fmt.remote);
                 det_send(win.edit, EM_REPLACESEL, FALSE, (LPARAM)add);
                 if (shown == 0) det_font_apply(&fmt, win.edit);     // the first lines: in case the empty box kept its own
                 det_font_runs(&fmt, win.edit, base, add, o);
@@ -3743,7 +3810,7 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
         if (now - quiet_since > 600000 || now - born > 6u * 3600 * 1000) break;
     }
 out:
-    if (raw && len) det_log_view(h, &st, raw, len, full, face);
+    if (raw && len) det_log_view(h, &st, raw, len, full, L"Nirmala UI");   // the log box's face (ui.c RpLog)
     if (face) HeapFree(GetProcessHeap(), 0, face);
     det_font_close(&fmt);
     if (f != INVALID_HANDLE_VALUE) CloseHandle(f);
