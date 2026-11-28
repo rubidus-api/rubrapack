@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detailed contents — rubrapack Manual</title><style>@font-face { font-family:"Doc Serif"; src:url("../fonts/serif.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-italic.woff2") format("woff2");
+  font-weight:400; font-style:italic; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-kr.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-kr-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans-kr.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans-kr-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Mono"; src:url("../fonts/mono.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Mono"; src:url("../fonts/mono-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+:root { color-scheme: light dark; --bg:#fafaf8; --bg2:#f2f2f0; --bg3:#e6e6e3; --fg:#141414; --muted:#555555; --line:#c9c9c9; --line-strong:#8a8a8a; --accent:#1a4f8a; --accent-fg:#ffffff; --accent2:#96530f; --honey:#f2b04a; --honey-fg:#2b1d00; --honey-text:#855400; --honey-soft:#fbebc6; --danger:#9b1b30; --ok:#1d6e37; --warn:#855400; --select:#d4dde8;
+  --rule:var(--line); --box-bg:var(--bg2); --code-bg:var(--bg2); --box-rule:var(--line); --link:var(--accent);
+  --tok-c:#3f5b4a; --tok-k:#123c87; --tok-t:#0f5b63; --tok-s:#7a3b0a;
+  --tok-n:#8a2222; --tok-p:#6b2d8a; --tok-x:#555555; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg:#121314; --bg2:#1c1e20; --bg3:#2a2c2f; --fg:#e8e8e8; --muted:#a6a6a6; --line:#3a3d40; --line-strong:#75787c; --accent:#8ab4e8; --accent-fg:#121314; --accent2:#d4883b; --honey:#f2b04a; --honey-fg:#121314; --honey-text:#f2b04a; --honey-soft:#3b311e; --danger:#f07a8c; --ok:#7bcb95; --warn:#f2b04a; --select:#2f3d52;
+    --tok-c:#9fbfa8; --tok-k:#9fc0f0; --tok-t:#7fcbd4; --tok-s:#e0b080;
+  --tok-n:#e79a9a; --tok-p:#c79ae0; --tok-x:#a6a6a6; } }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#121314; --bg2:#1c1e20; --bg3:#2a2c2f; --fg:#e8e8e8; --muted:#a6a6a6; --line:#3a3d40; --line-strong:#75787c; --accent:#8ab4e8; --accent-fg:#121314; --accent2:#d4883b; --honey:#f2b04a; --honey-fg:#121314; --honey-text:#f2b04a; --honey-soft:#3b311e; --danger:#f07a8c; --ok:#7bcb95; --warn:#f2b04a; --select:#2f3d52;
+  --tok-c:#9fbfa8; --tok-k:#9fc0f0; --tok-t:#7fcbd4; --tok-s:#e0b080;
+  --tok-n:#e79a9a; --tok-p:#c79ae0; --tok-x:#a6a6a6; }
+:root[data-theme="light"] { color-scheme: light; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); line-height:1.75;
+       font-family:"Doc Serif","Noto Serif CJK KR","Noto Serif KR",Georgia,serif; }
+.here-head { display:flex; align-items:center; gap:.8rem; padding:.2rem 0 .5rem;
+  border-bottom:1px solid var(--rule,#ddd); margin-bottom:.5rem; }
+.here-head .sp { flex:1; }
+.here-all { margin-left:auto; font-size:.9rem; }
+.here-x { font:inherit; font-size:.9rem; cursor:pointer; background:none;
+  border:1px solid var(--line-strong); padding:.05rem .45rem;
+  color:inherit; }
+.here-body a, .tf-secs a { display:block; text-decoration:none; padding:.12rem 0;
+  line-height:1.45; }
+.here-body a:hover, .tf-secs a:hover { text-decoration:underline; }
+.here-body a.lv4, .tf-secs a.lv4 { padding-left:1.6rem; font-size:.94rem;
+  color:var(--muted,#555); }
+.tf-no { display:inline-block; min-width:3.2rem; color:var(--muted,#666);
+  font-variant-numeric:tabular-nums; }
+.toc-full .tf-ch { margin:.9rem 0 .15rem; font-weight:700; }
+.toc-full .tf-secs { margin:0 0 .5rem .2rem; border-left:2px solid var(--rule,#e2e2e2);
+  padding-left:.7rem; }
+.toc-full h4.toc-part { margin-top:1.8rem; }
+.toc a.toc-detail { font-weight:700; }
+@media print { .here-btn, .here-panel { display:none; } }
+.bar { position:sticky; top:0; z-index:20; display:flex; flex-wrap:nowrap; gap:.25rem; align-items:center;
+       min-height:44px; padding:0 clamp(.4rem,2vw,1.6rem); background:var(--bg2);
+       border-bottom:1px solid var(--line); font-size:.9rem;
+       font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.bar a { color:var(--fg); text-decoration:none; } .bar a:hover { text-decoration:none; }
+.bar .sp { display:none; }
+main { width:100%; padding:1.6rem clamp(.9rem,3vw,2.5rem) 5rem; }
+.wrap { width:100%; }
+main .wrap { max-width:960px; margin-inline:auto; }
+:root[data-measure="fit"] main .wrap { max-width:none; margin:0; }
+h1,h2,h3,h4 { font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; line-height:1.35;
+  padding-bottom:.18rem; border-bottom:1px solid var(--rule); }
+h1 { font-size:clamp(1.5rem,3.4vw,2.1rem); margin:.2rem 0 .9rem; }
+h2 { font-size:clamp(1.35rem,3vw,1.8rem); margin:0 0 .7rem; padding-bottom:.35rem;
+     border-bottom:2px solid var(--fg); }
+h3 { font-size:clamp(1.05rem,2.2vw,1.25rem); margin:1.5rem 0 .5rem;
+     padding-bottom:.22rem; border-bottom:1.5px solid var(--fg); }
+p { margin:.9rem 0; } a { color:var(--link); }
+main p { text-indent: 1em; }
+.cover p, .note p, .toc p, .float-caption, .metalist p, .memrow p,
+.colophon-meta p, li p, td p, th p, figure p, blockquote p,
+.demo-src p, .demo-out p, pre, pre p,
+.dev-label, p.dev-label { text-indent: 0; }
+.src-note { font-size: .86em; color: var(--muted, #666); }
+.src-note code { font-size: .95em; }
+sup.fnref { font-size: .72em; line-height: 0; vertical-align: super; }
+sup.fnref a { text-decoration: none; padding: 0 .1em; }
+sup.fnref a::before { content: "["; }
+sup.fnref a::after  { content: "]"; }
+.chapter-notes { margin: 3rem 0 1rem; padding-top: .9rem;
+                 border-top: 2px solid var(--rule, #333); }
+.chapter-notes h2 { font-size: 1.05rem; margin: 0 0 .6rem; }
+.chapter-notes ol { margin: 0; padding-left: 1.6em; }
+.chapter-notes li { font-size: .92em; margin: .35em 0; text-indent: 0; }
+.chapter-notes a.fnback { text-decoration: none; }
+.dev p { text-indent: 0; }
+.dev p + p { text-indent: 1em; }
+.dev p:has(> span.dev-label:first-child) { text-indent: 0; }
+.chapter-head p { text-indent: 0; }
+pre,code,kbd { font-family:"Doc Mono","D2Coding",ui-monospace,SFMono-Regular,Menlo,monospace; }
+code { background:none; padding:0; font-size:.95em; }
+pre { background:none; border:1px solid var(--fg); border-radius:0;
+      padding:.95rem 1.05rem; overflow-x:auto; line-height:1.6; font-size:.95rem;
+      margin:1.2rem 0; }
+.tok-c { color:var(--tok-c); font-style:italic; }
+.tok-k { color:var(--tok-k); font-weight:700; }
+.tok-s { color:var(--tok-s); }
+.tok-n { color:var(--tok-n); }
+.tok-t { color:var(--tok-t); font-weight:700; }
+.tok-x { color:var(--tok-x); }
+.tok-p { color:var(--tok-p); }
+pre code { background:none; padding:0; }
+.tblwrap { overflow-x:auto; text-align:center; }
+.tblwrap > table { display:inline-table; width:auto; max-width:none; margin:1.1rem 0; }
+table { border-collapse:collapse; margin:1.1rem auto; font-size:.95rem;
+        width:auto; max-width:100%; border:2px solid var(--fg);
+        table-layout:auto; }
+th, td { white-space:normal; }
+th,td { border:1px solid var(--rule); padding:.42rem .6rem; text-align:left; vertical-align:top; }
+th { background:rgba(128,128,128,.16); font-weight:700;
+     border-bottom:2px solid var(--fg);
+     font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+table tr:first-child th, table tr:first-child td { border-bottom:1px solid var(--fg); }
+ul,ol { padding-left:1.4rem; } li { margin:.3rem 0; }
+.float-list { list-style:none; padding-left:0; }
+.float-list li { margin:.12rem 0; }
+.memrow { overflow-x:auto; text-align:center; margin:1.1rem 0 .2rem; }
+.memrow table.mem { display:inline-table; border-collapse:collapse;
+  border:none; margin:0; width:auto; }
+.memrow td.cell { border:1px solid var(--fg); padding:.3rem .5rem;
+  font-family:"Doc Mono","D2Coding",ui-monospace,monospace; font-size:.9rem;
+  text-align:center; background:none; }
+.memrow td.cell.hi { border-width:2px; }
+.memrow td.addr { border:none; padding:.15rem .5rem 0; text-align:center;
+  font-family:"Doc Mono","D2Coding",ui-monospace,monospace; font-size:.82rem;
+  color:var(--muted); }
+.demo { border:1px solid var(--fg); margin:1.15rem 0; }
+.demo > .demo-head { margin:0; padding:.5rem .9rem; text-indent:0;
+  border-bottom:1px solid var(--fg); font-weight:700; font-size:.92rem; }
+.demo-src > .demo-head { font-family:"Doc Mono","D2Coding",ui-monospace,monospace; }
+.demo-in > .demo-head, .demo-out > .demo-head {
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.demo > .demo-body { padding:0; }
+.demo > .demo-body pre { border:none; border-radius:0; margin:0;
+  padding:.6rem .9rem; }
+.dev { margin:1.15rem 0; padding:0; background:none; border:none; border-radius:0; }
+.dev > .dev-label { border-left:4px solid var(--fg);
+  padding:.1rem .8rem .25rem .8rem; margin:0 0 .34rem; }
+.dev > .dev-body { border-left:2px solid var(--box-rule);
+  padding:.35rem .8rem .35rem .8rem; margin:0; }
+.dev > .dev-body > *:first-child { margin-top:0; }
+.dev > .dev-body > *:last-child { margin-bottom:0; }
+.float-caption { text-align:center; font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif;
+  font-size:.92rem; color:var(--muted); margin:.35rem 0 1.2rem; }
+figure { margin:1.2rem 0; }
+figure.tbl table { margin-bottom:.2rem; }
+figure.tbl { text-align:center; }
+.dev > p:first-child { margin-top:0; } .dev > p:last-child { margin-bottom:0; }
+.dev-label { font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+             font-size:.92rem; color:var(--muted); margin-bottom:.4rem; }
+.dev.open { border:none; border-radius:0; background:none;
+  padding:0; margin:.75rem 0; }
+.dev.open > .dev-label { margin:0 0 .34rem; padding:.1rem .8rem .25rem .8rem;
+  text-indent:0; border-left:4px solid var(--fg);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  font-size:.98rem; color:var(--fg); text-transform:none; letter-spacing:0; }
+.dev.open > .open-body { margin:0; padding:.35rem .8rem;
+  border-left:2px solid var(--box-rule); }
+.dev.open > .open-body > *:first-child { margin-top:0; }
+.dev.open > .open-body > *:last-child { margin-bottom:0; }
+.dev.open > .open-body > * { margin:.4rem 0; }
+.dev.open > .open-body > *:first-child { margin-top:0; }
+.dev.open > .open-body > *:last-child { margin-bottom:0; }
+.dev.open .open-body > ol.qlist { margin:0; padding-left:1.35rem; }
+.dev.open ol.qlist li { margin:.18rem 0; padding-left:.15rem; }
+.dev.open ol.qlist li::marker { color:var(--muted); font-weight:700; }
+.dev.open .qa-a { border:none; border-left:2px solid var(--box-rule);
+  padding:.06rem 0 .06rem .7rem; margin:.32rem 0 0; }
+.prereq .dev-label, .deepqa .dev-label, .why .dev-label,
+.organizer .dev-label, .questions .dev-label {
+  text-transform:none; letter-spacing:0; font-size:1.12rem; font-weight:700;
+  color:var(--fg); margin-bottom:.45rem; }
+.deepqa .qa-a { border-left:2px solid var(--muted); padding-left:.75rem; }
+.qa-box { border:none; margin:1.15rem 0; }
+.qa-box .dev { margin:0; border:none; border-radius:0; padding:0; background:none; }
+.qa-box .qa-q { border-left:4px solid var(--fg);
+  padding:.1rem .8rem .25rem .8rem; margin:0; }
+.qa-box .qa-a { border:none; border-left:2px solid var(--box-rule);
+  padding:.35rem .8rem; margin:.34rem 0 0; }
+.qa-box .qa-q > p, .qa-box .qa-a > p { margin:0; }
+.dev.recap { border:none; background:none; padding:0; margin:1.15rem 0; }
+.dev.recap > .dev-label { margin:0 0 .34rem; padding:.1rem .8rem .25rem .8rem;
+  text-indent:0; border-left:4px solid var(--fg);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  font-size:.95rem; color:var(--fg); }
+.dev.recap > .dev-body > p, .dev.recap > .dev-body > div:not(.demo),
+.dev.recap > .dev-body > figure { margin:.3rem 0; padding:0; }
+.dev > .dev-body > .demo { margin:.7rem 0; }
+.deepqa .qa-a { border-left:2px solid var(--muted); padding-left:.75rem; }
+.qa-q .dev-label, .qa-a .dev-label, .deepqa .qa-a .dev-label {
+  display:inline; margin-bottom:0; }
+.qa-q .dev-label + p, .qa-a .dev-label + p { display:inline; }
+.qa-q .dev-label, .qa-q .dev-label + p {
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  color:var(--fg); font-size:1rem; }
+.qa-a .dev-label { color:var(--muted); }
+.qa-a .dev-label + p { font-family:inherit; font-weight:400; }
+span.dev-label { display:inline; font-size:1rem; margin:0; }
+.dev.misconception, .dev.realcase, .dev.antipattern, .dev.mathbox,
+.dev.platform, .dev.recap {
+  border:none; border-radius:0; background:none; padding:0; margin:1.15rem 0; }
+.dev.misconception > .dev-label, .dev.realcase > .dev-label,
+.dev.antipattern > .dev-label, .dev.mathbox > .dev-label,
+.dev.platform > .dev-label, .dev.recap > .dev-label {
+  margin:0 0 .34rem; padding:.1rem .8rem .25rem .8rem; text-indent:0;
+  border-left:4px solid var(--fg);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  font-size:.95rem; color:var(--fg); }
+.dev > .dev-body > p, .dev > .dev-body > div:not(.demo),
+.dev > .dev-body > figure, .dev > .open-body > p {
+  margin:.35rem 0; padding:0; }
+.bar .menu-btn { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center;
+  min-width:38px; min-height:38px; padding:0; font:inherit; font-size:1.25rem; line-height:1;
+  color:var(--fg); background:none; border:0; cursor:pointer; text-decoration:none; }
+.bar .back, .bar .bar-nav .nb { flex:0 0 auto; display:inline-flex; align-items:center; gap:.3em;
+  min-height:32px; padding:0 .65rem; border:1px solid var(--line); background:var(--bg);
+  color:var(--fg); font-weight:600; white-space:nowrap; text-decoration:none; }
+.bar .menu-btn[aria-expanded="true"] { background:var(--bg3); }
+.bar .place { flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+  padding:0 .35rem; }
+.bar .place strong a { color:var(--honey-text); }
+.bar .place .cur { color:var(--fg); }
+.bar .bar-nav { flex:0 0 auto; display:flex; gap:.3rem; align-items:center; white-space:nowrap; }
+.bar .bar-nav .off { color:var(--muted); border-color:var(--line); opacity:.45; }
+.bar .back:hover, .bar .menu-btn:hover, .bar .bar-nav a.nb:hover, .bar .place a:hover { background:var(--bg3); }
+.dev p, .dev div, .dev ul, .dev ol, .qa-box p, .qa-box div {
+  margin-top:.4rem; margin-bottom:.4rem; }
+.dev > *:first-child, .qa-box .dev > *:first-child { margin-top:0; }
+.dev > *:last-child, .qa-box .dev > *:last-child { margin-bottom:0; }
+.dev ul, .dev ol { padding-left:1.3rem; }
+.dev li { margin:.15rem 0; }
+.dev.antipattern > .dev-label { border-left-style:solid; }
+.dev.mathbox { font-size:.95rem; }
+.note { border:1px solid var(--rule); background:none; padding:.65rem .9rem;
+        margin:0 0 1.6rem; font-size:.9rem; }
+.cover { text-align:center; margin:1.4rem 0 2rem; padding-bottom:1.2rem; }
+.cover h1 { font-size:clamp(1.9rem,5vw,2.9rem); margin:0; letter-spacing:.01em;
+            padding-bottom:0; border-bottom:none; }
+.cover p { margin:.45rem 0; }
+.cover-sub { font-size:clamp(1rem,2.2vw,1.2rem); color:var(--fg); }
+.badge { display:inline-block; margin-top:.5rem; padding:.16rem .6rem;
+         border:1px solid var(--fg); font-size:.8rem; font-weight:700;
+         font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.cover-meta { color:var(--muted); font-size:.9rem;
+              font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.cover-author { margin-top:1.1rem; font-size:1.05rem; }
+.cover-links { font-size:.87rem; }
+.cover-links a { margin:0 .6rem; }
+.cover-blurb { max-width:44rem; margin:1.7rem auto 0; font-size:.95rem; color:var(--muted); }
+.cover-blurb p { margin:.5rem 0; }
+.metalist { display:grid; grid-template-columns:max-content 1fr; gap:.35rem 1.2rem;
+  margin:.6rem 0 1rem; }
+.metalist dt { color:var(--muted); font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif;
+  font-size:.92rem; }
+.metalist dd { margin:0; }
+.colophon-meta { display:grid; grid-template-columns:max-content 1fr; gap:.35rem 1.2rem;
+                 margin:1.2rem 0 1.8rem; font-size:.93rem; }
+.colophon-meta dt { color:var(--muted);
+                    font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-size:.88rem; }
+.colophon-meta dd { margin:0; }
+.colophon { font-size:.93rem; }
+.colophon > div { margin:.9rem 0; padding-left:.9rem; border-left:1px solid var(--rule); }
+figure.fig { margin:1.6rem 0; text-align:center; }
+figure.fig img { max-width:100%; height:auto; }
+figure.fig figcaption { margin-top:.5rem; font-size:.92rem; color:var(--muted); }
+@media (prefers-color-scheme: dark) { figure.fig img { filter:invert(1) hue-rotate(180deg); } }
+:root[data-theme="dark"] figure.fig img { filter:invert(1) hue-rotate(180deg); }
+:root[data-theme="light"] figure.fig img { filter:none; }
+.toc { columns:24rem; column-gap:2.4rem; }
+.toc-part { break-inside:avoid; margin:1.1rem 0 .3rem; font-size:.95rem; letter-spacing:.02em;
+            font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.toc > .toc-part:first-child, .toc > .toc-keep:first-child > .toc-part, .toc-full > .toc-part:first-child { margin-top:0; }
+.toc-front { margin-bottom:.4rem; }
+.toc-group { padding-left:.85rem; }
+.toc-keep, .toc a { break-inside:avoid; }
+.toc a { display:block; padding:.28rem 0; text-decoration:none; }
+.toc a:hover { text-decoration:underline; }
+.nav { display:flex; gap:1rem; align-items:center; margin-top:3rem; padding-top:1rem;
+       border-top:1px solid var(--rule); font-size:.9rem;
+       font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.nav .sp { flex:1 1 auto; }
+code.style-name { font-family:"Doc Mono","D2Coding",ui-monospace,monospace;
+  font-size:.72em; color:var(--muted); background:var(--rule);
+  padding:.05em .35em; border-radius:3px; white-space:nowrap;
+  font-weight:400; letter-spacing:0; }
+.dev.open > .dev-label { padding-top:.42rem; padding-bottom:.42rem; }
+.dev.open > .open-body { padding-top:.4rem; padding-bottom:.4rem; }
+.dev.open > .open-body > p { margin:.6rem 0; }
+.dev > .dev-body { padding-top:.5rem; padding-bottom:.5rem; }
+.dev > .dev-body > p, .dev > .dev-body > div:not(.demo),
+.dev > .dev-body > figure { margin:.55rem 0; }
+main { line-height:1.85; }
+p { margin:1.15rem 0; }
+h2 { margin-top:2.4rem; }
+h3 { margin-top:2rem; }
+li { margin:.3rem 0; }
+h1, h2, h3, h4 { border-bottom-color:var(--box-rule) !important; }
+.toc { line-height:1.45; }
+.toc a { padding:.16rem 0; }
+.toc-part { margin:.85rem 0 .2rem; }
+.metalist { line-height:1.45; gap:.2rem 1.2rem; }
+.metalist dt, .metalist dd { margin:0; }
+.demo { border-color:var(--box-rule); }
+.demo > .demo-head { border-bottom-color:var(--box-rule); }
+.dev > .dev-label,
+.dev.open > .dev-label,
+.qa-box .qa-q,
+.dev.misconception > .dev-label, .dev.realcase > .dev-label,
+.dev.antipattern > .dev-label, .dev.mathbox > .dev-label,
+.dev.platform > .dev-label, .dev.recap > .dev-label {
+  border-left-color:var(--box-rule); }
+.dev > .dev-body,
+.dev > .open-body,
+.dev.open .qa-a,
+.qa-box .qa-a,
+.deepqa .qa-a { border-left-color:var(--box-rule); }
+.dev, .dev *, .qa-box, .qa-box *, .demo, .demo *,
+h1, h2, h3, h4, .colophon > div {
+  border-color:var(--box-rule); }
+.tbl table, .tbl th, .tbl td { border-color:initial; }
+.dev.open > .open-body,
+.dev.open > .qa-a,
+.dev.open .qa-a,
+.dev.deepqa .qa-a,
+.qa-box > .qa-a,
+.qa-box > .qa-q { border-left-color:var(--box-rule); }
+.bar .bar-toc { font-size:1.15em; line-height:1; text-decoration:none; }
+.dev, .dev-body, .open-body, .qa-box, .qa-q, .qa-a, .dev-label,
+.toc-full, .toc-full .tf-secs { line-height:inherit; font-size:1rem; }
+.dev > .dev-body > p, .dev > .open-body > p,
+.qa-box .qa-q > p, .qa-box .qa-a > p { margin:1.15rem 0; }
+.dev > .dev-body > *:first-child, .dev > .open-body > *:first-child,
+.qa-box .qa-q > p:first-child, .qa-box .qa-a > p:first-child { margin-top:0; }
+.dev > .dev-body > *:last-child, .dev > .open-body > *:last-child,
+.qa-box .qa-q > p:last-child, .qa-box .qa-a > p:last-child { margin-bottom:0; }
+.dev > .dev-label, .dev.open > .dev-label { font-size:.98rem; line-height:1.4; }
+h1,h2,h3,h4 { padding-bottom:.34rem; }
+h1 { margin:.2rem 0 1.3rem; }
+h2 { padding-bottom:.42rem; margin-bottom:1.15rem; }
+h3 { padding-bottom:.36rem; margin-bottom:.95rem; }
+.dev.open > .open-body > * { margin:.3rem 0; }
+.dev.open > .open-body > p { margin:.5rem 0; }
+.dev.open > .open-body > div { margin:.15rem 0; }
+.dev.open ul, .dev.open ol { margin:.3rem 0; }
+.dev.open li, .dev.open ol.qlist li { margin:0; }
+.dev.open > .open-body > *:first-child { margin-top:0; }
+.dev.open > .open-body > *:last-child { margin-bottom:0; }
+.dev.open .qa-a > p { margin:.35rem 0; }
+.dev, .dev *, .qa-box, .qa-box *, .demo, .demo *,
+h1, h2, h3, h4, .colophon > div { border-color:var(--box-rule); }
+.tbl table, .tbl th, .tbl td { border-color:initial; }
+a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible {
+  outline:2px solid var(--accent2); outline-offset:2px; }
+:target, h1, h2, h3, h4, [id] { scroll-margin-top:4.2rem; }
+.skip { position:absolute; left:-9999px; top:0; z-index:30;
+        background:var(--bg); color:var(--fg); border:1px solid var(--fg);
+        padding:.5rem .8rem; font-size:.9rem; text-decoration:none; }
+.skip:focus { left:.5rem; top:.5rem; }
+.here-panel { position:fixed; top:46px; left:clamp(.2rem,1vw,1rem); z-index:19;
+  width:min(32rem, calc(100vw - .4rem)); max-height:calc(100vh - 54px); overflow:auto;
+  padding:.7rem .9rem .9rem; border:1px solid var(--line); --k:var(--line-strong);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-size:.9rem; line-height:1.4;
+  background:
+    linear-gradient(var(--k),var(--k)) left top / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) left top / 3px 8px no-repeat,
+    linear-gradient(var(--k),var(--k)) right top / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) right top / 3px 8px no-repeat,
+    linear-gradient(var(--k),var(--k)) left bottom / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) left bottom / 3px 8px no-repeat,
+    linear-gradient(var(--k),var(--k)) right bottom / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) right bottom / 3px 8px no-repeat,
+    color-mix(in srgb, var(--bg) 97%, transparent); }
+.here-panel .tools { display:flex; flex-wrap:wrap; gap:.3rem .4rem; align-items:center;
+  margin-bottom:.6rem; }
+.tool, .segb { font:inherit; font-size:.88rem; color:var(--fg); background:none;
+  border:1px solid var(--line-strong); padding:0 .6rem; min-height:30px;
+  display:inline-flex; align-items:center; text-decoration:none; cursor:pointer; white-space:nowrap; }
+.tool:hover, .segb:hover, .nav a:hover, .here-panel .here-body a:hover { background:var(--bg3); }
+.segb[aria-pressed="true"] { background:var(--select); border-color:var(--accent); font-weight:700; }
+.tool, .segb, .bar a, .bar button, .nav a, .here-panel a { transition:background-color .08s; }
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+main a { text-decoration:underline; text-decoration-color:var(--box-rule);
+  text-underline-offset:2px; }
+main a:hover { background:var(--box-bg); text-decoration-color:var(--link); }
+main .toc a, main .toc-full a, main .here-body a { text-decoration:none; }
+main .toc a:hover, main .toc-full a:hover { background:var(--box-bg); text-decoration:underline; }
+.setbox { margin:0 0 .6rem; }
+.setrow { display:flex; flex-wrap:wrap; gap:.4rem .5rem; align-items:center; margin:.35rem 0; }
+.setlbl { min-width:4.2rem; font-size:.82rem; font-weight:700; }
+.seg { display:inline-flex; flex-wrap:wrap; gap:.25rem; }
+.col { display:inline-flex; align-items:center; gap:.3rem; }
+.col input[type=color] { width:2rem; height:1.4rem; padding:0; border:1px solid var(--line-strong);
+  background:none; cursor:pointer; }
+.setnote { margin:.5rem 0 0; font-size:.82rem; }
+.here-panel .ver { font-size:.82rem; color:var(--muted); padding:.2rem .45rem .2rem 0;
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; white-space:nowrap; }
+.demo pre, .demo pre code {
+  white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+.demo > .demo-body { overflow-x:visible; }
+.plink {
+  margin-left: .4em; font-weight: 400; text-decoration: none;
+  color: var(--muted, #888); opacity: 0;
+}
+h3:hover > .plink, h4:hover > .plink,
+h3 > .plink:focus, h4 > .plink:focus { opacity: 1; }
+@media (hover: none) { .plink { opacity: .45; } }
+.searchbox { margin:.6em 0 0; }
+.searchbox input[type=search] {
+  width: 100%; padding: .45em .6em; font: inherit;
+  border: 1px solid var(--line-strong);
+  background: var(--bg); color: var(--fg);
+}
+.search-hint { color: var(--muted, #777); font-size: .85em; margin:.3em 0 0; }
+.search-results { list-style: none; padding: 0; margin: .5em 0 0; }
+.search-results li { margin: .15em 0; }
+.search-results .where { color: var(--muted, #777); font-size: .85em; margin-left: .4em; }
+@media (max-width: 900px), (orientation: portrait) {
+  :root:not([data-layout="desktop"]) .bar .place .cur { display:none; }
+  :root:not([data-layout="desktop"]) .bar .back,
+  :root:not([data-layout="desktop"]) .bar .bar-nav .nb { min-height:40px; padding:0 .5rem; }
+}
+@media (max-width: 480px) {
+  :root:not([data-layout="desktop"]) .bar .bar-nav .prev .lbl,
+  :root:not([data-layout="desktop"]) .bar .bar-nav .next .lbl { display:none; }
+  :root:not([data-layout="desktop"]) .bar .bar-nav .nb { min-width:44px; justify-content:center; }
+  :root:not([data-layout="desktop"]) .bar { gap:.2rem; }
+}
+:root[data-layout="mobile"] .bar .place .cur { display:none; }
+:root[data-layout="mobile"] .bar .back, :root[data-layout="mobile"] .bar .bar-nav .nb { min-height:40px; padding:0 .5rem; }
+:root[data-layout="mobile"] main .wrap { max-width:34rem; }
+@media (pointer: coarse), (max-width: 900px) {
+  .bar .menu-btn { min-width:44px; min-height:44px; }
+  .tool, .segb { min-height:38px; }
+}
+@media print { .bar, .here-panel { display:none; } }
+
+body { font-family:"Doc Serif","Noto Serif",Georgia,serif; }
+h1,h2,h3,h4,.bar,.dev-label,.toc-part,.cover-meta,.badge,
+.colophon-meta dt { font-family:"Doc Sans","Noto Sans",system-ui,sans-serif; }
+pre,code,kbd { font-family:"Doc Mono","D2Coding",ui-monospace,SFMono-Regular,Menlo,monospace; }
+</style>
+<script>(function(){try{var L=localStorage,o='rp-read';if(o&&o!=='doc-read'&&L.getItem(o)!==null&&L.getItem('doc-read')===null){var v=JSON.parse(L.getItem(o)||'{}');delete v.width;L.setItem('doc-read',JSON.stringify(v));L.removeItem(o);}var s=JSON.parse(L.getItem('doc-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width==='fit')r.setAttribute('data-measure','fit');if(s.layout==='desktop'||s.layout==='mobile')r.setAttribute('data-layout',s.layout);if(s.layout==='desktop'){var m=document.querySelector('meta[name=viewport]');if(m)m.setAttribute('content','width=1100');}}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><button class="menu-btn" id="set-open" type="button" aria-expanded="false" aria-controls="here-panel" aria-label="Menu" title="Menu">☰</button><a class="back" href="index.html" title="Back">← <span class="lbl">Back</span></a><span class="place"><strong><a href="index.html">rubrapack Manual</a></strong><span class="cur"> › Detailed contents</span></span><span class="bar-nav"><a class="nb prev" href="index.html">‹ <span class="lbl">Prev</span></a><a class="nb toc" href="index.html"><span class="lbl">TOC</span></a><span class="nb next off" aria-hidden="true"><span class="lbl">Next</span> ›</span></span></div><div id="here-panel" class="here-panel" hidden><div class="setbox" id="setbox"><div class="setrow"><span class="setlbl">Language</span><span class="seg"><a class="segb" href="../ko/">한국어</a></span></div><div class="setrow"><span class="setlbl">Text width</span><span class="seg" id="s-width"><button type="button" class="segb" data-width="960">960</button><button type="button" class="segb" data-width="fit">Fit the window</button></span></div><div class="setrow"><span class="setlbl">Layout</span><span class="seg" id="s-layout"><button type="button" class="segb" data-layout="auto">Auto</button><button type="button" class="segb" data-layout="desktop">PC</button><button type="button" class="segb" data-layout="mobile">Mobile</button></span></div><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="tools"><span class="ver">v0.63.0</span><a class="tool" href="toc.html">▤ Detailed contents</a><a class="tool" href="https://github.com/rubidus-api/rubrapack/releases/download/v0.63.0/rubrapack-manual-0.63.0-en.pdf">⤓ PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">⌂ All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">≡ All repos</a></div></div>
+<main id="content"><div class="wrap">
+<h2>Detailed contents</h2><p class="note">The contents opened out to the section level - for going straight to a place.</p><div class="searchbox"><input type="search" id="q" placeholder="Find by heading" aria-label="Search" autocomplete="off"><p class="search-hint">Searches chapter and section headings - not the full text</p><ul class="search-results" id="qr"></ul></div><div class="toc-full"><h4 class="toc-part">Part I - Tutorial</h4><div class="tf-ch"><a href="tutorial-01-before-you-start.html">1 Before you start</a></div><div class="tf-secs"><a class="lv3" href="tutorial-01-before-you-start.html#what-an-installer-does"><span class="tf-no">1.1</span>What an installer does</a><a class="lv3" href="tutorial-01-before-you-start.html#what-you-write-what-rubrapack-makes"><span class="tf-no">1.2</span>What you write, what rubrapack makes</a><a class="lv3" href="tutorial-01-before-you-start.html#getting-rubrapack"><span class="tf-no">1.3</span>Getting rubrapack</a><a class="lv3" href="tutorial-01-before-you-start.html#a-terminal-for-those-who-have-not-used-one"><span class="tf-no">1.4</span>A terminal, for those who have not used one</a><a class="lv3" href="tutorial-01-before-you-start.html#the-folder-you-work-in"><span class="tf-no">1.5</span>The folder you work in</a><a class="lv3" href="tutorial-01-before-you-start.html#words-used-in-this-tutorial"><span class="tf-no">1.6</span>Words used in this tutorial</a></div><div class="tf-ch"><a href="tutorial-02-a-first-installer.html">2 A first installer: one program</a></div><div class="tf-secs"><a class="lv3" href="tutorial-02-a-first-installer.html#the-source"><span class="tf-no">2.1</span>The source</a><a class="lv3" href="tutorial-02-a-first-installer.html#building"><span class="tf-no">2.2</span>Building</a><a class="lv3" href="tutorial-02-a-first-installer.html#installing-and-removing-it"><span class="tf-no">2.3</span>Installing and removing it</a><a class="lv3" href="tutorial-02-a-first-installer.html#what-happened-inside"><span class="tf-no">2.4</span>What happened inside</a><a class="lv3" href="tutorial-02-a-first-installer.html#check-it-without-building"><span class="tf-no">2.5</span>Check it without building</a><a class="lv3" href="tutorial-02-a-first-installer.html#the-same-with-questions-instead-of-a-text-editor"><span class="tf-no">2.6</span>The same, with questions instead of a text editor</a></div><div class="tf-ch"><a href="tutorial-03-versions-and-upgrades.html">3 Versions and upgrades</a></div><div class="tf-secs"><a class="lv3" href="tutorial-03-versions-and-upgrades.html#one-source-for-every-version"><span class="tf-no">3.1</span>One source for every version</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#what-windows-does-with-two-versions"><span class="tf-no">3.2</span>What Windows does with two versions</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#version-numbers"><span class="tf-no">3.3</span>Version numbers</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#two-identifiers"><span class="tf-no">3.4</span>Two identifiers</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#check-the-upgrade-before-users-do"><span class="tf-no">3.5</span>Check the upgrade before users do</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#small-fixes-as-a-patch-patch"><span class="tf-no">3.6</span>Small fixes as a patch: patch</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#earlier-versions-made-by-another-tool"><span class="tf-no">3.7</span>Earlier versions made by another tool</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#add-ons-that-go-with-the-product"><span class="tf-no">3.8</span>Add-ons that go with the product</a></div><div class="tf-ch"><a href="tutorial-04-files-and-folders.html">4 More files and folders</a></div><div class="tf-secs"><a class="lv3" href="tutorial-04-files-and-folders.html#the-folder"><span class="tf-no">4.1</span>The folder</a><a class="lv3" href="tutorial-04-files-and-folders.html#the-source"><span class="tf-no">4.2</span>The source</a><a class="lv3" href="tutorial-04-files-and-folders.html#folders-dirid"><span class="tf-no">4.3</span>Folders: [dir.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#one-file-fileid"><span class="tf-no">4.4</span>One file: [file.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#many-files-filesid"><span class="tf-no">4.5</span>Many files: [files.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#an-empty-folder-folderid"><span class="tf-no">4.6</span>An empty folder: [folder.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#cleaning-up-removeid"><span class="tf-no">4.7</span>Cleaning up: [remove.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#a-second-copy-copyid"><span class="tf-no">4.8</span>A second copy: [copy.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#two-more-keys-you-may-meet"><span class="tf-no">4.9</span>Two more keys you may meet</a><a class="lv3" href="tutorial-04-files-and-folders.html#what-happened-inside"><span class="tf-no">4.10</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-05-shortcuts-icons-installed-apps.html">5 Shortcuts, icons and the Installed apps entry</a></div><div class="tf-secs"><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#the-source"><span class="tf-no">5.1</span>The source</a><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#shortcuts-shortcutid"><span class="tf-no">5.2</span>Shortcuts: [shortcut.ID]</a><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#the-installed-apps-entry-arp"><span class="tf-no">5.3</span>The Installed apps entry: [arp]</a><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#a-name-in-another-script"><span class="tf-no">5.4</span>A name in another script</a><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#try-it"><span class="tf-no">5.5</span>Try it</a><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#what-happened-inside"><span class="tf-no">5.6</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-06-dialogs-and-license.html">6 Dialogs, a license, and starting the program</a></div><div class="tf-secs"><a class="lv3" href="tutorial-06-dialogs-and-license.html#the-source"><span class="tf-no">6.1</span>The source</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#choosing-a-set-of-pages-ui"><span class="tf-no">6.2</span>Choosing a set of pages: ui</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#the-license-license"><span class="tf-no">6.3</span>The license: license</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#the-install-folder"><span class="tf-no">6.4</span>The install folder</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#a-picture-at-the-top-banner"><span class="tf-no">6.5</span>A picture at the top: banner</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#your-own-words-ui-textid"><span class="tf-no">6.6</span>Your own words: [ui-text.ID]</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#starting-the-program-at-the-end-launch"><span class="tf-no">6.7</span>Starting the program at the end: launch</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#seeing-what-is-being-done-details"><span class="tf-no">6.8</span>Seeing what is being done: details</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#saving-the-log-save-log"><span class="tf-no">6.9</span>Saving the log: save-log</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#try-it"><span class="tf-no">6.10</span>Try it</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#what-happened-inside"><span class="tf-no">6.11</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-07-several-languages.html">7 Several languages</a></div><div class="tf-secs"><a class="lv3" href="tutorial-07-several-languages.html#the-source"><span class="tf-no">7.1</span>The source</a><a class="lv3" href="tutorial-07-several-languages.html#adding-a-language-languages"><span class="tf-no">7.2</span>Adding a language: languages</a><a class="lv3" href="tutorial-07-several-languages.html#a-license-per-language-license-xx"><span class="tf-no">7.3</span>A license per language: license-xx</a><a class="lv3" href="tutorial-07-several-languages.html#a-text-per-language-text-xx"><span class="tf-no">7.4</span>A text per language: text-xx</a><a class="lv3" href="tutorial-07-several-languages.html#more-languages"><span class="tf-no">7.5</span>More languages</a><a class="lv3" href="tutorial-07-several-languages.html#typefaces"><span class="tf-no">7.6</span>Typefaces</a><a class="lv3" href="tutorial-07-several-languages.html#what-is-not-translated"><span class="tf-no">7.7</span>What is not translated</a><a class="lv3" href="tutorial-07-several-languages.html#try-it"><span class="tf-no">7.8</span>Try it</a><a class="lv3" href="tutorial-07-several-languages.html#what-happened-inside"><span class="tf-no">7.9</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-08-optional-parts.html">8 Optional parts: features and the user&#x27;s choices</a></div><div class="tf-secs"><a class="lv3" href="tutorial-08-optional-parts.html#features"><span class="tf-no">8.1</span>Features</a><a class="lv3" href="tutorial-08-optional-parts.html#the-source"><span class="tf-no">8.2</span>The source</a><a class="lv3" href="tutorial-08-optional-parts.html#declaring-features-featureid"><span class="tf-no">8.3</span>Declaring features: [feature.ID]</a><a class="lv3" href="tutorial-08-optional-parts.html#putting-files-in-features-feature"><span class="tf-no">8.4</span>Putting files in features: feature</a><a class="lv3" href="tutorial-08-optional-parts.html#what-the-user-sees"><span class="tf-no">8.5</span>What the user sees</a><a class="lv3" href="tutorial-08-optional-parts.html#choosing-from-the-command-line"><span class="tf-no">8.6</span>Choosing from the command line</a><a class="lv3" href="tutorial-08-optional-parts.html#changing-the-choice-later"><span class="tf-no">8.7</span>Changing the choice later</a><a class="lv3" href="tutorial-08-optional-parts.html#what-happened-inside"><span class="tf-no">8.8</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-09-conditions-and-searches.html">9 Conditions and searches</a></div><div class="tf-secs"><a class="lv3" href="tutorial-09-conditions-and-searches.html#properties"><span class="tf-no">9.1</span>Properties</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#the-source"><span class="tf-no">9.2</span>The source</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#your-own-property-propertyname"><span class="tf-no">9.3</span>Your own property: [property.NAME]</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#installing-something-only-when-when"><span class="tf-no">9.4</span>Installing something only when: when</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#refusing-to-install-requireid"><span class="tf-no">9.5</span>Refusing to install: [require.ID]</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#looking-around-first-searchid"><span class="tf-no">9.6</span>Looking around first: [search.ID]</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#remembering-the-install-folder"><span class="tf-no">9.7</span>Remembering the install folder</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#what-happened-inside"><span class="tf-no">9.8</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-10-scope-and-guard.html">10 Who it installs for, and a guarded folder</a></div><div class="tf-secs"><a class="lv3" href="tutorial-10-scope-and-guard.html#three-scopes"><span class="tf-no">10.1</span>Three scopes</a><a class="lv3" href="tutorial-10-scope-and-guard.html#the-source"><span class="tf-no">10.2</span>The source</a><a class="lv3" href="tutorial-10-scope-and-guard.html#a-dual-package"><span class="tf-no">10.3</span>A dual package</a><a class="lv3" href="tutorial-10-scope-and-guard.html#a-guarded-install-folder-guard"><span class="tf-no">10.4</span>A guarded install folder: guard</a><a class="lv3" href="tutorial-10-scope-and-guard.html#try-it"><span class="tf-no">10.5</span>Try it</a><a class="lv3" href="tutorial-10-scope-and-guard.html#what-happened-inside"><span class="tf-no">10.6</span>What happened inside</a><a class="lv3" href="tutorial-10-scope-and-guard.html#more-than-once-on-a-computer-instances"><span class="tf-no">10.7</span>More than once on a computer: instances</a></div><div class="tf-ch"><a href="tutorial-11-registry-environment-ini.html">11 The registry, environment variables, INI files, file types and links</a></div><div class="tf-secs"><a class="lv3" href="tutorial-11-registry-environment-ini.html#the-registry-in-two-minutes"><span class="tf-no">11.1</span>The registry in two minutes</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#the-source"><span class="tf-no">11.2</span>The source</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#registry-values-registryid"><span class="tf-no">11.3</span>Registry values: [registry.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#environment-variables-envid"><span class="tf-no">11.4</span>Environment variables: [env.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#ini-files-iniid"><span class="tf-no">11.5</span>INI files: [ini.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#file-types-associd"><span class="tf-no">11.6</span>File types: [assoc.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#links-protocolid"><span class="tf-no">11.7</span>Links: [protocol.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#right-click-menus-menuid"><span class="tf-no">11.8</span>Right-click menus: [menu.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#com-classes-comid"><span class="tf-no">11.9</span>COM classes: [com.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#try-it"><span class="tf-no">11.10</span>Try it</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#what-happened-inside"><span class="tf-no">11.11</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-12-services-fonts-permissions.html">12 Services, fonts, permissions</a></div><div class="tf-secs"><a class="lv3" href="tutorial-12-services-fonts-permissions.html#the-source"><span class="tf-no">12.1</span>The source</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#a-service-serviceid"><span class="tf-no">12.2</span>A service: [service.ID]</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#a-font-fontid"><span class="tf-no">12.3</span>A font: [font.ID]</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#access-rights-permissionid"><span class="tf-no">12.4</span>Access rights: [permission.ID]</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#programs-that-are-still-running-the-preflight"><span class="tf-no">12.5</span>Programs that are still running: the preflight</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#restarting-reboot"><span class="tf-no">12.6</span>Restarting: reboot</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#try-it"><span class="tf-no">12.7</span>Try it</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#what-happened-inside"><span class="tf-no">12.8</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-13-running-your-program.html">13 Running your program during installation</a></div><div class="tf-secs"><a class="lv3" href="tutorial-13-running-your-program.html#why-not-just-run-a-program"><span class="tf-no">13.1</span>Why not just run a program?</a><a class="lv3" href="tutorial-13-running-your-program.html#the-source"><span class="tf-no">13.2</span>The source</a><a class="lv3" href="tutorial-13-running-your-program.html#actionid"><span class="tf-no">13.3</span>[action.ID]</a><a class="lv3" href="tutorial-13-running-your-program.html#what-happens-when"><span class="tf-no">13.4</span>What happens when</a><a class="lv3" href="tutorial-13-running-your-program.html#try-it"><span class="tf-no">13.5</span>Try it</a><a class="lv3" href="tutorial-13-running-your-program.html#what-happened-inside"><span class="tf-no">13.6</span>What happened inside</a><a class="lv3" href="tutorial-13-running-your-program.html#one-action-and-moving-files"><span class="tf-no">13.7</span>One action, and moving files</a></div><div class="tf-ch"><a href="tutorial-14-your-own-pages.html">14 Your own dialog pages</a></div><div class="tf-secs"><a class="lv3" href="tutorial-14-your-own-pages.html#the-source"><span class="tf-no">14.1</span>The source</a><a class="lv3" href="tutorial-14-your-own-pages.html#a-page-dialogid"><span class="tf-no">14.2</span>A page: [dialog.ID]</a><a class="lv3" href="tutorial-14-your-own-pages.html#where-things-go-on-the-page"><span class="tf-no">14.3</span>Where things go on the page</a><a class="lv3" href="tutorial-14-your-own-pages.html#controls-dialog-controlid"><span class="tf-no">14.4</span>Controls: [dialog-control.ID]</a><a class="lv3" href="tutorial-14-your-own-pages.html#pictures-while-it-installs-billboardid"><span class="tf-no">14.5</span>Pictures while it installs: [billboard.ID]</a><a class="lv3" href="tutorial-14-your-own-pages.html#your-own-ui-dll-ui-embedded"><span class="tf-no">14.6</span>Your own UI DLL: [ui] embedded</a><a class="lv3" href="tutorial-14-your-own-pages.html#every-value-needs-a-default-propertyname"><span class="tf-no">14.7</span>Every value needs a default: [property.NAME]</a><a class="lv3" href="tutorial-14-your-own-pages.html#try-it"><span class="tf-no">14.8</span>Try it</a><a class="lv3" href="tutorial-14-your-own-pages.html#what-happened-inside"><span class="tf-no">14.9</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-15-cabinets-and-architectures.html">15 Cabinets, compression, big packages, and several architectures</a></div><div class="tf-secs"><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#the-folder"><span class="tf-no">15.1</span>The folder</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#the-source"><span class="tf-no">15.2</span>The source</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#cabinets-and-compression"><span class="tf-no">15.3</span>Cabinets and compression</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#several-architectures---arch"><span class="tf-no">15.4</span>Several architectures: --arch</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#the-same-bytes-every-time---reproducible"><span class="tf-no">15.5</span>The same bytes every time: --reproducible</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#names-from-a-mac---nfc"><span class="tf-no">15.6</span>Names from a Mac: --nfc</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#variables-from-the-command-line--d"><span class="tf-no">15.7</span>Variables from the command line: -D</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#somebody-elses-part-mergeid"><span class="tf-no">15.8</span>Somebody else&#x27;s part: [merge.ID]</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#what-happened-inside"><span class="tf-no">15.9</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-16-signing.html">16 Signing and timestamps</a></div><div class="tf-secs"><a class="lv3" href="tutorial-16-signing.html#what-a-signature-is"><span class="tf-no">16.1</span>What a signature is</a><a class="lv3" href="tutorial-16-signing.html#signing-with-a-key-file"><span class="tf-no">16.2</span>Signing with a key file</a><a class="lv3" href="tutorial-16-signing.html#timestamps-signatures-that-outlive-the-certificate"><span class="tf-no">16.3</span>Timestamps: signatures that outlive the certificate</a><a class="lv3" href="tutorial-16-signing.html#a-key-in-the-windows-certificate-store"><span class="tf-no">16.4</span>A key in the Windows certificate store</a><a class="lv3" href="tutorial-16-signing.html#a-hardware-token-pkcs11"><span class="tf-no">16.5</span>A hardware token: PKCS#11</a><a class="lv3" href="tutorial-16-signing.html#checking-a-signature-verify"><span class="tf-no">16.6</span>Checking a signature: verify</a><a class="lv3" href="tutorial-16-signing.html#external-cabinets"><span class="tf-no">16.7</span>External cabinets</a><a class="lv3" href="tutorial-16-signing.html#what-happened-inside"><span class="tf-no">16.8</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-17-msix-and-bundles.html">17 MSIX packages and bundles</a></div><div class="tf-secs"><a class="lv3" href="tutorial-17-msix-and-bundles.html#msi-or-msix"><span class="tf-no">17.1</span>MSI or MSIX?</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#the-folder"><span class="tf-no">17.2</span>The folder</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#the-source"><span class="tf-no">17.3</span>The source</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#the-packages-identity-msix"><span class="tf-no">17.4</span>The package&#x27;s identity: [msix]</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#the-application-msix-appid"><span class="tf-no">17.5</span>The application: [msix-app.ID]</a><a class="lv4" href="tutorial-17-msix-and-bundles.html#names-in-several-languages-logos-in-several-sizes"><span class="tf-no"></span>Names in several languages, logos in several sizes</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#extras-msix-extensionid"><span class="tf-no">17.6</span>Extras: [msix-extension.ID]</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#what-the-package-asks-for-capabilities-and-dependencies"><span class="tf-no">17.7</span>What the package asks for: capabilities and dependencies</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#optional-and-modification-packages"><span class="tf-no">17.8</span>Optional and modification packages</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#a-program-that-needs-fixes-the-psf"><span class="tf-no">17.9</span>A program that needs fixes: the PSF</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#what-the-other-tables-become"><span class="tf-no">17.10</span>What the other tables become</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#building-for-testing---unsigned-test"><span class="tf-no">17.11</span>Building for testing: --unsigned-test</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#signing-it"><span class="tf-no">17.12</span>Signing it</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#all-architectures-in-one-file-a-bundle"><span class="tf-no">17.13</span>All architectures in one file: a bundle</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#updates-from-a-web-site-appinstaller"><span class="tf-no">17.14</span>Updates from a web site: .appinstaller</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#compression"><span class="tf-no">17.15</span>Compression</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#what-happened-inside"><span class="tf-no">17.16</span>What happened inside</a></div><div class="tf-ch"><a href="tutorial-18-checking-and-looking-inside.html">18 Checking and looking inside</a></div><div class="tf-secs"><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#checking-a-source-lint"><span class="tf-no">18.1</span>Checking a source: lint</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#checking-a-package-lint-file"><span class="tf-no">18.2</span>Checking a package: lint &amp;lt;file&gt;</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#looking-at-the-tables-inspect"><span class="tf-no">18.3</span>Looking at the tables: inspect</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#files-and-streams"><span class="tf-no">18.4</span>Files and streams</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#unpacking-without-installing-extract"><span class="tf-no">18.5</span>Unpacking without installing: extract</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#a-change-for-one-site-transform"><span class="tf-no">18.6</span>A change for one site: transform</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#what-changed-between-two-builds-diff"><span class="tf-no">18.7</span>What changed between two builds: diff</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#installing-without-touching-your-own-windows-try"><span class="tf-no">18.8</span>Installing without touching your own Windows: try</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#signatures-verify"><span class="tf-no">18.9</span>Signatures: verify</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#msix-packages"><span class="tf-no">18.10</span>MSIX packages</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#faster-test-builds---compress-none"><span class="tf-no">18.11</span>Faster test builds: --compress none</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#guids-guid"><span class="tf-no">18.12</span>GUIDs: guid</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#what-an-error-means-explain"><span class="tf-no">18.13</span>What an error means: explain</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#for-scripts---json"><span class="tf-no">18.14</span>For scripts: --json</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#help-on-the-command-line"><span class="tf-no">18.15</span>Help on the command line</a></div><div class="tf-ch"><a href="tutorial-19-automation.html">19 Starting fast and automating</a></div><div class="tf-secs"><a class="lv3" href="tutorial-19-automation.html#a-source-from-answers-new"><span class="tf-no">19.1</span>A source from answers: new</a><a class="lv3" href="tutorial-19-automation.html#from-an-existing-package-new---from"><span class="tf-no">19.2</span>From an existing package: new --from</a><a class="lv3" href="tutorial-19-automation.html#changing-a-source-edit"><span class="tf-no">19.3</span>Changing a source: edit</a><a class="lv3" href="tutorial-19-automation.html#a-release-script"><span class="tf-no">19.4</span>A release script</a><a class="lv3" href="tutorial-19-automation.html#on-a-build-server"><span class="tf-no">19.5</span>On a build server</a><a class="lv3" href="tutorial-19-automation.html#in-the-windows-package-manager---winget"><span class="tf-no">19.6</span>In the Windows Package Manager: --winget</a><a class="lv3" href="tutorial-19-automation.html#in-an-editor-schema"><span class="tf-no">19.7</span>In an editor: schema</a><a class="lv3" href="tutorial-19-automation.html#with-an-ai-assistant"><span class="tf-no">19.8</span>With an AI assistant</a><a class="lv3" href="tutorial-19-automation.html#several-packages-one-setup-program-chain"><span class="tf-no">19.9</span>Several packages, one setup program: [chain]</a><a class="lv3" href="tutorial-19-automation.html#where-to-go-from-here"><span class="tf-no">19.10</span>Where to go from here</a></div><h4 class="toc-part">Part II - Reference</h4><div class="tf-ch"><a href="reference.html">20 Source files and the rubrapack command</a></div><div class="tf-secs"><a class="lv3" href="reference.html#getting-started"><span class="tf-no">20.1</span>Getting started</a><a class="lv4" href="reference.html#a-first-package"><span class="tf-no"></span>A first package</a><a class="lv4" href="reference.html#a-license-page-and-optional-parts"><span class="tf-no"></span>A license page and optional parts</a><a class="lv4" href="reference.html#where-the-rest-is-explained"><span class="tf-no"></span>Where the rest is explained</a><a class="lv3" href="reference.html#example"><span class="tf-no">20.2</span>Example</a><a class="lv3" href="reference.html#source-format"><span class="tf-no">20.3</span>Source format</a><a class="lv3" href="reference.html#the-toml-subset"><span class="tf-no">20.4</span>The TOML subset</a><a class="lv3" href="reference.html#tables"><span class="tf-no">20.5</span>Tables</a><a class="lv4" href="reference.html#msix-packages"><span class="tf-no"></span>MSIX packages</a><a class="lv4" href="reference.html#registering-with-an-installed-program-actionid"><span class="tf-no"></span>Registering with an installed program: [action.ID]</a><a class="lv4" href="reference.html#running-a-program-or-dll-a-single-actionid"><span class="tf-no"></span>Running a program or DLL: a single [action.ID]</a><a class="lv4" href="reference.html#registry-values-registryid"><span class="tf-no"></span>Registry values: [registry.ID]</a><a class="lv4" href="reference.html#shortcuts-shortcutid"><span class="tf-no"></span>Shortcuts: [shortcut.ID]</a><a class="lv4" href="reference.html#file-types-and-links-associd-protocolid"><span class="tf-no"></span>File types and links: [assoc.ID], [protocol.ID]</a><a class="lv4" href="reference.html#explorers-right-click-menu-menuid"><span class="tf-no"></span>Explorer&#x27;s right-click menu: [menu.ID]</a><a class="lv4" href="reference.html#com-classes-comid"><span class="tf-no"></span>COM classes: [com.ID]</a><a class="lv4" href="reference.html#explorer-handlers-handlerid"><span class="tf-no"></span>Explorer handlers: [handler.ID]</a><a class="lv4" href="reference.html#msix-only-msix-extensionid"><span class="tf-no"></span>MSIX only: [msix-extension.ID]</a><a class="lv4" href="reference.html#moving-files-odbc-published-components"><span class="tf-no"></span>Moving files, ODBC, published components</a><a class="lv4" href="reference.html#assemblies-assembly"><span class="tf-no"></span>Assemblies: assembly</a><a class="lv4" href="reference.html#removing-and-copying-removeid-copyid"><span class="tf-no"></span>Removing and copying: [remove.ID], [copy.ID]</a><a class="lv4" href="reference.html#wiping-at-removal-recursive-on--uninstall"><span class="tf-no"></span>Wiping at removal: recursive, on = &quot;uninstall&quot;</a><a class="lv4" href="reference.html#environment-variables-envid"><span class="tf-no"></span>Environment variables: [env.ID]</a><a class="lv4" href="reference.html#ini-files-iniid"><span class="tf-no"></span>INI files: [ini.ID]</a><a class="lv4" href="reference.html#several-packages-in-one-setup-chain"><span class="tf-no"></span>Several packages in one setup: [chain]</a><a class="lv4" href="reference.html#merge-modules-mergeid"><span class="tf-no"></span>Merge modules: [merge.ID]</a><a class="lv4" href="reference.html#writing-a-merge-module-module"><span class="tf-no"></span>Writing a merge module: [module]</a><a class="lv4" href="reference.html#searching-and-requiring-searchid-requireid"><span class="tf-no"></span>Searching and requiring: [search.ID], [require.ID]</a><a class="lv4" href="reference.html#services-fonts-and-permissions"><span class="tf-no"></span>Services, fonts and permissions</a><a class="lv4" href="reference.html#per-user-and-dual-packages-scope"><span class="tf-no"></span>Per-user and dual packages: scope</a><a class="lv4" href="reference.html#cabinets"><span class="tf-no"></span>Cabinets</a><a class="lv4" href="reference.html#installed-apps-entry-and-properties"><span class="tf-no"></span>Installed apps entry and properties</a><a class="lv4" href="reference.html#installing-from-the-command-line"><span class="tf-no"></span>Installing from the command line</a><a class="lv4" href="reference.html#installing-without-a-window"><span class="tf-no"></span>Installing without a window</a><a class="lv4" href="reference.html#dialogs-ui"><span class="tf-no"></span>Dialogs: ui</a><a class="lv4" href="reference.html#several-languages"><span class="tf-no"></span>Several languages</a><a class="lv4" href="reference.html#language-packs"><span class="tf-no"></span>Language packs</a><a class="lv4" href="reference.html#icon-the-finished-page-and-the-scope-page"><span class="tf-no"></span>Icon, the finished page, and the scope page</a><a class="lv4" href="reference.html#your-own-dialog-pages-dialogid-dialog-controlid"><span class="tf-no"></span>Your own dialog pages: [dialog.ID], [dialog-control.ID]</a><a class="lv4" href="reference.html#billboards-billboardid"><span class="tf-no"></span>Billboards: [billboard.ID]</a><a class="lv4" href="reference.html#architectures-and-upgrade-families"><span class="tf-no"></span>Architectures and upgrade families</a><a class="lv4" href="reference.html#versions-that-must-be-removed-first"><span class="tf-no"></span>Versions that must be removed first</a><a class="lv4" href="reference.html#before-it-goes-on-the-preflight"><span class="tf-no"></span>Before it goes on: the preflight</a><a class="lv4" href="reference.html#cleaning-up-later-the-cleanup-task"><span class="tf-no"></span>Cleaning up later: the cleanup task</a><a class="lv4" href="reference.html#add-ons-removed-with-their-product-parent-remove-addons"><span class="tf-no"></span>Add-ons removed with their product: parent, remove-addons</a><a class="lv4" href="reference.html#several-instances-side-by-side-instances"><span class="tf-no"></span>Several instances side by side: instances</a><a class="lv4" href="reference.html#taking-the-place-of-other-products-replaces"><span class="tf-no"></span>Taking the place of other products: replaces</a><a class="lv4" href="reference.html#wildcards-filesid"><span class="tf-no"></span>Wildcards: [files.ID]</a><a class="lv4" href="reference.html#empty-folders-folderid"><span class="tf-no"></span>Empty folders: [folder.ID]</a><a class="lv4" href="reference.html#features"><span class="tf-no"></span>Features</a><a class="lv4" href="reference.html#conditions-when"><span class="tf-no"></span>Conditions: when</a><a class="lv4" href="reference.html#variables"><span class="tf-no"></span>Variables</a><a class="lv4" href="reference.html#windows-names"><span class="tf-no"></span>Windows names</a><a class="lv4" href="reference.html#program-files"><span class="tf-no"></span>Program files</a><a class="lv4" href="reference.html#leaving-a-file-at-removal-keep"><span class="tf-no"></span>Leaving a file at removal: keep</a><a class="lv4" href="reference.html#guarding-the-install-folder"><span class="tf-no"></span>Guarding the install folder</a><a class="lv4" href="reference.html#paths"><span class="tf-no"></span>Paths</a><a class="lv3" href="reference.html#command-line"><span class="tf-no">20.6</span>Command line</a><a class="lv3" href="reference.html#diagnostic-codes"><span class="tf-no">20.7</span>Diagnostic codes</a></div><h4 class="toc-part">Part III - Background knowledge</h4><div class="tf-ch"><a href="basics-01-bits-bytes-and-hex.html">21 Bits, bytes and hexadecimal</a></div><div class="tf-secs"><a class="lv3" href="basics-01-bits-bytes-and-hex.html#bits"><span class="tf-no">21.1</span>Bits</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#binary-numbers"><span class="tf-no">21.2</span>Binary numbers</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#bytes"><span class="tf-no">21.3</span>Bytes</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#hexadecimal"><span class="tf-no">21.4</span>Hexadecimal</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#reading-a-hex-dump"><span class="tf-no">21.5</span>Reading a hex dump</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#units-kb-mb-and-kib-mib"><span class="tf-no">21.6</span>Units: KB, MB and KiB, MiB</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#where-this-is-used"><span class="tf-no">21.7</span>Where this is used</a></div><div class="tf-ch"><a href="basics-02-numbers-and-flags.html">22 Numbers in files, and bit flags</a></div><div class="tf-secs"><a class="lv3" href="basics-02-numbers-and-flags.html#one-two-four-eight-bytes"><span class="tf-no">22.1</span>One, two, four, eight bytes</a><a class="lv3" href="basics-02-numbers-and-flags.html#byte-order-little-endian"><span class="tf-no">22.2</span>Byte order: little-endian</a><a class="lv3" href="basics-02-numbers-and-flags.html#negative-numbers-twos-complement"><span class="tf-no">22.3</span>Negative numbers: two&#x27;s complement</a><a class="lv3" href="basics-02-numbers-and-flags.html#bit-flags"><span class="tf-no">22.4</span>Bit flags</a><a class="lv3" href="basics-02-numbers-and-flags.html#testing-and-setting-a-bit-and-or"><span class="tf-no">22.5</span>Testing and setting a bit: AND, OR</a><a class="lv3" href="basics-02-numbers-and-flags.html#where-this-is-used"><span class="tf-no">22.6</span>Where this is used</a></div><div class="tf-ch"><a href="basics-03-text.html">23 Text: characters, code points and encodings</a></div><div class="tf-secs"><a class="lv3" href="basics-03-text.html#characters-and-code-points"><span class="tf-no">23.1</span>Characters and code points</a><a class="lv3" href="basics-03-text.html#ascii"><span class="tf-no">23.2</span>ASCII</a><a class="lv3" href="basics-03-text.html#code-pages-one-byte-256-characters"><span class="tf-no">23.3</span>Code pages: one byte, 256 characters</a><a class="lv3" href="basics-03-text.html#utf-8"><span class="tf-no">23.4</span>UTF-8</a><a class="lv3" href="basics-03-text.html#utf-16"><span class="tf-no">23.5</span>UTF-16</a><a class="lv3" href="basics-03-text.html#the-byte-order-mark"><span class="tf-no">23.6</span>The byte order mark</a><a class="lv3" href="basics-03-text.html#unicode-normalization"><span class="tf-no">23.7</span>Unicode normalization</a><a class="lv3" href="basics-03-text.html#when-text-looks-wrong"><span class="tf-no">23.8</span>When text looks wrong</a><a class="lv3" href="basics-03-text.html#where-this-is-used"><span class="tf-no">23.9</span>Where this is used</a></div><div class="tf-ch"><a href="basics-04-guids-and-hashes.html">24 GUIDs and hashes</a></div><div class="tf-secs"><a class="lv3" href="basics-04-guids-and-hashes.html#guids"><span class="tf-no">24.1</span>GUIDs</a><a class="lv4" href="basics-04-guids-and-hashes.html#version-and-variant"><span class="tf-no"></span>Version and variant</a><a class="lv4" href="basics-04-guids-and-hashes.html#in-text-and-in-bytes"><span class="tf-no"></span>In text and in bytes</a><a class="lv3" href="basics-04-guids-and-hashes.html#hashes"><span class="tf-no">24.2</span>Hashes</a><a class="lv4" href="basics-04-guids-and-hashes.html#hashes-in-the-tutorials-packages"><span class="tf-no"></span>Hashes in the tutorial&#x27;s packages</a><a class="lv3" href="basics-04-guids-and-hashes.html#guids-from-hashes-guid---from"><span class="tf-no">24.3</span>GUIDs from hashes: guid --from</a><a class="lv3" href="basics-04-guids-and-hashes.html#where-this-is-used"><span class="tf-no">24.4</span>Where this is used</a></div><div class="tf-ch"><a href="basics-05-compression.html">25 Compression</a></div><div class="tf-secs"><a class="lv3" href="basics-05-compression.html#why-data-can-be-made-smaller"><span class="tf-no">25.1</span>Why data can be made smaller</a><a class="lv3" href="basics-05-compression.html#lz77-copy-from-earlier"><span class="tf-no">25.2</span>LZ77: &quot;copy from earlier&quot;</a><a class="lv3" href="basics-05-compression.html#huffman-coding-short-codes-for-common-symbols"><span class="tf-no">25.3</span>Huffman coding: short codes for common symbols</a><a class="lv3" href="basics-05-compression.html#deflate-bit-by-bit"><span class="tf-no">25.4</span>Deflate, bit by bit</a><a class="lv3" href="basics-05-compression.html#mszip-deflate-in-a-cabinet"><span class="tf-no">25.5</span>MSZIP: deflate in a cabinet</a><a class="lv3" href="basics-05-compression.html#deflate-in-an-msix"><span class="tf-no">25.6</span>Deflate in an MSIX</a><a class="lv3" href="basics-05-compression.html#where-this-is-used"><span class="tf-no">25.7</span>Where this is used</a></div><div class="tf-ch"><a href="basics-06-files-inside-a-file.html">26 Files inside a file</a></div><div class="tf-secs"><a class="lv3" href="basics-06-files-inside-a-file.html#how-a-disk-stores-files"><span class="tf-no">26.1</span>How a disk stores files</a><a class="lv3" href="basics-06-files-inside-a-file.html#an-msi-is-a-file-system-in-a-file"><span class="tf-no">26.2</span>An MSI is a file system in a file</a><a class="lv4" href="basics-06-files-inside-a-file.html#small-streams-the-mini-stream"><span class="tf-no"></span>Small streams: the mini stream</a><a class="lv4" href="basics-06-files-inside-a-file.html#the-names"><span class="tf-no"></span>The names</a><a class="lv3" href="basics-06-files-inside-a-file.html#an-msix-is-an-archive"><span class="tf-no">26.3</span>An MSIX is an archive</a><a class="lv3" href="basics-06-files-inside-a-file.html#why-two-designs"><span class="tf-no">26.4</span>Why two designs?</a><a class="lv3" href="basics-06-files-inside-a-file.html#where-this-is-used"><span class="tf-no">26.5</span>Where this is used</a></div><div class="tf-ch"><a href="basics-07-tables-and-keys.html">27 Tables, keys and references</a></div><div class="tf-secs"><a class="lv3" href="basics-07-tables-and-keys.html#tables-rows-and-columns"><span class="tf-no">27.1</span>Tables, rows and columns</a><a class="lv3" href="basics-07-tables-and-keys.html#primary-keys-what-makes-a-row-unique"><span class="tf-no">27.2</span>Primary keys: what makes a row unique</a><a class="lv3" href="basics-07-tables-and-keys.html#foreign-keys-rows-that-point-at-rows"><span class="tf-no">27.3</span>Foreign keys: rows that point at rows</a><a class="lv3" href="basics-07-tables-and-keys.html#keys-you-give-keys-rubrapack-makes"><span class="tf-no">27.4</span>Keys you give, keys rubrapack makes</a><a class="lv3" href="basics-07-tables-and-keys.html#storing-strings-once-the-string-pool"><span class="tf-no">27.5</span>Storing strings once: the string pool</a><a class="lv3" href="basics-07-tables-and-keys.html#tables-about-tables"><span class="tf-no">27.6</span>Tables about tables</a><a class="lv3" href="basics-07-tables-and-keys.html#the-idt-text-format"><span class="tf-no">27.7</span>The IDT text format</a><a class="lv3" href="basics-07-tables-and-keys.html#where-this-is-used"><span class="tf-no">27.8</span>Where this is used</a></div><div class="tf-ch"><a href="basics-08-keys-certificates-signatures.html">28 Keys, certificates and signatures</a></div><div class="tf-secs"><a class="lv3" href="basics-08-keys-certificates-signatures.html#two-keys-instead-of-one"><span class="tf-no">28.1</span>Two keys instead of one</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#signing-and-checking"><span class="tf-no">28.2</span>Signing and checking</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#certificates-whose-key-is-this"><span class="tf-no">28.3</span>Certificates: whose key is this?</a><a class="lv4" href="basics-08-keys-certificates-signatures.html#names-cn-o-c"><span class="tf-no"></span>Names: CN, O, C</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#chains-and-trust"><span class="tf-no">28.4</span>Chains and trust</a><a class="lv4" href="basics-08-keys-certificates-signatures.html#revocation"><span class="tf-no"></span>Revocation</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#timestamps"><span class="tf-no">28.5</span>Timestamps</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#where-keys-live-files-and-tokens"><span class="tf-no">28.6</span>Where keys live: files and tokens</a><a class="lv4" href="basics-08-keys-certificates-signatures.html#the-thumbprint"><span class="tf-no"></span>The thumbprint</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#where-this-is-used"><span class="tf-no">28.7</span>Where this is used</a></div><div class="tf-ch"><a href="basics-09-folders-and-environment-variables.html">29 Windows folders and environment variables</a></div><div class="tf-secs"><a class="lv3" href="basics-09-folders-and-environment-variables.html#what-an-environment-variable-is"><span class="tf-no">29.1</span>What an environment variable is</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#the-common-variables"><span class="tf-no">29.2</span>The common variables</a><a class="lv4" href="basics-09-folders-and-environment-variables.html#folders"><span class="tf-no"></span>Folders</a><a class="lv4" href="basics-09-folders-and-environment-variables.html#not-folders"><span class="tf-no"></span>Not folders</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#folders-without-a-variable"><span class="tf-no">29.3</span>Folders without a variable</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#three-moments"><span class="tf-no">29.4</span>Three moments</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#windows-installers-names"><span class="tf-no">29.5</span>Windows Installer&#x27;s names</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#in-rubrapack"><span class="tf-no">29.6</span>In rubrapack</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#where-this-is-used"><span class="tf-no">29.7</span>Where this is used</a></div><h4 class="toc-part">Part IV - File formats</h4><div class="tf-ch"><a href="formats-readme.html">30 Package formats for implementers</a></div><div class="tf-secs"><a class="lv3" href="formats-readme.html#how-to-read-the-facts"><span class="tf-no">30.1</span>How to read the facts</a><a class="lv3" href="formats-readme.html#conventions"><span class="tf-no">30.2</span>Conventions</a><a class="lv3" href="formats-readme.html#the-pipeline-in-one-picture"><span class="tf-no">30.3</span>The pipeline, in one picture</a></div><div class="tf-ch"><a href="formats-cfb.html">31 Compound File Binary (CFB)</a></div><div class="tf-secs"><a class="lv3" href="formats-cfb.html#sectors"><span class="tf-no">31.1</span>Sectors</a><a class="lv3" href="formats-cfb.html#header-first-512-bytes-spec"><span class="tf-no">31.2</span>Header (first 512 bytes) [spec]</a><a class="lv3" href="formats-cfb.html#fat-difat-mini-fat-spec"><span class="tf-no">31.3</span>FAT, DIFAT, mini FAT [spec]</a><a class="lv3" href="formats-cfb.html#directory-spec"><span class="tf-no">31.4</span>Directory [spec]</a><a class="lv3" href="formats-cfb.html#a-simple-deterministic-writer"><span class="tf-no">31.5</span>A simple, deterministic writer</a><a class="lv3" href="formats-cfb.html#reading-safely"><span class="tf-no">31.6</span>Reading safely</a><a class="lv3" href="formats-cfb.html#worked-example-the-tutorials-hellomsi"><span class="tf-no">31.7</span>Worked example: the tutorial&#x27;s hello.msi</a></div><div class="tf-ch"><a href="formats-msi-database.html">32 The MSI database inside the compound file</a></div><div class="tf-secs"><a class="lv3" href="formats-msi-database.html#streams"><span class="tf-no">32.1</span>Streams</a><a class="lv4" href="formats-msi-database.html#stream-names"><span class="tf-no"></span>Stream names</a><a class="lv3" href="formats-msi-database.html#the-string-pool-_stringpool-and-_stringdata"><span class="tf-no">32.2</span>The string pool: _StringPool and _StringData</a><a class="lv4" href="formats-msi-database.html#code-page"><span class="tf-no"></span>Code page</a><a class="lv3" href="formats-msi-database.html#system-tables"><span class="tf-no">32.3</span>System tables</a><a class="lv4" href="formats-msi-database.html#column-type-bits-_columnstype"><span class="tf-no"></span>Column type bits (_Columns.Type)</a><a class="lv3" href="formats-msi-database.html#table-streams"><span class="tf-no">32.4</span>Table streams</a><a class="lv3" href="formats-msi-database.html#transforms-mst"><span class="tf-no">32.5</span>Transforms (.mst)</a><a class="lv3" href="formats-msi-database.html#patches-msp"><span class="tf-no">32.6</span>Patches (.msp)</a><a class="lv3" href="formats-msi-database.html#idt-archive-files-what-msidatabaseexport-writes"><span class="tf-no">32.7</span>IDT archive files (what MsiDatabaseExport writes)</a><a class="lv3" href="formats-msi-database.html#reading-safely"><span class="tf-no">32.8</span>Reading safely</a><a class="lv3" href="formats-msi-database.html#worked-example-the-tutorials-hellomsi"><span class="tf-no">32.9</span>Worked example: the tutorial&#x27;s hello.msi</a></div><div class="tf-ch"><a href="formats-msi-summary.html">33 Summary information</a></div><div class="tf-secs"><a class="lv3" href="formats-msi-summary.html#layout-spec-observed"><span class="tf-no">33.1</span>Layout [spec] [observed]</a><a class="lv3" href="formats-msi-summary.html#properties-an-installer-package-sets"><span class="tf-no">33.2</span>Properties an installer package sets</a><a class="lv3" href="formats-msi-summary.html#the-code-page-trap---keep-summary-strings-ascii-observed"><span class="tf-no">33.3</span>The code page trap - keep summary strings ASCII [observed]</a><a class="lv3" href="formats-msi-summary.html#worked-example-the-tutorials-hellomsi"><span class="tf-no">33.4</span>Worked example: the tutorial&#x27;s hello.msi</a></div><div class="tf-ch"><a href="formats-msi-package.html">34 The smallest package that installs, repairs, upgrades and uninstalls</a></div><div class="tf-secs"><a class="lv3" href="formats-msi-package.html#tables-and-columns"><span class="tf-no">34.1</span>Tables and columns</a><a class="lv3" href="formats-msi-package.html#property"><span class="tf-no">34.2</span>Property</a><a class="lv3" href="formats-msi-package.html#directory"><span class="tf-no">34.3</span>Directory</a><a class="lv3" href="formats-msi-package.html#components-features-files"><span class="tf-no">34.4</span>Components, features, files</a><a class="lv3" href="formats-msi-package.html#empty-folders"><span class="tf-no">34.5</span>Empty folders</a><a class="lv3" href="formats-msi-package.html#media-and-the-cabinet"><span class="tf-no">34.6</span>Media and the cabinet</a><a class="lv3" href="formats-msi-package.html#major-upgrade-and-downgrade-refusal"><span class="tf-no">34.7</span>Major upgrade and downgrade refusal</a><a class="lv3" href="formats-msi-package.html#running-an-installed-program-to-register-and-unregister"><span class="tf-no">34.8</span>Running an installed program to register and unregister</a><a class="lv3" href="formats-msi-package.html#registry-values"><span class="tf-no">34.9</span>Registry values</a><a class="lv3" href="formats-msi-package.html#shortcuts"><span class="tf-no">34.10</span>Shortcuts</a><a class="lv3" href="formats-msi-package.html#removing-files-and-duplicating-them"><span class="tf-no">34.11</span>Removing files and duplicating them</a><a class="lv3" href="formats-msi-package.html#environment-variables"><span class="tf-no">34.12</span>Environment variables</a><a class="lv3" href="formats-msi-package.html#ini-files"><span class="tf-no">34.13</span>INI files</a><a class="lv3" href="formats-msi-package.html#searches-and-launch-conditions"><span class="tf-no">34.14</span>Searches and launch conditions</a><a class="lv3" href="formats-msi-package.html#services-fonts-permissions"><span class="tf-no">34.15</span>Services, fonts, permissions</a><a class="lv3" href="formats-msi-package.html#cabinets-administrative-images-advertisement"><span class="tf-no">34.16</span>Cabinets, administrative images, advertisement</a><a class="lv3" href="formats-msi-package.html#per-user-and-dual-packages"><span class="tf-no">34.17</span>Per-user and dual packages</a><a class="lv3" href="formats-msi-package.html#files-in-use"><span class="tf-no">34.18</span>Files in use</a><a class="lv3" href="formats-msi-package.html#sequences"><span class="tf-no">34.19</span>Sequences</a><a class="lv3" href="formats-msi-package.html#dialogs"><span class="tf-no">34.20</span>Dialogs</a><a class="lv4" href="formats-msi-package.html#choices-during-installation"><span class="tf-no"></span>Choices during installation</a><a class="lv4" href="formats-msi-package.html#several-languages-in-one-package"><span class="tf-no"></span>Several languages in one package</a><a class="lv3" href="formats-msi-package.html#what-this-recipe-does-not-cover-yet"><span class="tf-no">34.21</span>What this recipe does not cover yet</a></div><div class="tf-ch"><a href="formats-pe.html">35 Program files: machine type and version</a></div><div class="tf-secs"><a class="lv3" href="formats-pe.html#finding-the-headers-spec"><span class="tf-no">35.1</span>Finding the headers [spec]</a><a class="lv3" href="formats-pe.html#the-version-resource-spec"><span class="tf-no">35.2</span>The version resource [spec]</a><a class="lv3" href="formats-pe.html#what-goes-into-the-package-observed"><span class="tf-no">35.3</span>What goes into the package [observed]</a><a class="lv3" href="formats-pe.html#reading-safely"><span class="tf-no">35.4</span>Reading safely</a></div><div class="tf-ch"><a href="formats-cab-mszip.html">36 Cabinets, MSZIP and deflate</a></div><div class="tf-secs"><a class="lv3" href="formats-cab-mszip.html#cabinet-layout-spec-ms-cab"><span class="tf-no">36.1</span>Cabinet layout [spec: MS-CAB]</a><a class="lv4" href="formats-cab-mszip.html#block-checksum-spec"><span class="tf-no"></span>Block checksum [spec]</a><a class="lv3" href="formats-cab-mszip.html#mszip-spec-ms-mci"><span class="tf-no">36.2</span>MSZIP [spec: MS-MCI]</a><a class="lv3" href="formats-cab-mszip.html#lzx-spec-ms-patch-2-ms-cab"><span class="tf-no">36.3</span>LZX [spec: MS-PATCH 2, MS-CAB]</a><a class="lv3" href="formats-cab-mszip.html#a-deflate-encoder-in-brief-spec-rfc-1951"><span class="tf-no">36.4</span>A deflate encoder in brief [spec: RFC 1951]</a><a class="lv3" href="formats-cab-mszip.html#worked-example-the-tutorials-hellomsi"><span class="tf-no">36.5</span>Worked example: the tutorial&#x27;s hello.msi</a></div><div class="tf-ch"><a href="formats-identity.html">37 Deterministic identities and reproducible packages</a></div><div class="tf-secs"><a class="lv3" href="formats-identity.html#name-based-guids-uuid-version-8-spec-rfc-9562"><span class="tf-no">37.1</span>Name-based GUIDs (UUID version 8) [spec: RFC 9562]</a><a class="lv3" href="formats-identity.html#keys"><span class="tf-no">37.2</span>Keys</a><a class="lv3" href="formats-identity.html#reproducible-packages"><span class="tf-no">37.3</span>Reproducible packages</a></div><div class="tf-ch"><a href="formats-authenticode.html">38 Authenticode signatures</a></div><div class="tf-secs"><a class="lv3" href="formats-authenticode.html#where-the-signature-lives-in-a-pe-file"><span class="tf-no">38.1</span>Where the signature lives in a PE file</a><a class="lv3" href="formats-authenticode.html#the-pe-digest"><span class="tf-no">38.2</span>The PE digest</a><a class="lv3" href="formats-authenticode.html#the-cms-signeddata"><span class="tf-no">38.3</span>The CMS SignedData</a><a class="lv3" href="formats-authenticode.html#msi-packages"><span class="tf-no">38.4</span>MSI packages</a><a class="lv3" href="formats-authenticode.html#cabinets"><span class="tf-no">38.5</span>Cabinets</a><a class="lv3" href="formats-authenticode.html#catalogs-of-shared-win32-assemblies"><span class="tf-no">38.6</span>Catalogs of shared Win32 assemblies</a><a class="lv3" href="formats-authenticode.html#timestamps"><span class="tf-no">38.7</span>Timestamps</a><a class="lv3" href="formats-authenticode.html#ecdsa"><span class="tf-no">38.8</span>ECDSA</a><a class="lv3" href="formats-authenticode.html#what-windows-reports"><span class="tf-no">38.9</span>What Windows reports</a><a class="lv3" href="formats-authenticode.html#worked-example-the-tutorials-hellomsi"><span class="tf-no">38.10</span>Worked example: the tutorial&#x27;s hello.msi</a></div><div class="tf-ch"><a href="formats-verify.html">39 Checking your output against Windows</a></div><div class="tf-secs"><a class="lv3" href="formats-verify.html#the-database-opens-and-decodes"><span class="tf-no">39.1</span>The database opens and decodes</a><a class="lv3" href="formats-verify.html#the-package-installs"><span class="tf-no">39.2</span>The package installs</a><a class="lv3" href="formats-verify.html#checks-before-writing"><span class="tf-no">39.3</span>Checks before writing</a><a class="lv3" href="formats-verify.html#microsofts-ice-rules-observed"><span class="tf-no">39.4</span>Microsoft&#x27;s ICE rules [observed]</a><a class="lv3" href="formats-verify.html#things-that-look-fine-but-are-not"><span class="tf-no">39.5</span>Things that look fine but are not</a></div><div class="tf-ch"><a href="formats-msix.html">40 MSIX packages</a></div><div class="tf-secs"><a class="lv3" href="formats-msix.html#the-zip-archive"><span class="tf-no">40.1</span>The ZIP archive</a><a class="lv3" href="formats-msix.html#the-block-map-appxblockmapxml"><span class="tf-no">40.2</span>The block map (AppxBlockMap.xml)</a><a class="lv3" href="formats-msix.html#content_typesxml"><span class="tf-no">40.3</span>[Content_Types].xml</a><a class="lv3" href="formats-msix.html#the-manifest-appxmanifestxml"><span class="tf-no">40.4</span>The manifest (AppxManifest.xml)</a><a class="lv3" href="formats-msix.html#the-virtual-registry-registrydat-userdat"><span class="tf-no">40.5</span>The virtual registry (Registry.dat, User.dat)</a><a class="lv3" href="formats-msix.html#the-virtual-file-system-vfs"><span class="tf-no">40.6</span>The virtual file system (VFS\...)</a><a class="lv3" href="formats-msix.html#the-resource-index-resourcespri-observed"><span class="tf-no">40.7</span>The resource index (resources.pri) [observed]</a><a class="lv3" href="formats-msix.html#extensions"><span class="tf-no">40.8</span>Extensions</a><a class="lv3" href="formats-msix.html#bundles-msixbundle"><span class="tf-no">40.9</span>Bundles (.msixbundle)</a><a class="lv3" href="formats-msix.html#signatures-appxsignaturep7x"><span class="tf-no">40.10</span>Signatures (AppxSignature.p7x)</a><a class="lv3" href="formats-msix.html#installing-an-unsigned-package"><span class="tf-no">40.11</span>Installing an unsigned package</a><a class="lv3" href="formats-msix.html#worked-example-the-tutorials-hellomsix"><span class="tf-no">40.12</span>Worked example: the tutorial&#x27;s hello.msix</a></div><div class="tf-ch"><a href="formats-registry.html">41 Registry hive files (REGF)</a></div><div class="tf-secs"><a class="lv3" href="formats-registry.html#layout"><span class="tf-no">41.1</span>Layout</a><a class="lv3" href="formats-registry.html#the-base-block"><span class="tf-no">41.2</span>The base block</a><a class="lv3" href="formats-registry.html#keys-nk"><span class="tf-no">41.3</span>Keys (nk)</a><a class="lv3" href="formats-registry.html#subkey-lists-lh-ri"><span class="tf-no">41.4</span>Subkey lists (lh, ri)</a><a class="lv3" href="formats-registry.html#values-vk-and-value-lists"><span class="tf-no">41.5</span>Values (vk) and value lists</a><a class="lv3" href="formats-registry.html#the-security-cell-sk"><span class="tf-no">41.6</span>The security cell (sk)</a><a class="lv3" href="formats-registry.html#reproducible-hives"><span class="tf-no">41.7</span>Reproducible hives</a></div></div>
+<div class="nav"><a href="index.html">← Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><span></span></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.menu-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&p&&!p.hidden){open(false);if(b)b.focus();}});document.addEventListener('click',function(e){if(p&&!p.hidden&&!p.contains(e.target)&&!(b&&b.contains(e.target)))open(false);});var bk=document.querySelector('.bar .back');if(bk)bk.addEventListener('click',function(e){if(history.length>1&&document.referrer){e.preventDefault();history.back();}});var box=document.getElementById('setbox');if(!box)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('doc-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('doc-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function paint(){var s=load();var t=s.theme||'auto',w=s.width==='fit'?'fit':'960';[].forEach.call(box.querySelectorAll('.segb[data-theme]'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});[].forEach.call(box.querySelectorAll('.segb[data-width]'),function(x){x.setAttribute('aria-pressed',x.dataset.width===w);});var ly=s.layout||'auto';[].forEach.call(box.querySelectorAll('.segb[data-layout]'),function(x){x.setAttribute('aria-pressed',x.dataset.layout===ly);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}paint();[].forEach.call(box.querySelectorAll('.segb[data-width]'),function(x){x.addEventListener('click',function(){var s=load();if(x.dataset.width==='fit'){s.width='fit';r.setAttribute('data-measure','fit');}else{delete s.width;r.removeAttribute('data-measure');}save(s);setTimeout(paint,0);});});[].forEach.call(box.querySelectorAll('.segb[data-layout]'),function(x){x.addEventListener('click',function(){var s=load(),v=x.dataset.layout;if(v==='auto'){delete s.layout;r.removeAttribute('data-layout');}else{s.layout=v;r.setAttribute('data-layout',v);}save(s);var m=document.querySelector('meta[name=viewport]');var want=v==='desktop'?'width=1100':'width=device-width, initial-scale=1';if(m&&m.getAttribute('content')!==want)location.reload();else setTimeout(paint,0);});});[].forEach.call(box.querySelectorAll('.segb[data-theme]'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

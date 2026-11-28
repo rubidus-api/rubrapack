@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>17 MSIX packages and bundles — rubrapack Manual</title><style>@font-face { font-family:"Doc Serif"; src:url("../fonts/serif.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-italic.woff2") format("woff2");
+  font-weight:400; font-style:italic; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-kr.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-kr-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans-kr.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans-kr-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Mono"; src:url("../fonts/mono.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Mono"; src:url("../fonts/mono-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+:root { color-scheme: light dark; --bg:#fafaf8; --bg2:#f2f2f0; --bg3:#e6e6e3; --fg:#141414; --muted:#555555; --line:#c9c9c9; --line-strong:#8a8a8a; --accent:#1a4f8a; --accent-fg:#ffffff; --accent2:#96530f; --honey:#f2b04a; --honey-fg:#2b1d00; --honey-text:#855400; --honey-soft:#fbebc6; --danger:#9b1b30; --ok:#1d6e37; --warn:#855400; --select:#d4dde8;
+  --rule:var(--line); --box-bg:var(--bg2); --code-bg:var(--bg2); --box-rule:var(--line); --link:var(--accent);
+  --tok-c:#3f5b4a; --tok-k:#123c87; --tok-t:#0f5b63; --tok-s:#7a3b0a;
+  --tok-n:#8a2222; --tok-p:#6b2d8a; --tok-x:#555555; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg:#121314; --bg2:#1c1e20; --bg3:#2a2c2f; --fg:#e8e8e8; --muted:#a6a6a6; --line:#3a3d40; --line-strong:#75787c; --accent:#8ab4e8; --accent-fg:#121314; --accent2:#d4883b; --honey:#f2b04a; --honey-fg:#121314; --honey-text:#f2b04a; --honey-soft:#3b311e; --danger:#f07a8c; --ok:#7bcb95; --warn:#f2b04a; --select:#2f3d52;
+    --tok-c:#9fbfa8; --tok-k:#9fc0f0; --tok-t:#7fcbd4; --tok-s:#e0b080;
+  --tok-n:#e79a9a; --tok-p:#c79ae0; --tok-x:#a6a6a6; } }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#121314; --bg2:#1c1e20; --bg3:#2a2c2f; --fg:#e8e8e8; --muted:#a6a6a6; --line:#3a3d40; --line-strong:#75787c; --accent:#8ab4e8; --accent-fg:#121314; --accent2:#d4883b; --honey:#f2b04a; --honey-fg:#121314; --honey-text:#f2b04a; --honey-soft:#3b311e; --danger:#f07a8c; --ok:#7bcb95; --warn:#f2b04a; --select:#2f3d52;
+  --tok-c:#9fbfa8; --tok-k:#9fc0f0; --tok-t:#7fcbd4; --tok-s:#e0b080;
+  --tok-n:#e79a9a; --tok-p:#c79ae0; --tok-x:#a6a6a6; }
+:root[data-theme="light"] { color-scheme: light; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); line-height:1.75;
+       font-family:"Doc Serif","Noto Serif CJK KR","Noto Serif KR",Georgia,serif; }
+.here-head { display:flex; align-items:center; gap:.8rem; padding:.2rem 0 .5rem;
+  border-bottom:1px solid var(--rule,#ddd); margin-bottom:.5rem; }
+.here-head .sp { flex:1; }
+.here-all { margin-left:auto; font-size:.9rem; }
+.here-x { font:inherit; font-size:.9rem; cursor:pointer; background:none;
+  border:1px solid var(--line-strong); padding:.05rem .45rem;
+  color:inherit; }
+.here-body a, .tf-secs a { display:block; text-decoration:none; padding:.12rem 0;
+  line-height:1.45; }
+.here-body a:hover, .tf-secs a:hover { text-decoration:underline; }
+.here-body a.lv4, .tf-secs a.lv4 { padding-left:1.6rem; font-size:.94rem;
+  color:var(--muted,#555); }
+.tf-no { display:inline-block; min-width:3.2rem; color:var(--muted,#666);
+  font-variant-numeric:tabular-nums; }
+.toc-full .tf-ch { margin:.9rem 0 .15rem; font-weight:700; }
+.toc-full .tf-secs { margin:0 0 .5rem .2rem; border-left:2px solid var(--rule,#e2e2e2);
+  padding-left:.7rem; }
+.toc-full h4.toc-part { margin-top:1.8rem; }
+.toc a.toc-detail { font-weight:700; }
+@media print { .here-btn, .here-panel { display:none; } }
+.bar { position:sticky; top:0; z-index:20; display:flex; flex-wrap:nowrap; gap:.25rem; align-items:center;
+       min-height:44px; padding:0 clamp(.4rem,2vw,1.6rem); background:var(--bg2);
+       border-bottom:1px solid var(--line); font-size:.9rem;
+       font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.bar a { color:var(--fg); text-decoration:none; } .bar a:hover { text-decoration:none; }
+.bar .sp { display:none; }
+main { width:100%; padding:1.6rem clamp(.9rem,3vw,2.5rem) 5rem; }
+.wrap { width:100%; }
+main .wrap { max-width:960px; margin-inline:auto; }
+:root[data-measure="fit"] main .wrap { max-width:none; margin:0; }
+h1,h2,h3,h4 { font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; line-height:1.35;
+  padding-bottom:.18rem; border-bottom:1px solid var(--rule); }
+h1 { font-size:clamp(1.5rem,3.4vw,2.1rem); margin:.2rem 0 .9rem; }
+h2 { font-size:clamp(1.35rem,3vw,1.8rem); margin:0 0 .7rem; padding-bottom:.35rem;
+     border-bottom:2px solid var(--fg); }
+h3 { font-size:clamp(1.05rem,2.2vw,1.25rem); margin:1.5rem 0 .5rem;
+     padding-bottom:.22rem; border-bottom:1.5px solid var(--fg); }
+p { margin:.9rem 0; } a { color:var(--link); }
+main p { text-indent: 1em; }
+.cover p, .note p, .toc p, .float-caption, .metalist p, .memrow p,
+.colophon-meta p, li p, td p, th p, figure p, blockquote p,
+.demo-src p, .demo-out p, pre, pre p,
+.dev-label, p.dev-label { text-indent: 0; }
+.src-note { font-size: .86em; color: var(--muted, #666); }
+.src-note code { font-size: .95em; }
+sup.fnref { font-size: .72em; line-height: 0; vertical-align: super; }
+sup.fnref a { text-decoration: none; padding: 0 .1em; }
+sup.fnref a::before { content: "["; }
+sup.fnref a::after  { content: "]"; }
+.chapter-notes { margin: 3rem 0 1rem; padding-top: .9rem;
+                 border-top: 2px solid var(--rule, #333); }
+.chapter-notes h2 { font-size: 1.05rem; margin: 0 0 .6rem; }
+.chapter-notes ol { margin: 0; padding-left: 1.6em; }
+.chapter-notes li { font-size: .92em; margin: .35em 0; text-indent: 0; }
+.chapter-notes a.fnback { text-decoration: none; }
+.dev p { text-indent: 0; }
+.dev p + p { text-indent: 1em; }
+.dev p:has(> span.dev-label:first-child) { text-indent: 0; }
+.chapter-head p { text-indent: 0; }
+pre,code,kbd { font-family:"Doc Mono","D2Coding",ui-monospace,SFMono-Regular,Menlo,monospace; }
+code { background:none; padding:0; font-size:.95em; }
+pre { background:none; border:1px solid var(--fg); border-radius:0;
+      padding:.95rem 1.05rem; overflow-x:auto; line-height:1.6; font-size:.95rem;
+      margin:1.2rem 0; }
+.tok-c { color:var(--tok-c); font-style:italic; }
+.tok-k { color:var(--tok-k); font-weight:700; }
+.tok-s { color:var(--tok-s); }
+.tok-n { color:var(--tok-n); }
+.tok-t { color:var(--tok-t); font-weight:700; }
+.tok-x { color:var(--tok-x); }
+.tok-p { color:var(--tok-p); }
+pre code { background:none; padding:0; }
+.tblwrap { overflow-x:auto; text-align:center; }
+.tblwrap > table { display:inline-table; width:auto; max-width:none; margin:1.1rem 0; }
+table { border-collapse:collapse; margin:1.1rem auto; font-size:.95rem;
+        width:auto; max-width:100%; border:2px solid var(--fg);
+        table-layout:auto; }
+th, td { white-space:normal; }
+th,td { border:1px solid var(--rule); padding:.42rem .6rem; text-align:left; vertical-align:top; }
+th { background:rgba(128,128,128,.16); font-weight:700;
+     border-bottom:2px solid var(--fg);
+     font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+table tr:first-child th, table tr:first-child td { border-bottom:1px solid var(--fg); }
+ul,ol { padding-left:1.4rem; } li { margin:.3rem 0; }
+.float-list { list-style:none; padding-left:0; }
+.float-list li { margin:.12rem 0; }
+.memrow { overflow-x:auto; text-align:center; margin:1.1rem 0 .2rem; }
+.memrow table.mem { display:inline-table; border-collapse:collapse;
+  border:none; margin:0; width:auto; }
+.memrow td.cell { border:1px solid var(--fg); padding:.3rem .5rem;
+  font-family:"Doc Mono","D2Coding",ui-monospace,monospace; font-size:.9rem;
+  text-align:center; background:none; }
+.memrow td.cell.hi { border-width:2px; }
+.memrow td.addr { border:none; padding:.15rem .5rem 0; text-align:center;
+  font-family:"Doc Mono","D2Coding",ui-monospace,monospace; font-size:.82rem;
+  color:var(--muted); }
+.demo { border:1px solid var(--fg); margin:1.15rem 0; }
+.demo > .demo-head { margin:0; padding:.5rem .9rem; text-indent:0;
+  border-bottom:1px solid var(--fg); font-weight:700; font-size:.92rem; }
+.demo-src > .demo-head { font-family:"Doc Mono","D2Coding",ui-monospace,monospace; }
+.demo-in > .demo-head, .demo-out > .demo-head {
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.demo > .demo-body { padding:0; }
+.demo > .demo-body pre { border:none; border-radius:0; margin:0;
+  padding:.6rem .9rem; }
+.dev { margin:1.15rem 0; padding:0; background:none; border:none; border-radius:0; }
+.dev > .dev-label { border-left:4px solid var(--fg);
+  padding:.1rem .8rem .25rem .8rem; margin:0 0 .34rem; }
+.dev > .dev-body { border-left:2px solid var(--box-rule);
+  padding:.35rem .8rem .35rem .8rem; margin:0; }
+.dev > .dev-body > *:first-child { margin-top:0; }
+.dev > .dev-body > *:last-child { margin-bottom:0; }
+.float-caption { text-align:center; font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif;
+  font-size:.92rem; color:var(--muted); margin:.35rem 0 1.2rem; }
+figure { margin:1.2rem 0; }
+figure.tbl table { margin-bottom:.2rem; }
+figure.tbl { text-align:center; }
+.dev > p:first-child { margin-top:0; } .dev > p:last-child { margin-bottom:0; }
+.dev-label { font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+             font-size:.92rem; color:var(--muted); margin-bottom:.4rem; }
+.dev.open { border:none; border-radius:0; background:none;
+  padding:0; margin:.75rem 0; }
+.dev.open > .dev-label { margin:0 0 .34rem; padding:.1rem .8rem .25rem .8rem;
+  text-indent:0; border-left:4px solid var(--fg);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  font-size:.98rem; color:var(--fg); text-transform:none; letter-spacing:0; }
+.dev.open > .open-body { margin:0; padding:.35rem .8rem;
+  border-left:2px solid var(--box-rule); }
+.dev.open > .open-body > *:first-child { margin-top:0; }
+.dev.open > .open-body > *:last-child { margin-bottom:0; }
+.dev.open > .open-body > * { margin:.4rem 0; }
+.dev.open > .open-body > *:first-child { margin-top:0; }
+.dev.open > .open-body > *:last-child { margin-bottom:0; }
+.dev.open .open-body > ol.qlist { margin:0; padding-left:1.35rem; }
+.dev.open ol.qlist li { margin:.18rem 0; padding-left:.15rem; }
+.dev.open ol.qlist li::marker { color:var(--muted); font-weight:700; }
+.dev.open .qa-a { border:none; border-left:2px solid var(--box-rule);
+  padding:.06rem 0 .06rem .7rem; margin:.32rem 0 0; }
+.prereq .dev-label, .deepqa .dev-label, .why .dev-label,
+.organizer .dev-label, .questions .dev-label {
+  text-transform:none; letter-spacing:0; font-size:1.12rem; font-weight:700;
+  color:var(--fg); margin-bottom:.45rem; }
+.deepqa .qa-a { border-left:2px solid var(--muted); padding-left:.75rem; }
+.qa-box { border:none; margin:1.15rem 0; }
+.qa-box .dev { margin:0; border:none; border-radius:0; padding:0; background:none; }
+.qa-box .qa-q { border-left:4px solid var(--fg);
+  padding:.1rem .8rem .25rem .8rem; margin:0; }
+.qa-box .qa-a { border:none; border-left:2px solid var(--box-rule);
+  padding:.35rem .8rem; margin:.34rem 0 0; }
+.qa-box .qa-q > p, .qa-box .qa-a > p { margin:0; }
+.dev.recap { border:none; background:none; padding:0; margin:1.15rem 0; }
+.dev.recap > .dev-label { margin:0 0 .34rem; padding:.1rem .8rem .25rem .8rem;
+  text-indent:0; border-left:4px solid var(--fg);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  font-size:.95rem; color:var(--fg); }
+.dev.recap > .dev-body > p, .dev.recap > .dev-body > div:not(.demo),
+.dev.recap > .dev-body > figure { margin:.3rem 0; padding:0; }
+.dev > .dev-body > .demo { margin:.7rem 0; }
+.deepqa .qa-a { border-left:2px solid var(--muted); padding-left:.75rem; }
+.qa-q .dev-label, .qa-a .dev-label, .deepqa .qa-a .dev-label {
+  display:inline; margin-bottom:0; }
+.qa-q .dev-label + p, .qa-a .dev-label + p { display:inline; }
+.qa-q .dev-label, .qa-q .dev-label + p {
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  color:var(--fg); font-size:1rem; }
+.qa-a .dev-label { color:var(--muted); }
+.qa-a .dev-label + p { font-family:inherit; font-weight:400; }
+span.dev-label { display:inline; font-size:1rem; margin:0; }
+.dev.misconception, .dev.realcase, .dev.antipattern, .dev.mathbox,
+.dev.platform, .dev.recap {
+  border:none; border-radius:0; background:none; padding:0; margin:1.15rem 0; }
+.dev.misconception > .dev-label, .dev.realcase > .dev-label,
+.dev.antipattern > .dev-label, .dev.mathbox > .dev-label,
+.dev.platform > .dev-label, .dev.recap > .dev-label {
+  margin:0 0 .34rem; padding:.1rem .8rem .25rem .8rem; text-indent:0;
+  border-left:4px solid var(--fg);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  font-size:.95rem; color:var(--fg); }
+.dev > .dev-body > p, .dev > .dev-body > div:not(.demo),
+.dev > .dev-body > figure, .dev > .open-body > p {
+  margin:.35rem 0; padding:0; }
+.bar .menu-btn { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center;
+  min-width:38px; min-height:38px; padding:0; font:inherit; font-size:1.25rem; line-height:1;
+  color:var(--fg); background:none; border:0; cursor:pointer; text-decoration:none; }
+.bar .back, .bar .bar-nav .nb { flex:0 0 auto; display:inline-flex; align-items:center; gap:.3em;
+  min-height:32px; padding:0 .65rem; border:1px solid var(--line); background:var(--bg);
+  color:var(--fg); font-weight:600; white-space:nowrap; text-decoration:none; }
+.bar .menu-btn[aria-expanded="true"] { background:var(--bg3); }
+.bar .place { flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+  padding:0 .35rem; }
+.bar .place strong a { color:var(--honey-text); }
+.bar .place .cur { color:var(--fg); }
+.bar .bar-nav { flex:0 0 auto; display:flex; gap:.3rem; align-items:center; white-space:nowrap; }
+.bar .bar-nav .off { color:var(--muted); border-color:var(--line); opacity:.45; }
+.bar .back:hover, .bar .menu-btn:hover, .bar .bar-nav a.nb:hover, .bar .place a:hover { background:var(--bg3); }
+.dev p, .dev div, .dev ul, .dev ol, .qa-box p, .qa-box div {
+  margin-top:.4rem; margin-bottom:.4rem; }
+.dev > *:first-child, .qa-box .dev > *:first-child { margin-top:0; }
+.dev > *:last-child, .qa-box .dev > *:last-child { margin-bottom:0; }
+.dev ul, .dev ol { padding-left:1.3rem; }
+.dev li { margin:.15rem 0; }
+.dev.antipattern > .dev-label { border-left-style:solid; }
+.dev.mathbox { font-size:.95rem; }
+.note { border:1px solid var(--rule); background:none; padding:.65rem .9rem;
+        margin:0 0 1.6rem; font-size:.9rem; }
+.cover { text-align:center; margin:1.4rem 0 2rem; padding-bottom:1.2rem; }
+.cover h1 { font-size:clamp(1.9rem,5vw,2.9rem); margin:0; letter-spacing:.01em;
+            padding-bottom:0; border-bottom:none; }
+.cover p { margin:.45rem 0; }
+.cover-sub { font-size:clamp(1rem,2.2vw,1.2rem); color:var(--fg); }
+.badge { display:inline-block; margin-top:.5rem; padding:.16rem .6rem;
+         border:1px solid var(--fg); font-size:.8rem; font-weight:700;
+         font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.cover-meta { color:var(--muted); font-size:.9rem;
+              font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.cover-author { margin-top:1.1rem; font-size:1.05rem; }
+.cover-links { font-size:.87rem; }
+.cover-links a { margin:0 .6rem; }
+.cover-blurb { max-width:44rem; margin:1.7rem auto 0; font-size:.95rem; color:var(--muted); }
+.cover-blurb p { margin:.5rem 0; }
+.metalist { display:grid; grid-template-columns:max-content 1fr; gap:.35rem 1.2rem;
+  margin:.6rem 0 1rem; }
+.metalist dt { color:var(--muted); font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif;
+  font-size:.92rem; }
+.metalist dd { margin:0; }
+.colophon-meta { display:grid; grid-template-columns:max-content 1fr; gap:.35rem 1.2rem;
+                 margin:1.2rem 0 1.8rem; font-size:.93rem; }
+.colophon-meta dt { color:var(--muted);
+                    font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-size:.88rem; }
+.colophon-meta dd { margin:0; }
+.colophon { font-size:.93rem; }
+.colophon > div { margin:.9rem 0; padding-left:.9rem; border-left:1px solid var(--rule); }
+figure.fig { margin:1.6rem 0; text-align:center; }
+figure.fig img { max-width:100%; height:auto; }
+figure.fig figcaption { margin-top:.5rem; font-size:.92rem; color:var(--muted); }
+@media (prefers-color-scheme: dark) { figure.fig img { filter:invert(1) hue-rotate(180deg); } }
+:root[data-theme="dark"] figure.fig img { filter:invert(1) hue-rotate(180deg); }
+:root[data-theme="light"] figure.fig img { filter:none; }
+.toc { columns:24rem; column-gap:2.4rem; }
+.toc-part { break-inside:avoid; margin:1.1rem 0 .3rem; font-size:.95rem; letter-spacing:.02em;
+            font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.toc > .toc-part:first-child, .toc > .toc-keep:first-child > .toc-part, .toc-full > .toc-part:first-child { margin-top:0; }
+.toc-front { margin-bottom:.4rem; }
+.toc-group { padding-left:.85rem; }
+.toc-keep, .toc a { break-inside:avoid; }
+.toc a { display:block; padding:.28rem 0; text-decoration:none; }
+.toc a:hover { text-decoration:underline; }
+.nav { display:flex; gap:1rem; align-items:center; margin-top:3rem; padding-top:1rem;
+       border-top:1px solid var(--rule); font-size:.9rem;
+       font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.nav .sp { flex:1 1 auto; }
+code.style-name { font-family:"Doc Mono","D2Coding",ui-monospace,monospace;
+  font-size:.72em; color:var(--muted); background:var(--rule);
+  padding:.05em .35em; border-radius:3px; white-space:nowrap;
+  font-weight:400; letter-spacing:0; }
+.dev.open > .dev-label { padding-top:.42rem; padding-bottom:.42rem; }
+.dev.open > .open-body { padding-top:.4rem; padding-bottom:.4rem; }
+.dev.open > .open-body > p { margin:.6rem 0; }
+.dev > .dev-body { padding-top:.5rem; padding-bottom:.5rem; }
+.dev > .dev-body > p, .dev > .dev-body > div:not(.demo),
+.dev > .dev-body > figure { margin:.55rem 0; }
+main { line-height:1.85; }
+p { margin:1.15rem 0; }
+h2 { margin-top:2.4rem; }
+h3 { margin-top:2rem; }
+li { margin:.3rem 0; }
+h1, h2, h3, h4 { border-bottom-color:var(--box-rule) !important; }
+.toc { line-height:1.45; }
+.toc a { padding:.16rem 0; }
+.toc-part { margin:.85rem 0 .2rem; }
+.metalist { line-height:1.45; gap:.2rem 1.2rem; }
+.metalist dt, .metalist dd { margin:0; }
+.demo { border-color:var(--box-rule); }
+.demo > .demo-head { border-bottom-color:var(--box-rule); }
+.dev > .dev-label,
+.dev.open > .dev-label,
+.qa-box .qa-q,
+.dev.misconception > .dev-label, .dev.realcase > .dev-label,
+.dev.antipattern > .dev-label, .dev.mathbox > .dev-label,
+.dev.platform > .dev-label, .dev.recap > .dev-label {
+  border-left-color:var(--box-rule); }
+.dev > .dev-body,
+.dev > .open-body,
+.dev.open .qa-a,
+.qa-box .qa-a,
+.deepqa .qa-a { border-left-color:var(--box-rule); }
+.dev, .dev *, .qa-box, .qa-box *, .demo, .demo *,
+h1, h2, h3, h4, .colophon > div {
+  border-color:var(--box-rule); }
+.tbl table, .tbl th, .tbl td { border-color:initial; }
+.dev.open > .open-body,
+.dev.open > .qa-a,
+.dev.open .qa-a,
+.dev.deepqa .qa-a,
+.qa-box > .qa-a,
+.qa-box > .qa-q { border-left-color:var(--box-rule); }
+.bar .bar-toc { font-size:1.15em; line-height:1; text-decoration:none; }
+.dev, .dev-body, .open-body, .qa-box, .qa-q, .qa-a, .dev-label,
+.toc-full, .toc-full .tf-secs { line-height:inherit; font-size:1rem; }
+.dev > .dev-body > p, .dev > .open-body > p,
+.qa-box .qa-q > p, .qa-box .qa-a > p { margin:1.15rem 0; }
+.dev > .dev-body > *:first-child, .dev > .open-body > *:first-child,
+.qa-box .qa-q > p:first-child, .qa-box .qa-a > p:first-child { margin-top:0; }
+.dev > .dev-body > *:last-child, .dev > .open-body > *:last-child,
+.qa-box .qa-q > p:last-child, .qa-box .qa-a > p:last-child { margin-bottom:0; }
+.dev > .dev-label, .dev.open > .dev-label { font-size:.98rem; line-height:1.4; }
+h1,h2,h3,h4 { padding-bottom:.34rem; }
+h1 { margin:.2rem 0 1.3rem; }
+h2 { padding-bottom:.42rem; margin-bottom:1.15rem; }
+h3 { padding-bottom:.36rem; margin-bottom:.95rem; }
+.dev.open > .open-body > * { margin:.3rem 0; }
+.dev.open > .open-body > p { margin:.5rem 0; }
+.dev.open > .open-body > div { margin:.15rem 0; }
+.dev.open ul, .dev.open ol { margin:.3rem 0; }
+.dev.open li, .dev.open ol.qlist li { margin:0; }
+.dev.open > .open-body > *:first-child { margin-top:0; }
+.dev.open > .open-body > *:last-child { margin-bottom:0; }
+.dev.open .qa-a > p { margin:.35rem 0; }
+.dev, .dev *, .qa-box, .qa-box *, .demo, .demo *,
+h1, h2, h3, h4, .colophon > div { border-color:var(--box-rule); }
+.tbl table, .tbl th, .tbl td { border-color:initial; }
+a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible {
+  outline:2px solid var(--accent2); outline-offset:2px; }
+:target, h1, h2, h3, h4, [id] { scroll-margin-top:4.2rem; }
+.skip { position:absolute; left:-9999px; top:0; z-index:30;
+        background:var(--bg); color:var(--fg); border:1px solid var(--fg);
+        padding:.5rem .8rem; font-size:.9rem; text-decoration:none; }
+.skip:focus { left:.5rem; top:.5rem; }
+.here-panel { position:fixed; top:46px; left:clamp(.2rem,1vw,1rem); z-index:19;
+  width:min(32rem, calc(100vw - .4rem)); max-height:calc(100vh - 54px); overflow:auto;
+  padding:.7rem .9rem .9rem; border:1px solid var(--line); --k:var(--line-strong);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-size:.9rem; line-height:1.4;
+  background:
+    linear-gradient(var(--k),var(--k)) left top / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) left top / 3px 8px no-repeat,
+    linear-gradient(var(--k),var(--k)) right top / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) right top / 3px 8px no-repeat,
+    linear-gradient(var(--k),var(--k)) left bottom / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) left bottom / 3px 8px no-repeat,
+    linear-gradient(var(--k),var(--k)) right bottom / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) right bottom / 3px 8px no-repeat,
+    color-mix(in srgb, var(--bg) 97%, transparent); }
+.here-panel .tools { display:flex; flex-wrap:wrap; gap:.3rem .4rem; align-items:center;
+  margin-bottom:.6rem; }
+.tool, .segb { font:inherit; font-size:.88rem; color:var(--fg); background:none;
+  border:1px solid var(--line-strong); padding:0 .6rem; min-height:30px;
+  display:inline-flex; align-items:center; text-decoration:none; cursor:pointer; white-space:nowrap; }
+.tool:hover, .segb:hover, .nav a:hover, .here-panel .here-body a:hover { background:var(--bg3); }
+.segb[aria-pressed="true"] { background:var(--select); border-color:var(--accent); font-weight:700; }
+.tool, .segb, .bar a, .bar button, .nav a, .here-panel a { transition:background-color .08s; }
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+main a { text-decoration:underline; text-decoration-color:var(--box-rule);
+  text-underline-offset:2px; }
+main a:hover { background:var(--box-bg); text-decoration-color:var(--link); }
+main .toc a, main .toc-full a, main .here-body a { text-decoration:none; }
+main .toc a:hover, main .toc-full a:hover { background:var(--box-bg); text-decoration:underline; }
+.setbox { margin:0 0 .6rem; }
+.setrow { display:flex; flex-wrap:wrap; gap:.4rem .5rem; align-items:center; margin:.35rem 0; }
+.setlbl { min-width:4.2rem; font-size:.82rem; font-weight:700; }
+.seg { display:inline-flex; flex-wrap:wrap; gap:.25rem; }
+.col { display:inline-flex; align-items:center; gap:.3rem; }
+.col input[type=color] { width:2rem; height:1.4rem; padding:0; border:1px solid var(--line-strong);
+  background:none; cursor:pointer; }
+.setnote { margin:.5rem 0 0; font-size:.82rem; }
+.here-panel .ver { font-size:.82rem; color:var(--muted); padding:.2rem .45rem .2rem 0;
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; white-space:nowrap; }
+.demo pre, .demo pre code {
+  white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+.demo > .demo-body { overflow-x:visible; }
+.plink {
+  margin-left: .4em; font-weight: 400; text-decoration: none;
+  color: var(--muted, #888); opacity: 0;
+}
+h3:hover > .plink, h4:hover > .plink,
+h3 > .plink:focus, h4 > .plink:focus { opacity: 1; }
+@media (hover: none) { .plink { opacity: .45; } }
+.searchbox { margin:.6em 0 0; }
+.searchbox input[type=search] {
+  width: 100%; padding: .45em .6em; font: inherit;
+  border: 1px solid var(--line-strong);
+  background: var(--bg); color: var(--fg);
+}
+.search-hint { color: var(--muted, #777); font-size: .85em; margin:.3em 0 0; }
+.search-results { list-style: none; padding: 0; margin: .5em 0 0; }
+.search-results li { margin: .15em 0; }
+.search-results .where { color: var(--muted, #777); font-size: .85em; margin-left: .4em; }
+@media (max-width: 900px), (orientation: portrait) {
+  :root:not([data-layout="desktop"]) .bar .place .cur { display:none; }
+  :root:not([data-layout="desktop"]) .bar .back,
+  :root:not([data-layout="desktop"]) .bar .bar-nav .nb { min-height:40px; padding:0 .5rem; }
+}
+@media (max-width: 480px) {
+  :root:not([data-layout="desktop"]) .bar .bar-nav .prev .lbl,
+  :root:not([data-layout="desktop"]) .bar .bar-nav .next .lbl { display:none; }
+  :root:not([data-layout="desktop"]) .bar .bar-nav .nb { min-width:44px; justify-content:center; }
+  :root:not([data-layout="desktop"]) .bar { gap:.2rem; }
+}
+:root[data-layout="mobile"] .bar .place .cur { display:none; }
+:root[data-layout="mobile"] .bar .back, :root[data-layout="mobile"] .bar .bar-nav .nb { min-height:40px; padding:0 .5rem; }
+:root[data-layout="mobile"] main .wrap { max-width:34rem; }
+@media (pointer: coarse), (max-width: 900px) {
+  .bar .menu-btn { min-width:44px; min-height:44px; }
+  .tool, .segb { min-height:38px; }
+}
+@media print { .bar, .here-panel { display:none; } }
+
+body { font-family:"Doc Serif","Noto Serif",Georgia,serif; }
+h1,h2,h3,h4,.bar,.dev-label,.toc-part,.cover-meta,.badge,
+.colophon-meta dt { font-family:"Doc Sans","Noto Sans",system-ui,sans-serif; }
+pre,code,kbd { font-family:"Doc Mono","D2Coding",ui-monospace,SFMono-Regular,Menlo,monospace; }
+</style>
+<script>(function(){try{var L=localStorage,o='rp-read';if(o&&o!=='doc-read'&&L.getItem(o)!==null&&L.getItem('doc-read')===null){var v=JSON.parse(L.getItem(o)||'{}');delete v.width;L.setItem('doc-read',JSON.stringify(v));L.removeItem(o);}var s=JSON.parse(L.getItem('doc-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width==='fit')r.setAttribute('data-measure','fit');if(s.layout==='desktop'||s.layout==='mobile')r.setAttribute('data-layout',s.layout);if(s.layout==='desktop'){var m=document.querySelector('meta[name=viewport]');if(m)m.setAttribute('content','width=1100');}}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><button class="menu-btn" id="set-open" type="button" aria-expanded="false" aria-controls="here-panel" aria-label="Menu" title="Menu">☰</button><a class="back" href="index.html" title="Back">← <span class="lbl">Back</span></a><span class="place"><strong><a href="index.html">rubrapack Manual</a></strong><span class="cur"> › ch. 17</span></span><span class="bar-nav"><a class="nb prev" href="tutorial-16-signing.html">‹ <span class="lbl">Prev</span></a><a class="nb toc" href="index.html"><span class="lbl">TOC</span></a><a class="nb next" href="tutorial-18-checking-and-looking-inside.html"><span class="lbl">Next</span> ›</a></span></div><div id="here-panel" class="here-panel" hidden><div class="setbox" id="setbox"><div class="setrow"><span class="setlbl">Language</span><span class="seg"><a class="segb" href="../ko/">한국어</a></span></div><div class="setrow"><span class="setlbl">Text width</span><span class="seg" id="s-width"><button type="button" class="segb" data-width="960">960</button><button type="button" class="segb" data-width="fit">Fit the window</button></span></div><div class="setrow"><span class="setlbl">Layout</span><span class="seg" id="s-layout"><button type="button" class="segb" data-layout="auto">Auto</button><button type="button" class="segb" data-layout="desktop">PC</button><button type="button" class="segb" data-layout="mobile">Mobile</button></span></div><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="tools"><span class="ver">v0.63.0</span><a class="tool" href="toc.html">▤ Detailed contents</a><a class="tool" href="https://github.com/rubidus-api/rubrapack/releases/download/v0.63.0/rubrapack-manual-0.63.0-en.pdf">⤓ PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">⌂ All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">≡ All repos</a></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#msi-or-msix"><span class="tf-no">17.1</span>MSI or MSIX?</a><a class="lv3" href="#the-folder"><span class="tf-no">17.2</span>The folder</a><a class="lv3" href="#the-source"><span class="tf-no">17.3</span>The source</a><a class="lv3" href="#the-packages-identity-msix"><span class="tf-no">17.4</span>The package&#x27;s identity: [msix]</a><a class="lv3" href="#the-application-msix-appid"><span class="tf-no">17.5</span>The application: [msix-app.ID]</a><a class="lv4" href="#names-in-several-languages-logos-in-several-sizes"><span class="tf-no"></span>Names in several languages, logos in several sizes</a><a class="lv3" href="#extras-msix-extensionid"><span class="tf-no">17.6</span>Extras: [msix-extension.ID]</a><a class="lv3" href="#what-the-package-asks-for-capabilities-and-dependencies"><span class="tf-no">17.7</span>What the package asks for: capabilities and dependencies</a><a class="lv3" href="#optional-and-modification-packages"><span class="tf-no">17.8</span>Optional and modification packages</a><a class="lv3" href="#a-program-that-needs-fixes-the-psf"><span class="tf-no">17.9</span>A program that needs fixes: the PSF</a><a class="lv3" href="#what-the-other-tables-become"><span class="tf-no">17.10</span>What the other tables become</a><a class="lv3" href="#building-for-testing---unsigned-test"><span class="tf-no">17.11</span>Building for testing: --unsigned-test</a><a class="lv3" href="#signing-it"><span class="tf-no">17.12</span>Signing it</a><a class="lv3" href="#all-architectures-in-one-file-a-bundle"><span class="tf-no">17.13</span>All architectures in one file: a bundle</a><a class="lv3" href="#updates-from-a-web-site-appinstaller"><span class="tf-no">17.14</span>Updates from a web site: .appinstaller</a><a class="lv3" href="#compression"><span class="tf-no">17.15</span>Compression</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">17.16</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2>17 MSIX packages and bundles</h2><p>Goal: build Hello as an MSIX package too - the newer package format of Windows - from the same source, then as one bundle that holds all three architectures.</p><h3 id="msi-or-msix">17.1 MSI or MSIX?<a class="plink" href="#msi-or-msix" aria-label="Link to this section" title="Link to this section">#</a></h3><figure class="tbl"><div class="tblwrap"><table><tr><th></th><th>MSI (<code>.​msi</code>)</th><th>MSIX (<code>.​msix</code>)</th></tr><tr><td>Installs</td><td>anywhere the package says, and changes the computer as told</td><td>into a sealed folder Windows owns; files and registry the app writes are kept apart</td></tr><tr><td>Removal</td><td>as clean as the package makes it</td><td>always complete: nothing is left behind</td></tr><tr><td>Signature</td><td>recommended</td><td><strong>required</strong>: Windows does not install an unsigned MSIX (except for testing, below)</td></tr><tr><td>Can do</td><td>everything in this tutorial</td><td>files, shortcuts, file types, registry, INI files, fonts, services, a command-line alias, a start-at-sign-in task, environment variables for the application's own processes</td></tr><tr><td>Cannot do</td><td>-</td><td>custom actions, machine-wide environment variables, permissions, conditions, dialogs</td></tr></table></div></figure><p>Many products ship both. rubrapack builds either from one source: the output's extension decides.</p><h3 id="the-folder">17.2 The folder<a class="plink" href="#the-folder" aria-label="Link to this section" title="Link to this section">#</a></h3><p>Three logos go next to the source, in <code>assets\</code>: PNG pictures of exactly 150x150, 44x44 and 50x50 pixels. The Start menu and the Settings app show them. Without them the package gets plain one-colour logos - give all three or none.</p><pre><code data-lang>C:\work\hello\
+    assets\
+        Square150x150.png
+        Square44x44.png
+        StoreLogo.png
+    dist\
+        x64\hello.exe
+        x86\hello.exe
+        arm64\hello.exe
+        docs\guide.txt
+    hello.toml</code></pre><h3 id="the-source">17.3 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3><pre><code data-lang="toml"><em><span class="tok-c">#</span></em><em><span class="tok-c"> tutorial 17: hello.toml</span></em>
+format <span class="tok-x">=</span> <span class="tok-n">1</span>
+
+<span class="tok-x">[</span>package<span class="tok-x">]</span>
+name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Hello</span><span class="tok-s">"</span>
+manufacturer <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Example Software</span><span class="tok-s">"</span>
+version <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">$(VERSION)</span><span class="tok-s">"</span>
+arch <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">x64</span><span class="tok-s">"</span>
+upgrade-code <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}</span><span class="tok-s">"</span>
+upgrade-code-x86 <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">{7D1C2B3A-4E5F-4061-9728-3A4B5C6D7E8F}</span><span class="tok-s">"</span>
+upgrade-code-arm64 <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">{0E9F8D7C-6B5A-4948-8372-6150F4E3D2C1}</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>define<span class="tok-x">]</span>
+VERSION <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">2.1.0</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>msix<span class="tok-x">]</span>
+identity-name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">ExampleSoftware.Hello</span><span class="tok-s">"</span>
+publisher <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">CN=Example Software</span><span class="tok-s">"</span>
+publisher-display-name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Example Software</span><span class="tok-s">"</span>
+min-version <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">10.0.17763.0</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>msix-app<span class="tok-x">.</span>Hello<span class="tok-x">]</span>
+executable <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Hello</span><span class="tok-s">"</span>
+display-name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Hello</span><span class="tok-s">"</span>
+description <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Says hello.</span><span class="tok-s">"</span>
+logo-150 <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">assets/Square150x150.png</span><span class="tok-s">"</span>
+logo-44 <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">assets/Square44x44.png</span><span class="tok-s">"</span>
+store-logo <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">assets/StoreLogo.png</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>msix-extension<span class="tok-x">.</span>Command<span class="tok-x">]</span>
+kind <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">alias</span><span class="tok-s">"</span>
+alias <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">hello.exe</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>msix-extension<span class="tok-x">.</span>AtSignIn<span class="tok-x">]</span>
+kind <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">startup-task</span><span class="tok-s">"</span>
+display-name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Hello</span><span class="tok-s">"</span>
+enabled <span class="tok-x">=</span> <span class="tok-n">false</span>
+
+<span class="tok-x">[</span>msix-extension<span class="tok-x">.</span>Web<span class="tok-x">]</span>
+kind <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">firewall</span><span class="tok-s">"</span>
+direction <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">in</span><span class="tok-s">"</span>
+protocol <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">tcp</span><span class="tok-s">"</span>
+ports <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">8080</span><span class="tok-s">"</span>
+profile <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">private</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>dir<span class="tok-x">.</span>INSTALLDIR<span class="tok-x">]</span>
+path <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">$(ProgramFiles)/Hello</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>file<span class="tok-x">.</span>Hello<span class="tok-x">]</span>
+dir <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">INSTALLDIR</span><span class="tok-s">"</span>
+source <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">dist/$(ARCH)/hello.exe</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>files<span class="tok-x">.</span>DocFiles<span class="tok-x">]</span>
+dir <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">INSTALLDIR</span><span class="tok-s">"</span>
+glob <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">dist/docs/**</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>shortcut<span class="tok-x">.</span>StartMenu<span class="tok-x">]</span>
+dir <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Programs</span><span class="tok-s">"</span>
+name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Hello</span><span class="tok-s">"</span>
+target <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">file:Hello</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>assoc<span class="tok-x">.</span>HelloDoc<span class="tok-x">]</span>
+extension <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">.hello</span><span class="tok-s">"</span>
+prog-id <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">ExampleSoftware.HelloDocument</span><span class="tok-s">"</span>
+description <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Hello document</span><span class="tok-s">"</span>
+target <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">file:Hello</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>registry<span class="tok-x">.</span>Greeting<span class="tok-x">]</span>
+root <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">HKMU</span><span class="tok-s">"</span>
+key <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Software</span><span class="tok-n">\\</span><span class="tok-s">Example Software</span><span class="tok-n">\\</span><span class="tok-s">Hello</span><span class="tok-s">"</span>
+name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Greeting</span><span class="tok-s">"</span>
+value <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Hello</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>env<span class="tok-x">.</span>HelloHome<span class="tok-x">]</span>
+name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">HELLO_HOME</span><span class="tok-s">"</span>
+value <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">[INSTALLDIR]</span><span class="tok-s">"</span>
+msi-only <span class="tok-x">=</span> <span class="tok-n">true</span></code></pre><h3 id="the-packages-identity-msix">17.4 The package's identity: <code>[msix]</code><a class="plink" href="#the-packages-identity-msix" aria-label="Link to this section" title="Link to this section">#</a></h3><figure class="tbl"><div class="tblwrap"><table><tr><th>Key</th><th>Meaning</th></tr><tr><td><code>identity-​name</code></td><td>the package's name for Windows, 3-50 characters of <code>A-​Z a-​z 0-​9 . -</code>; by custom <code>Company.​Product</code>. Like the upgrade code of an MSI it must never change: a new version with the same name and publisher replaces the old one.</td></tr><tr><td><code>publisher</code></td><td>the <em>subject</em> of the certificate you will sign with, written as Windows writes it (next section)</td></tr><tr><td><code>publisher-​display-​name</code></td><td>the publisher's name people see; the default is <code>[package] manufacturer</code></td></tr><tr><td><code>min-​version</code></td><td>the oldest Windows it installs on, as <code>10.​0.​&lt;build>.​0</code>; the default <code>10.​0.​17763.​0</code> is Windows 10 version 1809</td></tr></table></div></figure><p>The version is <code>[package] version</code> with a fourth part: <code>2.1.0</code> becomes <code>2.1.0.0</code>.</p><h3 id="the-application-msix-appid">17.5 The application: <code>[msix-app.ID]</code><a class="plink" href="#the-application-msix-appid" aria-label="Link to this section" title="Link to this section">#</a></h3><p>An MSIX lists the <em>applications</em> it contains - the entries in the Start menu. <code>executable</code> names the <code>[file.*]</code> that starts it; the folder of that file (here <code>INSTALLDIR</code>) becomes the package's own folder. <code>display-name</code> and <code>description</code> default to the package's name. Several <code>[msix-app.*]</code> tables give several entries.</p><h4 id="names-in-several-languages-logos-in-several-sizes">Names in several languages, logos in several sizes<a class="plink" href="#names-in-several-languages-logos-in-several-sizes" aria-label="Link to this section" title="Link to this section">#</a></h4><p><code>display-name-ko = "헬로"</code> (and <code>description-ko</code>, and in <code>[msix]</code> <code>display-name-ko</code> and <code>publisher-display-name-ko</code> for the package) gives a name in another language; Windows shows the one that fits the user's language, and the text without a suffix everywhere else. For a logo, put sharper versions next to it - <code>Square44x44.scale-200.png</code> (88x88) beside <code>Square44x44.png</code>, with <code>scale-125</code>, <code>-150</code> and <code>-400</code> as you like - and screens set to 200% show those. rubrapack puts both into the package's <code>resources.pri</code>, the index Windows looks names and files up in, and writes it only when a package has them.</p><h3 id="extras-msix-extensionid">17.6 Extras: <code>[msix-extension.ID]</code><a class="plink" href="#extras-msix-extensionid" aria-label="Link to this section" title="Link to this section">#</a></h3><ul><li><code>kind = "alias"</code>: typing <code>hello.exe</code> in a console starts the application, from any folder - the MSIX way of putting a program on the <code>PATH</code>.</li><li><code>kind = "startup-task"</code>: the application starts when the user signs in, once it has been run once. <code>enabled = false</code> leaves it off until the user turns it on in Task Manager's Startup apps, which shows <code>display-name</code>. <code>task-id</code> names the task for Windows; the default is the table's ID (here <code>AtSignIn</code>, as the manifest below shows).</li><li><code>kind = "firewall"</code>: a Windows Firewall rule that exists while the package is installed - here incoming TCP connections on port 8080 to Hello, on private networks. <code>direction</code> is <code>in</code> or <code>out</code>, <code>protocol</code> <code>tcp</code> or <code>udp</code>, <code>ports</code> one port or a range like <code>8000-8100</code>, <code>profile</code> <code>all</code> (the default), <code>domain</code>, <code>private</code> or <code>public</code>; <code>file = "file:ID"</code> names another program of the package.</li><li><code>kind = "com-server"</code>, <code>"toast"</code> and <code>"context-menu"</code> register COM classes: a class your program or a DLL serves (<code>file</code>, <code>class = "{GUID}"</code>, <code>args</code>, <code>threading</code> for a DLL), the class Windows starts the program as when the user clicks one of its notifications, and an Explorer context menu verb for some file <code>types</code> (a DLL with the <code>verb</code>). The Reference ("MSIX only") has an example of each.</li><li><code>kind = "app-extension"</code> and <code>"app-extension-host"</code>, <code>"app-service"</code>, <code>"share-target"</code> and <code>"autoplay"</code> declare what Windows offers other apps and the user: a plug-in of a named category and the application that loads such plug-ins, a service other apps call by name, a place in the Share window for some file <code>types</code> or data <code>formats</code>, and an entry in the AutoPlay choices when a card or device is connected. An extension has a <code>name</code> (its category), an <code>extension-id</code> and a <code>public-folder</code> of files the host may read; a host lists <code>names</code>; a service has a <code>name</code>, an <code>entry-point</code> (the class that serves it) and <code>multiple-instances</code>; AutoPlay takes <code>content-events</code> (volumes such as a camera card) and <code>device-events</code> (a device, handled by a COM <code>class</code>). The program does the work when it is called; the Reference has an example of each.</li></ul><p>With several <code>[msix-app.*]</code> tables, <code>app = "Hello"</code> says which application an extension belongs to; the default is the first. An MSI build leaves these tables out.</p><h3 id="what-the-package-asks-for-capabilities-and-dependencies">17.7 What the package asks for: capabilities and dependencies<a class="plink" href="#what-the-package-asks-for-capabilities-and-dependencies" aria-label="Link to this section" title="Link to this section">#</a></h3><p>An MSIX application asks Windows for what it uses beyond running as a desktop program, and names the framework packages it needs:</p><pre><code data-lang="toml"><span class="tok-x">[</span>msix<span class="tok-x">]</span>
+identity-name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">ExampleSoftware.Hello</span><span class="tok-s">"</span>
+publisher <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">CN=Example Software, O=Example Software, C=KR</span><span class="tok-s">"</span>
+capabilities <span class="tok-x">=</span> <span class="tok-x">[</span><span class="tok-s">"</span><span class="tok-s">internetClient</span><span class="tok-s">"</span><span class="tok-x">,</span> <span class="tok-s">"</span><span class="tok-s">allowElevation</span><span class="tok-s">"</span><span class="tok-x">]</span>
+
+<span class="tok-x">[</span>msix-dependency<span class="tok-x">.</span>VCLibs<span class="tok-x">]</span>
+name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">Microsoft.VCLibs.140.00.UWPDesktop</span><span class="tok-s">"</span>
+publisher <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US</span><span class="tok-s">"</span>
+min-version <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">14.0.24217.0</span><span class="tok-s">"</span>
+
+<span class="tok-x">[</span>msix-app<span class="tok-x">.</span>Helper<span class="tok-x">]</span>
+executable <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">HelperExe</span><span class="tok-s">"</span>
+hidden <span class="tok-x">=</span> <span class="tok-n">true</span>                  <em><span class="tok-c">#</span></em><em><span class="tok-c"> no Start menu entry</span></em>
+background-color <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">#1E3A5F</span><span class="tok-s">"</span>   <em><span class="tok-c">#</span></em><em><span class="tok-c"> the tile's colour</span></em></code></pre><ul><li><code>capabilities</code> lists names such as <code>internetClient</code>, <code>documentsLibrary</code>, <code>webcam</code> or <code>allowElevation</code>; rubrapack writes each one as the manifest wants it. The Reference lists them.</li><li>A program built with Visual C++ that does not carry its runtime needs the VCLibs framework: <code>[msix-dependency.VCLibs]</code> makes Windows require it (from the Microsoft Store it is installed with the application).</li><li>An application that must write into its own install folder or to <code>HKCU</code> for real can turn the package's write virtualization off: <code>file-system-virtualization = false</code>, <code>registry-virtualization = false</code> (Windows 10 1903 and later).</li></ul><h3 id="optional-and-modification-packages">17.8 Optional and modification packages<a class="plink" href="#optional-and-modification-packages" aria-label="Link to this section" title="Link to this section">#</a></h3><p>A package can belong to another one. An <em>optional package</em> adds content - more levels, a plug-in - to a main package, and installs only where that package is:</p><pre><code data-lang="toml"><span class="tok-x">[</span>msix<span class="tok-x">]</span>
+identity-name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">ExampleSoftware.HelloExtras</span><span class="tok-s">"</span>
+publisher <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">CN=Example Software, O=Example Software, C=KR</span><span class="tok-s">"</span>
+main-package <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">ExampleSoftware.Hello</span><span class="tok-s">"</span></code></pre><p>A <em>modification package</em> changes how an installed application is set up - an enterprise's settings file and registry values - without touching the application's own package:</p><pre><code data-lang="toml"><span class="tok-x">[</span>msix<span class="tok-x">]</span>
+identity-name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">ExampleSoftware.HelloSiteSettings</span><span class="tok-s">"</span>
+publisher <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">CN=Example Software, O=Example Software, C=KR</span><span class="tok-s">"</span>
+main-package <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">ExampleSoftware.Hello</span><span class="tok-s">"</span>
+modification <span class="tok-x">=</span> <span class="tok-n">true</span>
+min-version <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">10.0.18362.0</span><span class="tok-s">"</span></code></pre><p>Neither needs <code>[msix-app.*]</code> tables; an optional package's files go to its own folder (the dir <code>INSTALLDIR</code>), a modification package's into the virtual file system, where the main application sees them. <code>main-publisher</code> names the main package's publisher when it is someone else's.</p><p>A <em>framework package</em> is the other way round: shared files that several packages depend on. It has no applications, capabilities or dependencies of its own; each package that uses it names it in an <code>[msix-dependency.*]</code> table:</p><pre><code data-lang="toml"><span class="tok-x">[</span>msix<span class="tok-x">]</span>
+identity-name <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">ExampleSoftware.Runtime</span><span class="tok-s">"</span>
+publisher <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">CN=Example Software, O=Example Software, C=KR</span><span class="tok-s">"</span>
+framework <span class="tok-x">=</span> <span class="tok-n">true</span></code></pre><p>Packages of different sources can also share one container - an application and the add-ons an IT department packaged for it, which then see each other's files and settings. <code>rubrapack container ContosoSuite contoso.msix contoso-addons.msix -o suite.xml</code> writes the definition, and <code>Add-AppSharedPackageContainer suite.xml</code> (as an administrator) deploys it.</p><p>A program that keeps its own installer can still have package identity - for an alias, a share target, an app extension: <code>external-location = true</code> (with <code>min-version = "10.0.19041.0"</code>) builds a package that holds only the manifest, and the installer registers it with <code>Add-AppxPackage -Path &lt;package> -ExternalLocation &lt;the program's folder></code>.</p><h3 id="a-program-that-needs-fixes-the-psf">17.9 A program that needs fixes: the PSF<a class="plink" href="#a-program-that-needs-fixes-the-psf" aria-label="Link to this section" title="Link to this section">#</a></h3><p>Some programs do not run as they should inside an MSIX: they write a log beside themselves, or take their own folder for the working directory. Microsoft's <em>Package Support Framework</em> fixes such things without changing the program. Unpack its NuGet package (<code>Microsoft.PackageSupportFramework</code>, the <code>bin</code> folder), write its <code>config.json</code>, and name both:</p><pre><code data-lang="toml"><span class="tok-x">[</span>msix-psf<span class="tok-x">]</span>
+files <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">psf/bin</span><span class="tok-s">"</span>            <em><span class="tok-c">#</span></em><em><span class="tok-c"> PsfLauncher64.exe, PsfRuntime64.dll, the fixups</span></em>
+config <span class="tok-x">=</span> <span class="tok-s">"</span><span class="tok-s">psf/config.json</span><span class="tok-s">"</span>   <em><span class="tok-c">#</span></em><em><span class="tok-c"> "applications": [{ "id": "Hello", "executable": "hello.exe", ... }]</span></em></code></pre><p>The application then starts through <code>PsfLauncher64.exe</code> (<code>launcher</code> names another one), which applies the fixups <code>config.json</code> lists and starts <code>hello.exe</code>.</p><h3 id="what-the-other-tables-become">17.10 What the other tables become<a class="plink" href="#what-the-other-tables-become" aria-label="Link to this section" title="Link to this section">#</a></h3><ul><li><code>[shortcut.StartMenu]</code> in <code>Programs</code> to the application's executable <em>is</em> the application's Start menu entry. A shortcut on the <code>Desktop</code> also works, from <code>min-version = "10.0.19645.0"</code> on. Shortcuts elsewhere, with arguments or with an <code>icon</code>, are MSI only (<code>RP1613</code>).</li><li><code>[assoc.HelloDoc]</code> becomes a file type association of the application; the application's logo stands for the file type.</li><li><code>[registry.Greeting]</code> goes into the package's <em>virtual registry</em>: the application sees the value as if it were in the real registry, while the computer's registry stays untouched. Only keys under <code>Software</code> can go there (<code>RP1612</code>).</li><li>A <code>[service.*]</code> (chapter 12) becomes a packaged service: the same name, start and account, from Windows 10 version 2004 on (<code>min-version = "10.0.19041.0"</code>); it goes when the package goes.</li><li><code>[ini.*]</code> becomes an INI file in the package, written when the package is built.</li><li><code>[env.HelloHome]</code>: an MSIX cannot change the computer's environment. What it can do is give the variables to the application's own processes: the application then starts through a small launcher of rubrapack's (<code>rubrapack\Hello.exe</code> in the package), which sets them and starts <code>hello.exe</code>. <code>HELLO_HOME</code> is meant for other programs too, so this source keeps it for the MSI with <code>msi-only = true</code>; without that line the MSIX would give it to Hello alone.</li></ul><p><code>msi-only = true</code> keeps a table in the MSI and leaves it out of the MSIX. What an MSIX cannot hold at all - a <code>[require.*]</code>, an <code>[action.*]</code> - stops the build until you say what you want:</p><pre><code data-lang>C:\work\hello> rubrapack build hello.toml -o hello.msix --unsigned-test
+hello.toml:80:1: error[RP1605]: [require.Win81] cannot go into an MSIX; add msi-only = true to build the MSIX without it</code></pre><p>rubrapack never drops something silently.</p><p>Features, properties, dialogs and <code>[arp]</code> concern Windows Installer only and are not used. <code>rubrapack lint hello.toml --target msix</code> checks a source for MSIX without building it.</p><h3 id="building-for-testing---unsigned-test">17.11 Building for testing: <code>--unsigned-test</code><a class="plink" href="#building-for-testing---unsigned-test" aria-label="Link to this section" title="Link to this section">#</a></h3><pre><code data-lang>C:\work\hello> rubrapack build hello.toml -o hello.msix --unsigned-test
+C:\work\hello> rubrapack build hello.toml -o hello.msi</code></pre><p>Windows installs an unsigned MSIX only when the package says it is meant for testing and the installer says it accepts that. <code>--unsigned-test</code> adds that mark (it changes the publisher, so the package is a different package from the signed one). Install it in PowerShell, as administrator because it contains a program:</p><pre><code data-lang>PS C:\work\hello> Add-AppxPackage -Path hello.msix -AllowUnsigned
+PS C:\work\hello> hello.exe
+PS C:\work\hello> Get-AppxPackage ExampleSoftware.Hello | Remove-AppxPackage</code></pre><p>Such a package is for your own test computer only.</p><h3 id="signing-it">17.12 Signing it<a class="plink" href="#signing-it" aria-label="Link to this section" title="Link to this section">#</a></h3><p>For people to install it, sign it (chapter 16) - the MSIX's <code>publisher</code> must be exactly the certificate's subject. Otherwise signing stops and prints the subject to use:</p><pre><code data-lang>C:\work\hello> rubrapack build hello.toml -o hello.msix --key signer.pfx --pass-env SIGN_PASS
+rubrapack: error[RP0011]: 'hello.msix': the package's publisher "CN=Example Software" is not the certificate's subject "O=Example Software Ltd, CN=Example Software"; set [msix] publisher to it (without --unsigned-test)</code></pre><p>Copy that subject into <code>publisher</code>. Windows writes a subject's parts from the last to the first, so it differs from how some tools show it.</p><p>A signed package that holds programs also carries <code>AppxMetadata\CodeIntegrity.cat</code>, a catalog of their hashes signed with the same key, as Windows' own signer adds it. It is what Windows' code integrity checks the package's unsigned programs against where only signed code may run (S mode, application control); rubrapack's catalog was checked against Windows' own hashes and <code>signtool</code>, not on such a device.</p><h3 id="all-architectures-in-one-file-a-bundle">17.13 All architectures in one file: a bundle<a class="plink" href="#all-architectures-in-one-file-a-bundle" aria-label="Link to this section" title="Link to this section">#</a></h3><p>An output ending in <code>.msixbundle</code> builds the source once for each architecture of <code>--arch</code>, as in chapter 15, and puts the packages in one file:</p><pre><code data-lang>C:\work\hello> rubrapack build hello.toml -o hello.msixbundle --arch x64,x86,arm64 --unsigned-test
+C:\work\hello> rubrapack inspect hello.msixbundle --files
+AppxMetadata\AppxBundleManifest.xml 1616  deflate
+ExampleSoftware.Hello_2.1.0.0_x64.msix  11119 stored
+ExampleSoftware.Hello_2.1.0.0_x86.msix  11208 stored
+ExampleSoftware.Hello_2.1.0.0_arm64.msix  11119 stored</code></pre><p>Windows installs the package for its own processor from it. With <code>--key</code> the bundle and each package in it are signed. <code>--flat</code> keeps the packages out of the bundle, as files beside it, so that a later version can ship only those that changed.</p><p>When the source has names in other languages (<code>display-name-ko</code> and the like), the bundle also holds one <em>resource package</em> per language, <code>ExampleSoftware.Hello_2.1.0.0_language-ko.msix</code>, with that language's texts; the architecture packages keep only the source's own language. Windows installs the resource packages of the languages the user has set, so nobody downloads texts they never see, and a language added to Windows later is fetched with the next update. <code>language-packs = false</code> in <code>[msix]</code> keeps every language in the architecture packages instead.</p><p>For the Microsoft Store, end the output in <code>.msixupload</code> instead: Partner Center takes the bundle in that file together with each architecture's public symbols, which <code>[msix]</code> names with <code>symbols = ["bin/$(ARCH)/hello.pdb"]</code>. The Store signs the app itself, so neither <code>--key</code> nor <code>--unsigned-test</code> is needed (the latter would change the publisher).</p><h3 id="updates-from-a-web-site-appinstaller">17.14 Updates from a web site: <code>.appinstaller</code><a class="plink" href="#updates-from-a-web-site-appinstaller" aria-label="Link to this section" title="Link to this section">#</a></h3><p>Windows can keep an MSIX up to date by itself, from a web site (or a file share) you publish it on. Say where the package will be, and rubrapack writes an <em>App Installer file</em> beside it:</p><pre><code data-lang>[msix]
+...
+appinstaller-uri = "https://example.com/hello/hello.appinstaller"
+package-uri = "https://example.com/hello/hello.msixbundle"
+update-hours = 24                 # how often Windows looks for a newer version (0: at every start)</code></pre><pre><code data-lang>C:\work\hello> rubrapack build hello.toml -o hello.msixbundle --arch x64,x86,arm64 --key ...</code></pre><p>writes <code>hello.msixbundle</code> and <code>hello.appinstaller</code>. Put both at those addresses. People install from the <code>.appinstaller</code> (opening it, or <code>Add-AppxPackage -AppInstallerFile</code>), and from then on Windows checks that address when the app starts; publish the next version with its new <code>.appinstaller</code> at the same addresses and it updates itself. <code>update-prompt = true</code> asks the user first, <code>update-blocks = true</code> makes the app wait for the update, <code>update-background = true</code> also checks every eight hours in the background. App Installer takes signed packages only (chapter 16).</p><h3 id="compression">17.15 Compression<a class="plink" href="#compression" aria-label="Link to this section" title="Link to this section">#</a></h3><p>Files are compressed with deflate; pictures and other files that are compressed already are stored as they are. <code>--msix-compress store</code> stores everything, which makes the package bigger (here 11119 to 30072 bytes) but quicker to open. An MSIX holds no date or time: the same source gives the same bytes on every computer.</p><h3 id="what-happened-inside">17.16 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3><p>An MSIX is a ZIP archive. Look at its list of files:</p><pre><code data-lang>C:\work\hello> rubrapack inspect hello.msix --files
+hello.exe 17920 deflate
+guide.txt 6 deflate
+Assets\Square150x150.png  301 stored
+Assets\Square44x44.png  111 stored
+Assets\StoreLogo.png  117 stored
+Registry.dat  8192  deflate
+AppxManifest.xml  2960  deflate</code></pre><p><code>Registry.dat</code> is the virtual registry - a registry <em>hive</em> file. <code>AppxManifest.xml</code> describes the package; <code>--manifest</code> prints it:</p><pre><code data-lang>C:\work\hello> rubrapack inspect hello.msix --manifest
+...
+  &lt;Identity Name="ExampleSoftware.Hello" Publisher="CN=Example Software, OID.2.25.311729368913984317654407730594956997722=1" Version="2.1.0.0" ProcessorArchitecture="x64" />
+...
+    &lt;Application Id="Hello" Executable="hello.exe" EntryPoint="Windows.FullTrustApplication">
+...
+          &lt;uap3:FileTypeAssociation Name="examplesoftware.hellodocument" Parameters="&amp;quot;%1&amp;quot;">
+...
+          &lt;desktop:StartupTask TaskId="AtSignIn" Enabled="false" DisplayName="Hello" />
+...
+            &lt;desktop:ExecutionAlias Alias="hello.exe" />
+...
+    &lt;rescap:Capability Name="runFullTrust" /></code></pre><p>The <code>OID.2.25...=1</code> part of the publisher is the test mark <code>--unsigned-test</code> added. <code>runFullTrust</code> means the program runs like any desktop program, not in the restricted sandbox of store apps. Two more entries are in every package, though <code>--files</code> does not list them: <code>AppxBlockMap.xml</code>, the hash of every 64 KB block of every file, which is what a signature covers, and <code>[Content_Types].xml</code>, the type of each file. A signed package also has <code>AppxSignature.p7x</code>, the signature. Part IV shows the ZIP layout and the block map byte by byte.</p>
+<div class="nav"><a href="tutorial-16-signing.html">← Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-18-checking-and-looking-inside.html">Next →</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.menu-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&p&&!p.hidden){open(false);if(b)b.focus();}});document.addEventListener('click',function(e){if(p&&!p.hidden&&!p.contains(e.target)&&!(b&&b.contains(e.target)))open(false);});var bk=document.querySelector('.bar .back');if(bk)bk.addEventListener('click',function(e){if(history.length>1&&document.referrer){e.preventDefault();history.back();}});var box=document.getElementById('setbox');if(!box)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('doc-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('doc-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function paint(){var s=load();var t=s.theme||'auto',w=s.width==='fit'?'fit':'960';[].forEach.call(box.querySelectorAll('.segb[data-theme]'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});[].forEach.call(box.querySelectorAll('.segb[data-width]'),function(x){x.setAttribute('aria-pressed',x.dataset.width===w);});var ly=s.layout||'auto';[].forEach.call(box.querySelectorAll('.segb[data-layout]'),function(x){x.setAttribute('aria-pressed',x.dataset.layout===ly);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}paint();[].forEach.call(box.querySelectorAll('.segb[data-width]'),function(x){x.addEventListener('click',function(){var s=load();if(x.dataset.width==='fit'){s.width='fit';r.setAttribute('data-measure','fit');}else{delete s.width;r.removeAttribute('data-measure');}save(s);setTimeout(paint,0);});});[].forEach.call(box.querySelectorAll('.segb[data-layout]'),function(x){x.addEventListener('click',function(){var s=load(),v=x.dataset.layout;if(v==='auto'){delete s.layout;r.removeAttribute('data-layout');}else{s.layout=v;r.setAttribute('data-layout',v);}save(s);var m=document.querySelector('meta[name=viewport]');var want=v==='desktop'?'width=1100':'width=device-width, initial-scale=1';if(m&&m.getAttribute('content')!==want)location.reload();else setTimeout(paint,0);});});[].forEach.call(box.querySelectorAll('.segb[data-theme]'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

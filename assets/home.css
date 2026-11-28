@@ -1,0 +1,23 @@
+/* SPDX-License-Identifier: MIT */
+/* home.css - a project home page (tools/home.py, doc-standard DS-G11), over doc.css and its colour tokens. */
+.home-main { max-width: 60rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.home-main p { text-indent: 0; }
+.home-head { padding: 1rem 0 1.2rem; border-bottom: 1px solid var(--line); }
+.home-head h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 .4rem; border: 0; padding: 0; }
+.home-head .what { font-size: 1.2rem; font-weight: 700; margin: 0 0 .4rem; }
+.home-head .pitch { color: var(--muted); margin: 0 0 .9rem; }
+.links { display: flex; flex-wrap: wrap; gap: .5rem; }
+.links a { padding: .35rem .8rem; border: 1px solid var(--line-strong); border-radius: 4px; color: var(--link);
+  text-decoration: none; }
+.links a.primary { font-weight: 700; color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.home-main section { margin-top: 1.6rem; }
+.home-main h2 { font-size: 1.25rem; margin: 0 0 .5rem; }
+.features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 1.5rem; }
+.feature h3 { font-size: 1.05rem; margin: .4rem 0 .2rem; }
+.feature p { margin: 0; }
+.feature img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+.home-foot { margin-top: 2rem; padding-top: .8rem; border-top: 1px solid var(--line); color: var(--muted);
+  font-size: .92em; }
+:lang(ko) .home-main { word-break: keep-all; overflow-wrap: anywhere; }
+@media (max-width: 640px) { :root:not([data-layout="desktop"]) .features { grid-template-columns: 1fr; } }
+:root[data-layout="mobile"] .features { grid-template-columns: 1fr; }

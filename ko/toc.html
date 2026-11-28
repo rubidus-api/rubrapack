@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>상세 차례 — rubrapack 매뉴얼</title><style>@font-face { font-family:"Doc Serif"; src:url("../fonts/serif.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-italic.woff2") format("woff2");
+  font-weight:400; font-style:italic; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-kr.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Serif"; src:url("../fonts/serif-kr-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap;
+  unicode-range:U+0000-024F,U+2000-206F,U+20A0-20BF,U+2100-21FF,U+2190-2BFF; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans-kr.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Sans"; src:url("../fonts/sans-kr-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Mono"; src:url("../fonts/mono.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Doc Mono"; src:url("../fonts/mono-bold.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+:root { color-scheme: light dark; --bg:#fafaf8; --bg2:#f2f2f0; --bg3:#e6e6e3; --fg:#141414; --muted:#555555; --line:#c9c9c9; --line-strong:#8a8a8a; --accent:#1a4f8a; --accent-fg:#ffffff; --accent2:#96530f; --honey:#f2b04a; --honey-fg:#2b1d00; --honey-text:#855400; --honey-soft:#fbebc6; --danger:#9b1b30; --ok:#1d6e37; --warn:#855400; --select:#d4dde8;
+  --rule:var(--line); --box-bg:var(--bg2); --code-bg:var(--bg2); --box-rule:var(--line); --link:var(--accent);
+  --tok-c:#3f5b4a; --tok-k:#123c87; --tok-t:#0f5b63; --tok-s:#7a3b0a;
+  --tok-n:#8a2222; --tok-p:#6b2d8a; --tok-x:#555555; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg:#121314; --bg2:#1c1e20; --bg3:#2a2c2f; --fg:#e8e8e8; --muted:#a6a6a6; --line:#3a3d40; --line-strong:#75787c; --accent:#8ab4e8; --accent-fg:#121314; --accent2:#d4883b; --honey:#f2b04a; --honey-fg:#121314; --honey-text:#f2b04a; --honey-soft:#3b311e; --danger:#f07a8c; --ok:#7bcb95; --warn:#f2b04a; --select:#2f3d52;
+    --tok-c:#9fbfa8; --tok-k:#9fc0f0; --tok-t:#7fcbd4; --tok-s:#e0b080;
+  --tok-n:#e79a9a; --tok-p:#c79ae0; --tok-x:#a6a6a6; } }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#121314; --bg2:#1c1e20; --bg3:#2a2c2f; --fg:#e8e8e8; --muted:#a6a6a6; --line:#3a3d40; --line-strong:#75787c; --accent:#8ab4e8; --accent-fg:#121314; --accent2:#d4883b; --honey:#f2b04a; --honey-fg:#121314; --honey-text:#f2b04a; --honey-soft:#3b311e; --danger:#f07a8c; --ok:#7bcb95; --warn:#f2b04a; --select:#2f3d52;
+  --tok-c:#9fbfa8; --tok-k:#9fc0f0; --tok-t:#7fcbd4; --tok-s:#e0b080;
+  --tok-n:#e79a9a; --tok-p:#c79ae0; --tok-x:#a6a6a6; }
+:root[data-theme="light"] { color-scheme: light; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); line-height:1.75;
+       font-family:"Doc Serif","Noto Serif CJK KR","Noto Serif KR",Georgia,serif; }
+.here-head { display:flex; align-items:center; gap:.8rem; padding:.2rem 0 .5rem;
+  border-bottom:1px solid var(--rule,#ddd); margin-bottom:.5rem; }
+.here-head .sp { flex:1; }
+.here-all { margin-left:auto; font-size:.9rem; }
+.here-x { font:inherit; font-size:.9rem; cursor:pointer; background:none;
+  border:1px solid var(--line-strong); padding:.05rem .45rem;
+  color:inherit; }
+.here-body a, .tf-secs a { display:block; text-decoration:none; padding:.12rem 0;
+  line-height:1.45; }
+.here-body a:hover, .tf-secs a:hover { text-decoration:underline; }
+.here-body a.lv4, .tf-secs a.lv4 { padding-left:1.6rem; font-size:.94rem;
+  color:var(--muted,#555); }
+.tf-no { display:inline-block; min-width:3.2rem; color:var(--muted,#666);
+  font-variant-numeric:tabular-nums; }
+.toc-full .tf-ch { margin:.9rem 0 .15rem; font-weight:700; }
+.toc-full .tf-secs { margin:0 0 .5rem .2rem; border-left:2px solid var(--rule,#e2e2e2);
+  padding-left:.7rem; }
+.toc-full h4.toc-part { margin-top:1.8rem; }
+.toc a.toc-detail { font-weight:700; }
+@media print { .here-btn, .here-panel { display:none; } }
+.bar { position:sticky; top:0; z-index:20; display:flex; flex-wrap:nowrap; gap:.25rem; align-items:center;
+       min-height:44px; padding:0 clamp(.4rem,2vw,1.6rem); background:var(--bg2);
+       border-bottom:1px solid var(--line); font-size:.9rem;
+       font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.bar a { color:var(--fg); text-decoration:none; } .bar a:hover { text-decoration:none; }
+.bar .sp { display:none; }
+main { width:100%; padding:1.6rem clamp(.9rem,3vw,2.5rem) 5rem; }
+.wrap { width:100%; }
+main .wrap { max-width:960px; margin-inline:auto; }
+:root[data-measure="fit"] main .wrap { max-width:none; margin:0; }
+h1,h2,h3,h4 { font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; line-height:1.35;
+  padding-bottom:.18rem; border-bottom:1px solid var(--rule); }
+h1 { font-size:clamp(1.5rem,3.4vw,2.1rem); margin:.2rem 0 .9rem; }
+h2 { font-size:clamp(1.35rem,3vw,1.8rem); margin:0 0 .7rem; padding-bottom:.35rem;
+     border-bottom:2px solid var(--fg); }
+h3 { font-size:clamp(1.05rem,2.2vw,1.25rem); margin:1.5rem 0 .5rem;
+     padding-bottom:.22rem; border-bottom:1.5px solid var(--fg); }
+p { margin:.9rem 0; } a { color:var(--link); }
+main p { text-indent: 1em; }
+.cover p, .note p, .toc p, .float-caption, .metalist p, .memrow p,
+.colophon-meta p, li p, td p, th p, figure p, blockquote p,
+.demo-src p, .demo-out p, pre, pre p,
+.dev-label, p.dev-label { text-indent: 0; }
+.src-note { font-size: .86em; color: var(--muted, #666); }
+.src-note code { font-size: .95em; }
+sup.fnref { font-size: .72em; line-height: 0; vertical-align: super; }
+sup.fnref a { text-decoration: none; padding: 0 .1em; }
+sup.fnref a::before { content: "["; }
+sup.fnref a::after  { content: "]"; }
+.chapter-notes { margin: 3rem 0 1rem; padding-top: .9rem;
+                 border-top: 2px solid var(--rule, #333); }
+.chapter-notes h2 { font-size: 1.05rem; margin: 0 0 .6rem; }
+.chapter-notes ol { margin: 0; padding-left: 1.6em; }
+.chapter-notes li { font-size: .92em; margin: .35em 0; text-indent: 0; }
+.chapter-notes a.fnback { text-decoration: none; }
+.dev p { text-indent: 0; }
+.dev p + p { text-indent: 1em; }
+.dev p:has(> span.dev-label:first-child) { text-indent: 0; }
+.chapter-head p { text-indent: 0; }
+pre,code,kbd { font-family:"Doc Mono","D2Coding",ui-monospace,SFMono-Regular,Menlo,monospace; }
+code { background:none; padding:0; font-size:.95em; }
+pre { background:none; border:1px solid var(--fg); border-radius:0;
+      padding:.95rem 1.05rem; overflow-x:auto; line-height:1.6; font-size:.95rem;
+      margin:1.2rem 0; }
+.tok-c { color:var(--tok-c); font-style:italic; }
+.tok-k { color:var(--tok-k); font-weight:700; }
+.tok-s { color:var(--tok-s); }
+.tok-n { color:var(--tok-n); }
+.tok-t { color:var(--tok-t); font-weight:700; }
+.tok-x { color:var(--tok-x); }
+.tok-p { color:var(--tok-p); }
+pre code { background:none; padding:0; }
+.tblwrap { overflow-x:auto; text-align:center; }
+.tblwrap > table { display:inline-table; width:auto; max-width:none; margin:1.1rem 0; }
+table { border-collapse:collapse; margin:1.1rem auto; font-size:.95rem;
+        width:auto; max-width:100%; border:2px solid var(--fg);
+        table-layout:auto; }
+th, td { white-space:normal; }
+th,td { border:1px solid var(--rule); padding:.42rem .6rem; text-align:left; vertical-align:top; }
+th { background:rgba(128,128,128,.16); font-weight:700;
+     border-bottom:2px solid var(--fg);
+     font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+table tr:first-child th, table tr:first-child td { border-bottom:1px solid var(--fg); }
+ul,ol { padding-left:1.4rem; } li { margin:.3rem 0; }
+.float-list { list-style:none; padding-left:0; }
+.float-list li { margin:.12rem 0; }
+.memrow { overflow-x:auto; text-align:center; margin:1.1rem 0 .2rem; }
+.memrow table.mem { display:inline-table; border-collapse:collapse;
+  border:none; margin:0; width:auto; }
+.memrow td.cell { border:1px solid var(--fg); padding:.3rem .5rem;
+  font-family:"Doc Mono","D2Coding",ui-monospace,monospace; font-size:.9rem;
+  text-align:center; background:none; }
+.memrow td.cell.hi { border-width:2px; }
+.memrow td.addr { border:none; padding:.15rem .5rem 0; text-align:center;
+  font-family:"Doc Mono","D2Coding",ui-monospace,monospace; font-size:.82rem;
+  color:var(--muted); }
+.demo { border:1px solid var(--fg); margin:1.15rem 0; }
+.demo > .demo-head { margin:0; padding:.5rem .9rem; text-indent:0;
+  border-bottom:1px solid var(--fg); font-weight:700; font-size:.92rem; }
+.demo-src > .demo-head { font-family:"Doc Mono","D2Coding",ui-monospace,monospace; }
+.demo-in > .demo-head, .demo-out > .demo-head {
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.demo > .demo-body { padding:0; }
+.demo > .demo-body pre { border:none; border-radius:0; margin:0;
+  padding:.6rem .9rem; }
+.dev { margin:1.15rem 0; padding:0; background:none; border:none; border-radius:0; }
+.dev > .dev-label { border-left:4px solid var(--fg);
+  padding:.1rem .8rem .25rem .8rem; margin:0 0 .34rem; }
+.dev > .dev-body { border-left:2px solid var(--box-rule);
+  padding:.35rem .8rem .35rem .8rem; margin:0; }
+.dev > .dev-body > *:first-child { margin-top:0; }
+.dev > .dev-body > *:last-child { margin-bottom:0; }
+.float-caption { text-align:center; font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif;
+  font-size:.92rem; color:var(--muted); margin:.35rem 0 1.2rem; }
+figure { margin:1.2rem 0; }
+figure.tbl table { margin-bottom:.2rem; }
+figure.tbl { text-align:center; }
+.dev > p:first-child { margin-top:0; } .dev > p:last-child { margin-bottom:0; }
+.dev-label { font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+             font-size:.92rem; color:var(--muted); margin-bottom:.4rem; }
+.dev.open { border:none; border-radius:0; background:none;
+  padding:0; margin:.75rem 0; }
+.dev.open > .dev-label { margin:0 0 .34rem; padding:.1rem .8rem .25rem .8rem;
+  text-indent:0; border-left:4px solid var(--fg);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  font-size:.98rem; color:var(--fg); text-transform:none; letter-spacing:0; }
+.dev.open > .open-body { margin:0; padding:.35rem .8rem;
+  border-left:2px solid var(--box-rule); }
+.dev.open > .open-body > *:first-child { margin-top:0; }
+.dev.open > .open-body > *:last-child { margin-bottom:0; }
+.dev.open > .open-body > * { margin:.4rem 0; }
+.dev.open > .open-body > *:first-child { margin-top:0; }
+.dev.open > .open-body > *:last-child { margin-bottom:0; }
+.dev.open .open-body > ol.qlist { margin:0; padding-left:1.35rem; }
+.dev.open ol.qlist li { margin:.18rem 0; padding-left:.15rem; }
+.dev.open ol.qlist li::marker { color:var(--muted); font-weight:700; }
+.dev.open .qa-a { border:none; border-left:2px solid var(--box-rule);
+  padding:.06rem 0 .06rem .7rem; margin:.32rem 0 0; }
+.prereq .dev-label, .deepqa .dev-label, .why .dev-label,
+.organizer .dev-label, .questions .dev-label {
+  text-transform:none; letter-spacing:0; font-size:1.12rem; font-weight:700;
+  color:var(--fg); margin-bottom:.45rem; }
+.deepqa .qa-a { border-left:2px solid var(--muted); padding-left:.75rem; }
+.qa-box { border:none; margin:1.15rem 0; }
+.qa-box .dev { margin:0; border:none; border-radius:0; padding:0; background:none; }
+.qa-box .qa-q { border-left:4px solid var(--fg);
+  padding:.1rem .8rem .25rem .8rem; margin:0; }
+.qa-box .qa-a { border:none; border-left:2px solid var(--box-rule);
+  padding:.35rem .8rem; margin:.34rem 0 0; }
+.qa-box .qa-q > p, .qa-box .qa-a > p { margin:0; }
+.dev.recap { border:none; background:none; padding:0; margin:1.15rem 0; }
+.dev.recap > .dev-label { margin:0 0 .34rem; padding:.1rem .8rem .25rem .8rem;
+  text-indent:0; border-left:4px solid var(--fg);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  font-size:.95rem; color:var(--fg); }
+.dev.recap > .dev-body > p, .dev.recap > .dev-body > div:not(.demo),
+.dev.recap > .dev-body > figure { margin:.3rem 0; padding:0; }
+.dev > .dev-body > .demo { margin:.7rem 0; }
+.deepqa .qa-a { border-left:2px solid var(--muted); padding-left:.75rem; }
+.qa-q .dev-label, .qa-a .dev-label, .deepqa .qa-a .dev-label {
+  display:inline; margin-bottom:0; }
+.qa-q .dev-label + p, .qa-a .dev-label + p { display:inline; }
+.qa-q .dev-label, .qa-q .dev-label + p {
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  color:var(--fg); font-size:1rem; }
+.qa-a .dev-label { color:var(--muted); }
+.qa-a .dev-label + p { font-family:inherit; font-weight:400; }
+span.dev-label { display:inline; font-size:1rem; margin:0; }
+.dev.misconception, .dev.realcase, .dev.antipattern, .dev.mathbox,
+.dev.platform, .dev.recap {
+  border:none; border-radius:0; background:none; padding:0; margin:1.15rem 0; }
+.dev.misconception > .dev-label, .dev.realcase > .dev-label,
+.dev.antipattern > .dev-label, .dev.mathbox > .dev-label,
+.dev.platform > .dev-label, .dev.recap > .dev-label {
+  margin:0 0 .34rem; padding:.1rem .8rem .25rem .8rem; text-indent:0;
+  border-left:4px solid var(--fg);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-weight:700;
+  font-size:.95rem; color:var(--fg); }
+.dev > .dev-body > p, .dev > .dev-body > div:not(.demo),
+.dev > .dev-body > figure, .dev > .open-body > p {
+  margin:.35rem 0; padding:0; }
+.bar .menu-btn { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center;
+  min-width:38px; min-height:38px; padding:0; font:inherit; font-size:1.25rem; line-height:1;
+  color:var(--fg); background:none; border:0; cursor:pointer; text-decoration:none; }
+.bar .back, .bar .bar-nav .nb { flex:0 0 auto; display:inline-flex; align-items:center; gap:.3em;
+  min-height:32px; padding:0 .65rem; border:1px solid var(--line); background:var(--bg);
+  color:var(--fg); font-weight:600; white-space:nowrap; text-decoration:none; }
+.bar .menu-btn[aria-expanded="true"] { background:var(--bg3); }
+.bar .place { flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+  padding:0 .35rem; }
+.bar .place strong a { color:var(--honey-text); }
+.bar .place .cur { color:var(--fg); }
+.bar .bar-nav { flex:0 0 auto; display:flex; gap:.3rem; align-items:center; white-space:nowrap; }
+.bar .bar-nav .off { color:var(--muted); border-color:var(--line); opacity:.45; }
+.bar .back:hover, .bar .menu-btn:hover, .bar .bar-nav a.nb:hover, .bar .place a:hover { background:var(--bg3); }
+.dev p, .dev div, .dev ul, .dev ol, .qa-box p, .qa-box div {
+  margin-top:.4rem; margin-bottom:.4rem; }
+.dev > *:first-child, .qa-box .dev > *:first-child { margin-top:0; }
+.dev > *:last-child, .qa-box .dev > *:last-child { margin-bottom:0; }
+.dev ul, .dev ol { padding-left:1.3rem; }
+.dev li { margin:.15rem 0; }
+.dev.antipattern > .dev-label { border-left-style:solid; }
+.dev.mathbox { font-size:.95rem; }
+.note { border:1px solid var(--rule); background:none; padding:.65rem .9rem;
+        margin:0 0 1.6rem; font-size:.9rem; }
+.cover { text-align:center; margin:1.4rem 0 2rem; padding-bottom:1.2rem; }
+.cover h1 { font-size:clamp(1.9rem,5vw,2.9rem); margin:0; letter-spacing:.01em;
+            padding-bottom:0; border-bottom:none; }
+.cover p { margin:.45rem 0; }
+.cover-sub { font-size:clamp(1rem,2.2vw,1.2rem); color:var(--fg); }
+.badge { display:inline-block; margin-top:.5rem; padding:.16rem .6rem;
+         border:1px solid var(--fg); font-size:.8rem; font-weight:700;
+         font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.cover-meta { color:var(--muted); font-size:.9rem;
+              font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.cover-author { margin-top:1.1rem; font-size:1.05rem; }
+.cover-links { font-size:.87rem; }
+.cover-links a { margin:0 .6rem; }
+.cover-blurb { max-width:44rem; margin:1.7rem auto 0; font-size:.95rem; color:var(--muted); }
+.cover-blurb p { margin:.5rem 0; }
+.metalist { display:grid; grid-template-columns:max-content 1fr; gap:.35rem 1.2rem;
+  margin:.6rem 0 1rem; }
+.metalist dt { color:var(--muted); font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif;
+  font-size:.92rem; }
+.metalist dd { margin:0; }
+.colophon-meta { display:grid; grid-template-columns:max-content 1fr; gap:.35rem 1.2rem;
+                 margin:1.2rem 0 1.8rem; font-size:.93rem; }
+.colophon-meta dt { color:var(--muted);
+                    font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-size:.88rem; }
+.colophon-meta dd { margin:0; }
+.colophon { font-size:.93rem; }
+.colophon > div { margin:.9rem 0; padding-left:.9rem; border-left:1px solid var(--rule); }
+figure.fig { margin:1.6rem 0; text-align:center; }
+figure.fig img { max-width:100%; height:auto; }
+figure.fig figcaption { margin-top:.5rem; font-size:.92rem; color:var(--muted); }
+@media (prefers-color-scheme: dark) { figure.fig img { filter:invert(1) hue-rotate(180deg); } }
+:root[data-theme="dark"] figure.fig img { filter:invert(1) hue-rotate(180deg); }
+:root[data-theme="light"] figure.fig img { filter:none; }
+.toc { columns:24rem; column-gap:2.4rem; }
+.toc-part { break-inside:avoid; margin:1.1rem 0 .3rem; font-size:.95rem; letter-spacing:.02em;
+            font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.toc > .toc-part:first-child, .toc > .toc-keep:first-child > .toc-part, .toc-full > .toc-part:first-child { margin-top:0; }
+.toc-front { margin-bottom:.4rem; }
+.toc-group { padding-left:.85rem; }
+.toc-keep, .toc a { break-inside:avoid; }
+.toc a { display:block; padding:.28rem 0; text-decoration:none; }
+.toc a:hover { text-decoration:underline; }
+.nav { display:flex; gap:1rem; align-items:center; margin-top:3rem; padding-top:1rem;
+       border-top:1px solid var(--rule); font-size:.9rem;
+       font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; }
+.nav .sp { flex:1 1 auto; }
+code.style-name { font-family:"Doc Mono","D2Coding",ui-monospace,monospace;
+  font-size:.72em; color:var(--muted); background:var(--rule);
+  padding:.05em .35em; border-radius:3px; white-space:nowrap;
+  font-weight:400; letter-spacing:0; }
+.dev.open > .dev-label { padding-top:.42rem; padding-bottom:.42rem; }
+.dev.open > .open-body { padding-top:.4rem; padding-bottom:.4rem; }
+.dev.open > .open-body > p { margin:.6rem 0; }
+.dev > .dev-body { padding-top:.5rem; padding-bottom:.5rem; }
+.dev > .dev-body > p, .dev > .dev-body > div:not(.demo),
+.dev > .dev-body > figure { margin:.55rem 0; }
+main { line-height:1.85; }
+p { margin:1.15rem 0; }
+h2 { margin-top:2.4rem; }
+h3 { margin-top:2rem; }
+li { margin:.3rem 0; }
+h1, h2, h3, h4 { border-bottom-color:var(--box-rule) !important; }
+.toc { line-height:1.45; }
+.toc a { padding:.16rem 0; }
+.toc-part { margin:.85rem 0 .2rem; }
+.metalist { line-height:1.45; gap:.2rem 1.2rem; }
+.metalist dt, .metalist dd { margin:0; }
+.demo { border-color:var(--box-rule); }
+.demo > .demo-head { border-bottom-color:var(--box-rule); }
+.dev > .dev-label,
+.dev.open > .dev-label,
+.qa-box .qa-q,
+.dev.misconception > .dev-label, .dev.realcase > .dev-label,
+.dev.antipattern > .dev-label, .dev.mathbox > .dev-label,
+.dev.platform > .dev-label, .dev.recap > .dev-label {
+  border-left-color:var(--box-rule); }
+.dev > .dev-body,
+.dev > .open-body,
+.dev.open .qa-a,
+.qa-box .qa-a,
+.deepqa .qa-a { border-left-color:var(--box-rule); }
+.dev, .dev *, .qa-box, .qa-box *, .demo, .demo *,
+h1, h2, h3, h4, .colophon > div {
+  border-color:var(--box-rule); }
+.tbl table, .tbl th, .tbl td { border-color:initial; }
+.dev.open > .open-body,
+.dev.open > .qa-a,
+.dev.open .qa-a,
+.dev.deepqa .qa-a,
+.qa-box > .qa-a,
+.qa-box > .qa-q { border-left-color:var(--box-rule); }
+.bar .bar-toc { font-size:1.15em; line-height:1; text-decoration:none; }
+.dev, .dev-body, .open-body, .qa-box, .qa-q, .qa-a, .dev-label,
+.toc-full, .toc-full .tf-secs { line-height:inherit; font-size:1rem; }
+.dev > .dev-body > p, .dev > .open-body > p,
+.qa-box .qa-q > p, .qa-box .qa-a > p { margin:1.15rem 0; }
+.dev > .dev-body > *:first-child, .dev > .open-body > *:first-child,
+.qa-box .qa-q > p:first-child, .qa-box .qa-a > p:first-child { margin-top:0; }
+.dev > .dev-body > *:last-child, .dev > .open-body > *:last-child,
+.qa-box .qa-q > p:last-child, .qa-box .qa-a > p:last-child { margin-bottom:0; }
+.dev > .dev-label, .dev.open > .dev-label { font-size:.98rem; line-height:1.4; }
+h1,h2,h3,h4 { padding-bottom:.34rem; }
+h1 { margin:.2rem 0 1.3rem; }
+h2 { padding-bottom:.42rem; margin-bottom:1.15rem; }
+h3 { padding-bottom:.36rem; margin-bottom:.95rem; }
+.dev.open > .open-body > * { margin:.3rem 0; }
+.dev.open > .open-body > p { margin:.5rem 0; }
+.dev.open > .open-body > div { margin:.15rem 0; }
+.dev.open ul, .dev.open ol { margin:.3rem 0; }
+.dev.open li, .dev.open ol.qlist li { margin:0; }
+.dev.open > .open-body > *:first-child { margin-top:0; }
+.dev.open > .open-body > *:last-child { margin-bottom:0; }
+.dev.open .qa-a > p { margin:.35rem 0; }
+.dev, .dev *, .qa-box, .qa-box *, .demo, .demo *,
+h1, h2, h3, h4, .colophon > div { border-color:var(--box-rule); }
+.tbl table, .tbl th, .tbl td { border-color:initial; }
+a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible {
+  outline:2px solid var(--accent2); outline-offset:2px; }
+:target, h1, h2, h3, h4, [id] { scroll-margin-top:4.2rem; }
+.skip { position:absolute; left:-9999px; top:0; z-index:30;
+        background:var(--bg); color:var(--fg); border:1px solid var(--fg);
+        padding:.5rem .8rem; font-size:.9rem; text-decoration:none; }
+.skip:focus { left:.5rem; top:.5rem; }
+.here-panel { position:fixed; top:46px; left:clamp(.2rem,1vw,1rem); z-index:19;
+  width:min(32rem, calc(100vw - .4rem)); max-height:calc(100vh - 54px); overflow:auto;
+  padding:.7rem .9rem .9rem; border:1px solid var(--line); --k:var(--line-strong);
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; font-size:.9rem; line-height:1.4;
+  background:
+    linear-gradient(var(--k),var(--k)) left top / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) left top / 3px 8px no-repeat,
+    linear-gradient(var(--k),var(--k)) right top / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) right top / 3px 8px no-repeat,
+    linear-gradient(var(--k),var(--k)) left bottom / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) left bottom / 3px 8px no-repeat,
+    linear-gradient(var(--k),var(--k)) right bottom / 8px 3px no-repeat,
+    linear-gradient(var(--k),var(--k)) right bottom / 3px 8px no-repeat,
+    color-mix(in srgb, var(--bg) 97%, transparent); }
+.here-panel .tools { display:flex; flex-wrap:wrap; gap:.3rem .4rem; align-items:center;
+  margin-bottom:.6rem; }
+.tool, .segb { font:inherit; font-size:.88rem; color:var(--fg); background:none;
+  border:1px solid var(--line-strong); padding:0 .6rem; min-height:30px;
+  display:inline-flex; align-items:center; text-decoration:none; cursor:pointer; white-space:nowrap; }
+.tool:hover, .segb:hover, .nav a:hover, .here-panel .here-body a:hover { background:var(--bg3); }
+.segb[aria-pressed="true"] { background:var(--select); border-color:var(--accent); font-weight:700; }
+.tool, .segb, .bar a, .bar button, .nav a, .here-panel a { transition:background-color .08s; }
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+main a { text-decoration:underline; text-decoration-color:var(--box-rule);
+  text-underline-offset:2px; }
+main a:hover { background:var(--box-bg); text-decoration-color:var(--link); }
+main .toc a, main .toc-full a, main .here-body a { text-decoration:none; }
+main .toc a:hover, main .toc-full a:hover { background:var(--box-bg); text-decoration:underline; }
+.setbox { margin:0 0 .6rem; }
+.setrow { display:flex; flex-wrap:wrap; gap:.4rem .5rem; align-items:center; margin:.35rem 0; }
+.setlbl { min-width:4.2rem; font-size:.82rem; font-weight:700; }
+.seg { display:inline-flex; flex-wrap:wrap; gap:.25rem; }
+.col { display:inline-flex; align-items:center; gap:.3rem; }
+.col input[type=color] { width:2rem; height:1.4rem; padding:0; border:1px solid var(--line-strong);
+  background:none; cursor:pointer; }
+.setnote { margin:.5rem 0 0; font-size:.82rem; }
+.here-panel .ver { font-size:.82rem; color:var(--muted); padding:.2rem .45rem .2rem 0;
+  font-family:"Doc Sans","Noto Sans CJK KR",system-ui,sans-serif; white-space:nowrap; }
+.demo pre, .demo pre code {
+  white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+.demo > .demo-body { overflow-x:visible; }
+.plink {
+  margin-left: .4em; font-weight: 400; text-decoration: none;
+  color: var(--muted, #888); opacity: 0;
+}
+h3:hover > .plink, h4:hover > .plink,
+h3 > .plink:focus, h4 > .plink:focus { opacity: 1; }
+@media (hover: none) { .plink { opacity: .45; } }
+.searchbox { margin:.6em 0 0; }
+.searchbox input[type=search] {
+  width: 100%; padding: .45em .6em; font: inherit;
+  border: 1px solid var(--line-strong);
+  background: var(--bg); color: var(--fg);
+}
+.search-hint { color: var(--muted, #777); font-size: .85em; margin:.3em 0 0; }
+.search-results { list-style: none; padding: 0; margin: .5em 0 0; }
+.search-results li { margin: .15em 0; }
+.search-results .where { color: var(--muted, #777); font-size: .85em; margin-left: .4em; }
+@media (max-width: 900px), (orientation: portrait) {
+  :root:not([data-layout="desktop"]) .bar .place .cur { display:none; }
+  :root:not([data-layout="desktop"]) .bar .back,
+  :root:not([data-layout="desktop"]) .bar .bar-nav .nb { min-height:40px; padding:0 .5rem; }
+}
+@media (max-width: 480px) {
+  :root:not([data-layout="desktop"]) .bar .bar-nav .prev .lbl,
+  :root:not([data-layout="desktop"]) .bar .bar-nav .next .lbl { display:none; }
+  :root:not([data-layout="desktop"]) .bar .bar-nav .nb { min-width:44px; justify-content:center; }
+  :root:not([data-layout="desktop"]) .bar { gap:.2rem; }
+}
+:root[data-layout="mobile"] .bar .place .cur { display:none; }
+:root[data-layout="mobile"] .bar .back, :root[data-layout="mobile"] .bar .bar-nav .nb { min-height:40px; padding:0 .5rem; }
+:root[data-layout="mobile"] main .wrap { max-width:34rem; }
+@media (pointer: coarse), (max-width: 900px) {
+  .bar .menu-btn { min-width:44px; min-height:44px; }
+  .tool, .segb { min-height:38px; }
+}
+@media print { .bar, .here-panel { display:none; } }
+
+body { font-family:"Doc Serif","Noto Serif CJK KR","Noto Serif KR",Georgia,serif; }
+h1,h2,h3,h4,.bar,.dev-label,.toc-part,.cover-meta,.badge,
+.colophon-meta dt { font-family:"Doc Sans","Noto Sans CJK KR","Noto Sans KR",system-ui,sans-serif; }
+pre,code,kbd { font-family:"Doc Mono","D2Coding",ui-monospace,SFMono-Regular,Menlo,monospace; }
+</style>
+<script>(function(){try{var L=localStorage,o='rp-read';if(o&&o!=='doc-read'&&L.getItem(o)!==null&&L.getItem('doc-read')===null){var v=JSON.parse(L.getItem(o)||'{}');delete v.width;L.setItem('doc-read',JSON.stringify(v));L.removeItem(o);}var s=JSON.parse(L.getItem('doc-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width==='fit')r.setAttribute('data-measure','fit');if(s.layout==='desktop'||s.layout==='mobile')r.setAttribute('data-layout',s.layout);if(s.layout==='desktop'){var m=document.querySelector('meta[name=viewport]');if(m)m.setAttribute('content','width=1100');}}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><button class="menu-btn" id="set-open" type="button" aria-expanded="false" aria-controls="here-panel" aria-label="메뉴" title="메뉴">☰</button><a class="back" href="index.html" title="뒤로">← <span class="lbl">뒤로</span></a><span class="place"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><span class="cur"> › 상세 차례</span></span><span class="bar-nav"><a class="nb prev" href="index.html">‹ <span class="lbl">이전</span></a><a class="nb toc" href="index.html"><span class="lbl">목차</span></a><span class="nb next off" aria-hidden="true"><span class="lbl">다음</span> ›</span></span></div><div id="here-panel" class="here-panel" hidden><div class="setbox" id="setbox"><div class="setrow"><span class="setlbl">언어</span><span class="seg"><a class="segb" href="../en/">English</a></span></div><div class="setrow"><span class="setlbl">본문 폭</span><span class="seg" id="s-width"><button type="button" class="segb" data-width="960">960</button><button type="button" class="segb" data-width="fit">창에 맞춤</button></span></div><div class="setrow"><span class="setlbl">배치</span><span class="seg" id="s-layout"><button type="button" class="segb" data-layout="auto">자동</button><button type="button" class="segb" data-layout="desktop">PC</button><button type="button" class="segb" data-layout="mobile">모바일</button></span></div><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="tools"><span class="ver">v0.63.0</span><a class="tool" href="toc.html">▤ 상세 차례</a><a class="tool" href="https://github.com/rubidus-api/rubrapack/releases/download/v0.63.0/rubrapack-manual-0.63.0-ko.pdf">⤓ PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">⌂ 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">≡ 저장소 목록</a></div></div>
+<main id="content"><div class="wrap">
+<h2>상세 차례</h2><p class="note">장 아래 절까지 펼친 차례다. 찾는 자리를 바로 짚을 때 쓴다.</p><div class="searchbox"><input type="search" id="q" placeholder="제목으로 찾기" aria-label="검색" autocomplete="off"><p class="search-hint">장과 절의 제목에서 찾는다 - 본문 전체가 아니다</p><ul class="search-results" id="qr"></ul></div><div class="toc-full"><h4 class="toc-part">제1부 - 따라 하며 배우기</h4><div class="tf-ch"><a href="tutorial-01-before-you-start.html">1 시작하기 전에</a></div><div class="tf-secs"><a class="lv3" href="tutorial-01-before-you-start.html#설치-파일이-하는-일"><span class="tf-no">1.1</span>설치 파일이 하는 일</a><a class="lv3" href="tutorial-01-before-you-start.html#무엇을-쓰고-무엇이-만들어지나"><span class="tf-no">1.2</span>무엇을 쓰고 무엇이 만들어지나</a><a class="lv3" href="tutorial-01-before-you-start.html#rubrapack-받기"><span class="tf-no">1.3</span>rubrapack 받기</a><a class="lv3" href="tutorial-01-before-you-start.html#터미널을-처음-쓰는-사람을-위해"><span class="tf-no">1.4</span>터미널을 처음 쓰는 사람을 위해</a><a class="lv3" href="tutorial-01-before-you-start.html#작업-폴더"><span class="tf-no">1.5</span>작업 폴더</a><a class="lv3" href="tutorial-01-before-you-start.html#이-튜토리얼에서-쓰는-말"><span class="tf-no">1.6</span>이 튜토리얼에서 쓰는 말</a></div><div class="tf-ch"><a href="tutorial-02-a-first-installer.html">2 첫 설치 파일: 프로그램 하나</a></div><div class="tf-secs"><a class="lv3" href="tutorial-02-a-first-installer.html#원본"><span class="tf-no">2.1</span>원본</a><a class="lv3" href="tutorial-02-a-first-installer.html#빌드"><span class="tf-no">2.2</span>빌드</a><a class="lv3" href="tutorial-02-a-first-installer.html#설치하고-지우기"><span class="tf-no">2.3</span>설치하고 지우기</a><a class="lv3" href="tutorial-02-a-first-installer.html#안에서-무슨-일이-일어났나"><span class="tf-no">2.4</span>안에서 무슨 일이 일어났나</a><a class="lv3" href="tutorial-02-a-first-installer.html#빌드하지-않고-검사하기"><span class="tf-no">2.5</span>빌드하지 않고 검사하기</a><a class="lv3" href="tutorial-02-a-first-installer.html#편집기-대신-질문으로"><span class="tf-no">2.6</span>편집기 대신 질문으로</a></div><div class="tf-ch"><a href="tutorial-03-versions-and-upgrades.html">3 판과 업그레이드</a></div><div class="tf-secs"><a class="lv3" href="tutorial-03-versions-and-upgrades.html#모든-판에-원본-하나"><span class="tf-no">3.1</span>모든 판에 원본 하나</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#windows-는-두-판을-어떻게-다루나"><span class="tf-no">3.2</span>Windows 는 두 판을 어떻게 다루나</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#판-번호"><span class="tf-no">3.3</span>판 번호</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#두-식별자"><span class="tf-no">3.4</span>두 식별자</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#사용자보다-먼저-업그레이드를-확인하기"><span class="tf-no">3.5</span>사용자보다 먼저 업그레이드를 확인하기</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#작은-수정을-패치로-patch"><span class="tf-no">3.6</span>작은 수정을 패치로: patch</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#다른-도구로-만든-옛-판"><span class="tf-no">3.7</span>다른 도구로 만든 옛 판</a><a class="lv3" href="tutorial-03-versions-and-upgrades.html#제품과-함께-가는-추가-기능"><span class="tf-no">3.8</span>제품과 함께 가는 추가 기능</a></div><div class="tf-ch"><a href="tutorial-04-files-and-folders.html">4 더 많은 파일과 폴더</a></div><div class="tf-secs"><a class="lv3" href="tutorial-04-files-and-folders.html#폴더"><span class="tf-no">4.1</span>폴더</a><a class="lv3" href="tutorial-04-files-and-folders.html#원본"><span class="tf-no">4.2</span>원본</a><a class="lv3" href="tutorial-04-files-and-folders.html#폴더-dirid"><span class="tf-no">4.3</span>폴더: [dir.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#파일-하나-fileid"><span class="tf-no">4.4</span>파일 하나: [file.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#여러-파일-filesid"><span class="tf-no">4.5</span>여러 파일: [files.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#빈-폴더-folderid"><span class="tf-no">4.6</span>빈 폴더: [folder.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#치우기-removeid"><span class="tf-no">4.7</span>치우기: [remove.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#두-번째-사본-copyid"><span class="tf-no">4.8</span>두 번째 사본: [copy.ID]</a><a class="lv3" href="tutorial-04-files-and-folders.html#만날-수-있는-키-두-개-더"><span class="tf-no">4.9</span>만날 수 있는 키 두 개 더</a><a class="lv3" href="tutorial-04-files-and-folders.html#안에서-무슨-일이-일어났나"><span class="tf-no">4.10</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-05-shortcuts-icons-installed-apps.html">5 바로가기, 아이콘, &quot;설치된 앱&quot; 항목</a></div><div class="tf-secs"><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#원본"><span class="tf-no">5.1</span>원본</a><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#바로가기-shortcutid"><span class="tf-no">5.2</span>바로가기: [shortcut.ID]</a><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#설치된-앱-항목-arp"><span class="tf-no">5.3</span>&quot;설치된 앱&quot; 항목: [arp]</a><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#다른-글자로-된-이름"><span class="tf-no">5.4</span>다른 글자로 된 이름</a><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#해-보기"><span class="tf-no">5.5</span>해 보기</a><a class="lv3" href="tutorial-05-shortcuts-icons-installed-apps.html#안에서-무슨-일이-일어났나"><span class="tf-no">5.6</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-06-dialogs-and-license.html">6 대화창, 약관, 그리고 프로그램 시작하기</a></div><div class="tf-secs"><a class="lv3" href="tutorial-06-dialogs-and-license.html#원본"><span class="tf-no">6.1</span>원본</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#페이지-세트-고르기-ui"><span class="tf-no">6.2</span>페이지 세트 고르기: ui</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#약관-license"><span class="tf-no">6.3</span>약관: license</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#설치-폴더"><span class="tf-no">6.4</span>설치 폴더</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#위쪽의-그림-banner"><span class="tf-no">6.5</span>위쪽의 그림: banner</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#내-말로-ui-textid"><span class="tf-no">6.6</span>내 말로: [ui-text.ID]</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#끝에-프로그램-시작하기-launch"><span class="tf-no">6.7</span>끝에 프로그램 시작하기: launch</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#하는-일-보기-details"><span class="tf-no">6.8</span>하는 일 보기: details</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#로그-저장하기-save-log"><span class="tf-no">6.9</span>로그 저장하기: save-log</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#해-보기"><span class="tf-no">6.10</span>해 보기</a><a class="lv3" href="tutorial-06-dialogs-and-license.html#안에서-무슨-일이-일어났나"><span class="tf-no">6.11</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-07-several-languages.html">7 여러 언어</a></div><div class="tf-secs"><a class="lv3" href="tutorial-07-several-languages.html#원본"><span class="tf-no">7.1</span>원본</a><a class="lv3" href="tutorial-07-several-languages.html#언어-더하기-languages"><span class="tf-no">7.2</span>언어 더하기: languages</a><a class="lv3" href="tutorial-07-several-languages.html#언어마다-약관-license-xx"><span class="tf-no">7.3</span>언어마다 약관: license-xx</a><a class="lv3" href="tutorial-07-several-languages.html#언어마다-글-text-xx"><span class="tf-no">7.4</span>언어마다 글: text-xx</a><a class="lv3" href="tutorial-07-several-languages.html#더-많은-언어"><span class="tf-no">7.5</span>더 많은 언어</a><a class="lv3" href="tutorial-07-several-languages.html#글꼴"><span class="tf-no">7.6</span>글꼴</a><a class="lv3" href="tutorial-07-several-languages.html#번역되지-않는-것"><span class="tf-no">7.7</span>번역되지 않는 것</a><a class="lv3" href="tutorial-07-several-languages.html#해-보기"><span class="tf-no">7.8</span>해 보기</a><a class="lv3" href="tutorial-07-several-languages.html#안에서-무슨-일이-일어났나"><span class="tf-no">7.9</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-08-optional-parts.html">8 선택 구성요소: 기능과 사용자의 선택</a></div><div class="tf-secs"><a class="lv3" href="tutorial-08-optional-parts.html#기능"><span class="tf-no">8.1</span>기능</a><a class="lv3" href="tutorial-08-optional-parts.html#원본"><span class="tf-no">8.2</span>원본</a><a class="lv3" href="tutorial-08-optional-parts.html#기능-선언하기-featureid"><span class="tf-no">8.3</span>기능 선언하기: [feature.ID]</a><a class="lv3" href="tutorial-08-optional-parts.html#파일을-기능에-넣기-feature"><span class="tf-no">8.4</span>파일을 기능에 넣기: feature</a><a class="lv3" href="tutorial-08-optional-parts.html#사용자가-보는-것"><span class="tf-no">8.5</span>사용자가 보는 것</a><a class="lv3" href="tutorial-08-optional-parts.html#명령줄에서-고르기"><span class="tf-no">8.6</span>명령줄에서 고르기</a><a class="lv3" href="tutorial-08-optional-parts.html#나중에-바꾸기"><span class="tf-no">8.7</span>나중에 바꾸기</a><a class="lv3" href="tutorial-08-optional-parts.html#안에서-무슨-일이-일어났나"><span class="tf-no">8.8</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-09-conditions-and-searches.html">9 조건과 검색</a></div><div class="tf-secs"><a class="lv3" href="tutorial-09-conditions-and-searches.html#속성"><span class="tf-no">9.1</span>속성</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#원본"><span class="tf-no">9.2</span>원본</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#내-속성-propertyname"><span class="tf-no">9.3</span>내 속성: [property.NAME]</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#이럴-때만-설치하기-when"><span class="tf-no">9.4</span>이럴 때만 설치하기: when</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#설치-거부하기-requireid"><span class="tf-no">9.5</span>설치 거부하기: [require.ID]</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#먼저-둘러보기-searchid"><span class="tf-no">9.6</span>먼저 둘러보기: [search.ID]</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#설치-폴더-기억하기"><span class="tf-no">9.7</span>설치 폴더 기억하기</a><a class="lv3" href="tutorial-09-conditions-and-searches.html#안에서-무슨-일이-일어났나"><span class="tf-no">9.8</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-10-scope-and-guard.html">10 누구를 위해 설치하나, 그리고 보호되는 폴더</a></div><div class="tf-secs"><a class="lv3" href="tutorial-10-scope-and-guard.html#세-가지-범위"><span class="tf-no">10.1</span>세 가지 범위</a><a class="lv3" href="tutorial-10-scope-and-guard.html#원본"><span class="tf-no">10.2</span>원본</a><a class="lv3" href="tutorial-10-scope-and-guard.html#겸용dual-패키지"><span class="tf-no">10.3</span>겸용(dual) 패키지</a><a class="lv3" href="tutorial-10-scope-and-guard.html#보호되는-설치-폴더-guard"><span class="tf-no">10.4</span>보호되는 설치 폴더: guard</a><a class="lv3" href="tutorial-10-scope-and-guard.html#해-보기"><span class="tf-no">10.5</span>해 보기</a><a class="lv3" href="tutorial-10-scope-and-guard.html#안에서-무슨-일이-일어났나"><span class="tf-no">10.6</span>안에서 무슨 일이 일어났나</a><a class="lv3" href="tutorial-10-scope-and-guard.html#한-컴퓨터에-여러-번-instances"><span class="tf-no">10.7</span>한 컴퓨터에 여러 번: instances</a></div><div class="tf-ch"><a href="tutorial-11-registry-environment-ini.html">11 레지스트리, 환경 변수, INI 파일, 파일 형식과 링크</a></div><div class="tf-secs"><a class="lv3" href="tutorial-11-registry-environment-ini.html#2분-만에-보는-레지스트리"><span class="tf-no">11.1</span>2분 만에 보는 레지스트리</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#원본"><span class="tf-no">11.2</span>원본</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#레지스트리-값-registryid"><span class="tf-no">11.3</span>레지스트리 값: [registry.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#환경-변수-envid"><span class="tf-no">11.4</span>환경 변수: [env.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#ini-파일-iniid"><span class="tf-no">11.5</span>INI 파일: [ini.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#파일-형식-associd"><span class="tf-no">11.6</span>파일 형식: [assoc.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#링크-protocolid"><span class="tf-no">11.7</span>링크: [protocol.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#우클릭-메뉴-menuid"><span class="tf-no">11.8</span>우클릭 메뉴: [menu.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#com-클래스-comid"><span class="tf-no">11.9</span>COM 클래스: [com.ID]</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#해-보기"><span class="tf-no">11.10</span>해 보기</a><a class="lv3" href="tutorial-11-registry-environment-ini.html#안에서-무슨-일이-일어났나"><span class="tf-no">11.11</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-12-services-fonts-permissions.html">12 서비스, 글꼴, 권한</a></div><div class="tf-secs"><a class="lv3" href="tutorial-12-services-fonts-permissions.html#원본"><span class="tf-no">12.1</span>원본</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#서비스-serviceid"><span class="tf-no">12.2</span>서비스: [service.ID]</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#글꼴-fontid"><span class="tf-no">12.3</span>글꼴: [font.ID]</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#접근-권한-permissionid"><span class="tf-no">12.4</span>접근 권한: [permission.ID]</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#아직-실행-중인-프로그램-사전-점검"><span class="tf-no">12.5</span>아직 실행 중인 프로그램: 사전 점검</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#다시-시작하기-reboot"><span class="tf-no">12.6</span>다시 시작하기: reboot</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#해-보기"><span class="tf-no">12.7</span>해 보기</a><a class="lv3" href="tutorial-12-services-fonts-permissions.html#안에서-무슨-일이-일어났나"><span class="tf-no">12.8</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-13-running-your-program.html">13 설치하는 동안 내 프로그램 실행하기</a></div><div class="tf-secs"><a class="lv3" href="tutorial-13-running-your-program.html#왜-그냥-프로그램을-실행하면-안-되나"><span class="tf-no">13.1</span>왜 그냥 프로그램을 실행하면 안 되나?</a><a class="lv3" href="tutorial-13-running-your-program.html#원본"><span class="tf-no">13.2</span>원본</a><a class="lv3" href="tutorial-13-running-your-program.html#actionid"><span class="tf-no">13.3</span>[action.ID]</a><a class="lv3" href="tutorial-13-running-your-program.html#무엇이-언제-도나"><span class="tf-no">13.4</span>무엇이 언제 도나</a><a class="lv3" href="tutorial-13-running-your-program.html#해-보기"><span class="tf-no">13.5</span>해 보기</a><a class="lv3" href="tutorial-13-running-your-program.html#안에서-무슨-일이-일어났나"><span class="tf-no">13.6</span>안에서 무슨 일이 일어났나</a><a class="lv3" href="tutorial-13-running-your-program.html#동작-하나-그리고-파일-옮기기"><span class="tf-no">13.7</span>동작 하나, 그리고 파일 옮기기</a></div><div class="tf-ch"><a href="tutorial-14-your-own-pages.html">14 나만의 대화창 페이지</a></div><div class="tf-secs"><a class="lv3" href="tutorial-14-your-own-pages.html#원본"><span class="tf-no">14.1</span>원본</a><a class="lv3" href="tutorial-14-your-own-pages.html#페이지-dialogid"><span class="tf-no">14.2</span>페이지: [dialog.ID]</a><a class="lv3" href="tutorial-14-your-own-pages.html#페이지-위의-자리"><span class="tf-no">14.3</span>페이지 위의 자리</a><a class="lv3" href="tutorial-14-your-own-pages.html#컨트롤-dialog-controlid"><span class="tf-no">14.4</span>컨트롤: [dialog-control.ID]</a><a class="lv3" href="tutorial-14-your-own-pages.html#설치하는-동안-보이는-그림-billboardid"><span class="tf-no">14.5</span>설치하는 동안 보이는 그림: [billboard.ID]</a><a class="lv3" href="tutorial-14-your-own-pages.html#나만의-ui-dll-ui-embedded"><span class="tf-no">14.6</span>나만의 UI DLL: [ui] embedded</a><a class="lv3" href="tutorial-14-your-own-pages.html#모든-값에는-기본값이-있어야-한다-propertyname"><span class="tf-no">14.7</span>모든 값에는 기본값이 있어야 한다: [property.NAME]</a><a class="lv3" href="tutorial-14-your-own-pages.html#해-보기"><span class="tf-no">14.8</span>해 보기</a><a class="lv3" href="tutorial-14-your-own-pages.html#안에서-무슨-일이-일어났나"><span class="tf-no">14.9</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-15-cabinets-and-architectures.html">15 캐비닛, 압축, 큰 패키지, 여러 아키텍처</a></div><div class="tf-secs"><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#폴더"><span class="tf-no">15.1</span>폴더</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#원본"><span class="tf-no">15.2</span>원본</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#캐비닛과-압축"><span class="tf-no">15.3</span>캐비닛과 압축</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#여러-아키텍처---arch"><span class="tf-no">15.4</span>여러 아키텍처: --arch</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#매번-같은-바이트---reproducible"><span class="tf-no">15.5</span>매번 같은 바이트: --reproducible</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#mac-에서-온-이름---nfc"><span class="tf-no">15.6</span>Mac 에서 온 이름: --nfc</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#명령줄의-변수--d"><span class="tf-no">15.7</span>명령줄의 변수: -D</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#남이-만든-조각-mergeid"><span class="tf-no">15.8</span>남이 만든 조각: [merge.ID]</a><a class="lv3" href="tutorial-15-cabinets-and-architectures.html#안에서-무슨-일이-일어났나"><span class="tf-no">15.9</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-16-signing.html">16 서명과 타임스탬프</a></div><div class="tf-secs"><a class="lv3" href="tutorial-16-signing.html#서명이란"><span class="tf-no">16.1</span>서명이란</a><a class="lv3" href="tutorial-16-signing.html#키-파일로-서명하기"><span class="tf-no">16.2</span>키 파일로 서명하기</a><a class="lv3" href="tutorial-16-signing.html#타임스탬프-인증서보다-오래-사는-서명"><span class="tf-no">16.3</span>타임스탬프: 인증서보다 오래 사는 서명</a><a class="lv3" href="tutorial-16-signing.html#windows-인증서-저장소의-키"><span class="tf-no">16.4</span>Windows 인증서 저장소의 키</a><a class="lv3" href="tutorial-16-signing.html#하드웨어-토큰-pkcs11"><span class="tf-no">16.5</span>하드웨어 토큰: PKCS#11</a><a class="lv3" href="tutorial-16-signing.html#서명-확인하기-verify"><span class="tf-no">16.6</span>서명 확인하기: verify</a><a class="lv3" href="tutorial-16-signing.html#외부-캐비닛"><span class="tf-no">16.7</span>외부 캐비닛</a><a class="lv3" href="tutorial-16-signing.html#안에서-무슨-일이-일어났나"><span class="tf-no">16.8</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-17-msix-and-bundles.html">17 MSIX 패키지와 번들</a></div><div class="tf-secs"><a class="lv3" href="tutorial-17-msix-and-bundles.html#msi-인가-msix-인가"><span class="tf-no">17.1</span>MSI 인가 MSIX 인가?</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#폴더"><span class="tf-no">17.2</span>폴더</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#원본"><span class="tf-no">17.3</span>원본</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#패키지의-정체-msix"><span class="tf-no">17.4</span>패키지의 정체: [msix]</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#애플리케이션-msix-appid"><span class="tf-no">17.5</span>애플리케이션: [msix-app.ID]</a><a class="lv4" href="tutorial-17-msix-and-bundles.html#여러-언어의-이름-여러-크기의-로고"><span class="tf-no"></span>여러 언어의 이름, 여러 크기의 로고</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#덤-msix-extensionid"><span class="tf-no">17.6</span>덤: [msix-extension.ID]</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#패키지가-요구하는-것-능력과-의존-패키지"><span class="tf-no">17.7</span>패키지가 요구하는 것: 능력과 의존 패키지</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#선택적-패키지와-수정-패키지"><span class="tf-no">17.8</span>선택적 패키지와 수정 패키지</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#고침이-필요한-프로그램-psf"><span class="tf-no">17.9</span>고침이 필요한 프로그램: PSF</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#다른-표들은-무엇이-되나"><span class="tf-no">17.10</span>다른 표들은 무엇이 되나</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#시험용-빌드---unsigned-test"><span class="tf-no">17.11</span>시험용 빌드: --unsigned-test</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#서명하기"><span class="tf-no">17.12</span>서명하기</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#모든-아키텍처를-파일-하나에-번들"><span class="tf-no">17.13</span>모든 아키텍처를 파일 하나에: 번들</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#웹-사이트에서-업데이트-appinstaller"><span class="tf-no">17.14</span>웹 사이트에서 업데이트: .appinstaller</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#압축"><span class="tf-no">17.15</span>압축</a><a class="lv3" href="tutorial-17-msix-and-bundles.html#안에서-무슨-일이-일어났나"><span class="tf-no">17.16</span>안에서 무슨 일이 일어났나</a></div><div class="tf-ch"><a href="tutorial-18-checking-and-looking-inside.html">18 검사하고 들여다보기</a></div><div class="tf-secs"><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#원본-검사-lint"><span class="tf-no">18.1</span>원본 검사: lint</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#패키지-검사-lint-파일"><span class="tf-no">18.2</span>패키지 검사: lint &amp;lt;파일&gt;</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#표-보기-inspect"><span class="tf-no">18.3</span>표 보기: inspect</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#파일과-스트림"><span class="tf-no">18.4</span>파일과 스트림</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#설치하지-않고-풀기-extract"><span class="tf-no">18.5</span>설치하지 않고 풀기: extract</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#한-곳만을-위한-변경-transform"><span class="tf-no">18.6</span>한 곳만을 위한 변경: transform</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#두-빌드-사이에-바뀐-것-diff"><span class="tf-no">18.7</span>두 빌드 사이에 바뀐 것: diff</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#내-windows-를-건드리지-않고-설치해-보기-try"><span class="tf-no">18.8</span>내 Windows 를 건드리지 않고 설치해 보기: try</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#서명-verify"><span class="tf-no">18.9</span>서명: verify</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#msix-패키지"><span class="tf-no">18.10</span>MSIX 패키지</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#더-빠른-시험-빌드---compress-none"><span class="tf-no">18.11</span>더 빠른 시험 빌드: --compress none</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#guid-guid"><span class="tf-no">18.12</span>GUID: guid</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#오류의-뜻-explain"><span class="tf-no">18.13</span>오류의 뜻: explain</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#스크립트용---json"><span class="tf-no">18.14</span>스크립트용: --json</a><a class="lv3" href="tutorial-18-checking-and-looking-inside.html#명령줄의-도움말"><span class="tf-no">18.15</span>명령줄의 도움말</a></div><div class="tf-ch"><a href="tutorial-19-automation.html">19 빨리 시작하기와 자동화</a></div><div class="tf-secs"><a class="lv3" href="tutorial-19-automation.html#답으로-원본-만들기-new"><span class="tf-no">19.1</span>답으로 원본 만들기: new</a><a class="lv3" href="tutorial-19-automation.html#이미-있는-패키지에서-new---from"><span class="tf-no">19.2</span>이미 있는 패키지에서: new --from</a><a class="lv3" href="tutorial-19-automation.html#원본-고치기-edit"><span class="tf-no">19.3</span>원본 고치기: edit</a><a class="lv3" href="tutorial-19-automation.html#릴리스-스크립트"><span class="tf-no">19.4</span>릴리스 스크립트</a><a class="lv3" href="tutorial-19-automation.html#빌드-서버에서"><span class="tf-no">19.5</span>빌드 서버에서</a><a class="lv3" href="tutorial-19-automation.html#windows-패키지-관리자에---winget"><span class="tf-no">19.6</span>Windows 패키지 관리자에: --winget</a><a class="lv3" href="tutorial-19-automation.html#편집기에서-schema"><span class="tf-no">19.7</span>편집기에서: schema</a><a class="lv3" href="tutorial-19-automation.html#ai-도우미와-함께"><span class="tf-no">19.8</span>AI 도우미와 함께</a><a class="lv3" href="tutorial-19-automation.html#설치-프로그램-하나에-여러-패키지-chain"><span class="tf-no">19.9</span>설치 프로그램 하나에 여러 패키지: [chain]</a><a class="lv3" href="tutorial-19-automation.html#여기서-어디로"><span class="tf-no">19.10</span>여기서 어디로</a></div><h4 class="toc-part">제2부 - 참조</h4><div class="tf-ch"><a href="reference.html">20 원본 파일과 rubrapack 명령</a></div><div class="tf-secs"><a class="lv3" href="reference.html#시작하기"><span class="tf-no">20.1</span>시작하기</a><a class="lv4" href="reference.html#첫-패키지"><span class="tf-no"></span>첫 패키지</a><a class="lv4" href="reference.html#약관-페이지와-선택-구성요소"><span class="tf-no"></span>약관 페이지와 선택 구성요소</a><a class="lv4" href="reference.html#나머지를-설명하는-곳"><span class="tf-no"></span>나머지를 설명하는 곳</a><a class="lv3" href="reference.html#예"><span class="tf-no">20.2</span>예</a><a class="lv3" href="reference.html#원본-형식"><span class="tf-no">20.3</span>원본 형식</a><a class="lv3" href="reference.html#toml-부분집합"><span class="tf-no">20.4</span>TOML 부분집합</a><a class="lv3" href="reference.html#표"><span class="tf-no">20.5</span>표</a><a class="lv4" href="reference.html#msix-패키지"><span class="tf-no"></span>MSIX 패키지</a><a class="lv4" href="reference.html#설치한-프로그램으로-등록하기-actionid"><span class="tf-no"></span>설치한 프로그램으로 등록하기: [action.ID]</a><a class="lv4" href="reference.html#프로그램이나-dll-실행-동작-하나-actionid"><span class="tf-no"></span>프로그램이나 DLL 실행: 동작 하나 [action.ID]</a><a class="lv4" href="reference.html#레지스트리-값-registryid"><span class="tf-no"></span>레지스트리 값: [registry.ID]</a><a class="lv4" href="reference.html#바로가기-shortcutid"><span class="tf-no"></span>바로가기: [shortcut.ID]</a><a class="lv4" href="reference.html#파일-형식과-링크-associd-protocolid"><span class="tf-no"></span>파일 형식과 링크: [assoc.ID], [protocol.ID]</a><a class="lv4" href="reference.html#탐색기의-우클릭-메뉴-menuid"><span class="tf-no"></span>탐색기의 우클릭 메뉴: [menu.ID]</a><a class="lv4" href="reference.html#com-클래스-comid"><span class="tf-no"></span>COM 클래스: [com.ID]</a><a class="lv4" href="reference.html#탐색기-처리기-handlerid"><span class="tf-no"></span>탐색기 처리기: [handler.ID]</a><a class="lv4" href="reference.html#msix-전용-msix-extensionid"><span class="tf-no"></span>MSIX 전용: [msix-extension.ID]</a><a class="lv4" href="reference.html#파일-옮기기-odbc-게시-구성-요소"><span class="tf-no"></span>파일 옮기기, ODBC, 게시 구성 요소</a><a class="lv4" href="reference.html#어셈블리-assembly"><span class="tf-no"></span>어셈블리: assembly</a><a class="lv4" href="reference.html#지우기와-복사-removeid-copyid"><span class="tf-no"></span>지우기와 복사: [remove.ID], [copy.ID]</a><a class="lv4" href="reference.html#제거할-때-싹-지우기-recursive-on--uninstall"><span class="tf-no"></span>제거할 때 싹 지우기: recursive, on = &quot;uninstall&quot;</a><a class="lv4" href="reference.html#환경-변수-envid"><span class="tf-no"></span>환경 변수: [env.ID]</a><a class="lv4" href="reference.html#ini-파일-iniid"><span class="tf-no"></span>INI 파일: [ini.ID]</a><a class="lv4" href="reference.html#설치-프로그램-하나에-여러-패키지-chain"><span class="tf-no"></span>설치 프로그램 하나에 여러 패키지: [chain]</a><a class="lv4" href="reference.html#병합-모듈-mergeid"><span class="tf-no"></span>병합 모듈: [merge.ID]</a><a class="lv4" href="reference.html#병합-모듈-만들기-module"><span class="tf-no"></span>병합 모듈 만들기: [module]</a><a class="lv4" href="reference.html#검색과-요구-searchid-requireid"><span class="tf-no"></span>검색과 요구: [search.ID], [require.ID]</a><a class="lv4" href="reference.html#서비스-글꼴-권한"><span class="tf-no"></span>서비스, 글꼴, 권한</a><a class="lv4" href="reference.html#사용자별-패키지와-겸용-패키지-scope"><span class="tf-no"></span>사용자별 패키지와 겸용 패키지: scope</a><a class="lv4" href="reference.html#캐비닛"><span class="tf-no"></span>캐비닛</a><a class="lv4" href="reference.html#설치된-앱-항목과-속성"><span class="tf-no"></span>설치된 앱 항목과 속성</a><a class="lv4" href="reference.html#명령줄로-설치하기"><span class="tf-no"></span>명령줄로 설치하기</a><a class="lv4" href="reference.html#창-없이-설치하기"><span class="tf-no"></span>창 없이 설치하기</a><a class="lv4" href="reference.html#대화창-ui"><span class="tf-no"></span>대화창: ui</a><a class="lv4" href="reference.html#여러-언어"><span class="tf-no"></span>여러 언어</a><a class="lv4" href="reference.html#언어팩"><span class="tf-no"></span>언어팩</a><a class="lv4" href="reference.html#아이콘-완료-페이지-설치-범위-페이지"><span class="tf-no"></span>아이콘, 완료 페이지, 설치 범위 페이지</a><a class="lv4" href="reference.html#나만의-대화창-페이지-dialogid-dialog-controlid"><span class="tf-no"></span>나만의 대화창 페이지: [dialog.ID], [dialog-control.ID]</a><a class="lv4" href="reference.html#빌보드-billboardid"><span class="tf-no"></span>빌보드: [billboard.ID]</a><a class="lv4" href="reference.html#아키텍처와-업그레이드-계열"><span class="tf-no"></span>아키텍처와 업그레이드 계열</a><a class="lv4" href="reference.html#먼저-지워야-하는-판"><span class="tf-no"></span>먼저 지워야 하는 판</a><a class="lv4" href="reference.html#진행하기-전에-사전-점검"><span class="tf-no"></span>진행하기 전에: 사전 점검</a><a class="lv4" href="reference.html#나중에-정리하기-정리-작업"><span class="tf-no"></span>나중에 정리하기: 정리 작업</a><a class="lv4" href="reference.html#제품과-함께-지워지는-추가-기능-parent-remove-addons"><span class="tf-no"></span>제품과 함께 지워지는 추가 기능: parent, remove-addons</a><a class="lv4" href="reference.html#여러-인스턴스-나란히-instances"><span class="tf-no"></span>여러 인스턴스 나란히: instances</a><a class="lv4" href="reference.html#다른-제품을-대신하기-replaces"><span class="tf-no"></span>다른 제품을 대신하기: replaces</a><a class="lv4" href="reference.html#와일드카드-filesid"><span class="tf-no"></span>와일드카드: [files.ID]</a><a class="lv4" href="reference.html#빈-폴더-folderid"><span class="tf-no"></span>빈 폴더: [folder.ID]</a><a class="lv4" href="reference.html#기능feature"><span class="tf-no"></span>기능(feature)</a><a class="lv4" href="reference.html#조건-when"><span class="tf-no"></span>조건: when</a><a class="lv4" href="reference.html#제거할-때-파일-남기기-keep"><span class="tf-no"></span>제거할 때 파일 남기기: keep</a><a class="lv4" href="reference.html#변수"><span class="tf-no"></span>변수</a><a class="lv4" href="reference.html#windows-이름"><span class="tf-no"></span>Windows 이름</a><a class="lv4" href="reference.html#프로그램-파일"><span class="tf-no"></span>프로그램 파일</a><a class="lv4" href="reference.html#설치-폴더-지키기"><span class="tf-no"></span>설치 폴더 지키기</a><a class="lv4" href="reference.html#경로"><span class="tf-no"></span>경로</a><a class="lv3" href="reference.html#명령줄"><span class="tf-no">20.6</span>명령줄</a><a class="lv3" href="reference.html#진단-코드"><span class="tf-no">20.7</span>진단 코드</a></div><h4 class="toc-part">제3부 - 기초 지식</h4><div class="tf-ch"><a href="basics-01-bits-bytes-and-hex.html">21 비트, 바이트, 16진수</a></div><div class="tf-secs"><a class="lv3" href="basics-01-bits-bytes-and-hex.html#비트"><span class="tf-no">21.1</span>비트</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#2진수"><span class="tf-no">21.2</span>2진수</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#바이트"><span class="tf-no">21.3</span>바이트</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#16진수"><span class="tf-no">21.4</span>16진수</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#16진-덤프-읽기"><span class="tf-no">21.5</span>16진 덤프 읽기</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#단위-kb-mb-와-kib-mib"><span class="tf-no">21.6</span>단위: KB, MB 와 KiB, MiB</a><a class="lv3" href="basics-01-bits-bytes-and-hex.html#쓰이는-곳"><span class="tf-no">21.7</span>쓰이는 곳</a></div><div class="tf-ch"><a href="basics-02-numbers-and-flags.html">22 파일 속의 수, 그리고 비트 플래그</a></div><div class="tf-secs"><a class="lv3" href="basics-02-numbers-and-flags.html#1-2-4-8-바이트"><span class="tf-no">22.1</span>1, 2, 4, 8 바이트</a><a class="lv3" href="basics-02-numbers-and-flags.html#바이트-순서-little-endian"><span class="tf-no">22.2</span>바이트 순서: little-endian</a><a class="lv3" href="basics-02-numbers-and-flags.html#음수-2의-보수"><span class="tf-no">22.3</span>음수: 2의 보수</a><a class="lv3" href="basics-02-numbers-and-flags.html#비트-플래그"><span class="tf-no">22.4</span>비트 플래그</a><a class="lv3" href="basics-02-numbers-and-flags.html#비트-확인하기와-켜기-and-or"><span class="tf-no">22.5</span>비트 확인하기와 켜기: AND, OR</a><a class="lv3" href="basics-02-numbers-and-flags.html#쓰이는-곳"><span class="tf-no">22.6</span>쓰이는 곳</a></div><div class="tf-ch"><a href="basics-03-text.html">23 글자: 문자, 코드 포인트, 인코딩</a></div><div class="tf-secs"><a class="lv3" href="basics-03-text.html#문자와-코드-포인트"><span class="tf-no">23.1</span>문자와 코드 포인트</a><a class="lv3" href="basics-03-text.html#ascii"><span class="tf-no">23.2</span>ASCII</a><a class="lv3" href="basics-03-text.html#코드-페이지-한-바이트-256-문자"><span class="tf-no">23.3</span>코드 페이지: 한 바이트, 256 문자</a><a class="lv3" href="basics-03-text.html#utf-8"><span class="tf-no">23.4</span>UTF-8</a><a class="lv3" href="basics-03-text.html#utf-16"><span class="tf-no">23.5</span>UTF-16</a><a class="lv3" href="basics-03-text.html#바이트-순서-표시"><span class="tf-no">23.6</span>바이트 순서 표시</a><a class="lv3" href="basics-03-text.html#유니코드-정규화"><span class="tf-no">23.7</span>유니코드 정규화</a><a class="lv3" href="basics-03-text.html#글자가-이상하게-보일-때"><span class="tf-no">23.8</span>글자가 이상하게 보일 때</a><a class="lv3" href="basics-03-text.html#쓰이는-곳"><span class="tf-no">23.9</span>쓰이는 곳</a></div><div class="tf-ch"><a href="basics-04-guids-and-hashes.html">24 GUID 와 해시</a></div><div class="tf-secs"><a class="lv3" href="basics-04-guids-and-hashes.html#guid"><span class="tf-no">24.1</span>GUID</a><a class="lv4" href="basics-04-guids-and-hashes.html#판과-변형"><span class="tf-no"></span>판과 변형</a><a class="lv4" href="basics-04-guids-and-hashes.html#글과-바이트"><span class="tf-no"></span>글과 바이트</a><a class="lv3" href="basics-04-guids-and-hashes.html#해시"><span class="tf-no">24.2</span>해시</a><a class="lv4" href="basics-04-guids-and-hashes.html#튜토리얼-패키지-속의-해시"><span class="tf-no"></span>튜토리얼 패키지 속의 해시</a><a class="lv3" href="basics-04-guids-and-hashes.html#해시로-만드는-guid-guid---from"><span class="tf-no">24.3</span>해시로 만드는 GUID: guid --from</a><a class="lv3" href="basics-04-guids-and-hashes.html#쓰이는-곳"><span class="tf-no">24.4</span>쓰이는 곳</a></div><div class="tf-ch"><a href="basics-05-compression.html">25 압축</a></div><div class="tf-secs"><a class="lv3" href="basics-05-compression.html#데이터를-줄일-수-있는-까닭"><span class="tf-no">25.1</span>데이터를 줄일 수 있는 까닭</a><a class="lv3" href="basics-05-compression.html#lz77-앞에서-베껴-와라"><span class="tf-no">25.2</span>LZ77: &quot;앞에서 베껴 와라&quot;</a><a class="lv3" href="basics-05-compression.html#허프만-부호-흔한-기호에-짧은-부호"><span class="tf-no">25.3</span>허프만 부호: 흔한 기호에 짧은 부호</a><a class="lv3" href="basics-05-compression.html#deflate-비트-하나하나"><span class="tf-no">25.4</span>deflate, 비트 하나하나</a><a class="lv3" href="basics-05-compression.html#mszip-캐비닛-속의-deflate"><span class="tf-no">25.5</span>MSZIP: 캐비닛 속의 deflate</a><a class="lv3" href="basics-05-compression.html#msix-속의-deflate"><span class="tf-no">25.6</span>MSIX 속의 deflate</a><a class="lv3" href="basics-05-compression.html#쓰이는-곳"><span class="tf-no">25.7</span>쓰이는 곳</a></div><div class="tf-ch"><a href="basics-06-files-inside-a-file.html">26 파일 속의 파일</a></div><div class="tf-secs"><a class="lv3" href="basics-06-files-inside-a-file.html#디스크가-파일을-저장하는-방법"><span class="tf-no">26.1</span>디스크가 파일을 저장하는 방법</a><a class="lv3" href="basics-06-files-inside-a-file.html#msi-는-파일-속의-파일-시스템이다"><span class="tf-no">26.2</span>MSI 는 파일 속의 파일 시스템이다</a><a class="lv4" href="basics-06-files-inside-a-file.html#작은-스트림-미니-스트림"><span class="tf-no"></span>작은 스트림: 미니 스트림</a><a class="lv4" href="basics-06-files-inside-a-file.html#이름"><span class="tf-no"></span>이름</a><a class="lv3" href="basics-06-files-inside-a-file.html#msix-는-묶음-파일이다"><span class="tf-no">26.3</span>MSIX 는 묶음 파일이다</a><a class="lv3" href="basics-06-files-inside-a-file.html#왜-두-설계인가"><span class="tf-no">26.4</span>왜 두 설계인가?</a><a class="lv3" href="basics-06-files-inside-a-file.html#쓰이는-곳"><span class="tf-no">26.5</span>쓰이는 곳</a></div><div class="tf-ch"><a href="basics-07-tables-and-keys.html">27 표, 키, 참조</a></div><div class="tf-secs"><a class="lv3" href="basics-07-tables-and-keys.html#표-행-열"><span class="tf-no">27.1</span>표, 행, 열</a><a class="lv3" href="basics-07-tables-and-keys.html#기본-키-행을-하나로-만드는-것"><span class="tf-no">27.2</span>기본 키: 행을 하나로 만드는 것</a><a class="lv3" href="basics-07-tables-and-keys.html#외래-키-행을-가리키는-행"><span class="tf-no">27.3</span>외래 키: 행을 가리키는 행</a><a class="lv3" href="basics-07-tables-and-keys.html#내가-주는-키-rubrapack-이-만드는-키"><span class="tf-no">27.4</span>내가 주는 키, rubrapack 이 만드는 키</a><a class="lv3" href="basics-07-tables-and-keys.html#문자열은-한-번만-문자열-풀"><span class="tf-no">27.5</span>문자열은 한 번만: 문자열 풀</a><a class="lv3" href="basics-07-tables-and-keys.html#표에-대한-표"><span class="tf-no">27.6</span>표에 대한 표</a><a class="lv3" href="basics-07-tables-and-keys.html#idt-텍스트-형식"><span class="tf-no">27.7</span>IDT 텍스트 형식</a><a class="lv3" href="basics-07-tables-and-keys.html#쓰이는-곳"><span class="tf-no">27.8</span>쓰이는 곳</a></div><div class="tf-ch"><a href="basics-08-keys-certificates-signatures.html">28 키, 인증서, 서명</a></div><div class="tf-secs"><a class="lv3" href="basics-08-keys-certificates-signatures.html#열쇠-하나-대신-둘"><span class="tf-no">28.1</span>열쇠 하나 대신 둘</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#서명하기와-확인하기"><span class="tf-no">28.2</span>서명하기와 확인하기</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#인증서-이것은-누구의-키인가"><span class="tf-no">28.3</span>인증서: 이것은 누구의 키인가?</a><a class="lv4" href="basics-08-keys-certificates-signatures.html#이름-cn-o-c"><span class="tf-no"></span>이름: CN, O, C</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#사슬과-신뢰"><span class="tf-no">28.4</span>사슬과 신뢰</a><a class="lv4" href="basics-08-keys-certificates-signatures.html#폐지"><span class="tf-no"></span>폐지</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#타임스탬프"><span class="tf-no">28.5</span>타임스탬프</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#키가-사는-곳-파일과-토큰"><span class="tf-no">28.6</span>키가 사는 곳: 파일과 토큰</a><a class="lv4" href="basics-08-keys-certificates-signatures.html#지문"><span class="tf-no"></span>지문</a><a class="lv3" href="basics-08-keys-certificates-signatures.html#쓰이는-곳"><span class="tf-no">28.7</span>쓰이는 곳</a></div><div class="tf-ch"><a href="basics-09-folders-and-environment-variables.html">29 Windows 폴더와 환경 변수</a></div><div class="tf-secs"><a class="lv3" href="basics-09-folders-and-environment-variables.html#환경-변수란"><span class="tf-no">29.1</span>환경 변수란</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#흔히-쓰는-변수"><span class="tf-no">29.2</span>흔히 쓰는 변수</a><a class="lv4" href="basics-09-folders-and-environment-variables.html#폴더"><span class="tf-no"></span>폴더</a><a class="lv4" href="basics-09-folders-and-environment-variables.html#폴더가-아닌-것"><span class="tf-no"></span>폴더가 아닌 것</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#변수가-없는-폴더"><span class="tf-no">29.3</span>변수가 없는 폴더</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#세-시점"><span class="tf-no">29.4</span>세 시점</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#windows-installer-의-이름"><span class="tf-no">29.5</span>Windows Installer 의 이름</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#rubrapack-에서"><span class="tf-no">29.6</span>rubrapack 에서</a><a class="lv3" href="basics-09-folders-and-environment-variables.html#쓰이는-곳"><span class="tf-no">29.7</span>쓰이는 곳</a></div><h4 class="toc-part">제4부 - 파일 형식</h4><div class="tf-ch"><a href="formats-readme.html">30 구현하는 사람을 위한 패키지 형식</a></div><div class="tf-secs"><a class="lv3" href="formats-readme.html#사실을-읽는-법"><span class="tf-no">30.1</span>사실을 읽는 법</a><a class="lv3" href="formats-readme.html#표기"><span class="tf-no">30.2</span>표기</a><a class="lv3" href="formats-readme.html#흐름을-한-그림으로"><span class="tf-no">30.3</span>흐름을 한 그림으로</a></div><div class="tf-ch"><a href="formats-cfb.html">31 복합 파일(Compound File Binary, CFB)</a></div><div class="tf-secs"><a class="lv3" href="formats-cfb.html#섹터"><span class="tf-no">31.1</span>섹터</a><a class="lv3" href="formats-cfb.html#머리처음-512바이트-spec"><span class="tf-no">31.2</span>머리(처음 512바이트) [spec]</a><a class="lv3" href="formats-cfb.html#fat-difat-미니-fat-spec"><span class="tf-no">31.3</span>FAT, DIFAT, 미니 FAT [spec]</a><a class="lv3" href="formats-cfb.html#디렉터리-spec"><span class="tf-no">31.4</span>디렉터리 [spec]</a><a class="lv3" href="formats-cfb.html#단순하고-결정적인-작성기"><span class="tf-no">31.5</span>단순하고 결정적인 작성기</a><a class="lv3" href="formats-cfb.html#안전하게-읽기"><span class="tf-no">31.6</span>안전하게 읽기</a><a class="lv3" href="formats-cfb.html#실제-예-튜토리얼의-hellomsi"><span class="tf-no">31.7</span>실제 예: 튜토리얼의 hello.msi</a></div><div class="tf-ch"><a href="formats-msi-database.html">32 복합 파일 속의 MSI 데이터베이스</a></div><div class="tf-secs"><a class="lv3" href="formats-msi-database.html#스트림"><span class="tf-no">32.1</span>스트림</a><a class="lv4" href="formats-msi-database.html#스트림-이름"><span class="tf-no"></span>스트림 이름</a><a class="lv3" href="formats-msi-database.html#문자열-풀-_stringpool-과-_stringdata"><span class="tf-no">32.2</span>문자열 풀: _StringPool 과 _StringData</a><a class="lv4" href="formats-msi-database.html#코드-페이지"><span class="tf-no"></span>코드 페이지</a><a class="lv3" href="formats-msi-database.html#시스템-표"><span class="tf-no">32.3</span>시스템 표</a><a class="lv4" href="formats-msi-database.html#열-형식-비트_columnstype"><span class="tf-no"></span>열 형식 비트(_Columns.Type)</a><a class="lv3" href="formats-msi-database.html#표-스트림"><span class="tf-no">32.4</span>표 스트림</a><a class="lv3" href="formats-msi-database.html#변환mst"><span class="tf-no">32.5</span>변환(.mst)</a><a class="lv3" href="formats-msi-database.html#패치msp"><span class="tf-no">32.6</span>패치(.msp)</a><a class="lv3" href="formats-msi-database.html#idt-보관-파일msidatabaseexport-가-쓰는-것"><span class="tf-no">32.7</span>IDT 보관 파일(MsiDatabaseExport 가 쓰는 것)</a><a class="lv3" href="formats-msi-database.html#안전하게-읽기"><span class="tf-no">32.8</span>안전하게 읽기</a><a class="lv3" href="formats-msi-database.html#실제-예-튜토리얼의-hellomsi"><span class="tf-no">32.9</span>실제 예: 튜토리얼의 hello.msi</a></div><div class="tf-ch"><a href="formats-msi-summary.html">33 요약 정보</a></div><div class="tf-secs"><a class="lv3" href="formats-msi-summary.html#배치-spec-observed"><span class="tf-no">33.1</span>배치 [spec] [observed]</a><a class="lv3" href="formats-msi-summary.html#설치-패키지가-정하는-속성"><span class="tf-no">33.2</span>설치 패키지가 정하는 속성</a><a class="lv3" href="formats-msi-summary.html#코드-페이지-함정---요약-문자열은-ascii-로-observed"><span class="tf-no">33.3</span>코드 페이지 함정 - 요약 문자열은 ASCII 로 [observed]</a><a class="lv3" href="formats-msi-summary.html#실제-예-튜토리얼의-hellomsi"><span class="tf-no">33.4</span>실제 예: 튜토리얼의 hello.msi</a></div><div class="tf-ch"><a href="formats-msi-package.html">34 설치·복구·업그레이드·제거가 되는 가장 작은 패키지</a></div><div class="tf-secs"><a class="lv3" href="formats-msi-package.html#표와-열"><span class="tf-no">34.1</span>표와 열</a><a class="lv3" href="formats-msi-package.html#property"><span class="tf-no">34.2</span>Property</a><a class="lv3" href="formats-msi-package.html#directory"><span class="tf-no">34.3</span>Directory</a><a class="lv3" href="formats-msi-package.html#구성-요소-기능-파일"><span class="tf-no">34.4</span>구성 요소, 기능, 파일</a><a class="lv3" href="formats-msi-package.html#빈-폴더"><span class="tf-no">34.5</span>빈 폴더</a><a class="lv3" href="formats-msi-package.html#media-와-캐비닛"><span class="tf-no">34.6</span>Media 와 캐비닛</a><a class="lv3" href="formats-msi-package.html#메이저-업그레이드와-다운그레이드-거부"><span class="tf-no">34.7</span>메이저 업그레이드와 다운그레이드 거부</a><a class="lv3" href="formats-msi-package.html#설치한-프로그램으로-등록해제하기"><span class="tf-no">34.8</span>설치한 프로그램으로 등록·해제하기</a><a class="lv3" href="formats-msi-package.html#레지스트리-값"><span class="tf-no">34.9</span>레지스트리 값</a><a class="lv3" href="formats-msi-package.html#바로가기"><span class="tf-no">34.10</span>바로가기</a><a class="lv3" href="formats-msi-package.html#파일-지우기와-복제"><span class="tf-no">34.11</span>파일 지우기와 복제</a><a class="lv3" href="formats-msi-package.html#환경-변수"><span class="tf-no">34.12</span>환경 변수</a><a class="lv3" href="formats-msi-package.html#ini-파일"><span class="tf-no">34.13</span>INI 파일</a><a class="lv3" href="formats-msi-package.html#검색과-설치-조건"><span class="tf-no">34.14</span>검색과 설치 조건</a><a class="lv3" href="formats-msi-package.html#서비스-글꼴-권한"><span class="tf-no">34.15</span>서비스, 글꼴, 권한</a><a class="lv3" href="formats-msi-package.html#캐비닛-관리-이미지-광고"><span class="tf-no">34.16</span>캐비닛, 관리 이미지, 광고</a><a class="lv3" href="formats-msi-package.html#사용자별-패키지와-겸용-패키지"><span class="tf-no">34.17</span>사용자별 패키지와 겸용 패키지</a><a class="lv3" href="formats-msi-package.html#사용-중인-파일"><span class="tf-no">34.18</span>사용 중인 파일</a><a class="lv3" href="formats-msi-package.html#순서"><span class="tf-no">34.19</span>순서</a><a class="lv3" href="formats-msi-package.html#대화창"><span class="tf-no">34.20</span>대화창</a><a class="lv3" href="formats-msi-package.html#이-조리법이-아직-다루지-않는-것"><span class="tf-no">34.21</span>이 조리법이 아직 다루지 않는 것</a></div><div class="tf-ch"><a href="formats-pe.html">35 프로그램 파일: 머신 형식과 판</a></div><div class="tf-secs"><a class="lv3" href="formats-pe.html#머리-찾기-spec"><span class="tf-no">35.1</span>머리 찾기 [spec]</a><a class="lv3" href="formats-pe.html#판-정보-리소스-spec"><span class="tf-no">35.2</span>판 정보 리소스 [spec]</a><a class="lv3" href="formats-pe.html#패키지에-드는-것-observed"><span class="tf-no">35.3</span>패키지에 드는 것 [observed]</a><a class="lv3" href="formats-pe.html#안전하게-읽기"><span class="tf-no">35.4</span>안전하게 읽기</a></div><div class="tf-ch"><a href="formats-cab-mszip.html">36 캐비닛, MSZIP, deflate</a></div><div class="tf-secs"><a class="lv3" href="formats-cab-mszip.html#캐비닛-배치-spec-ms-cab"><span class="tf-no">36.1</span>캐비닛 배치 [spec: MS-CAB]</a><a class="lv4" href="formats-cab-mszip.html#블록-체크섬-spec"><span class="tf-no"></span>블록 체크섬 [spec]</a><a class="lv3" href="formats-cab-mszip.html#mszip-spec-ms-mci"><span class="tf-no">36.2</span>MSZIP [spec: MS-MCI]</a><a class="lv3" href="formats-cab-mszip.html#lzx-spec-ms-patch-2-ms-cab"><span class="tf-no">36.3</span>LZX [spec: MS-PATCH 2, MS-CAB]</a><a class="lv3" href="formats-cab-mszip.html#deflate-인코더-간단히-spec-rfc-1951"><span class="tf-no">36.4</span>deflate 인코더 간단히 [spec: RFC 1951]</a><a class="lv3" href="formats-cab-mszip.html#실제-예-튜토리얼의-hellomsi"><span class="tf-no">36.5</span>실제 예: 튜토리얼의 hello.msi</a></div><div class="tf-ch"><a href="formats-identity.html">37 결정적인 정체와 재현 가능한 패키지</a></div><div class="tf-secs"><a class="lv3" href="formats-identity.html#이름에서-만드는-guiduuid-8판-spec-rfc-9562"><span class="tf-no">37.1</span>이름에서 만드는 GUID(UUID 8판) [spec: RFC 9562]</a><a class="lv3" href="formats-identity.html#키"><span class="tf-no">37.2</span>키</a><a class="lv3" href="formats-identity.html#재현-가능한-패키지"><span class="tf-no">37.3</span>재현 가능한 패키지</a></div><div class="tf-ch"><a href="formats-authenticode.html">38 Authenticode 서명</a></div><div class="tf-secs"><a class="lv3" href="formats-authenticode.html#pe-파일에서-서명이-사는-곳"><span class="tf-no">38.1</span>PE 파일에서 서명이 사는 곳</a><a class="lv3" href="formats-authenticode.html#pe-다이제스트"><span class="tf-no">38.2</span>PE 다이제스트</a><a class="lv3" href="formats-authenticode.html#cms-signeddata"><span class="tf-no">38.3</span>CMS SignedData</a><a class="lv3" href="formats-authenticode.html#msi-패키지"><span class="tf-no">38.4</span>MSI 패키지</a><a class="lv3" href="formats-authenticode.html#캐비닛"><span class="tf-no">38.5</span>캐비닛</a><a class="lv3" href="formats-authenticode.html#공유-win32-어셈블리의-카탈로그"><span class="tf-no">38.6</span>공유 Win32 어셈블리의 카탈로그</a><a class="lv3" href="formats-authenticode.html#타임스탬프"><span class="tf-no">38.7</span>타임스탬프</a><a class="lv3" href="formats-authenticode.html#ecdsa"><span class="tf-no">38.8</span>ECDSA</a><a class="lv3" href="formats-authenticode.html#windows-가-알려-주는-것"><span class="tf-no">38.9</span>Windows 가 알려 주는 것</a><a class="lv3" href="formats-authenticode.html#실제-예-튜토리얼의-hellomsi"><span class="tf-no">38.10</span>실제 예: 튜토리얼의 hello.msi</a></div><div class="tf-ch"><a href="formats-verify.html">39 출력을 Windows 와 대조하기</a></div><div class="tf-secs"><a class="lv3" href="formats-verify.html#데이터베이스가-열리고-풀린다"><span class="tf-no">39.1</span>데이터베이스가 열리고 풀린다</a><a class="lv3" href="formats-verify.html#패키지가-설치된다"><span class="tf-no">39.2</span>패키지가 설치된다</a><a class="lv3" href="formats-verify.html#쓰기-전에-하는-검사"><span class="tf-no">39.3</span>쓰기 전에 하는 검사</a><a class="lv3" href="formats-verify.html#microsoft-의-ice-규칙-관찰"><span class="tf-no">39.4</span>Microsoft 의 ICE 규칙 [관찰]</a><a class="lv3" href="formats-verify.html#멀쩡해-보이지만-아닌-것"><span class="tf-no">39.5</span>멀쩡해 보이지만 아닌 것</a></div><div class="tf-ch"><a href="formats-msix.html">40 MSIX 패키지</a></div><div class="tf-secs"><a class="lv3" href="formats-msix.html#zip-압축-파일"><span class="tf-no">40.1</span>ZIP 압축 파일</a><a class="lv3" href="formats-msix.html#블록-맵appxblockmapxml"><span class="tf-no">40.2</span>블록 맵(AppxBlockMap.xml)</a><a class="lv3" href="formats-msix.html#content_typesxml"><span class="tf-no">40.3</span>[Content_Types].xml</a><a class="lv3" href="formats-msix.html#매니페스트appxmanifestxml"><span class="tf-no">40.4</span>매니페스트(AppxManifest.xml)</a><a class="lv3" href="formats-msix.html#가상-레지스트리registrydat-userdat"><span class="tf-no">40.5</span>가상 레지스트리(Registry.dat, User.dat)</a><a class="lv3" href="formats-msix.html#가상-파일-시스템vfs"><span class="tf-no">40.6</span>가상 파일 시스템(VFS\...)</a><a class="lv3" href="formats-msix.html#자원-색인resourcespri-observed"><span class="tf-no">40.7</span>자원 색인(resources.pri) [observed]</a><a class="lv3" href="formats-msix.html#확장"><span class="tf-no">40.8</span>확장</a><a class="lv3" href="formats-msix.html#묶음msixbundle"><span class="tf-no">40.9</span>묶음(.msixbundle)</a><a class="lv3" href="formats-msix.html#서명appxsignaturep7x"><span class="tf-no">40.10</span>서명(AppxSignature.p7x)</a><a class="lv3" href="formats-msix.html#서명-없는-패키지-설치하기"><span class="tf-no">40.11</span>서명 없는 패키지 설치하기</a><a class="lv3" href="formats-msix.html#실제-예-튜토리얼의-hellomsix"><span class="tf-no">40.12</span>실제 예: 튜토리얼의 hello.msix</a></div><div class="tf-ch"><a href="formats-registry.html">41 레지스트리 하이브 파일(REGF)</a></div><div class="tf-secs"><a class="lv3" href="formats-registry.html#배치"><span class="tf-no">41.1</span>배치</a><a class="lv3" href="formats-registry.html#기본-블록"><span class="tf-no">41.2</span>기본 블록</a><a class="lv3" href="formats-registry.html#키nk"><span class="tf-no">41.3</span>키(nk)</a><a class="lv3" href="formats-registry.html#하위-키-목록lh-ri"><span class="tf-no">41.4</span>하위 키 목록(lh, ri)</a><a class="lv3" href="formats-registry.html#값vk과-값-목록"><span class="tf-no">41.5</span>값(vk)과 값 목록</a><a class="lv3" href="formats-registry.html#보안-칸sk"><span class="tf-no">41.6</span>보안 칸(sk)</a><a class="lv3" href="formats-registry.html#재현-가능한-하이브"><span class="tf-no">41.7</span>재현 가능한 하이브</a></div></div>
+<div class="nav"><a href="index.html">← 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><span></span></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.menu-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&p&&!p.hidden){open(false);if(b)b.focus();}});document.addEventListener('click',function(e){if(p&&!p.hidden&&!p.contains(e.target)&&!(b&&b.contains(e.target)))open(false);});var bk=document.querySelector('.bar .back');if(bk)bk.addEventListener('click',function(e){if(history.length>1&&document.referrer){e.preventDefault();history.back();}});var box=document.getElementById('setbox');if(!box)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('doc-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('doc-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function paint(){var s=load();var t=s.theme||'auto',w=s.width==='fit'?'fit':'960';[].forEach.call(box.querySelectorAll('.segb[data-theme]'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});[].forEach.call(box.querySelectorAll('.segb[data-width]'),function(x){x.setAttribute('aria-pressed',x.dataset.width===w);});var ly=s.layout||'auto';[].forEach.call(box.querySelectorAll('.segb[data-layout]'),function(x){x.setAttribute('aria-pressed',x.dataset.layout===ly);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}paint();[].forEach.call(box.querySelectorAll('.segb[data-width]'),function(x){x.addEventListener('click',function(){var s=load();if(x.dataset.width==='fit'){s.width='fit';r.setAttribute('data-measure','fit');}else{delete s.width;r.removeAttribute('data-measure');}save(s);setTimeout(paint,0);});});[].forEach.call(box.querySelectorAll('.segb[data-layout]'),function(x){x.addEventListener('click',function(){var s=load(),v=x.dataset.layout;if(v==='auto'){delete s.layout;r.removeAttribute('data-layout');}else{s.layout=v;r.setAttribute('data-layout',v);}save(s);var m=document.querySelector('meta[name=viewport]');var want=v==='desktop'?'width=1100':'width=device-width, initial-scale=1';if(m&&m.getAttribute('content')!==want)location.reload();else setTimeout(paint,0);});});[].forEach.call(box.querySelectorAll('.segb[data-theme]'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="\ucc3e\uc740 \uac83\uc774 \uc5c6\ub2e4";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>
